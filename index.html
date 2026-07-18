@@ -13,42 +13,42 @@
   --text:#e8e8e6; --muted:#8b8f96; --accent:#c9b280; --accent-text:#141517; --accent-soft:rgba(201,178,128,.20);
   --accent2:#8fb6c9; --accent2-soft:rgba(143,182,201,.20);
   --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#9aa0a8; --given:#e8e8e6; --user:#c9b280;
-  --cell-sel:#3a3e33; --cell-hl:#222428; --cell-same:#33362c; --shadow:0 10px 34px rgba(0,0,0,.45);
+  --cell-sel:#3a3e33; --cell-hl:#222428; --cell-same:#33362c; --shadow:0 2px 10px rgba(0,0,0,.45);
 }
 html[data-theme="steel"]{
   --bg:#12151a; --panel:#191e25; --panel2:#212730; --line:#2a323d; --line-strong:#46525f;
   --text:#e4e9ee; --muted:#87929f; --accent:#4c9be6; --accent-text:#0b1016; --accent-soft:rgba(76,155,230,.20);
   --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.20);
   --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#93a0ad; --given:#e4e9ee; --user:#4c9be6;
-  --cell-sel:#2c4763; --cell-hl:#20262f; --cell-same:#2c3a4e; --shadow:0 10px 34px rgba(0,0,0,.5);
+  --cell-sel:#2c4763; --cell-hl:#20262f; --cell-same:#2c3a4e; --shadow:0 2px 10px rgba(0,0,0,.5);
 }
 html[data-theme="midnight"]{
   --bg:#0e1320; --panel:#161d2e; --panel2:#1d2740; --line:#26314c; --line-strong:#3e4d73;
   --text:#dfe6f5; --muted:#7c88a5; --accent:#7aa2f7; --accent-text:#0e1320; --accent-soft:rgba(122,162,247,.20);
   --accent2:#f0c674; --accent2-soft:rgba(240,198,116,.20);
   --error:#f7768e; --error-soft:rgba(247,118,142,.14); --note:#8a94ad; --given:#dfe6f5; --user:#7aa2f7;
-  --cell-sel:#26335a; --cell-hl:#182238; --cell-same:#223055; --shadow:0 10px 34px rgba(0,0,0,.5);
+  --cell-sel:#26335a; --cell-hl:#182238; --cell-same:#223055; --shadow:0 2px 10px rgba(0,0,0,.5);
 }
 html[data-theme="emerald"]{
   --bg:#0e1512; --panel:#151f1a; --panel2:#1c2a23; --line:#25352c; --line-strong:#3c5647;
   --text:#e2ece6; --muted:#7f948a; --accent:#6fbf8f; --accent-text:#0e1512; --accent-soft:rgba(111,191,143,.20);
   --accent2:#c9a06f; --accent2-soft:rgba(201,160,111,.20);
   --error:#e0716c; --error-soft:rgba(224,113,108,.14); --note:#8aa094; --given:#e2ece6; --user:#6fbf8f;
-  --cell-sel:#1f3a2c; --cell-hl:#16241d; --cell-same:#1c3628; --shadow:0 10px 34px rgba(0,0,0,.5);
+  --cell-sel:#1f3a2c; --cell-hl:#16241d; --cell-same:#1c3628; --shadow:0 2px 10px rgba(0,0,0,.5);
 }
 html[data-theme="amethyst"]{
   --bg:#141021; --panel:#1c1730; --panel2:#251e40; --line:#302a4d; --line-strong:#4d4477;
   --text:#e9e4f5; --muted:#948ba9; --accent:#a78bfa; --accent-text:#141021; --accent-soft:rgba(167,139,250,.20);
   --accent2:#e8b07f; --accent2-soft:rgba(232,176,127,.20);
   --error:#f0708a; --error-soft:rgba(240,112,138,.14); --note:#9a90b3; --given:#e9e4f5; --user:#a78bfa;
-  --cell-sel:#332a5c; --cell-hl:#1f1838; --cell-same:#2d2652; --shadow:0 10px 34px rgba(0,0,0,.5);
+  --cell-sel:#332a5c; --cell-hl:#1f1838; --cell-same:#2d2652; --shadow:0 2px 10px rgba(0,0,0,.5);
 }
 html[data-theme="paper"]{
   --bg:#f4f1ea; --panel:#fdfcf8; --panel2:#efece3; --line:#ddd8cb; --line-strong:#b4ad9c;
   --text:#28251f; --muted:#8a8577; --accent:#4a67d6; --accent-text:#ffffff; --accent-soft:rgba(74,103,214,.15);
   --accent2:#b3591f; --accent2-soft:rgba(179,89,31,.14);
   --error:#c94f57; --error-soft:rgba(201,79,87,.12); --note:#8a8577; --given:#28251f; --user:#4a67d6;
-  --cell-sel:#dde3f8; --cell-hl:#eeebe0; --cell-same:#e2e7f6; --shadow:0 10px 30px rgba(90,80,60,.18);
+  --cell-sel:#dde3f8; --cell-hl:#eeebe0; --cell-same:#e2e7f6; --shadow:0 2px 8px rgba(90,80,60,.15);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -60,33 +60,40 @@ body{margin:0; background:var(--bg); color:var(--text);
 body.pos-left{align-items:flex-start}
 body.pos-right{align-items:flex-end}
 button{font-family:inherit; color:inherit}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:5px}
 header{width:100%; max-width:540px; display:flex; align-items:center; gap:8px; padding:16px 18px 8px}
-header h1{font-size:19px; font-weight:800; letter-spacing:.14em; margin:0; flex:1}
-.badge{font-size:11px; font-weight:600; padding:5px 11px; border-radius:20px; border:1px solid var(--line-strong);
+header h1{font-size:19px; font-weight:800; letter-spacing:.14em; margin:0; flex:1; display:flex; align-items:center; gap:9px}
+.logo-mark{width:21px; height:21px; stroke:var(--accent); stroke-width:1.6; fill:none}
+.logo-mark .lm-a{fill:var(--accent-soft); stroke:none}
+.badge{font-size:11px; font-weight:600; padding:5px 11px; border-radius:11px; border:1px solid var(--line-strong);
   color:var(--muted); background:transparent; cursor:pointer; transition:color .15s,border-color .15s}
 .badge:hover{color:var(--text)}
 .badge.ok{color:var(--accent); border-color:var(--accent)}
-.iconbtn{background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer;
+.iconbtn{background:transparent; border:1px solid transparent; border-radius:4px; cursor:pointer;
   color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
 main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .hidden{display:none !important}
 /* ---------- главный экран ---------- */
-.card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:18px; margin-bottom:14px}
+.feat-list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
+.feat-list li{display:flex; flex-direction:column; gap:3px; padding-left:10px; border-left:2px solid var(--accent-soft)}
+.feat-list b{font-size:13px; font-weight:700}
+.feat-list span{font-size:12px; color:var(--muted); line-height:1.45}
+@media (max-width:560px){.feat-list{grid-template-columns:1fr}}
 .card h2{margin:0 0 4px; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
 .cont-row{display:flex; gap:8px; margin-top:10px}
 .cont-open{flex:1; display:flex; justify-content:space-between; align-items:center;
-  background:var(--panel2); border:1px solid var(--accent); border-radius:14px;
+  background:var(--panel2); border:1px solid var(--accent); border-radius:5px;
   padding:13px 16px; cursor:pointer; font-size:14px; font-weight:600; transition:transform .1s}
 .cont-open:active{transform:scale(.985)}
 .cont-open small{color:var(--muted); font-weight:500}
-.cont-del{flex:none; width:44px; border-radius:14px; border:1px solid var(--line); background:var(--panel2);
+.cont-del{flex:none; width:44px; border-radius:5px; border:1px solid var(--line); background:var(--panel2);
   color:var(--muted); cursor:pointer; font-size:15px}
 .cont-del:hover{color:var(--error); border-color:var(--error)}
 .diff-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
-.diff-btn{background:var(--panel2); border:1px solid var(--line); border-radius:14px;
+.diff-btn{background:var(--panel2); border:1px solid var(--line); border-radius:5px;
   padding:15px 14px; cursor:pointer; text-align:left; transition:border-color .15s, transform .1s}
 .diff-btn:hover{border-color:var(--accent)}
 .diff-btn:active{transform:scale(.97)}
@@ -105,7 +112,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 /* ---------- поле ---------- */
 .board-wrap{position:relative}
 #board{display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
-  border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
+  border:2px solid var(--line-strong); border-radius:7px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
 #board.notes-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent); outline-offset:-3px; background:var(--cell-sel)}
 #board.hyp-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent2); outline-offset:-3px; background:var(--cell-sel)}
@@ -135,14 +142,14 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 @keyframes uflash{0%{background:var(--accent-soft)}100%{background:transparent}}
 .cell.wave{animation:wave .5s ease-out both}
 @keyframes wave{0%{transform:scale(1)}45%{transform:scale(1.18); color:var(--accent)}100%{transform:scale(1)}}
-#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:12px;
+#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:7px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
 #pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
 /* всплывающее окно выбора цифры */
 #picker{position:absolute; z-index:8; background:var(--panel2); border:1px solid var(--line-strong);
-  border-radius:14px; padding:8px; display:grid; grid-template-columns:repeat(3,44px); gap:5px;
+  border-radius:5px; padding:8px; display:grid; grid-template-columns:repeat(3,44px); gap:5px;
   box-shadow:var(--shadow); animation:mIn .15s ease-out}
-#picker button{width:100%; aspect-ratio:1; border-radius:10px; border:1px solid var(--line);
+#picker button{width:100%; aspect-ratio:1; border-radius:4px; border:1px solid var(--line);
   background:var(--panel); font-size:17px; font-weight:500; cursor:pointer; display:flex;
   align-items:center; justify-content:center; transition:border-color .1s, transform .08s}
 #picker button:hover{border-color:var(--accent)}
@@ -151,7 +158,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 #picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:13px; font-weight:600}
 #picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; margin-right:6px}
 #picker .pk-mode{grid-column:1/-1; display:flex; gap:4px; margin-bottom:2px}
-#picker .pk-mode button{flex:1; aspect-ratio:auto; height:30px; border-radius:8px; border:1px solid var(--line);
+#picker .pk-mode button{flex:1; aspect-ratio:auto; height:30px; border-radius:5px; border:1px solid var(--line);
   background:transparent; color:var(--muted); width:auto; padding:0}
 #picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 #picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
@@ -163,7 +170,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 #picker.mode-note button[data-v].done, #picker.mode-hyp button[data-v].done{opacity:.22}
 /* ---------- управление ---------- */
 .controls{display:flex; justify-content:space-between; gap:6px; margin-top:14px}
-.ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
+.ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:7px;
   padding:9px 2px; cursor:pointer; color:var(--muted); font-size:10px; font-weight:600;
   display:flex; flex-direction:column; align-items:center; gap:3px; transition:color .12s,border-color .12s}
 .ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
@@ -173,7 +180,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .ctl.on2{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
 .ctl:disabled{opacity:.3; cursor:default; transform:none}
 .numpad{display:grid; grid-template-columns:repeat(9,1fr); gap:6px; margin-top:10px}
-.num{background:var(--panel); border:1px solid var(--line); border-radius:12px; aspect-ratio:.78;
+.num{background:var(--panel); border:1px solid var(--line); border-radius:7px; aspect-ratio:.78;
   cursor:pointer; font-size:clamp(16px,4.5vw,23px); font-weight:300;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
   transition:border-color .12s, transform .08s}
@@ -187,7 +194,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
 .numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.22}
 /* ---------- кнопки, модалки ---------- */
-.btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:12px;
+.btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:7px;
   padding:12px 22px; font-size:14px; font-weight:700; cursor:pointer; transition:transform .1s, filter .15s}
 .btn:hover{filter:brightness(1.08)}
 .btn:active{transform:scale(.97)}
@@ -195,7 +202,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .btn.danger{background:transparent; color:var(--error); border:1px solid var(--error)}
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
   justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
-.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:20px;
+.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:11px;
   padding:24px; width:100%; max-width:430px; max-height:86vh; overflow-y:auto; box-shadow:var(--shadow);
   animation:mIn .22s ease-out}
 @keyframes mIn{from{transform:translateY(14px) scale(.97); opacity:0}to{transform:none; opacity:1}}
@@ -208,7 +215,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .win-sub{color:var(--muted); font-size:13px; margin-bottom:6px; font-weight:500}
 .record{color:var(--accent); font-size:13px; font-weight:700; margin-bottom:8px}
 .win-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px}
-.win-grid div{background:var(--panel2); border-radius:12px; padding:10px 6px}
+.win-grid div{background:var(--panel2); border-radius:7px; padding:10px 6px}
 .win-grid b{display:block; font-size:17px; font-weight:600; font-variant-numeric:tabular-nums}
 .win-grid span{font-size:10px; color:var(--muted); font-weight:600}
 .hist{font-size:12px; color:var(--muted); margin-top:14px; font-weight:500}
@@ -216,18 +223,18 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .modal .row{display:flex; gap:10px; margin-top:20px; justify-content:flex-end; flex-wrap:wrap}
 /* настройки: вкладки */
 .stabs{display:flex; gap:6px; margin-bottom:14px}
-.stabs button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
+.stabs button{flex:1; padding:9px 0; border-radius:4px; border:1px solid var(--line);
   background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
 .stabs button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 .swatches{display:flex; gap:10px; flex-wrap:wrap}
-.sw{width:64px; border:2px solid var(--line); border-radius:14px; padding:8px 4px 6px; cursor:pointer;
+.sw{width:64px; border:2px solid var(--line); border-radius:5px; padding:8px 4px 6px; cursor:pointer;
   background:var(--panel2); display:flex; flex-direction:column; align-items:center; gap:5px; transition:border-color .15s}
 .sw.selq{border-color:var(--accent)}
 .sw i{width:30px; height:30px; border-radius:50%; display:block; border:1px solid rgba(255,255,255,.14); position:relative}
 .sw i::after{content:''; position:absolute; right:1px; bottom:1px; width:13px; height:13px; border-radius:50%; border:1px solid rgba(255,255,255,.12); background:var(--sw-a)}
 .sw span{font-size:10px; font-weight:600; color:var(--muted)}
 .posseg,.langseg{display:flex; gap:8px}
-.posseg button,.langseg button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
+.posseg button,.langseg button{flex:1; padding:9px 0; border-radius:4px; border:1px solid var(--line);
   background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
 .posseg button.on,.langseg button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 .toggle{display:flex; gap:12px; align-items:flex-start; padding:10px 0; cursor:pointer}
@@ -237,12 +244,12 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .keys{display:grid; grid-template-columns:auto 1fr; gap:7px 14px; align-items:center;
   font-size:12px; color:var(--muted); font-weight:500}
 .keys .kk{display:flex; gap:4px; justify-content:flex-end; white-space:nowrap}
-.keys kbd{background:var(--panel2); border:1px solid var(--line-strong); border-radius:6px; padding:2px 7px;
+.keys kbd{background:var(--panel2); border:1px solid var(--line-strong); border-radius:4px; padding:2px 7px;
   font-family:inherit; font-size:11px; font-weight:700; color:var(--text)}
 /* тост, конфетти, оверлеи */
 #toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
   background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
-  padding:10px 18px; border-radius:12px; font-size:13px; font-weight:600; z-index:50;
+  padding:10px 18px; border-radius:7px; font-size:13px; font-weight:600; z-index:50;
   transition:opacity .25s, transform .25s; pointer-events:none; box-shadow:var(--shadow)}
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed; inset:0; pointer-events:none; z-index:40; overflow:hidden}
@@ -258,7 +265,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 </head>
 <body>
 <header>
-  <h1>SUDOKU</h1>
+  <h1><svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="2"/><path d="M8.5 1.5v21M15.5 1.5v21M1.5 8.5h21M1.5 15.5h21"/><rect class="lm-a" x="15.5" y="8.5" width="7" height="7"/></svg>SUDOKU</h1>
   <button class="iconbtn" id="statsBtn" aria-label="stats">
     <svg viewBox="0 0 24 24"><path d="M5 20v-7M11 20V5M17 20v-10M3 20h18"/></svg>
   </button>
@@ -289,6 +296,19 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
         <div><b id="tot-perfect">0</b><span data-i18n="cleanL">чистых</span></div>
         <div><b id="tot-time">—</b><span data-i18n="playtimeL">за игрой</span></div>
       </div>
+    </div>
+    <div class="card feat">
+      <h2 data-i18n="featT">Что здесь есть</h2>
+      <ul class="feat-list">
+        <li><b data-i18n="f1T">Окно выбора у клетки</b><span data-i18n="f1D">двойной или правый клик по клетке — цифры, заметки и черновик прямо на месте, без беготни к нумпаду</span></li>
+        <li><b data-i18n="f2T">Режим черновика</b><span data-i18n="f2D">проверяй гипотезу пунктирными цифрами, потом принимай её в решение или откатывай одним нажатием</span></li>
+        <li><b data-i18n="f3T">Счётчики цифр</b><span data-i18n="f3D">на каждой кнопке видно, сколько таких цифр осталось расставить — и в нумпаде, и в окне выбора</span></li>
+        <li><b data-i18n="f4T">Умная подсветка</b><span data-i18n="f4D">выделяются одинаковые цифры и даже клетки с такой же заметкой</span></li>
+        <li><b data-i18n="f5T">Гибкие настройки</b><span data-i18n="f5D">мгновенная или финальная проверка ошибок, лимит на три ошибки, авто-заметки, подсказки — всё включается и выключается</span></li>
+        <li><b data-i18n="f6T">Свой вид</b><span data-i18n="f6D">шесть тем, поле слева, по центру или справа, русский и английский</span></li>
+        <li><b data-i18n="f7T">Клавиатура</b><span data-i18n="f7D">полное управление с клавиатуры: цифры, стрелки, N — заметки, H — подсказка, пробел — пауза</span></li>
+        <li><b data-i18n="f8T">Без лишнего</b><span data-i18n="f8D">работает офлайн, прогресс хранится в браузере, никаких аккаунтов и рекламы</span></li>
+      </ul>
     </div>
   </section>
   <!-- ИГРА -->
@@ -470,6 +490,15 @@ ru:{
   k_hypm:'режим черновика', k_erase:'стереть', k_undo:'отмена / вернуть (⌘Z, ⌘⇧Z)', k_hint:'подсказка (если включена)',
   k_auto:'авто-заметки (если включены)', k_pause:'пауза', k_nav:'навигация по полю', k_menu:'меню', k_pick:'окно выбора цифры',
   gen:'Генерация поля…', digitTab:'Цифра', noteTab:'Заметка', hypTab:'Черновик', eraseP:'Стереть',
+  featT:'Что здесь есть',
+  f1T:'Окно выбора у клетки', f1D:'двойной или правый клик по клетке — цифры, заметки и черновик прямо на месте, без беготни к нумпаду',
+  f2T:'Режим черновика', f2D:'проверяй гипотезу пунктирными цифрами, потом принимай её в решение или откатывай одним нажатием',
+  f3T:'Счётчики цифр', f3D:'на каждой кнопке видно, сколько таких цифр осталось расставить — и в нумпаде, и в окне выбора',
+  f4T:'Умная подсветка', f4D:'выделяются одинаковые цифры и даже клетки с такой же заметкой',
+  f5T:'Гибкие настройки', f5D:'мгновенная или финальная проверка ошибок, лимит на три ошибки, авто-заметки, подсказки — всё включается и выключается',
+  f6T:'Свой вид', f6D:'шесть тем, поле слева, по центру или справа, русский и английский',
+  f7T:'Клавиатура', f7D:'полное управление с клавиатуры: цифры, стрелки, N — заметки, H — подсказка, пробел — пауза',
+  f8T:'Без лишнего', f8D:'работает офлайн, прогресс хранится в браузере, никаких аккаунтов и рекламы',
   vaultConnect:'Подключить vault', vaultSync:'Vault: нажмите для синка', vaultOk:'Vault ✓',
   savedVault:'Сохранено в vault', vaultFail:'Не удалось записать в vault — кликни по бейджу',
   vaultOn:'Vault подключён', fromVault:'Данные обновлены из vault',
@@ -507,6 +536,15 @@ en:{
   k_hypm:'draft mode', k_erase:'erase', k_undo:'undo / redo (⌘Z, ⌘⇧Z)', k_hint:'hint (if enabled)',
   k_auto:'auto-notes (if enabled)', k_pause:'pause', k_nav:'move around the board', k_menu:'menu', k_pick:'digit picker popup',
   gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
+  featT:'What you get',
+  f1T:'Digit popup at the cell', f1D:'double or right click a cell — digits, notes and draft right in place, no trips to the numpad',
+  f2T:'Draft mode', f2D:'test a hypothesis with dashed digits, then commit it to the solution or roll it back in one tap',
+  f3T:'Digit counters', f3D:'every key shows how many of that digit are left — both on the numpad and in the popup',
+  f4T:'Smart highlighting', f4D:'identical digits light up, and so do cells holding the same pencil note',
+  f5T:'Flexible settings', f5D:'instant or final error checking, three-mistake limit, auto-notes, hints — everything toggles on and off',
+  f6T:'Make it yours', f6D:'six themes, board on the left, center or right, English and Russian',
+  f7T:'Keyboard first', f7D:'full keyboard control: digits, arrows, N for notes, H for hint, Space to pause',
+  f8T:'Nothing extra', f8D:'works offline, progress lives in your browser, no accounts and no ads',
   vaultConnect:'Connect vault', vaultSync:'Vault: click to sync', vaultOk:'Vault ✓',
   savedVault:'Saved to vault', vaultFail:'Failed to write to vault — click the badge',
   vaultOn:'Vault connected', fromVault:'Data refreshed from vault',
