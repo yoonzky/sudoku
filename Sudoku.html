@@ -121,14 +121,14 @@ body.in-game header .iconbtn{position:static}
 .feat-list li>div.mv{flex-direction:row; gap:9px; height:80px}
 .mv{flex:none; flex-direction:row; width:124px; height:80px; background:var(--panel2); border:1px solid var(--line); border-radius:7px;
   display:flex; align-items:center; justify-content:center; gap:7px; margin-top:1px}
-.mv-cell{width:32px; height:32px; border:1.5px solid var(--line-strong); border-radius:4px; background:var(--cell-sel);
+.mv-cell{width:32px; height:32px; border:2px solid var(--accent); border-radius:2px; background:var(--cell-sel);
   display:flex; align-items:center; justify-content:center; font-weight:600; font-size:15px}
-.mv-cell.dash{border:1.5px dashed var(--accent); color:var(--accent); background:transparent}
-.mv-pop{display:grid; grid-template-columns:repeat(3,16px); gap:2px; background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:3px}
-.mv-pop i{font-style:normal; font-size:9px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; background:var(--panel2); border-radius:2px}
-.mv-key{width:26px; height:33px; background:var(--panel); border:1px solid var(--line); border-radius:4px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:12.5px; font-weight:600; line-height:1}
-.mv-key small{font-size:8px; color:var(--muted); margin-top:1px}
+.mv-cell.dash{border:2px dashed var(--accent2); color:var(--accent2); background:transparent}
+.mv-pop{display:grid; grid-template-columns:repeat(3,16px); gap:3px; background:var(--panel2); border:1px solid var(--line-strong); border-radius:8px; padding:4px; box-shadow:var(--shadow)}
+.mv-pop i{font-style:normal; font-size:9px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; background:var(--panel); border:1px solid var(--line); border-radius:4px}
+.mv-key{position:relative; width:28px; height:36px; background:var(--panel); border:1px solid var(--line); border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:300; line-height:1}
+.mv-key small{position:absolute; right:3px; bottom:2px; font-size:7.5px; color:var(--muted); font-weight:600}
 .mv kbd{background:var(--panel); border:1px solid var(--line-strong); border-radius:4px; padding:3px 6px; font-family:inherit; font-size:10px; font-weight:700}
 .feat-list b{font-size:14px; font-weight:700}
 .feat-list span{font-size:12.5px; color:var(--muted); line-height:1.5}
@@ -186,12 +186,11 @@ body.in-game header .iconbtn{position:static}
 .cell.hypv{color:var(--accent2); font-weight:500}
 #board::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
   background:
-    linear-gradient(90deg,var(--line-strong),var(--line-strong)) 33.3333% 0/2px 100% no-repeat,
-    linear-gradient(90deg,var(--line-strong),var(--line-strong)) 66.6667% 0/2px 100% no-repeat,
-    linear-gradient(var(--line-strong),var(--line-strong)) 0 33.3333%/100% 2px no-repeat,
-    linear-gradient(var(--line-strong),var(--line-strong)) 0 66.6667%/100% 2px no-repeat,
+    linear-gradient(90deg, transparent 0 calc(33.3333% - 1px), var(--line-strong) 0 calc(33.3333% + 1px), transparent 0 calc(66.6667% - 1px), var(--line-strong) 0 calc(66.6667% + 1px), transparent 0),
+    linear-gradient(180deg, transparent 0 calc(33.3333% - 1px), var(--line-strong) 0 calc(33.3333% + 1px), transparent 0 calc(66.6667% - 1px), var(--line-strong) 0 calc(66.6667% + 1px), transparent 0),
     repeating-linear-gradient(90deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9)),
     repeating-linear-gradient(180deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9))}
+#board{margin:0 auto}
 .cell:nth-child(1){border-top-left-radius:10px}
 .cell:nth-child(9){border-top-right-radius:10px}
 .cell:nth-child(73){border-bottom-left-radius:10px}
@@ -249,11 +248,11 @@ body.in-game header .iconbtn{position:static}
 .ctl.on2{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
 .ctl:disabled{opacity:.3; cursor:default; transform:none}
 .numpad{display:grid; grid-template-columns:repeat(9,1fr); gap:6px; margin-top:10px}
-.num{background:var(--panel); border:1px solid var(--line); border-radius:12px; aspect-ratio:.78;
+.num{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:12px; aspect-ratio:.78;
   cursor:pointer; font-size:clamp(16px,4.5vw,23px); font-weight:300;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+  display:flex; align-items:center; justify-content:center;
   transition:border-color .12s, transform .08s}
-.num small{font-size:9px; color:var(--muted); font-weight:600}
+.num small{position:absolute; right:6px; bottom:4px; font-size:10px; color:var(--muted); font-weight:600; line-height:1}
 .num:hover{border-color:var(--accent)}
 .num:active{transform:scale(.92)}
 .num.done{opacity:.22; pointer-events:none}
@@ -382,7 +381,6 @@ body.in-game header .iconbtn{position:static}
         <li><div class="mv"><span class="mv-cell">5</span><span class="mv-pop"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></div><div><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">Или двойной — окно с цифрами прямо у клетки</span></div></li>
         <li><div class="mv"><span class="mv-cell dash">5</span><span class="mv-cell dash">7</span></div><div><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">Пробуй ход пунктиром, потом прими или откати</span></div></li>
         <li><div class="mv"><span class="mv-key">7<small>3</small></span><span class="mv-key">8<small>1</small></span><span class="mv-key">9<small>4</small></span></div><div><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">Видно, сколько каждой цифры осталось</span></div></li>
-        <li><div class="mv"><kbd>Space</kbd></div><div><b data-i18n="f7T">Пробел и клавиши</b><span data-i18n="f7D">пробел — заметки, H — подсказка, стрелки — по полю</span></div></li>
       </ul>
     </div>
   </section>
@@ -1632,6 +1630,15 @@ window._sud={
 /* ================= старт ================= */
 loadCache();
 buildBoard(); buildNumpad(); buildSwatches(); buildPicker();
+function snapBoard(){
+  const b=$('board'); if(!b) return;
+  b.style.width='';
+  const w=b.getBoundingClientRect().width;
+  const c=Math.floor(w/9);
+  if(c>0) b.style.width=(c*9)+'px';
+}
+window.addEventListener('resize',snapBoard);
+snapBoard();
 applyTheme(); applyControls(); applyLayout(); applyLang();
 renderHome(); show('home');
 if(pending.length) saveLog();
