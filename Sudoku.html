@@ -106,7 +106,8 @@ main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
 #home .feat{grid-column:2; grid-row:1/span 4}
 #game{max-width:clamp(320px, calc(100vh - 285px), 540px); margin:0 auto}
 body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4px}
-body.in-game header h1{font-size:24px; flex:1; text-align:left}
+body.in-game header h1{font-size:24px; flex:1; text-align:left; cursor:pointer}
+body.in-game header h1:hover{color:var(--accent)}
 body.in-game header .iconbtn{position:static}
 @media(max-width:940px){#home{display:block}}
 .site-foot{width:100%; max-width:940px; text-align:center; padding:6px 18px 18px; font-size:12px; color:var(--muted)}
@@ -395,7 +396,6 @@ body.in-game .site-foot{display:none}
   <!-- ИГРА -->
   <section id="game" class="hidden">
     <div class="topbar">
-      <button class="tbtn" id="backBtn"><span data-i18n="menuBack">‹ Меню</span></button>
       <span class="t-item"><b id="gDiff"></b></span>
       <span class="t-item" id="gMistWrap"><span data-i18n="errorsL">Ошибки</span>: <b id="gMist">0</b></span>
       <span class="t-item"><b id="gTimer">0:00</b></span>
@@ -1552,7 +1552,8 @@ $('contList').addEventListener('click',async e=>{
     persistCache(); saveSes(); renderHome();
   }
 });
-$('backBtn').addEventListener('click',()=>{ closePicker(); stopTimer(); persistCache(); saveSes(); show('home'); renderHome(); });
+function goHome(){ closePicker(); stopTimer(); persistCache(); saveSes(); show('home'); renderHome(); }
+document.querySelector('header h1').addEventListener('click',()=>{ if(!$('game').classList.contains('hidden')) goHome(); });
 $('pauseBtn').addEventListener('click',()=>setPaused(!cur().paused));
 $('resumeBtn').addEventListener('click',()=>setPaused(false));
 $('restartBtn').addEventListener('click',async()=>{
@@ -1636,7 +1637,7 @@ document.addEventListener('keydown',e=>{
     case 'KeyP': setPaused(!g.paused); break;
     case 'Escape':
       if(!$('picker').classList.contains('hidden')) closePicker();
-      else $('backBtn').click();
+      else goHome();
       break;
     case 'ArrowUp': case 'ArrowDown': case 'ArrowLeft': case 'ArrowRight': {
       e.preventDefault();
