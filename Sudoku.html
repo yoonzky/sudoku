@@ -108,6 +108,10 @@ body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4p
 body.in-game header h1{font-size:24px; flex:1; text-align:left}
 body.in-game header .iconbtn{position:static}
 @media(max-width:940px){#home{display:block}}
+.site-foot{width:100%; max-width:940px; text-align:center; padding:6px 18px 18px; font-size:12px; color:var(--muted)}
+.site-foot a{color:var(--muted)}
+.site-foot a:hover{color:var(--text)}
+body.in-game .site-foot{display:none}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
 /* ---------- главный экран ---------- */
@@ -539,6 +543,8 @@ body.in-game header .iconbtn{position:static}
     <div class="row"><button class="btn" id="setClose" data-i18n="done">Готово</button></div>
   </div>
 </div>
+
+<footer class="site-foot">© 2026 <a href="https://github.com/yoonzky/sudoku" target="_blank" rel="noopener">yoonzky</a> · MIT</footer>
 
 <div id="toast"></div>
 <div id="genOverlay" class="hidden" data-i18n="gen">Генерация поля…</div>
