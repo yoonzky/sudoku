@@ -1040,6 +1040,7 @@ function saveSes(){
 }
 function scheduleSaveSes(){}
 function rerenderAll(){
+  if(typeof snapBoard==='function') snapBoard();
   applyTheme(); applyControls(); applyLayout(); applyLang();
   if($('game').classList.contains('hidden')) renderHome();
   else if(cur()){ renderBoard(); $('gTimer').textContent=fmtTime(cur().time); }
@@ -1054,7 +1055,8 @@ function toast(msg){
 }
 function show(screen){ $('home').classList.toggle('hidden',screen!=='home');
   $('game').classList.toggle('hidden',screen!=='game');
-  document.body.classList.toggle('in-game', screen==='game'); }
+  document.body.classList.toggle('in-game', screen==='game');
+  if(screen==='game' && typeof snapBoard==='function') snapBoard(); }
 function applyTheme(){
   document.documentElement.dataset.theme=SES.settings.theme;
   if(!THEMES.find(x=>x.id===SES.settings.theme)) SES.settings.theme=THEMES[0].id;
