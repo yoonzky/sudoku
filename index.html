@@ -1,73 +1,81 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="steel">
+<html lang="ru" data-theme="sepia">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#12151a" id="metaTheme">
+<meta name="theme-color" content="#efe9dd" id="metaTheme">
 <title>Sudoku</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%23191e25' stroke='%234c9be6' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%234c9be6' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%23faf7f0' stroke='%23b4552d' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%23b4552d' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
-:root, html[data-theme="graphite"]{
-  --bg:#141517; --panel:#1c1e21; --panel2:#24262a; --line:#2e3136; --line-strong:#4a4e55;
-  --text:#e8e8e6; --muted:#8b8f96; --accent:#c9b280; --accent-text:#141517; --accent-soft:rgba(201,178,128,.20);
-  --accent2:#8fb6c9; --accent2-soft:rgba(143,182,201,.20);
-  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#9aa0a8; --given:#e8e8e6; --user:#c9b280;
-  --cell-sel:#3a3e33; --cell-hl:#222428; --cell-same:#33362c; --shadow:0 10px 34px rgba(0,0,0,.45);
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+:root, html[data-theme="sepia"]{
+  --bg:#efe9dd; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
+  --text:#2c2921; --muted:#847d6e; --accent:#b4552d; --accent-text:#ffffff; --accent-soft:#f3ded2;
+  --accent2:#4a67d6; --accent2-soft:#e2e7f6;
+  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#b4552d;
+  --cell-sel:#f3ded2; --cell-hl:#f4efe4; --cell-same:#f0e2d4; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#e4ddcd;
 }
-html[data-theme="steel"]{
-  --bg:#12151a; --panel:#191e25; --panel2:#212730; --line:#2a323d; --line-strong:#46525f;
-  --text:#e4e9ee; --muted:#87929f; --accent:#4c9be6; --accent-text:#0b1016; --accent-soft:rgba(76,155,230,.20);
-  --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.20);
-  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#93a0ad; --given:#e4e9ee; --user:#4c9be6;
-  --cell-sel:#2c4763; --cell-hl:#20262f; --cell-same:#2c3a4e; --shadow:0 10px 34px rgba(0,0,0,.5);
+html[data-theme="indigo"]{
+  --bg:#eae9e2; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
+  --text:#2c2921; --muted:#847d6e; --accent:#4a67d6; --accent-text:#ffffff; --accent-soft:#e2e7f6;
+  --accent2:#b4552d; --accent2-soft:#f3ded2;
+  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#4a67d6;
+  --cell-sel:#dde3f8; --cell-hl:#f0efe8; --cell-same:#e2e7f6; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#dedcd2;
+}
+html[data-theme="olive"]{
+  --bg:#edeedd; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
+  --text:#2c2921; --muted:#847d6e; --accent:#6b7a2f; --accent-text:#ffffff; --accent-soft:#e8ecd4;
+  --accent2:#b4552d; --accent2-soft:#f3ded2;
+  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#6b7a2f;
+  --cell-sel:#e3e8c9; --cell-hl:#f2f3e6; --cell-same:#e8ecd4; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#e0e2cc;
+}
+html[data-theme="rose"]{
+  --bg:#f0e7e2; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
+  --text:#2c2921; --muted:#847d6e; --accent:#b03a5b; --accent-text:#ffffff; --accent-soft:#f5dde5;
+  --accent2:#4a67d6; --accent2-soft:#e2e7f6;
+  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#b03a5b;
+  --cell-sel:#f3d6df; --cell-hl:#f5eeea; --cell-same:#f5dde5; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#e6d8d1;
+}
+html[data-theme="latte"]{
+  --bg:#e6e1d7; --panel:#f2eee6; --panel2:#faf8f3; --line:#cfc8b8; --line-strong:#2c2921;
+  --text:#2c2921; --muted:#7d766a; --accent:#8a5a36; --accent-text:#ffffff; --accent-soft:#ecdccc;
+  --accent2:#4a67d6; --accent2-soft:#e2e7f6;
+  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#7d766a; --given:#2c2921; --user:#8a5a36;
+  --cell-sel:#ead9c6; --cell-hl:#ece7dc; --cell-same:#e8dbc9; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#dad4c6;
+}
+html[data-theme="candle"]{
+  --bg:#211c14; --panel:#2a241a; --panel2:#332c20; --line:#403828; --line-strong:#e6dcc8;
+  --text:#e6dcc8; --muted:#9c9179; --accent:#d8a05c; --accent-text:#211c14; --accent-soft:rgba(216,160,92,.16);
+  --accent2:#8ab4d8; --accent2-soft:rgba(138,180,216,.16);
+  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#9c9179; --given:#e6dcc8; --user:#d8a05c;
+  --cell-sel:#443a24; --cell-hl:#2e2820; --cell-same:#3c3422; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#2b251b;
+}
+html[data-theme="moss"]{
+  --bg:#1b201a; --panel:#232922; --panel2:#2b322a; --line:#363e34; --line-strong:#dfe5da;
+  --text:#dfe5da; --muted:#8d968a; --accent:#7fae6b; --accent-text:#1b201a; --accent-soft:rgba(127,174,107,.16);
+  --accent2:#d8a05c; --accent2-soft:rgba(216,160,92,.16);
+  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8d968a; --given:#dfe5da; --user:#7fae6b;
+  --cell-sel:#33402c; --cell-hl:#262c24; --cell-same:#2e3a29; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#262c24;
 }
 html[data-theme="midnight"]{
-  --bg:#0e1320; --panel:#161d2e; --panel2:#1d2740; --line:#26314c; --line-strong:#3e4d73;
-  --text:#dfe6f5; --muted:#7c88a5; --accent:#7aa2f7; --accent-text:#0e1320; --accent-soft:rgba(122,162,247,.20);
-  --accent2:#f0c674; --accent2-soft:rgba(240,198,116,.20);
-  --error:#f7768e; --error-soft:rgba(247,118,142,.14); --note:#8a94ad; --given:#dfe6f5; --user:#7aa2f7;
-  --cell-sel:#26335a; --cell-hl:#182238; --cell-same:#223055; --shadow:0 10px 34px rgba(0,0,0,.5);
+  --bg:#171a22; --panel:#1e222c; --panel2:#262b37; --line:#303645; --line-strong:#dde1ea;
+  --text:#dde1ea; --muted:#8a91a3; --accent:#7aa2f7; --accent-text:#171a22; --accent-soft:rgba(122,162,247,.16);
+  --accent2:#d8a05c; --accent2-soft:rgba(216,160,92,.16);
+  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8a91a3; --given:#dde1ea; --user:#7aa2f7;
+  --cell-sel:#273455; --cell-hl:#21252f; --cell-same:#2b3752; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#232733;
 }
-html[data-theme="emerald"]{
-  --bg:#0e1512; --panel:#151f1a; --panel2:#1c2a23; --line:#25352c; --line-strong:#3c5647;
-  --text:#e2ece6; --muted:#7f948a; --accent:#6fbf8f; --accent-text:#0e1512; --accent-soft:rgba(111,191,143,.20);
-  --accent2:#c9a06f; --accent2-soft:rgba(201,160,111,.20);
-  --error:#e0716c; --error-soft:rgba(224,113,108,.14); --note:#8aa094; --given:#e2ece6; --user:#6fbf8f;
-  --cell-sel:#1f3a2c; --cell-hl:#16241d; --cell-same:#1c3628; --shadow:0 10px 34px rgba(0,0,0,.5);
-}
-html[data-theme="amethyst"]{
-  --bg:#141021; --panel:#1c1730; --panel2:#251e40; --line:#302a4d; --line-strong:#4d4477;
-  --text:#e9e4f5; --muted:#948ba9; --accent:#a78bfa; --accent-text:#141021; --accent-soft:rgba(167,139,250,.20);
-  --accent2:#e8b07f; --accent2-soft:rgba(232,176,127,.20);
-  --error:#f0708a; --error-soft:rgba(240,112,138,.14); --note:#9a90b3; --given:#e9e4f5; --user:#a78bfa;
-  --cell-sel:#332a5c; --cell-hl:#1f1838; --cell-same:#2d2652; --shadow:0 10px 34px rgba(0,0,0,.5);
-}
-html[data-theme="snow"]{
-  --bg:#eef1f5; --panel:#fbfcfe; --panel2:#e7ebf1; --line:#d5dbe4; --line-strong:#a8b2c1;
-  --text:#1f242c; --muted:#75808f; --accent:#3b82c4; --accent-text:#ffffff; --accent-soft:rgba(59,130,196,.15);
-  --accent2:#8a63c9; --accent2-soft:rgba(138,99,201,.14);
-  --error:#c94f57; --error-soft:rgba(201,79,87,.12); --note:#75808f; --given:#1f242c; --user:#3b82c4;
-  --cell-sel:#d8e4f3; --cell-hl:#e8ecf2; --cell-same:#dde7f4; --shadow:0 10px 30px rgba(70,80,100,.16);
-}
-html[data-theme="mint"]{
-  --bg:#edf4ef; --panel:#fafdfb; --panel2:#e3efe7; --line:#d2e2d8; --line-strong:#9fbcaa;
-  --text:#212b24; --muted:#748c7d; --accent:#2f9e63; --accent-text:#ffffff; --accent-soft:rgba(47,158,99,.15);
-  --accent2:#b3762a; --accent2-soft:rgba(179,118,42,.14);
-  --error:#c94f57; --error-soft:rgba(201,79,87,.12); --note:#748c7d; --given:#212b24; --user:#2f9e63;
-  --cell-sel:#d4eadd; --cell-hl:#e6f0ea; --cell-same:#dcece2; --shadow:0 10px 30px rgba(60,90,70,.16);
-}
-html[data-theme="paper"]{
-  --bg:#f4f1ea; --panel:#fdfcf8; --panel2:#efece3; --line:#ddd8cb; --line-strong:#b4ad9c;
-  --text:#28251f; --muted:#8a8577; --accent:#4a67d6; --accent-text:#ffffff; --accent-soft:rgba(74,103,214,.15);
-  --accent2:#b3591f; --accent2-soft:rgba(179,89,31,.14);
-  --error:#c94f57; --error-soft:rgba(201,79,87,.12); --note:#8a8577; --given:#28251f; --user:#4a67d6;
-  --cell-sel:#dde3f8; --cell-hl:#eeebe0; --cell-same:#e2e7f6; --shadow:0 10px 30px rgba(90,80,60,.18);
+html[data-theme="coal"]{
+  --bg:#17181a; --panel:#1e2023; --panel2:#26292d; --line:#303439; --line-strong:#dde0e4;
+  --text:#dde0e4; --muted:#8b9199; --accent:#8ab4d8; --accent-text:#17181a; --accent-soft:rgba(138,180,216,.16);
+  --accent2:#d8a05c; --accent2-soft:rgba(216,160,92,.16);
+  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8b9199; --given:#dde0e4; --user:#8ab4d8;
+  --cell-sel:#2c3a48; --cell-hl:#222528; --cell-same:#2a3542; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#24262a;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{margin:0; background:var(--bg); color:var(--text);
-  font-family:'Manrope',-apple-system,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  background-image:radial-gradient(var(--dot) 1px, transparent 1px); background-size:22px 22px;
+  font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   transition:background .25s,color .25s}
@@ -75,35 +83,52 @@ body.pos-left{align-items:flex-start}
 body.pos-right{align-items:flex-end}
 button{font-family:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
-header{width:100%; max-width:540px; display:flex; align-items:center; gap:8px; padding:16px 18px 8px}
-header h1{font-size:19px; font-weight:800; letter-spacing:.14em; margin:0; flex:1}
+header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
+header h1{font-family:Fraunces,serif; font-size:42px; font-weight:700; letter-spacing:.02em; margin:0}
 .badge{font-size:11px; font-weight:600; padding:5px 11px; border-radius:20px; border:1px solid var(--line-strong);
   color:var(--muted); background:transparent; cursor:pointer; transition:color .15s,border-color .15s}
 .badge:hover{color:var(--text)}
 .badge.ok{color:var(--accent); border-color:var(--accent)}
+.tagline{margin:0; color:var(--muted); font-size:14px}
+body.in-game .tagline{display:none}
+header .iconbtn{position:absolute; top:30px}
+header #statsBtn{right:calc(50% - 440px)}
+header #setBtn{right:calc(50% - 478px)}
+@media(max-width:990px){header #statsBtn{right:58px} header #setBtn{right:18px}}
 .iconbtn{background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer;
   color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
-main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
+main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
+#home{display:grid; grid-template-columns:540px 300px; gap:40px; justify-content:center; align-items:start}
+#home>.card{grid-column:1}
+#home .feat{grid-column:2; grid-row:1/span 4}
+#game{max-width:540px; margin:0 auto}
+@media(max-width:940px){#home{display:block}}
 .hidden{display:none !important}
+@media(min-height:640px){body.in-game{overflow:hidden}}
 /* ---------- главный экран ---------- */
 .card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
-#home .card{background:transparent; border:none; padding:14px 0; margin-bottom:4px}
+#home .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px;
+  box-shadow:0 1px 0 var(--line); margin-bottom:14px}
+#home .card h2{font-family:Fraunces,serif; font-size:17px; color:var(--text); text-transform:none; letter-spacing:0; font-weight:700}
 .feat-list{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:13px}
 .feat-list li{display:flex; gap:11px; align-items:flex-start}
 .feat-list li>div{display:flex; flex-direction:column; gap:3px}
-.f-ico{flex:none; width:30px; height:30px; stroke:var(--accent); stroke-width:1.5; fill:none;
-  stroke-linecap:round; stroke-linejoin:round; margin-top:2px}
-.f-ico .f-fill{fill:var(--accent-soft); stroke:none}
-.f-ico .f-txt{fill:var(--accent); font-weight:700; font-family:inherit}
-.f-ico .f-txt2{fill:var(--muted); font-weight:700; font-family:inherit}
+.mv{flex:none; width:96px; height:64px; background:var(--panel2); border:1px solid var(--line); border-radius:7px;
+  display:flex; align-items:center; justify-content:center; gap:7px; margin-top:1px}
+.mv-cell{width:26px; height:26px; border:1.5px solid var(--line-strong); border-radius:4px; background:var(--cell-sel);
+  display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px}
+.mv-cell.dash{border:1.5px dashed var(--accent); color:var(--accent); background:transparent}
+.mv-pop{display:grid; grid-template-columns:repeat(3,13px); gap:2px; background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:3px}
+.mv-pop i{font-style:normal; font-size:7.5px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; background:var(--panel2); border-radius:2px}
+.mv-key{width:21px; height:27px; background:var(--panel); border:1px solid var(--line); border-radius:4px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:10.5px; font-weight:600; line-height:1}
+.mv-key small{font-size:6.5px; color:var(--muted); margin-top:1px}
+.mv kbd{background:var(--panel); border:1px solid var(--line-strong); border-radius:4px; padding:2px 4px; font-family:inherit; font-size:8px; font-weight:700}
 .feat-list b{font-size:13px; font-weight:700}
 .feat-list span{font-size:12px; color:var(--muted); line-height:1.5}
-@media (min-width:1180px){
-  #home .feat{position:fixed; top:76px; left:calc(50% + 286px); width:300px;
-    max-height:calc(100vh - 110px); overflow-y:auto; margin-bottom:0}
-}
+
 @media (max-width:1179px){
   .feat-list{display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
 }
@@ -228,7 +253,8 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .btn.danger{background:transparent; color:var(--error); border:1px solid var(--error)}
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
   justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
-.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:20px;
+.modal .row:last-child{position:sticky; bottom:-24px; background:var(--panel); padding:12px 0 14px; margin-bottom:-14px}
+.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:14px;
   padding:24px; width:100%; max-width:430px; max-height:86vh; overflow-y:auto; box-shadow:var(--shadow);
   animation:mIn .22s ease-out}
 @keyframes mIn{from{transform:translateY(14px) scale(.97); opacity:0}to{transform:none; opacity:1}}
@@ -300,6 +326,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 <body>
 <header>
   <h1>SUDOKU</h1>
+  <p class="tagline" data-i18n="tagline">спокойная головоломка на каждый день</p>
   <button class="iconbtn" id="statsBtn" aria-label="stats">
     <svg viewBox="0 0 24 24"><path d="M5 20v-7M11 20V5M17 20v-10M3 20h18"/></svg>
   </button>
@@ -334,10 +361,10 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
     <div class="card feat">
       <h2 data-i18n="featT">Возможности</h2>
       <ul class="feat-list">
-        <li><svg class="f-ico" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="5"/><path d="M12 2.5v7M12 9.5h5"/><path class="f-fill" d="M12 3.5h3.5a1.5 1.5 0 0 1 1.5 1.5v4.5h-5z"/></svg><div><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">или двойной — окно с цифрами прямо у клетки</span></div></li>
-        <li><svg class="f-ico" viewBox="0 0 24 24" stroke-dasharray="3 2.2"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><text x="12" y="16.4" text-anchor="middle" font-size="11" stroke="none" class="f-txt">5</text></svg><div><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">пробуй ход пунктиром, потом прими или откати</span></div></li>
-        <li><svg class="f-ico" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><text x="10.2" y="15.6" text-anchor="middle" font-size="11" stroke="none" class="f-txt">7</text><text x="17" y="19.4" text-anchor="middle" font-size="7" stroke="none" class="f-txt2">3</text></svg><div><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">видно, сколько каждой цифры осталось</span></div></li>
-        <li><svg class="f-ico" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M7 14.8h10M6 9.5h.01M9.5 9.5h.01M13 9.5h.01M16.5 9.5h.01"/></svg><div><b data-i18n="f7T">Пробел и клавиши</b><span data-i18n="f7D">пробел — заметки, H — подсказка, стрелки — по полю</span></div></li>
+        <li><div class="mv"><span class="mv-cell">5</span><span class="mv-pop"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></div><div><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">или двойной — окно с цифрами прямо у клетки</span></div></li>
+        <li><div class="mv"><span class="mv-cell dash">5</span><span class="mv-cell dash">7</span></div><div><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">пробуй ход пунктиром, потом прими или откати</span></div></li>
+        <li><div class="mv"><span class="mv-key">7<small>3</small></span><span class="mv-key">8<small>1</small></span><span class="mv-key">9<small>4</small></span></div><div><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">видно, сколько каждой цифры осталось</span></div></li>
+        <li><div class="mv"><kbd>Space</kbd><kbd>H</kbd><kbd>←→</kbd></div><div><b data-i18n="f7T">Пробел и клавиши</b><span data-i18n="f7D">пробел — заметки, H — подсказка, стрелки — по полю</span></div></li>
       </ul>
     </div>
   </section>
@@ -467,7 +494,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
         <span class="kk"><kbd>Alt</kbd><kbd>1–9</kbd></span><span data-i18n="k_hyp1">проба в клетку</span>
         <span class="kk"><kbd>N</kbd></span><span data-i18n="k_notes">режим заметок (и Пробел)</span>
         <span class="kk"><kbd>D</kbd></span><span data-i18n="k_hypm">режим черновика</span>
-        <span class="kk"><kbd>⌫</kbd></span><span data-i18n="k_erase">стереть</span>
+        <span class="kk"><kbd>Backspace</kbd><kbd>Del</kbd></span><span data-i18n="k_erase">стереть</span>
         <span class="kk"><kbd>Z</kbd><kbd>Y</kbd></span><span data-i18n="k_undo">отмена / вернуть (⌘Z, ⌘⇧Z)</span>
         <span class="kk"><kbd>H</kbd></span><span data-i18n="k_hint">подсказка (если включена)</span>
         <span class="kk"><kbd>A</kbd></span><span data-i18n="k_auto">авто-заметки (если включены)</span>
@@ -496,6 +523,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 /* ================= i18n ================= */
 const I18N = {
 ru:{
+  tagline:'спокойная головоломка на каждый день',
   continue:'Продолжить', newGame:'Новая игра', total:'Всего',
   d_easy:'Лёгкий', d_medium:'Средний', d_hard:'Сложный', d_expert:'Эксперт',
   solvedL:'решено', cleanL:'чистых', playtimeL:'за игрой', notPlayed:'не играл',
@@ -539,6 +567,7 @@ ru:{
   mist:'ошибок', hintsSm:'подсказок',
 },
 en:{
+  tagline:'a calm puzzle for every day',
   continue:'Continue', newGame:'New game', total:'Overall',
   d_easy:'Easy', d_medium:'Medium', d_hard:'Hard', d_expert:'Expert',
   solvedL:'solved', cleanL:'flawless', playtimeL:'time played', notPlayed:'not played',
@@ -582,6 +611,7 @@ en:{
   k_dblK:'2×click', k_rmbK:'RMB',
 },
 es:{
+  tagline:'un rompecabezas tranquilo para cada día',
   continue:'Continuar', newGame:'Nueva partida', total:'Total',
   d_easy:'Fácil', d_medium:'Medio', d_hard:'Difícil', d_expert:'Experto',
   solvedL:'resueltos', cleanL:'perfectos', playtimeL:'tiempo jugado', notPlayed:'sin jugar',
@@ -620,6 +650,7 @@ es:{
   k_dblK:'2×clic', k_rmbK:'clic der.',
 },
 de:{
+  tagline:'ein ruhiges Rätsel für jeden Tag',
   continue:'Fortsetzen', newGame:'Neues Spiel', total:'Gesamt',
   d_easy:'Leicht', d_medium:'Mittel', d_hard:'Schwer', d_expert:'Experte',
   solvedL:'gelöst', cleanL:'fehlerfrei', playtimeL:'Spielzeit', notPlayed:'nicht gespielt',
@@ -658,6 +689,7 @@ de:{
   k_dblK:'2×Klick', k_rmbK:'RMT',
 },
 fr:{
+  tagline:'un puzzle paisible pour chaque jour',
   continue:'Continuer', newGame:'Nouvelle partie', total:'Total',
   d_easy:'Facile', d_medium:'Moyen', d_hard:'Difficile', d_expert:'Expert',
   solvedL:'résolues', cleanL:'parfaites', playtimeL:'temps de jeu', notPlayed:'pas joué',
@@ -696,6 +728,7 @@ fr:{
   k_dblK:'2×clic', k_rmbK:'clic droit',
 },
 zh:{
+  tagline:'每天一局，静心解题',
   continue:'继续', newGame:'新游戏', total:'总计',
   d_easy:'简单', d_medium:'中等', d_hard:'困难', d_expert:'专家',
   solvedL:'已解决', cleanL:'零失误', playtimeL:'游戏时长', notPlayed:'未玩过',
@@ -745,20 +778,21 @@ const DIFFS = { easy:{clues:38}, medium:{clues:32}, hard:{clues:27}, expert:{clu
 const DIFF_KEYS = Object.keys(DIFFS);
 const dName = d => t('d_'+d);
 const THEMES = [
-  {id:'steel',    name:'Steel',    bg:'#191e25', accent:'#8ab4d8', meta:'#12151a'},
-  {id:'graphite', name:'Graphite', bg:'#1c1e21', accent:'#c9b280', meta:'#141517'},
-  {id:'midnight', name:'Midnight', bg:'#161d2e', accent:'#7aa2f7', meta:'#0e1320'},
-  {id:'emerald',  name:'Emerald',  bg:'#151f1a', accent:'#6fbf8f', meta:'#0e1512'},
-  {id:'amethyst', name:'Amethyst', bg:'#1c1730', accent:'#a78bfa', meta:'#141021'},
-  {id:'paper',    name:'Paper',    bg:'#fdfcf8', accent:'#4a67d6', meta:'#f4f1ea'},
-  {id:'snow',     name:'Snow',     bg:'#fbfcfe', accent:'#3b82c4', meta:'#eef1f5'},
-  {id:'mint',     name:'Mint',     bg:'#fafdfb', accent:'#2f9e63', meta:'#edf4ef'},
+  {id:'sepia', name:'Sepia', bg:'#efe9dd', accent:'#b4552d', meta:'#efe9dd'},
+  {id:'indigo', name:'Indigo', bg:'#eae9e2', accent:'#4a67d6', meta:'#eae9e2'},
+  {id:'olive', name:'Olive', bg:'#edeedd', accent:'#6b7a2f', meta:'#edeedd'},
+  {id:'rose', name:'Rose', bg:'#f0e7e2', accent:'#b03a5b', meta:'#f0e7e2'},
+  {id:'latte', name:'Latte', bg:'#e6e1d7', accent:'#8a5a36', meta:'#e6e1d7'},
+  {id:'candle', name:'Candlelight', bg:'#211c14', accent:'#d8a05c', meta:'#211c14'},
+  {id:'moss', name:'Moss', bg:'#1b201a', accent:'#7fae6b', meta:'#1b201a'},
+  {id:'midnight', name:'Midnight', bg:'#171a22', accent:'#7aa2f7', meta:'#171a22'},
+  {id:'coal', name:'Charcoal', bg:'#17181a', accent:'#8ab4d8', meta:'#17181a'},
 ];
 const SYS_LANG=(()=>{ try{
   const langs=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];
   for(const l of langs){ const p=String(l).slice(0,2).toLowerCase(); if(I18N[p]) return p; }
 }catch(e){} return 'en'; })();
-const DEF_SETTINGS = {theme:'steel', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
+const DEF_SETTINGS = {theme:'sepia', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
 /* LOG — зеркало файла Журнал.md; дополняется ТОЛЬКО через pending (очередь побед) */
 let LOG = { games:[], updated:0 };
 let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
@@ -979,9 +1013,11 @@ function toast(msg){
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
 }
 function show(screen){ $('home').classList.toggle('hidden',screen!=='home');
-  $('game').classList.toggle('hidden',screen!=='game'); }
+  $('game').classList.toggle('hidden',screen!=='game');
+  document.body.classList.toggle('in-game', screen==='game'); }
 function applyTheme(){
   document.documentElement.dataset.theme=SES.settings.theme;
+  if(!THEMES.find(x=>x.id===SES.settings.theme)) SES.settings.theme=THEMES[0].id;
   const th=THEMES.find(x=>x.id===SES.settings.theme)||THEMES[0];
   $('metaTheme').setAttribute('content', th.meta);
   document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('selq', b.dataset.t===SES.settings.theme));
