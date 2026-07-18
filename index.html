@@ -181,8 +181,8 @@ body.in-game header .iconbtn{position:static}
 #board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
   border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
-#board.notes-on .cell.sel::after{border-style:dashed}
-#board.hyp-on .cell.sel::after{border-style:dashed; border-color:var(--accent2)}
+#board.notes-on .cell.sel{outline:2px dashed var(--accent); outline-offset:-3px}
+#board.hyp-on .cell.sel{outline:2px dashed var(--accent2); outline-offset:-3px}
 .cell{position:relative; display:flex; align-items:center; justify-content:center;
   font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
   color:var(--user); transition:background .1s}
@@ -201,17 +201,9 @@ body.in-game header .iconbtn{position:static}
 .cell:nth-child(81){border-bottom-right-radius:10px}
 .cell.hl{background:var(--cell-hl)}
 .cell.same{background:var(--cell-same)}
-.cell.sel{z-index:4}
-.cell.sel::after{content:''; position:absolute; top:var(--selT,0px); left:var(--selL,0px); right:1px; bottom:1px;
-  border:2px solid var(--accent); background:var(--cell-sel); pointer-events:none; z-index:-1}
-.cell:nth-child(9n+4), .cell:nth-child(9n+7){--selL:1px}
-.cell:nth-child(n+28):nth-child(-n+36), .cell:nth-child(n+55):nth-child(-n+63){--selT:1px}
-.cell:nth-child(1).sel::after{border-top-left-radius:9px}
-.cell:nth-child(9).sel::after{border-top-right-radius:9px}
-.cell:nth-child(73).sel::after{border-bottom-left-radius:9px}
-.cell:nth-child(81).sel::after{border-bottom-right-radius:9px}
+.cell.sel{background:var(--cell-sel)}
 .cell.err{color:var(--error); background:var(--error-soft)}
-.cell.err.sel{background:transparent}
+.cell.err.sel{background:var(--cell-sel)}
 .cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
 .cell .notes span{font-size:clamp(9px,2.2vw,13px); color:var(--note); display:flex; align-items:center; justify-content:center; font-weight:600}
 .cell .notes span.nhl{color:var(--accent); font-weight:800}
