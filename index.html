@@ -234,8 +234,8 @@ body.in-game .site-foot{display:none}
 .cell.err{color:var(--error); background:var(--error-soft)}
 .cell.err.sel{background:var(--cell-sel)}
 .cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
-.cell .notes span{font-size:clamp(9px,2.2vw,13px); color:var(--note); display:flex; align-items:center; justify-content:center; font-weight:600}
-.cell .notes span.nhl{color:var(--accent); font-weight:800}
+.cell .notes span{font-size:clamp(8px,1.9vw,11px); color:var(--note); opacity:.75; display:flex; align-items:center; justify-content:center; font-weight:500}
+.cell .notes span.nhl{color:var(--accent); font-weight:800; opacity:1}
 .cell.pop{animation:pop .2s ease-out}
 @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 .cell.uflash{animation:uflash .55s ease-out}
