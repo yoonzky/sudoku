@@ -195,6 +195,10 @@ body.in-game header .iconbtn{position:static}
 .cell:nth-child(9){border-top-right-radius:10px}
 .cell:nth-child(73){border-bottom-left-radius:10px}
 .cell:nth-child(81){border-bottom-right-radius:10px}
+.cell:nth-child(1).sel::after{border-top-left-radius:10px}
+.cell:nth-child(9).sel::after{border-top-right-radius:10px}
+.cell:nth-child(73).sel::after{border-bottom-left-radius:10px}
+.cell:nth-child(81).sel::after{border-bottom-right-radius:10px}
 .cell.hl{background:var(--cell-hl)}
 .cell.same{background:var(--cell-same)}
 .cell.sel{background:var(--cell-sel); z-index:4}
@@ -1634,8 +1638,8 @@ function snapBoard(){
   const b=$('board'); if(!b) return;
   b.style.width='';
   const w=b.getBoundingClientRect().width;
-  const c=Math.floor(w/9);
-  if(c>0) b.style.width=(c*9)+'px';
+  const c=Math.floor((w-4)/9);           // 4px — рамка поля (2+2)
+  if(c>0) b.style.width=(c*9+4)+'px';
 }
 window.addEventListener('resize',snapBoard);
 snapBoard();
