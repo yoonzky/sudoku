@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="graphite">
+<html lang="ru" data-theme="steel">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#141517" id="metaTheme">
+<meta name="theme-color" content="#12151a" id="metaTheme">
 <title>Sudoku</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%231c1e21' stroke='%23c9b280' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%23c9b280' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%23191e25' stroke='%234c9be6' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%234c9be6' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
 :root, html[data-theme="graphite"]{
@@ -156,6 +156,11 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 #picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 #picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
 #picker .pk-mode button.on[data-m="hyp"]{background:var(--accent2-soft); border-color:var(--accent2); color:var(--accent2)}
+#picker button[data-v]{position:relative}
+#picker button[data-v] small{position:absolute; right:4px; bottom:2px; font-size:9px; font-weight:600; color:var(--muted); line-height:1}
+#picker.mode-note button[data-v]{color:var(--accent); border-color:var(--accent-soft); background:var(--accent-soft)}
+#picker.mode-hyp button[data-v]{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
+#picker.mode-note button[data-v].done, #picker.mode-hyp button[data-v].done{opacity:.22}
 /* ---------- управление ---------- */
 .controls{display:flex; justify-content:space-between; gap:6px; margin-top:14px}
 .ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
@@ -529,7 +534,7 @@ const THEMES = [
   {id:'amethyst', name:'Аметист', bg:'#1c1730', accent:'#a78bfa', meta:'#141021'},
   {id:'paper',    name:'Бумага',  bg:'#fdfcf8', accent:'#4a67d6', meta:'#f4f1ea'},
 ];
-const DEF_SETTINGS = {theme:'graphite', pos:'center', lang:'ru', instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
+const DEF_SETTINGS = {theme:'steel', pos:'center', lang:'ru', instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
 /* LOG — зеркало файла Журнал.md; дополняется ТОЛЬКО через pending (очередь побед) */
 let LOG = { games:[], updated:0 };
 let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
@@ -885,9 +890,23 @@ function setMode(m){ inputMode = inputMode===m ? 'digit' : m; syncModeButtons();
 
 /* всплывающее окно выбора цифры */
 function syncPickerMode(){
-  $('picker').querySelectorAll('.pk-mode button').forEach(b=>{
-    const on = b.dataset.m===inputMode || (b.dataset.m==='digit'&&inputMode==='digit');
+  const pk=$('picker');
+  pk.querySelectorAll('.pk-mode button').forEach(b=>{
     b.classList.toggle('on', b.dataset.m===inputMode);
+  });
+  pk.classList.toggle('mode-note', inputMode==='note');
+  pk.classList.toggle('mode-hyp', inputMode==='hyp');
+}
+function refreshPickerCounts(){
+  const pk=$('picker'); if(pk.classList.contains('hidden')) return;
+  const g=cur(); if(!g){ closePicker(); return; }
+  const counts={};
+  for(let k=0;k<81;k++){ const v=merged(g,k); if(v) counts[v]=(counts[v]||0)+1; }
+  const showCounts = SES.settings.showCounts !== false;
+  pk.querySelectorAll('button[data-v]').forEach(b=>{
+    const v=+b.dataset.v, left=9-(counts[v]||0);
+    b.classList.toggle('done', left<=0);
+    const s=b.querySelector('small'); if(s) s.textContent=(showCounts && left>0)?left:'';
   });
 }
 const PK_ICONS={
@@ -909,8 +928,9 @@ function buildPicker(){
   pk.appendChild(hdr);
   for(let v=1;v<=9;v++){
     const b=document.createElement('button');
-    b.dataset.v=v; b.textContent=v;
-    b.addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); inputDigit(v); closePicker();});
+    b.dataset.v=v; b.innerHTML=`${v}<small></small>`;
+    b.addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); inputDigit(v);
+      if(inputMode==='digit') closePicker(); else refreshPickerCounts();});
     pk.appendChild(b);
   }
   const x=document.createElement('button');
@@ -931,11 +951,9 @@ function openPicker(i){
   const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
   sel=i; renderBoard();
   const pk=$('picker');
-  const counts={};
-  for(let k=0;k<81;k++){ const v=merged(g,k); if(v) counts[v]=(counts[v]||0)+1; }
-  pk.querySelectorAll('button[data-v]').forEach(b=>b.classList.toggle('done',(counts[+b.dataset.v]||0)>=9));
   syncPickerMode();
   pk.classList.remove('hidden');
+  refreshPickerCounts();
   const boardR=$('board').getBoundingClientRect(), cellR=cells[i].getBoundingClientRect();
   const pw=pk.offsetWidth, ph=pk.offsetHeight;
   let left=cellR.right-boardR.left+8;
