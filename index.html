@@ -596,6 +596,7 @@ body.in-game .site-foot{display:none}
 /* i18n */
 const I18N = {
 ru:{
+  th_indigo:'Индиго', th_midnight:'Полночь', th_sepia:'Сепия', th_candle:'Свеча', th_olive:'Олива', th_moss:'Мох', th_rose:'Роза', th_wine:'Вино', th_fog:'Туман', th_coal:'Уголь',
   welT:'Как тебе удобнее?', welLight:'Светлая', welDark:'Тёмная', welNote:'Остальные темы — в настройках',
   yes:'Да', cancel:'Отмена',
   tagline:'спокойная головоломка на каждый день',
@@ -642,6 +643,7 @@ ru:{
   mist:'ошибок', hintsSm:'подсказок',
 },
 en:{
+  th_indigo:'Indigo', th_midnight:'Midnight', th_sepia:'Sepia', th_candle:'Candlelight', th_olive:'Olive', th_moss:'Moss', th_rose:'Rose', th_wine:'Wine', th_fog:'Fog', th_coal:'Charcoal',
   welT:'Pick your look', welLight:'Light', welDark:'Dark', welNote:'More themes in settings',
   yes:'Yes', cancel:'Cancel',
   tagline:'a calm puzzle for every day',
@@ -688,6 +690,7 @@ en:{
   k_dblK:'2×click', k_rmbK:'RMB',
 },
 es:{
+  th_indigo:'Índigo', th_midnight:'Medianoche', th_sepia:'Sepia', th_candle:'Vela', th_olive:'Oliva', th_moss:'Musgo', th_rose:'Rosa', th_wine:'Vino', th_fog:'Niebla', th_coal:'Carbón',
   welT:'Elige tu estilo', welLight:'Clara', welDark:'Oscura', welNote:'Más temas en los ajustes',
   yes:'Sí', cancel:'Cancelar',
   tagline:'un rompecabezas tranquilo para cada día',
@@ -729,6 +732,7 @@ es:{
   k_dblK:'2×clic', k_rmbK:'clic der.',
 },
 de:{
+  th_indigo:'Indigo', th_midnight:'Mitternacht', th_sepia:'Sepia', th_candle:'Kerzenlicht', th_olive:'Olive', th_moss:'Moos', th_rose:'Rose', th_wine:'Wein', th_fog:'Nebel', th_coal:'Kohle',
   welT:'Wähle deinen Stil', welLight:'Hell', welDark:'Dunkel', welNote:'Weitere Designs in den Einstellungen',
   yes:'Ja', cancel:'Abbrechen',
   tagline:'ein ruhiges Rätsel für jeden Tag',
@@ -770,6 +774,7 @@ de:{
   k_dblK:'2×Klick', k_rmbK:'RMT',
 },
 fr:{
+  th_indigo:'Indigo', th_midnight:'Minuit', th_sepia:'Sépia', th_candle:'Bougie', th_olive:'Olive', th_moss:'Mousse', th_rose:'Rose', th_wine:'Vin', th_fog:'Brume', th_coal:'Charbon',
   welT:'Choisissez votre style', welLight:'Clair', welDark:'Sombre', welNote:'Plus de thèmes dans les réglages',
   yes:'Oui', cancel:'Annuler',
   tagline:'un puzzle paisible pour chaque jour',
@@ -811,6 +816,7 @@ fr:{
   k_dblK:'2×clic', k_rmbK:'clic droit',
 },
 zh:{
+  th_indigo:'靛蓝', th_midnight:'午夜', th_sepia:'棕褐', th_candle:'烛光', th_olive:'橄榄', th_moss:'苔藓', th_rose:'玫瑰', th_wine:'酒红', th_fog:'雾灰', th_coal:'炭黑',
   welT:'选择外观', welLight:'浅色', welDark:'深色', welNote:'更多主题见设置',
   yes:'确定', cancel:'取消',
   tagline:'每天一局，静心解题',
@@ -856,6 +862,7 @@ function applyLang(){
   document.documentElement.lang = SES.settings.lang;
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
   document.querySelectorAll('#langseg button').forEach(b=>b.classList.toggle('on', b.dataset.l===SES.settings.lang));
+  document.querySelectorAll('.sw').forEach(b=>{ const sp=b.querySelector('span'); if(sp) sp.textContent=t('th_'+b.dataset.t); });
 }
 
 /* константы / состояние */
@@ -1541,7 +1548,7 @@ function buildSwatches(){
   for(const th of THEMES){
     const b=document.createElement('button');
     b.className='sw'; b.dataset.t=th.id;
-    b.innerHTML=`<i style="background:${th.accent}; --sw-a:${th.bg}"></i><span>${th.name}</span>`;
+    b.innerHTML=`<i style="background:${th.accent}; --sw-a:${th.bg}"></i><span>${t('th_'+th.id)||th.name}</span>`;
     b.addEventListener('click',()=>{ SES.settings.theme=th.id; applyTheme(); persistCache(); saveSes(); });
     wrap.appendChild(b);
   }
