@@ -91,7 +91,13 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
 #home .card{background:transparent; border:none; padding:14px 0; margin-bottom:4px}
 .feat-list{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:13px}
-.feat-list li{display:flex; flex-direction:column; gap:3px}
+.feat-list li{display:flex; gap:11px; align-items:flex-start}
+.feat-list li>div{display:flex; flex-direction:column; gap:3px}
+.f-ico{flex:none; width:30px; height:30px; stroke:var(--accent); stroke-width:1.5; fill:none;
+  stroke-linecap:round; stroke-linejoin:round; margin-top:2px}
+.f-ico .f-fill{fill:var(--accent-soft); stroke:none}
+.f-ico .f-txt{fill:var(--accent); font-weight:700; font-family:inherit}
+.f-ico .f-txt2{fill:var(--muted); font-weight:700; font-family:inherit}
 .feat-list b{font-size:13px; font-weight:700}
 .feat-list span{font-size:12px; color:var(--muted); line-height:1.5}
 @media (min-width:1180px){
@@ -326,12 +332,12 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
       </div>
     </div>
     <div class="card feat">
-      <h2 data-i18n="featT">Фишки</h2>
+      <h2 data-i18n="featT">Возможности</h2>
       <ul class="feat-list">
-        <li><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">или двойной — окно с цифрами прямо у клетки</span></li>
-        <li><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">пробуй ход пунктиром, потом прими или откати</span></li>
-        <li><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">видно, сколько каждой цифры осталось</span></li>
-        <li><b data-i18n="f7T">Пробел и клавиши</b><span data-i18n="f7D">пробел — заметки, H — подсказка, стрелки — по полю</span></li>
+        <li><svg class="f-ico" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="5"/><path d="M12 2.5v7M12 9.5h5"/><path class="f-fill" d="M12 3.5h3.5a1.5 1.5 0 0 1 1.5 1.5v4.5h-5z"/></svg><div><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">или двойной — окно с цифрами прямо у клетки</span></div></li>
+        <li><svg class="f-ico" viewBox="0 0 24 24" stroke-dasharray="3 2.2"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><text x="12" y="16.4" text-anchor="middle" font-size="11" stroke="none" class="f-txt">5</text></svg><div><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">пробуй ход пунктиром, потом прими или откати</span></div></li>
+        <li><svg class="f-ico" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><text x="10.2" y="15.6" text-anchor="middle" font-size="11" stroke="none" class="f-txt">7</text><text x="17" y="19.4" text-anchor="middle" font-size="7" stroke="none" class="f-txt2">3</text></svg><div><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">видно, сколько каждой цифры осталось</span></div></li>
+        <li><svg class="f-ico" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M7 14.8h10M6 9.5h.01M9.5 9.5h.01M13 9.5h.01M16.5 9.5h.01"/></svg><div><b data-i18n="f7T">Пробел и клавиши</b><span data-i18n="f7D">пробел — заметки, H — подсказка, стрелки — по полю</span></div></li>
       </ul>
     </div>
   </section>
@@ -518,7 +524,7 @@ ru:{
   k_hypm:'режим черновика', k_erase:'стереть', k_undo:'отмена / вернуть (⌘Z, ⌘⇧Z)', k_hint:'подсказка (если включена)',
   k_auto:'авто-заметки (если включены)', k_pause:'пауза', k_nav:'навигация по полю', k_menu:'меню', k_pick:'окно выбора цифры',
   gen:'Генерация поля…', digitTab:'Цифра', noteTab:'Заметка', hypTab:'Черновик', eraseP:'Стереть',
-  featT:'Фишки',
+  featT:'Возможности',
   f1T:'Правый клик по клетке', f1D:'или двойной — окно с цифрами прямо у клетки',
   f2T:'Черновик', f2D:'пробуй ход пунктиром, потом прими или откати',
   f3T:'Счётчики на нумпаде', f3D:'видно, сколько каждой цифры осталось',
@@ -568,7 +574,7 @@ en:{
   hasErrors:'Wrong digits: {n}', autoDone:'Candidates filled in', assistNote:'assisted — not recorded',
   delGame:'Delete this game?', restartConfirm:'Restart this puzzle? Board progress will be reset.',
   mist:'errors', hintsSm:'hints',
-  featT:'Highlights',
+  featT:'Features',
   f1T:'Right-click a cell', f1D:'or double click — a digit popup right at the cell',
   f2T:'Draft mode', f2D:'try a move dashed, then commit or undo',
   f3T:'Numpad counters', f3D:'see how many of each digit are left',
@@ -606,7 +612,7 @@ es:{
   hasErrors:'Dígitos erróneos: {n}', autoDone:'Candidatos rellenados', assistNote:'con ayuda — no se registra',
   delGame:'¿Eliminar esta partida?', restartConfirm:'¿Reiniciar este puzle? El progreso se perderá.',
   mist:'errores', hintsSm:'pistas',
-  featT:'Lo mejor',
+  featT:'Funciones',
   f1T:'Clic derecho en la celda', f1D:'o doble clic — ventana de dígitos junto a la celda',
   f2T:'Borrador', f2D:'prueba en punteado, luego confirma o deshaz',
   f3T:'Contadores en el teclado', f3D:'ve cuántos quedan de cada dígito',
@@ -644,7 +650,7 @@ de:{
   hasErrors:'Falsche Ziffern: {n}', autoDone:'Kandidaten eingetragen', assistNote:'mit Hilfe — wird nicht gewertet',
   delGame:'Dieses Spiel löschen?', restartConfirm:'Rätsel neu starten? Der Fortschritt geht verloren.',
   mist:'Fehler', hintsSm:'Tipps',
-  featT:'Highlights',
+  featT:'Features',
   f1T:'Rechtsklick auf die Zelle', f1D:'oder Doppelklick — Ziffernfenster direkt an der Zelle',
   f2T:'Entwurf', f2D:'Zug gestrichelt testen, dann übernehmen oder verwerfen',
   f3T:'Zähler am Numpad', f3D:'zeigt, wie viele jeder Ziffer übrig sind',
@@ -682,7 +688,7 @@ fr:{
   hasErrors:'Chiffres faux : {n}', autoDone:'Candidats remplis', assistNote:'avec aide — non comptée',
   delGame:'Supprimer cette partie ?', restartConfirm:'Recommencer cette grille ? La progression sera perdue.',
   mist:'erreurs', hintsSm:'indices',
-  featT:'Points forts',
+  featT:'Fonctions',
   f1T:'Clic droit sur la case', f1D:'ou double clic — fenêtre de chiffres près de la case',
   f2T:'Brouillon', f2D:'essayez en pointillés, puis validez ou annulez',
   f3T:'Compteurs du pavé', f3D:'combien il reste de chaque chiffre',
@@ -720,7 +726,7 @@ zh:{
   hasErrors:'错误数字：{n}', autoDone:'候选数已填入', assistNote:'使用辅助 — 不计入统计',
   delGame:'删除这局？', restartConfirm:'重新开始本局？进度将被清除。',
   mist:'错误', hintsSm:'提示',
-  featT:'亮点',
+  featT:'功能',
   f1T:'右键点击单元格', f1D:'或双击 — 数字弹窗就在单元格旁',
   f2T:'草稿', f2D:'虚线试探，再采纳或撤销',
   f3T:'数字键计数', f3D:'每个数字还剩几个一目了然',
@@ -1147,8 +1153,7 @@ function buildPicker(){
   for(let v=1;v<=9;v++){
     const b=document.createElement('button');
     b.dataset.v=v; b.innerHTML=`${v}<small></small>`;
-    b.addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); inputDigit(v);
-      if(inputMode==='digit') closePicker(); else refreshPickerCounts();});
+    b.addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); inputDigit(v); closePicker();});
     pk.appendChild(b);
   }
   const x=document.createElement('button');
