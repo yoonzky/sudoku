@@ -116,7 +116,7 @@ body.in-game header .iconbtn{position:static}
 body.in-game .site-foot{display:none}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
-/* ---------- главный экран ---------- */
+/* главный экран */
 .card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
 #home .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px;
   box-shadow:0 1px 0 var(--line); margin-bottom:12px}
@@ -175,14 +175,14 @@ body.in-game .site-foot{display:none}
 .mini-stats{display:flex; gap:22px; margin-top:12px; flex-wrap:wrap}
 .mini-stats div b{display:block; font-size:22px; font-weight:300; font-variant-numeric:tabular-nums}
 .mini-stats div span{font-size:11px; color:var(--muted); font-weight:500}
-/* ---------- верхняя панель игры ---------- */
+/* верхняя панель игры */
 .topbar{display:flex; align-items:center; justify-content:space-between; margin:4px 0 12px; font-size:13px; color:var(--muted); gap:6px}
 .topbar .t-item{font-weight:500}
 .topbar .t-item b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
 .topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:4px; display:flex; align-items:center; gap:4px}
 .topbar .tbtn:hover{color:var(--text)}
 .topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round}
-/* ---------- поле ---------- */
+/* поле */
 .board-wrap{position:relative}
 #board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
   border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
@@ -245,7 +245,7 @@ body.in-game .site-foot{display:none}
 #picker.mode-note button[data-v]{color:var(--accent); border-color:var(--accent-soft); background:var(--accent-soft)}
 #picker.mode-hyp button[data-v]{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
 #picker.mode-note button[data-v].done, #picker.mode-hyp button[data-v].done{opacity:.22}
-/* ---------- управление ---------- */
+/* управление */
 .controls{display:flex; justify-content:space-between; gap:6px; margin-top:14px}
 .ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
   padding:9px 2px; cursor:pointer; color:var(--muted); font-size:10px; font-weight:600;
@@ -270,7 +270,7 @@ body.in-game .site-foot{display:none}
 .numpad.mode-note .num{color:var(--accent); border-color:var(--accent-soft); background-color:var(--panel); background-image:linear-gradient(var(--accent-soft),var(--accent-soft))}
 .numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2-soft); background-color:var(--panel); background-image:linear-gradient(var(--accent2-soft),var(--accent2-soft))}
 .numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.22}
-/* ---------- кнопки, модалки ---------- */
+/* кнопки, модалки */
 .btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:12px;
   padding:12px 22px; font-size:14px; font-weight:700; cursor:pointer; transition:transform .1s, filter .15s}
 .btn:hover{filter:brightness(1.08)}
@@ -458,6 +458,17 @@ body.in-game .site-foot{display:none}
 </div>
 
 <!-- СТАТИСТИКА -->
+<div class="modal-bg hidden" id="welcomeModal">
+  <div class="modal" style="max-width:360px; text-align:center">
+    <h2 data-i18n="welT">Как тебе удобнее?</h2>
+    <div class="row" style="gap:10px; justify-content:center; margin:18px 0 12px">
+      <button class="btn" id="welLight" data-i18n="welLight">Светлая</button>
+      <button class="btn" id="welDark" data-i18n="welDark">Тёмная</button>
+    </div>
+    <p style="font-size:12px; color:var(--muted); margin:0" data-i18n="welNote">Остальные темы — в настройках</p>
+  </div>
+</div>
+
 <div class="modal-bg hidden" id="confirmModal">
   <div class="modal" style="max-width:340px">
     <p id="confirmText" style="margin:4px 0 20px; font-size:14px; line-height:1.55"></p>
@@ -552,13 +563,11 @@ body.in-game .site-foot{display:none}
 
 <script>
 'use strict';
-/* ============================================================================
-   SUDOKU — офлайн-игра, все данные хранятся в localStorage браузера.
-   ============================================================================ */
 
-/* ================= i18n ================= */
+/* i18n */
 const I18N = {
 ru:{
+  welT:'Как тебе удобнее?', welLight:'Светлая', welDark:'Тёмная', welNote:'Остальные темы — в настройках',
   yes:'Да', cancel:'Отмена',
   tagline:'спокойная головоломка на каждый день',
   continue:'Продолжить', newGame:'Новая игра', total:'Всего',
@@ -604,6 +613,7 @@ ru:{
   mist:'ошибок', hintsSm:'подсказок',
 },
 en:{
+  welT:'Pick your look', welLight:'Light', welDark:'Dark', welNote:'More themes in settings',
   yes:'Yes', cancel:'Cancel',
   tagline:'a calm puzzle for every day',
   continue:'Continue', newGame:'New game', total:'Overall',
@@ -649,6 +659,7 @@ en:{
   k_dblK:'2×click', k_rmbK:'RMB',
 },
 es:{
+  welT:'Elige tu estilo', welLight:'Clara', welDark:'Oscura', welNote:'Más temas en los ajustes',
   yes:'Sí', cancel:'Cancelar',
   tagline:'un rompecabezas tranquilo para cada día',
   continue:'Continuar', newGame:'Nueva partida', total:'Total',
@@ -689,6 +700,7 @@ es:{
   k_dblK:'2×clic', k_rmbK:'clic der.',
 },
 de:{
+  welT:'Wähle deinen Stil', welLight:'Hell', welDark:'Dunkel', welNote:'Weitere Designs in den Einstellungen',
   yes:'Ja', cancel:'Abbrechen',
   tagline:'ein ruhiges Rätsel für jeden Tag',
   continue:'Fortsetzen', newGame:'Neues Spiel', total:'Gesamt',
@@ -729,6 +741,7 @@ de:{
   k_dblK:'2×Klick', k_rmbK:'RMT',
 },
 fr:{
+  welT:'Choisissez votre style', welLight:'Clair', welDark:'Sombre', welNote:'Plus de thèmes dans les réglages',
   yes:'Oui', cancel:'Annuler',
   tagline:'un puzzle paisible pour chaque jour',
   continue:'Continuer', newGame:'Nouvelle partie', total:'Total',
@@ -769,6 +782,7 @@ fr:{
   k_dblK:'2×clic', k_rmbK:'clic droit',
 },
 zh:{
+  welT:'选择外观', welLight:'浅色', welDark:'深色', welNote:'更多主题见设置',
   yes:'确定', cancel:'取消',
   tagline:'每天一局，静心解题',
   continue:'继续', newGame:'新游戏', total:'总计',
@@ -815,19 +829,19 @@ function applyLang(){
   document.querySelectorAll('#langseg button').forEach(b=>b.classList.toggle('on', b.dataset.l===SES.settings.lang));
 }
 
-/* ================= константы / состояние ================= */
+/* константы / состояние */
 const DIFFS = { easy:{clues:38}, medium:{clues:32}, hard:{clues:27}, expert:{clues:24} };
 const DIFF_KEYS = Object.keys(DIFFS);
 const dName = d => t('d_'+d);
 const THEMES = [
   {id:'indigo', name:'Indigo', bg:'#eae9e2', accent:'#4a67d6', meta:'#eae9e2'},
+  {id:'midnight', name:'Midnight', bg:'#171a22', accent:'#7aa2f7', meta:'#171a22'},
   {id:'sepia', name:'Sepia', bg:'#efe9dd', accent:'#b4552d', meta:'#efe9dd'},
   {id:'olive', name:'Olive', bg:'#edeedd', accent:'#6b7a2f', meta:'#edeedd'},
   {id:'rose', name:'Rose', bg:'#f0e7e2', accent:'#b03a5b', meta:'#f0e7e2'},
   {id:'latte', name:'Latte', bg:'#e6e1d7', accent:'#8a5a36', meta:'#e6e1d7'},
   {id:'candle', name:'Candlelight', bg:'#211c14', accent:'#d8a05c', meta:'#211c14'},
   {id:'moss', name:'Moss', bg:'#1b201a', accent:'#7fae6b', meta:'#1b201a'},
-  {id:'midnight', name:'Midnight', bg:'#171a22', accent:'#7aa2f7', meta:'#171a22'},
   {id:'coal', name:'Charcoal', bg:'#17181a', accent:'#8ab4d8', meta:'#17181a'},
 ];
 const SYS_LANG=(()=>{ try{
@@ -845,7 +859,7 @@ const cur = () => SES.games[SES.cur] || null;
 const allGames = () => [...LOG.games, ...pending];
 const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
-/* ================= генератор / решатель ================= */
+/* генератор / решатель */
 const rnd = n => Math.floor(Math.random()*n);
 const shuffle = a => {for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
 const peersCache=[], rowCells=[], colCells=[], boxCells=[];
@@ -995,7 +1009,7 @@ function generate(diff){
   return best || generateOnce(clues);
 }
 
-/* ================= локальный кэш ================= */
+/* локальный кэш */
 const LS_LOG='sudoku-log', LS_SES='sudoku-ses', LS_PEND='sudoku-pending';
 function persistCache(){
   SES.updated=Date.now();
@@ -1013,7 +1027,7 @@ function loadCache(){
   try{ const p=JSON.parse(localStorage.getItem(LS_PEND)); if(Array.isArray(p)) pending=p; }catch(e){}
 }
 
-/* ================= хранение: localStorage ================= */
+/* хранение: localStorage */
 function fmtTime(s){ if(s==null) return '—'; const h=(s/3600)|0, m=((s%3600)/60)|0, sec=s%60;
   return h? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}` }
 function statsByDiff(){
@@ -1048,7 +1062,7 @@ function rerenderAll(){
   else if(cur()){ renderBoard(); $('gTimer').textContent=fmtTime(cur().time); }
 }
 
-/* ================= мелкий UI ================= */
+/* мелкий UI */
 const $=id=>document.getElementById(id);
 let toastTimer=null;
 function toast(msg){
@@ -1108,7 +1122,7 @@ function renderHome(){
   $('tot-time').textContent= total? fmtTime(total) : '—';
 }
 
-/* ================= поле ================= */
+/* поле */
 const cells=[];
 function buildBoard(){
   const b=$('board');
@@ -1268,7 +1282,7 @@ function openPicker(i){
 }
 function closePicker(){ $('picker').classList.add('hidden'); }
 
-/* ================= логика ================= */
+/* логика */
 function snapshot(){ const g=cur(); return {values:g.values.slice(), notes:g.notes.map(n=>n.slice()), hyp:g.hyp.slice(), endErr:(g.endErr||[]).slice()}; }
 function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>300) undoStack.shift(); redoStack.length=0; }
 function restore(s){ const g=cur(); g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice()); g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice(); }
@@ -1475,7 +1489,7 @@ function setPaused(p){
     : '<svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>';
 }
 
-/* ================= статистика / настройки ================= */
+/* статистика / настройки */
 function openStats(){
   const st=statsByDiff();
   let html=`<tr><th>${t('level')}</th><th>${t('solvedL')}</th><th>${t('recordL')}</th><th>${t('avgL')}</th><th>${t('cleanL')}</th></tr>`;
@@ -1540,7 +1554,7 @@ function askConfirm(msg){
   });
 }
 
-/* ================= события ================= */
+/* события */
 document.querySelectorAll('.diff-btn').forEach(b=>b.addEventListener('click',()=>newGame(b.dataset.diff)));
 $('contList').addEventListener('click',async e=>{
   const open=e.target.closest('.cont-open');
@@ -1670,7 +1684,7 @@ window._sud={
   saveLog, saveSes, gradeSolve, generate,
 };
 
-/* ================= старт ================= */
+/* старт */
 loadCache();
 buildBoard(); buildNumpad(); buildSwatches(); buildPicker();
 function snapBoard(){
@@ -1685,6 +1699,18 @@ snapBoard();
 applyTheme(); applyControls(); applyLayout(); applyLang();
 renderHome(); show('home');
 if(pending.length) saveLog();
+(function(){
+  const seen=localStorage.getItem('sudoku-welcomed');
+  if(seen || localStorage.getItem(LS_SES)) return;
+  const bg=$('welcomeModal');
+  bg.classList.remove('hidden');
+  const pick=id=>{ SES.settings.theme=id; applyTheme(); persistCache(); saveSes();
+    try{ localStorage.setItem('sudoku-welcomed','1'); }catch(e){}
+    bg.classList.add('hidden'); };
+  $('welLight').onclick=()=>pick('indigo');
+  $('welDark').onclick=()=>pick('midnight');
+  bg.addEventListener('click',e=>{ if(e.target===bg){ try{ localStorage.setItem('sudoku-welcomed','1'); }catch(err){} bg.classList.add('hidden'); } });
+})();
 </script>
 </body>
 </html>
