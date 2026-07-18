@@ -114,6 +114,22 @@ body.in-game header .iconbtn{position:static}
 .site-foot a{color:var(--muted)}
 .site-foot a:hover{color:var(--text)}
 body.in-game .site-foot{display:none}
+.wel-grid{display:flex; gap:12px; margin:18px 0 14px}
+.wel-card{flex:1; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:10px 10px 12px;
+  cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:9px; align-items:center;
+  transition:border-color .15s, transform .1s}
+.wel-card:hover{border-color:var(--accent)}
+.wel-card:active{transform:scale(.97)}
+.wel-card b{font-size:13px}
+.wel-prev{width:100%; aspect-ratio:16/10; border-radius:8px; display:grid; grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr; gap:5px; padding:9px; border:1px solid rgba(127,127,127,.25)}
+.wel-prev i{display:block; border-radius:4px}
+.wp-light{background:#eae9e2}
+.wp-light i{background:#faf7f0; border:1px solid #d9d2c2}
+.wp-light i.a{background:#4a67d6; border-color:#4a67d6}
+.wp-dark{background:#171a22}
+.wp-dark i{background:#1e222c; border:1px solid #303645}
+.wp-dark i.a{background:#7aa2f7; border-color:#7aa2f7}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
 /* главный экран */
@@ -461,9 +477,15 @@ body.in-game .site-foot{display:none}
 <div class="modal-bg hidden" id="welcomeModal">
   <div class="modal" style="max-width:360px; text-align:center">
     <h2 data-i18n="welT">Как тебе удобнее?</h2>
-    <div class="row" style="gap:10px; justify-content:center; margin:18px 0 12px">
-      <button class="btn" id="welLight" data-i18n="welLight">Светлая</button>
-      <button class="btn" id="welDark" data-i18n="welDark">Тёмная</button>
+    <div class="wel-grid">
+      <button class="wel-card" id="welLight">
+        <span class="wel-prev wp-light"><i></i><i class="a"></i><i></i><i></i></span>
+        <b data-i18n="welLight">Светлая</b>
+      </button>
+      <button class="wel-card" id="welDark">
+        <span class="wel-prev wp-dark"><i></i><i class="a"></i><i></i><i></i></span>
+        <b data-i18n="welDark">Тёмная</b>
+      </button>
     </div>
     <p style="font-size:12px; color:var(--muted); margin:0" data-i18n="welNote">Остальные темы — в настройках</p>
   </div>
