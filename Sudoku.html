@@ -177,8 +177,8 @@ body.in-game header .iconbtn{position:static}
 #board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
   border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
-#board.notes-on .cell.sel{outline:2px dashed var(--accent); outline-offset:-2px; background:var(--cell-sel); z-index:4}
-#board.hyp-on .cell.sel{outline:2px dashed var(--accent2); outline-offset:-2px; background:var(--cell-sel); z-index:4}
+#board.notes-on .cell.sel::after{border-style:dashed}
+#board.hyp-on .cell.sel::after{border-style:dashed; border-color:var(--accent2)}
 .cell{position:relative; display:flex; align-items:center; justify-content:center;
   border-right:1px solid var(--line); border-bottom:1px solid var(--line);
   font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
@@ -197,7 +197,8 @@ body.in-game header .iconbtn{position:static}
 .cell:nth-child(81){border-bottom-right-radius:10px}
 .cell.hl{background:var(--cell-hl)}
 .cell.same{background:var(--cell-same)}
-.cell.sel{background:var(--cell-sel); outline:2px solid var(--accent); outline-offset:-2px; z-index:4}
+.cell.sel{background:var(--cell-sel); z-index:4}
+.cell.sel::after{content:''; position:absolute; inset:-1px 0px 0px -1px; border:2px solid var(--accent); pointer-events:none; z-index:5}
 .cell.err{color:var(--error); background:var(--error-soft)}
 .cell.err.sel{background:var(--cell-sel)}
 .cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
