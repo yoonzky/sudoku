@@ -13,42 +13,42 @@
   --text:#e8e8e6; --muted:#8b8f96; --accent:#c9b280; --accent-text:#141517; --accent-soft:rgba(201,178,128,.20);
   --accent2:#8fb6c9; --accent2-soft:rgba(143,182,201,.20);
   --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#9aa0a8; --given:#e8e8e6; --user:#c9b280;
-  --cell-sel:#3a3e33; --cell-hl:#222428; --cell-same:#33362c; --shadow:0 2px 10px rgba(0,0,0,.45);
+  --cell-sel:#3a3e33; --cell-hl:#222428; --cell-same:#33362c; --shadow:0 10px 34px rgba(0,0,0,.45);
 }
 html[data-theme="steel"]{
   --bg:#12151a; --panel:#191e25; --panel2:#212730; --line:#2a323d; --line-strong:#46525f;
   --text:#e4e9ee; --muted:#87929f; --accent:#4c9be6; --accent-text:#0b1016; --accent-soft:rgba(76,155,230,.20);
   --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.20);
   --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#93a0ad; --given:#e4e9ee; --user:#4c9be6;
-  --cell-sel:#2c4763; --cell-hl:#20262f; --cell-same:#2c3a4e; --shadow:0 2px 10px rgba(0,0,0,.5);
+  --cell-sel:#2c4763; --cell-hl:#20262f; --cell-same:#2c3a4e; --shadow:0 10px 34px rgba(0,0,0,.5);
 }
 html[data-theme="midnight"]{
   --bg:#0e1320; --panel:#161d2e; --panel2:#1d2740; --line:#26314c; --line-strong:#3e4d73;
   --text:#dfe6f5; --muted:#7c88a5; --accent:#7aa2f7; --accent-text:#0e1320; --accent-soft:rgba(122,162,247,.20);
   --accent2:#f0c674; --accent2-soft:rgba(240,198,116,.20);
   --error:#f7768e; --error-soft:rgba(247,118,142,.14); --note:#8a94ad; --given:#dfe6f5; --user:#7aa2f7;
-  --cell-sel:#26335a; --cell-hl:#182238; --cell-same:#223055; --shadow:0 2px 10px rgba(0,0,0,.5);
+  --cell-sel:#26335a; --cell-hl:#182238; --cell-same:#223055; --shadow:0 10px 34px rgba(0,0,0,.5);
 }
 html[data-theme="emerald"]{
   --bg:#0e1512; --panel:#151f1a; --panel2:#1c2a23; --line:#25352c; --line-strong:#3c5647;
   --text:#e2ece6; --muted:#7f948a; --accent:#6fbf8f; --accent-text:#0e1512; --accent-soft:rgba(111,191,143,.20);
   --accent2:#c9a06f; --accent2-soft:rgba(201,160,111,.20);
   --error:#e0716c; --error-soft:rgba(224,113,108,.14); --note:#8aa094; --given:#e2ece6; --user:#6fbf8f;
-  --cell-sel:#1f3a2c; --cell-hl:#16241d; --cell-same:#1c3628; --shadow:0 2px 10px rgba(0,0,0,.5);
+  --cell-sel:#1f3a2c; --cell-hl:#16241d; --cell-same:#1c3628; --shadow:0 10px 34px rgba(0,0,0,.5);
 }
 html[data-theme="amethyst"]{
   --bg:#141021; --panel:#1c1730; --panel2:#251e40; --line:#302a4d; --line-strong:#4d4477;
   --text:#e9e4f5; --muted:#948ba9; --accent:#a78bfa; --accent-text:#141021; --accent-soft:rgba(167,139,250,.20);
   --accent2:#e8b07f; --accent2-soft:rgba(232,176,127,.20);
   --error:#f0708a; --error-soft:rgba(240,112,138,.14); --note:#9a90b3; --given:#e9e4f5; --user:#a78bfa;
-  --cell-sel:#332a5c; --cell-hl:#1f1838; --cell-same:#2d2652; --shadow:0 2px 10px rgba(0,0,0,.5);
+  --cell-sel:#332a5c; --cell-hl:#1f1838; --cell-same:#2d2652; --shadow:0 10px 34px rgba(0,0,0,.5);
 }
 html[data-theme="paper"]{
   --bg:#f4f1ea; --panel:#fdfcf8; --panel2:#efece3; --line:#ddd8cb; --line-strong:#b4ad9c;
   --text:#28251f; --muted:#8a8577; --accent:#4a67d6; --accent-text:#ffffff; --accent-soft:rgba(74,103,214,.15);
   --accent2:#b3591f; --accent2-soft:rgba(179,89,31,.14);
   --error:#c94f57; --error-soft:rgba(201,79,87,.12); --note:#8a8577; --given:#28251f; --user:#4a67d6;
-  --cell-sel:#dde3f8; --cell-hl:#eeebe0; --cell-same:#e2e7f6; --shadow:0 2px 8px rgba(90,80,60,.15);
+  --cell-sel:#dde3f8; --cell-hl:#eeebe0; --cell-same:#e2e7f6; --shadow:0 10px 30px rgba(90,80,60,.18);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -60,40 +60,45 @@ body{margin:0; background:var(--bg); color:var(--text);
 body.pos-left{align-items:flex-start}
 body.pos-right{align-items:flex-end}
 button{font-family:inherit; color:inherit}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:5px}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
 header{width:100%; max-width:540px; display:flex; align-items:center; gap:8px; padding:16px 18px 8px}
-header h1{font-size:19px; font-weight:800; letter-spacing:.14em; margin:0; flex:1; display:flex; align-items:center; gap:9px}
-.logo-mark{width:21px; height:21px; stroke:var(--accent); stroke-width:1.6; fill:none}
-.logo-mark .lm-a{fill:var(--accent-soft); stroke:none}
-.badge{font-size:11px; font-weight:600; padding:5px 11px; border-radius:11px; border:1px solid var(--line-strong);
+header h1{font-size:19px; font-weight:800; letter-spacing:.14em; margin:0; flex:1}
+.badge{font-size:11px; font-weight:600; padding:5px 11px; border-radius:20px; border:1px solid var(--line-strong);
   color:var(--muted); background:transparent; cursor:pointer; transition:color .15s,border-color .15s}
 .badge:hover{color:var(--text)}
 .badge.ok{color:var(--accent); border-color:var(--accent)}
-.iconbtn{background:transparent; border:1px solid transparent; border-radius:4px; cursor:pointer;
+.iconbtn{background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer;
   color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
 main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .hidden{display:none !important}
 /* ---------- главный экран ---------- */
-.card{background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:18px; margin-bottom:14px}
-.feat-list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
-.feat-list li{display:flex; flex-direction:column; gap:3px; padding-left:10px; border-left:2px solid var(--accent-soft)}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
+.feat-list{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:13px}
+.feat-list li{display:flex; flex-direction:column; gap:3px}
 .feat-list b{font-size:13px; font-weight:700}
-.feat-list span{font-size:12px; color:var(--muted); line-height:1.45}
+.feat-list span{font-size:12px; color:var(--muted); line-height:1.5}
+@media (min-width:1180px){
+  #home .feat{position:fixed; top:76px; left:calc(50% + 286px); width:300px;
+    max-height:calc(100vh - 110px); overflow-y:auto; margin-bottom:0}
+}
+@media (max-width:1179px){
+  .feat-list{display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
+}
 @media (max-width:560px){.feat-list{grid-template-columns:1fr}}
 .card h2{margin:0 0 4px; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
 .cont-row{display:flex; gap:8px; margin-top:10px}
 .cont-open{flex:1; display:flex; justify-content:space-between; align-items:center;
-  background:var(--panel2); border:1px solid var(--accent); border-radius:5px;
+  background:var(--panel2); border:1px solid var(--accent); border-radius:14px;
   padding:13px 16px; cursor:pointer; font-size:14px; font-weight:600; transition:transform .1s}
 .cont-open:active{transform:scale(.985)}
 .cont-open small{color:var(--muted); font-weight:500}
-.cont-del{flex:none; width:44px; border-radius:5px; border:1px solid var(--line); background:var(--panel2);
+.cont-del{flex:none; width:44px; border-radius:14px; border:1px solid var(--line); background:var(--panel2);
   color:var(--muted); cursor:pointer; font-size:15px}
 .cont-del:hover{color:var(--error); border-color:var(--error)}
 .diff-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
-.diff-btn{background:var(--panel2); border:1px solid var(--line); border-radius:5px;
+.diff-btn{background:var(--panel2); border:1px solid var(--line); border-radius:14px;
   padding:15px 14px; cursor:pointer; text-align:left; transition:border-color .15s, transform .1s}
 .diff-btn:hover{border-color:var(--accent)}
 .diff-btn:active{transform:scale(.97)}
@@ -112,7 +117,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 /* ---------- поле ---------- */
 .board-wrap{position:relative}
 #board{display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
-  border:2px solid var(--line-strong); border-radius:7px; overflow:hidden; background:var(--panel);
+  border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
 #board.notes-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent); outline-offset:-3px; background:var(--cell-sel)}
 #board.hyp-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent2); outline-offset:-3px; background:var(--cell-sel)}
@@ -142,14 +147,14 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 @keyframes uflash{0%{background:var(--accent-soft)}100%{background:transparent}}
 .cell.wave{animation:wave .5s ease-out both}
 @keyframes wave{0%{transform:scale(1)}45%{transform:scale(1.18); color:var(--accent)}100%{transform:scale(1)}}
-#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:7px;
+#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:12px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
 #pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
 /* всплывающее окно выбора цифры */
 #picker{position:absolute; z-index:8; background:var(--panel2); border:1px solid var(--line-strong);
-  border-radius:5px; padding:8px; display:grid; grid-template-columns:repeat(3,44px); gap:5px;
+  border-radius:14px; padding:8px; display:grid; grid-template-columns:repeat(3,44px); gap:5px;
   box-shadow:var(--shadow); animation:mIn .15s ease-out}
-#picker button{width:100%; aspect-ratio:1; border-radius:4px; border:1px solid var(--line);
+#picker button{width:100%; aspect-ratio:1; border-radius:10px; border:1px solid var(--line);
   background:var(--panel); font-size:17px; font-weight:500; cursor:pointer; display:flex;
   align-items:center; justify-content:center; transition:border-color .1s, transform .08s}
 #picker button:hover{border-color:var(--accent)}
@@ -158,7 +163,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 #picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:13px; font-weight:600}
 #picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; margin-right:6px}
 #picker .pk-mode{grid-column:1/-1; display:flex; gap:4px; margin-bottom:2px}
-#picker .pk-mode button{flex:1; aspect-ratio:auto; height:30px; border-radius:5px; border:1px solid var(--line);
+#picker .pk-mode button{flex:1; aspect-ratio:auto; height:30px; border-radius:8px; border:1px solid var(--line);
   background:transparent; color:var(--muted); width:auto; padding:0}
 #picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 #picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
@@ -170,7 +175,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 #picker.mode-note button[data-v].done, #picker.mode-hyp button[data-v].done{opacity:.22}
 /* ---------- управление ---------- */
 .controls{display:flex; justify-content:space-between; gap:6px; margin-top:14px}
-.ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:7px;
+.ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
   padding:9px 2px; cursor:pointer; color:var(--muted); font-size:10px; font-weight:600;
   display:flex; flex-direction:column; align-items:center; gap:3px; transition:color .12s,border-color .12s}
 .ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
@@ -180,7 +185,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .ctl.on2{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
 .ctl:disabled{opacity:.3; cursor:default; transform:none}
 .numpad{display:grid; grid-template-columns:repeat(9,1fr); gap:6px; margin-top:10px}
-.num{background:var(--panel); border:1px solid var(--line); border-radius:7px; aspect-ratio:.78;
+.num{background:var(--panel); border:1px solid var(--line); border-radius:12px; aspect-ratio:.78;
   cursor:pointer; font-size:clamp(16px,4.5vw,23px); font-weight:300;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
   transition:border-color .12s, transform .08s}
@@ -194,7 +199,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
 .numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.22}
 /* ---------- кнопки, модалки ---------- */
-.btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:7px;
+.btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:12px;
   padding:12px 22px; font-size:14px; font-weight:700; cursor:pointer; transition:transform .1s, filter .15s}
 .btn:hover{filter:brightness(1.08)}
 .btn:active{transform:scale(.97)}
@@ -202,7 +207,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .btn.danger{background:transparent; color:var(--error); border:1px solid var(--error)}
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
   justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
-.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:11px;
+.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:20px;
   padding:24px; width:100%; max-width:430px; max-height:86vh; overflow-y:auto; box-shadow:var(--shadow);
   animation:mIn .22s ease-out}
 @keyframes mIn{from{transform:translateY(14px) scale(.97); opacity:0}to{transform:none; opacity:1}}
@@ -215,7 +220,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .win-sub{color:var(--muted); font-size:13px; margin-bottom:6px; font-weight:500}
 .record{color:var(--accent); font-size:13px; font-weight:700; margin-bottom:8px}
 .win-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px}
-.win-grid div{background:var(--panel2); border-radius:7px; padding:10px 6px}
+.win-grid div{background:var(--panel2); border-radius:12px; padding:10px 6px}
 .win-grid b{display:block; font-size:17px; font-weight:600; font-variant-numeric:tabular-nums}
 .win-grid span{font-size:10px; color:var(--muted); font-weight:600}
 .hist{font-size:12px; color:var(--muted); margin-top:14px; font-weight:500}
@@ -223,18 +228,20 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .modal .row{display:flex; gap:10px; margin-top:20px; justify-content:flex-end; flex-wrap:wrap}
 /* настройки: вкладки */
 .stabs{display:flex; gap:6px; margin-bottom:14px}
-.stabs button{flex:1; padding:9px 0; border-radius:4px; border:1px solid var(--line);
+.stabs button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
   background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
 .stabs button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 .swatches{display:flex; gap:10px; flex-wrap:wrap}
-.sw{width:64px; border:2px solid var(--line); border-radius:5px; padding:8px 4px 6px; cursor:pointer;
+.sw{width:64px; border:2px solid var(--line); border-radius:14px; padding:8px 4px 6px; cursor:pointer;
   background:var(--panel2); display:flex; flex-direction:column; align-items:center; gap:5px; transition:border-color .15s}
 .sw.selq{border-color:var(--accent)}
 .sw i{width:30px; height:30px; border-radius:50%; display:block; border:1px solid rgba(255,255,255,.14); position:relative}
 .sw i::after{content:''; position:absolute; right:1px; bottom:1px; width:13px; height:13px; border-radius:50%; border:1px solid rgba(255,255,255,.12); background:var(--sw-a)}
 .sw span{font-size:10px; font-weight:600; color:var(--muted)}
 .posseg,.langseg{display:flex; gap:8px}
-.posseg button,.langseg button{flex:1; padding:9px 0; border-radius:4px; border:1px solid var(--line);
+.langseg{flex-wrap:wrap}
+.langseg button{flex:1 1 30%; min-width:90px}
+.posseg button,.langseg button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
   background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
 .posseg button.on,.langseg button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 .toggle{display:flex; gap:12px; align-items:flex-start; padding:10px 0; cursor:pointer}
@@ -244,12 +251,12 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 .keys{display:grid; grid-template-columns:auto 1fr; gap:7px 14px; align-items:center;
   font-size:12px; color:var(--muted); font-weight:500}
 .keys .kk{display:flex; gap:4px; justify-content:flex-end; white-space:nowrap}
-.keys kbd{background:var(--panel2); border:1px solid var(--line-strong); border-radius:4px; padding:2px 7px;
+.keys kbd{background:var(--panel2); border:1px solid var(--line-strong); border-radius:6px; padding:2px 7px;
   font-family:inherit; font-size:11px; font-weight:700; color:var(--text)}
 /* тост, конфетти, оверлеи */
 #toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
   background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
-  padding:10px 18px; border-radius:7px; font-size:13px; font-weight:600; z-index:50;
+  padding:10px 18px; border-radius:12px; font-size:13px; font-weight:600; z-index:50;
   transition:opacity .25s, transform .25s; pointer-events:none; box-shadow:var(--shadow)}
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed; inset:0; pointer-events:none; z-index:40; overflow:hidden}
@@ -265,7 +272,7 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
 </head>
 <body>
 <header>
-  <h1><svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="2"/><path d="M8.5 1.5v21M15.5 1.5v21M1.5 8.5h21M1.5 15.5h21"/><rect class="lm-a" x="15.5" y="8.5" width="7" height="7"/></svg>SUDOKU</h1>
+  <h1>SUDOKU</h1>
   <button class="iconbtn" id="statsBtn" aria-label="stats">
     <svg viewBox="0 0 24 24"><path d="M5 20v-7M11 20V5M17 20v-10M3 20h18"/></svg>
   </button>
@@ -300,14 +307,14 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
     <div class="card feat">
       <h2 data-i18n="featT">Что здесь есть</h2>
       <ul class="feat-list">
-        <li><b data-i18n="f1T">Окно выбора у клетки</b><span data-i18n="f1D">двойной или правый клик по клетке — цифры, заметки и черновик прямо на месте, без беготни к нумпаду</span></li>
-        <li><b data-i18n="f2T">Режим черновика</b><span data-i18n="f2D">проверяй гипотезу пунктирными цифрами, потом принимай её в решение или откатывай одним нажатием</span></li>
-        <li><b data-i18n="f3T">Счётчики цифр</b><span data-i18n="f3D">на каждой кнопке видно, сколько таких цифр осталось расставить — и в нумпаде, и в окне выбора</span></li>
-        <li><b data-i18n="f4T">Умная подсветка</b><span data-i18n="f4D">выделяются одинаковые цифры и даже клетки с такой же заметкой</span></li>
-        <li><b data-i18n="f5T">Гибкие настройки</b><span data-i18n="f5D">мгновенная или финальная проверка ошибок, лимит на три ошибки, авто-заметки, подсказки — всё включается и выключается</span></li>
-        <li><b data-i18n="f6T">Свой вид</b><span data-i18n="f6D">шесть тем, поле слева, по центру или справа, русский и английский</span></li>
-        <li><b data-i18n="f7T">Клавиатура</b><span data-i18n="f7D">полное управление с клавиатуры: цифры, стрелки, N — заметки, H — подсказка, пробел — пауза</span></li>
-        <li><b data-i18n="f8T">Без лишнего</b><span data-i18n="f8D">работает офлайн, прогресс хранится в браузере, никаких аккаунтов и рекламы</span></li>
+        <li><b data-i18n="f1T">Окно выбора у клетки</b><span data-i18n="f1D">двойной или правый клик по клетке — цифры, заметки и черновик прямо на месте</span></li>
+        <li><b data-i18n="f2T">Режим черновика</b><span data-i18n="f2D">проверяй гипотезу пунктирными цифрами, потом принимай или откатывай одним нажатием</span></li>
+        <li><b data-i18n="f3T">Счётчики цифр</b><span data-i18n="f3D">на каждой кнопке видно, сколько таких цифр осталось расставить</span></li>
+        <li><b data-i18n="f4T">Умная подсветка</b><span data-i18n="f4D">выделяются одинаковые цифры и клетки с такой же заметкой</span></li>
+        <li><b data-i18n="f5T">Гибкие настройки</b><span data-i18n="f5D">мгновенная или финальная проверка, лимит ошибок, авто-заметки, подсказки — всё отключаемо</span></li>
+        <li><b data-i18n="f6T">Свой вид</b><span data-i18n="f6D">шесть тем, поле слева, по центру или справа, несколько языков</span></li>
+        <li><b data-i18n="f7T">Клавиатура</b><span data-i18n="f7D">полное управление: цифры, стрелки, N — заметки, H — подсказка, пробел — пауза</span></li>
+        <li><b data-i18n="f8T">Без лишнего</b><span data-i18n="f8D">работает офлайн, прогресс в браузере, без аккаунтов и рекламы</span></li>
       </ul>
     </div>
   </section>
@@ -406,8 +413,12 @@ main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
       </div>
       <h3 data-i18n="langT">Язык</h3>
       <div class="langseg" id="langseg">
-        <button data-l="ru">Русский</button>
         <button data-l="en">English</button>
+        <button data-l="ru">Русский</button>
+        <button data-l="es">Español</button>
+        <button data-l="de">Deutsch</button>
+        <button data-l="fr">Français</button>
+        <button data-l="zh">中文</button>
       </div>
     </div>
     <div class="stab hidden" id="tab-game">
@@ -491,14 +502,14 @@ ru:{
   k_auto:'авто-заметки (если включены)', k_pause:'пауза', k_nav:'навигация по полю', k_menu:'меню', k_pick:'окно выбора цифры',
   gen:'Генерация поля…', digitTab:'Цифра', noteTab:'Заметка', hypTab:'Черновик', eraseP:'Стереть',
   featT:'Что здесь есть',
-  f1T:'Окно выбора у клетки', f1D:'двойной или правый клик по клетке — цифры, заметки и черновик прямо на месте, без беготни к нумпаду',
-  f2T:'Режим черновика', f2D:'проверяй гипотезу пунктирными цифрами, потом принимай её в решение или откатывай одним нажатием',
-  f3T:'Счётчики цифр', f3D:'на каждой кнопке видно, сколько таких цифр осталось расставить — и в нумпаде, и в окне выбора',
-  f4T:'Умная подсветка', f4D:'выделяются одинаковые цифры и даже клетки с такой же заметкой',
-  f5T:'Гибкие настройки', f5D:'мгновенная или финальная проверка ошибок, лимит на три ошибки, авто-заметки, подсказки — всё включается и выключается',
-  f6T:'Свой вид', f6D:'шесть тем, поле слева, по центру или справа, русский и английский',
-  f7T:'Клавиатура', f7D:'полное управление с клавиатуры: цифры, стрелки, N — заметки, H — подсказка, пробел — пауза',
-  f8T:'Без лишнего', f8D:'работает офлайн, прогресс хранится в браузере, никаких аккаунтов и рекламы',
+  f1T:'Окно выбора у клетки', f1D:'двойной или правый клик по клетке — цифры, заметки и черновик прямо на месте',
+  f2T:'Режим черновика', f2D:'проверяй гипотезу пунктирными цифрами, потом принимай или откатывай одним нажатием',
+  f3T:'Счётчики цифр', f3D:'на каждой кнопке видно, сколько таких цифр осталось расставить',
+  f4T:'Умная подсветка', f4D:'выделяются одинаковые цифры и клетки с такой же заметкой',
+  f5T:'Гибкие настройки', f5D:'мгновенная или финальная проверка, лимит ошибок, авто-заметки, подсказки — всё отключаемо',
+  f6T:'Свой вид', f6D:'шесть тем, поле слева, по центру или справа, несколько языков',
+  f7T:'Клавиатура', f7D:'полное управление: цифры, стрелки, N — заметки, H — подсказка, пробел — пауза',
+  f8T:'Без лишнего', f8D:'работает офлайн, прогресс в браузере, без аккаунтов и рекламы',
   vaultConnect:'Подключить vault', vaultSync:'Vault: нажмите для синка', vaultOk:'Vault ✓',
   savedVault:'Сохранено в vault', vaultFail:'Не удалось записать в vault — кликни по бейджу',
   vaultOn:'Vault подключён', fromVault:'Данные обновлены из vault',
@@ -536,15 +547,6 @@ en:{
   k_hypm:'draft mode', k_erase:'erase', k_undo:'undo / redo (⌘Z, ⌘⇧Z)', k_hint:'hint (if enabled)',
   k_auto:'auto-notes (if enabled)', k_pause:'pause', k_nav:'move around the board', k_menu:'menu', k_pick:'digit picker popup',
   gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
-  featT:'What you get',
-  f1T:'Digit popup at the cell', f1D:'double or right click a cell — digits, notes and draft right in place, no trips to the numpad',
-  f2T:'Draft mode', f2D:'test a hypothesis with dashed digits, then commit it to the solution or roll it back in one tap',
-  f3T:'Digit counters', f3D:'every key shows how many of that digit are left — both on the numpad and in the popup',
-  f4T:'Smart highlighting', f4D:'identical digits light up, and so do cells holding the same pencil note',
-  f5T:'Flexible settings', f5D:'instant or final error checking, three-mistake limit, auto-notes, hints — everything toggles on and off',
-  f6T:'Make it yours', f6D:'six themes, board on the left, center or right, English and Russian',
-  f7T:'Keyboard first', f7D:'full keyboard control: digits, arrows, N for notes, H for hint, Space to pause',
-  f8T:'Nothing extra', f8D:'works offline, progress lives in your browser, no accounts and no ads',
   vaultConnect:'Connect vault', vaultSync:'Vault: click to sync', vaultOk:'Vault ✓',
   savedVault:'Saved to vault', vaultFail:'Failed to write to vault — click the badge',
   vaultOn:'Vault connected', fromVault:'Data refreshed from vault',
@@ -552,8 +554,181 @@ en:{
   hasErrors:'Wrong digits: {n}', autoDone:'Candidates filled in', assistNote:'assisted — not recorded',
   delGame:'Delete this game?', restartConfirm:'Restart this puzzle? Board progress will be reset.',
   mist:'errors', hintsSm:'hints',
+  featT:'What you get',
+  f1T:'Digit popup at the cell', f1D:'double or right click a cell — digits, notes and draft right in place',
+  f2T:'Draft mode', f2D:'test a hypothesis with dashed digits, then commit or roll back in one tap',
+  f3T:'Digit counters', f3D:'every key shows how many of that digit are left to place',
+  f4T:'Smart highlighting', f4D:'identical digits light up, and so do cells with the same pencil note',
+  f5T:'Flexible settings', f5D:'instant or final checking, mistake limit, auto-notes, hints — everything toggles',
+  f6T:'Make it yours', f6D:'six themes, board on the left, center or right, several languages',
+  f7T:'Keyboard first', f7D:'full control: digits, arrows, N for notes, H for hint, Space to pause',
+  f8T:'Nothing extra', f8D:'works offline, progress lives in your browser, no accounts and no ads',
+},
+es:{
+  continue:'Continuar', newGame:'Nueva partida', total:'Total',
+  d_easy:'Fácil', d_medium:'Medio', d_hard:'Difícil', d_expert:'Experto',
+  solvedL:'resueltos', cleanL:'perfectos', playtimeL:'tiempo jugado', notPlayed:'sin jugar',
+  record:'récord', solvedN:'resueltos',
+  menuBack:'‹ Menú', errorsL:'Errores', pauseT:'Pausa', resume:'Continuar', restart:'Reiniciar puzle',
+  undo:'Deshacer', redo:'Rehacer', erase:'Borrar', notes:'Notas', hyp:'Borrador', auto:'Auto', hint:'Pista',
+  winT:'¡Resuelto!', newRecord:'✦ Nuevo récord del nivel', recordL:'récord', mistakesL:'errores', hintsL:'pistas',
+  menuBtn:'Menú', again:'Otra más', clean:'partida perfecta ✦',
+  loseT:'Tres errores', loseText:'Límite de errores alcanzado. Continúa sin límite o reinicia el puzle.',
+  contNoLimit:'Continuar sin límite',
+  stats:'Estadísticas', level:'Nivel', avgL:'Media', histT:'Victorias recientes', none:'nada aún',
+  dataAt:'Datos a', close:'Cerrar',
+  settings:'Ajustes', tabView:'Vista', tabGame:'Juego', tabKeys:'Teclas',
+  themeT:'Tema', posT:'Posición del tablero', posLeft:'Izquierda', posCenter:'Centro', posRight:'Derecha', langT:'Idioma',
+  instantT:'Comprobación instantánea', instantD:'los dígitos erróneos se marcan en rojo al instante; desactivado — se comprueba al llenar el tablero. Para partidas nuevas',
+  limitT:'Límite — 3 errores', limitD:'tras el tercer error — pausa con opción: sin límite o reiniciar (solo comprobación instantánea)',
+  pickerT:'Ventana de dígitos', pickerD:'doble clic o clic derecho en una celda abre la ventana de dígitos',
+  sameT:'Resaltar números iguales', sameD:'al seleccionar una celda se resaltan los mismos dígitos y notas',
+  countsT:'Contador de restantes', countsD:'un número pequeño en las teclas — cuántos quedan',
+  hintBtnT:'Botón «Pista»', hintBtnD:'mostrar en la barra de control (tecla H)',
+  autoBtnT:'Botón «Auto-notas»', autoBtnD:'mostrar en la barra de control (tecla A)',
+  reset:'Restablecer estadísticas', resetConfirm:'¿Borrar todo el registro de partidas resueltas?',
+  resetDone:'Estadísticas restablecidas', done:'Listo',
+  k_digit:'introducir dígito', k_note:'nota en la celda', k_hyp1:'borrador en la celda', k_notes:'modo notas (o Espacio)',
+  k_hypm:'modo borrador', k_erase:'borrar', k_undo:'deshacer / rehacer (⌘Z, ⌘⇧Z)', k_hint:'pista (si está activada)',
+  k_auto:'auto-notas (si están activadas)', k_pause:'pausa', k_nav:'moverse por el tablero', k_menu:'menú', k_pick:'ventana de dígitos',
+  gen:'Generando tablero…', digitTab:'Dígito', noteTab:'Nota', hypTab:'Borrador', eraseP:'Borrar',
+  hasErrors:'Dígitos erróneos: {n}', autoDone:'Candidatos rellenados', assistNote:'con ayuda — no se registra',
+  delGame:'¿Eliminar esta partida?', restartConfirm:'¿Reiniciar este puzle? El progreso se perderá.',
+  mist:'errores', hintsSm:'pistas',
+  featT:'Qué ofrece',
+  f1T:'Ventana junto a la celda', f1D:'doble clic o clic derecho — dígitos, notas y borrador en el sitio',
+  f2T:'Modo borrador', f2D:'prueba una hipótesis con dígitos punteados, luego confírmala o deshazla',
+  f3T:'Contadores de dígitos', f3D:'cada tecla muestra cuántos dígitos quedan por colocar',
+  f4T:'Resaltado inteligente', f4D:'se iluminan los dígitos iguales y las celdas con la misma nota',
+  f5T:'Ajustes flexibles', f5D:'comprobación instantánea o final, límite de errores, auto-notas, pistas',
+  f6T:'A tu gusto', f6D:'seis temas, tablero a la izquierda, centro o derecha, varios idiomas',
+  f7T:'Teclado', f7D:'control total: dígitos, flechas, N — notas, H — pista, espacio — pausa',
+  f8T:'Sin extras', f8D:'funciona sin conexión, progreso en tu navegador, sin cuentas ni anuncios',
+},
+de:{
+  continue:'Fortsetzen', newGame:'Neues Spiel', total:'Gesamt',
+  d_easy:'Leicht', d_medium:'Mittel', d_hard:'Schwer', d_expert:'Experte',
+  solvedL:'gelöst', cleanL:'fehlerfrei', playtimeL:'Spielzeit', notPlayed:'nicht gespielt',
+  record:'Rekord', solvedN:'gelöst',
+  menuBack:'‹ Menü', errorsL:'Fehler', pauseT:'Pause', resume:'Weiter', restart:'Rätsel neu starten',
+  undo:'Rückgängig', redo:'Wiederholen', erase:'Löschen', notes:'Notizen', hyp:'Entwurf', auto:'Auto', hint:'Tipp',
+  winT:'Gelöst!', newRecord:'✦ Neuer Levelrekord', recordL:'Rekord', mistakesL:'Fehler', hintsL:'Tipps',
+  menuBtn:'Menü', again:'Noch eins', clean:'fehlerfreies Spiel ✦',
+  loseT:'Drei Fehler', loseText:'Fehlerlimit erreicht. Ohne Limit weiterspielen oder neu starten.',
+  contNoLimit:'Ohne Limit weiter',
+  stats:'Statistik', level:'Stufe', avgL:'Durchschnitt', histT:'Letzte Siege', none:'noch nichts',
+  dataAt:'Stand', close:'Schließen',
+  settings:'Einstellungen', tabView:'Ansicht', tabGame:'Spiel', tabKeys:'Tasten',
+  themeT:'Design', posT:'Position des Felds', posLeft:'Links', posCenter:'Mitte', posRight:'Rechts', langT:'Sprache',
+  instantT:'Sofortige Fehlerprüfung', instantD:'falsche Ziffern werden sofort rot; aus — Prüfung erst bei vollem Feld. Gilt für neue Spiele',
+  limitT:'Limit — 3 Fehler', limitD:'nach dem dritten Fehler — Pause mit Wahl: ohne Limit oder neu starten (nur bei Sofortprüfung)',
+  pickerT:'Ziffern-Popup', pickerD:'Doppel- oder Rechtsklick auf eine Zelle öffnet das Ziffernfenster',
+  sameT:'Gleiche Zahlen hervorheben', sameD:'beim Auswählen einer Zelle werden gleiche Ziffern und Notizen markiert',
+  countsT:'Zähler der Restziffern', countsD:'kleine Zahl auf den Tasten — wie viele noch fehlen',
+  hintBtnT:'„Tipp“-Taste', hintBtnD:'in der Steuerleiste anzeigen (Taste H)',
+  autoBtnT:'„Auto-Notizen“-Taste', autoBtnD:'in der Steuerleiste anzeigen (Taste A)',
+  reset:'Statistik zurücksetzen', resetConfirm:'Gesamtes Protokoll gelöster Spiele löschen?',
+  resetDone:'Statistik zurückgesetzt', done:'Fertig',
+  k_digit:'Ziffer eingeben', k_note:'Notiz in die Zelle', k_hyp1:'Entwurf in die Zelle', k_notes:'Notizmodus (oder Leertaste)',
+  k_hypm:'Entwurfsmodus', k_erase:'löschen', k_undo:'rückgängig / wiederholen (⌘Z, ⌘⇧Z)', k_hint:'Tipp (falls aktiviert)',
+  k_auto:'Auto-Notizen (falls aktiviert)', k_pause:'Pause', k_nav:'über das Feld bewegen', k_menu:'Menü', k_pick:'Ziffern-Popup',
+  gen:'Feld wird erzeugt…', digitTab:'Ziffer', noteTab:'Notiz', hypTab:'Entwurf', eraseP:'Löschen',
+  hasErrors:'Falsche Ziffern: {n}', autoDone:'Kandidaten eingetragen', assistNote:'mit Hilfe — wird nicht gewertet',
+  delGame:'Dieses Spiel löschen?', restartConfirm:'Rätsel neu starten? Der Fortschritt geht verloren.',
+  mist:'Fehler', hintsSm:'Tipps',
+  featT:'Was es bietet',
+  f1T:'Popup an der Zelle', f1D:'Doppel- oder Rechtsklick — Ziffern, Notizen und Entwurf direkt vor Ort',
+  f2T:'Entwurfsmodus', f2D:'Hypothese mit gestrichelten Ziffern testen, dann übernehmen oder verwerfen',
+  f3T:'Ziffernzähler', f3D:'jede Taste zeigt, wie viele dieser Ziffern noch fehlen',
+  f4T:'Kluge Hervorhebung', f4D:'gleiche Ziffern und Zellen mit derselben Notiz leuchten auf',
+  f5T:'Flexible Einstellungen', f5D:'sofortige oder finale Prüfung, Fehlerlimit, Auto-Notizen, Tipps',
+  f6T:'Dein Stil', f6D:'sechs Designs, Feld links, mittig oder rechts, mehrere Sprachen',
+  f7T:'Tastatur', f7D:'volle Steuerung: Ziffern, Pfeile, N — Notizen, H — Tipp, Leertaste — Pause',
+  f8T:'Nichts Überflüssiges', f8D:'funktioniert offline, Fortschritt im Browser, keine Konten, keine Werbung',
+},
+fr:{
+  continue:'Continuer', newGame:'Nouvelle partie', total:'Total',
+  d_easy:'Facile', d_medium:'Moyen', d_hard:'Difficile', d_expert:'Expert',
+  solvedL:'résolues', cleanL:'parfaites', playtimeL:'temps de jeu', notPlayed:'pas joué',
+  record:'record', solvedN:'résolues',
+  menuBack:'‹ Menu', errorsL:'Erreurs', pauseT:'Pause', resume:'Reprendre', restart:'Recommencer la grille',
+  undo:'Annuler', redo:'Rétablir', erase:'Effacer', notes:'Notes', hyp:'Brouillon', auto:'Auto', hint:'Indice',
+  winT:'Résolu !', newRecord:'✦ Nouveau record du niveau', recordL:'record', mistakesL:'erreurs', hintsL:'indices',
+  menuBtn:'Menu', again:'Encore une', clean:'partie parfaite ✦',
+  loseT:'Trois erreurs', loseText:'Limite d’erreurs atteinte. Continuez sans limite ou recommencez la grille.',
+  contNoLimit:'Continuer sans limite',
+  stats:'Statistiques', level:'Niveau', avgL:'Moyenne', histT:'Victoires récentes', none:'rien pour l’instant',
+  dataAt:'Données au', close:'Fermer',
+  settings:'Réglages', tabView:'Affichage', tabGame:'Jeu', tabKeys:'Touches',
+  themeT:'Thème', posT:'Position de la grille', posLeft:'Gauche', posCenter:'Centre', posRight:'Droite', langT:'Langue',
+  instantT:'Vérification instantanée', instantD:'les chiffres faux passent en rouge aussitôt ; désactivé — vérification quand la grille est pleine. Pour les nouvelles parties',
+  limitT:'Limite — 3 erreurs', limitD:'après la troisième erreur — pause avec choix : sans limite ou recommencer (vérification instantanée uniquement)',
+  pickerT:'Fenêtre de chiffres', pickerD:'double clic ou clic droit sur une case ouvre la fenêtre de chiffres',
+  sameT:'Surligner les chiffres identiques', sameD:'sélectionner une case met en évidence les mêmes chiffres et notes',
+  countsT:'Compteur de chiffres restants', countsD:'un petit nombre sur les touches — combien il en reste',
+  hintBtnT:'Bouton « Indice »', hintBtnD:'afficher dans la barre de contrôle (touche H)',
+  autoBtnT:'Bouton « Auto-notes »', autoBtnD:'afficher dans la barre de contrôle (touche A)',
+  reset:'Réinitialiser les statistiques', resetConfirm:'Effacer tout l’historique des parties résolues ?',
+  resetDone:'Statistiques réinitialisées', done:'Terminé',
+  k_digit:'saisir un chiffre', k_note:'note dans la case', k_hyp1:'brouillon dans la case', k_notes:'mode notes (ou Espace)',
+  k_hypm:'mode brouillon', k_erase:'effacer', k_undo:'annuler / rétablir (⌘Z, ⌘⇧Z)', k_hint:'indice (si activé)',
+  k_auto:'auto-notes (si activées)', k_pause:'pause', k_nav:'se déplacer sur la grille', k_menu:'menu', k_pick:'fenêtre de chiffres',
+  gen:'Génération de la grille…', digitTab:'Chiffre', noteTab:'Note', hypTab:'Brouillon', eraseP:'Effacer',
+  hasErrors:'Chiffres faux : {n}', autoDone:'Candidats remplis', assistNote:'avec aide — non comptée',
+  delGame:'Supprimer cette partie ?', restartConfirm:'Recommencer cette grille ? La progression sera perdue.',
+  mist:'erreurs', hintsSm:'indices',
+  featT:'Ce que ça offre',
+  f1T:'Fenêtre près de la case', f1D:'double clic ou clic droit — chiffres, notes et brouillon sur place',
+  f2T:'Mode brouillon', f2D:'testez une hypothèse en pointillés, puis validez ou annulez d’un geste',
+  f3T:'Compteurs de chiffres', f3D:'chaque touche montre combien de ce chiffre il reste à placer',
+  f4T:'Surlignage intelligent', f4D:'les chiffres identiques et les cases portant la même note s’illuminent',
+  f5T:'Réglages flexibles', f5D:'vérification instantanée ou finale, limite d’erreurs, auto-notes, indices',
+  f6T:'À votre goût', f6D:'six thèmes, grille à gauche, au centre ou à droite, plusieurs langues',
+  f7T:'Clavier', f7D:'contrôle total : chiffres, flèches, N — notes, H — indice, espace — pause',
+  f8T:'Rien de superflu', f8D:'fonctionne hors ligne, progression dans le navigateur, sans compte ni pub',
+},
+zh:{
+  continue:'继续', newGame:'新游戏', total:'总计',
+  d_easy:'简单', d_medium:'中等', d_hard:'困难', d_expert:'专家',
+  solvedL:'已解决', cleanL:'零失误', playtimeL:'游戏时长', notPlayed:'未玩过',
+  record:'纪录', solvedN:'已解决',
+  menuBack:'‹ 菜单', errorsL:'错误', pauseT:'已暂停', resume:'继续', restart:'重新开始',
+  undo:'撤销', redo:'重做', erase:'擦除', notes:'笔记', hyp:'草稿', auto:'自动', hint:'提示',
+  winT:'完成！', newRecord:'✦ 新纪录', recordL:'纪录', mistakesL:'错误', hintsL:'提示',
+  menuBtn:'菜单', again:'再来一局', clean:'零失误 ✦',
+  loseT:'三次错误', loseText:'已达错误上限。可以无限制继续，或重新开始本局。',
+  contNoLimit:'无限制继续',
+  stats:'统计', level:'难度', avgL:'平均', histT:'最近胜局', none:'暂无',
+  dataAt:'数据截至', close:'关闭',
+  settings:'设置', tabView:'外观', tabGame:'游戏', tabKeys:'按键',
+  themeT:'主题', posT:'棋盘位置', posLeft:'居左', posCenter:'居中', posRight:'居右', langT:'语言',
+  instantT:'即时检查错误', instantD:'错误数字立即变红；关闭后在棋盘填满时检查。对新游戏生效',
+  limitT:'限制 — 3 次错误', limitD:'第三次错误后暂停并选择：无限制继续或重新开始（仅即时检查模式）',
+  pickerT:'数字选择弹窗', pickerD:'双击或右键单元格打开数字弹窗',
+  sameT:'高亮相同数字', sameD:'选中单元格时高亮相同的数字和笔记',
+  countsT:'剩余数字计数', countsD:'数字键上的小数字 — 还剩多少个',
+  hintBtnT:'“提示”按钮', hintBtnD:'显示在控制栏（按键 H）',
+  autoBtnT:'“自动笔记”按钮', autoBtnD:'显示在控制栏（按键 A）',
+  reset:'重置统计', resetConfirm:'清空全部已解决记录？',
+  resetDone:'统计已重置', done:'完成',
+  k_digit:'输入数字', k_note:'填入笔记', k_hyp1:'填入草稿', k_notes:'笔记模式（或空格）',
+  k_hypm:'草稿模式', k_erase:'擦除', k_undo:'撤销 / 重做 (⌘Z, ⌘⇧Z)', k_hint:'提示（若开启）',
+  k_auto:'自动笔记（若开启）', k_pause:'暂停', k_nav:'在棋盘上移动', k_menu:'菜单', k_pick:'数字弹窗',
+  gen:'正在生成棋盘…', digitTab:'数字', noteTab:'笔记', hypTab:'草稿', eraseP:'擦除',
+  hasErrors:'错误数字：{n}', autoDone:'候选数已填入', assistNote:'使用辅助 — 不计入统计',
+  delGame:'删除这局？', restartConfirm:'重新开始本局？进度将被清除。',
+  mist:'错误', hintsSm:'提示',
+  featT:'特色功能',
+  f1T:'单元格旁的弹窗', f1D:'双击或右键单元格 — 数字、笔记、草稿就地输入',
+  f2T:'草稿模式', f2D:'用虚线数字验证假设，然后一键采纳或撤销',
+  f3T:'数字计数', f3D:'每个按键显示该数字还剩几个',
+  f4T:'智能高亮', f4D:'相同数字与相同笔记的单元格一同高亮',
+  f5T:'灵活设置', f5D:'即时或最终检错、错误限制、自动笔记、提示 — 均可开关',
+  f6T:'个性外观', f6D:'六种主题，棋盘位置可调，多语言界面',
+  f7T:'键盘操作', f7D:'全键盘控制:数字、方向键、N 笔记、H 提示、空格暂停',
+  f8T:'纯粹体验', f8D:'离线可用，进度存于浏览器，无账号无广告',
 }};
-function t(k){ return (I18N[SES.settings.lang]||I18N.ru)[k] || I18N.ru[k] || k; }
+function t(k){ const d=I18N[SES.settings.lang]||I18N.en; return d[k] || I18N.en[k] || I18N.ru[k] || k; }
 function applyLang(){
   document.documentElement.lang = SES.settings.lang;
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
@@ -572,7 +747,11 @@ const THEMES = [
   {id:'amethyst', name:'Аметист', bg:'#1c1730', accent:'#a78bfa', meta:'#141021'},
   {id:'paper',    name:'Бумага',  bg:'#fdfcf8', accent:'#4a67d6', meta:'#f4f1ea'},
 ];
-const DEF_SETTINGS = {theme:'steel', pos:'center', lang:'ru', instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
+const SYS_LANG=(()=>{ try{
+  const langs=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];
+  for(const l of langs){ const p=String(l).slice(0,2).toLowerCase(); if(I18N[p]) return p; }
+}catch(e){} return 'en'; })();
+const DEF_SETTINGS = {theme:'steel', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
 /* LOG — зеркало файла Журнал.md; дополняется ТОЛЬКО через pending (очередь побед) */
 let LOG = { games:[], updated:0 };
 let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
