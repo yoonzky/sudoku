@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="graphite">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#141517" id="metaTheme">
+<title>Sudoku</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%231c1e21' stroke='%23c9b280' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%23c9b280' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+:root, html[data-theme="graphite"]{
+  --bg:#141517; --panel:#1c1e21; --panel2:#24262a; --line:#2e3136; --line-strong:#4a4e55;
+  --text:#e8e8e6; --muted:#8b8f96; --accent:#c9b280; --accent-text:#141517; --accent-soft:rgba(201,178,128,.20);
+  --accent2:#8fb6c9; --accent2-soft:rgba(143,182,201,.20);
+  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#9aa0a8; --given:#e8e8e6; --user:#c9b280;
+  --cell-sel:#3a3e33; --cell-hl:#222428; --cell-same:#33362c; --shadow:0 10px 34px rgba(0,0,0,.45);
+}
+html[data-theme="steel"]{
+  --bg:#12151a; --panel:#191e25; --panel2:#212730; --line:#2a323d; --line-strong:#46525f;
+  --text:#e4e9ee; --muted:#87929f; --accent:#4c9be6; --accent-text:#0b1016; --accent-soft:rgba(76,155,230,.20);
+  --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.20);
+  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#93a0ad; --given:#e4e9ee; --user:#4c9be6;
+  --cell-sel:#2c4763; --cell-hl:#20262f; --cell-same:#2c3a4e; --shadow:0 10px 34px rgba(0,0,0,.5);
+}
+html[data-theme="midnight"]{
+  --bg:#0e1320; --panel:#161d2e; --panel2:#1d2740; --line:#26314c; --line-strong:#3e4d73;
+  --text:#dfe6f5; --muted:#7c88a5; --accent:#7aa2f7; --accent-text:#0e1320; --accent-soft:rgba(122,162,247,.20);
+  --accent2:#f0c674; --accent2-soft:rgba(240,198,116,.20);
+  --error:#f7768e; --error-soft:rgba(247,118,142,.14); --note:#8a94ad; --given:#dfe6f5; --user:#7aa2f7;
+  --cell-sel:#26335a; --cell-hl:#182238; --cell-same:#223055; --shadow:0 10px 34px rgba(0,0,0,.5);
+}
+html[data-theme="emerald"]{
+  --bg:#0e1512; --panel:#151f1a; --panel2:#1c2a23; --line:#25352c; --line-strong:#3c5647;
+  --text:#e2ece6; --muted:#7f948a; --accent:#6fbf8f; --accent-text:#0e1512; --accent-soft:rgba(111,191,143,.20);
+  --accent2:#c9a06f; --accent2-soft:rgba(201,160,111,.20);
+  --error:#e0716c; --error-soft:rgba(224,113,108,.14); --note:#8aa094; --given:#e2ece6; --user:#6fbf8f;
+  --cell-sel:#1f3a2c; --cell-hl:#16241d; --cell-same:#1c3628; --shadow:0 10px 34px rgba(0,0,0,.5);
+}
+html[data-theme="amethyst"]{
+  --bg:#141021; --panel:#1c1730; --panel2:#251e40; --line:#302a4d; --line-strong:#4d4477;
+  --text:#e9e4f5; --muted:#948ba9; --accent:#a78bfa; --accent-text:#141021; --accent-soft:rgba(167,139,250,.20);
+  --accent2:#e8b07f; --accent2-soft:rgba(232,176,127,.20);
+  --error:#f0708a; --error-soft:rgba(240,112,138,.14); --note:#9a90b3; --given:#e9e4f5; --user:#a78bfa;
+  --cell-sel:#332a5c; --cell-hl:#1f1838; --cell-same:#2d2652; --shadow:0 10px 34px rgba(0,0,0,.5);
+}
+html[data-theme="paper"]{
+  --bg:#f4f1ea; --panel:#fdfcf8; --panel2:#efece3; --line:#ddd8cb; --line-strong:#b4ad9c;
+  --text:#28251f; --muted:#8a8577; --accent:#4a67d6; --accent-text:#ffffff; --accent-soft:rgba(74,103,214,.15);
+  --accent2:#b3591f; --accent2-soft:rgba(179,89,31,.14);
+  --error:#c94f57; --error-soft:rgba(201,79,87,.12); --note:#8a8577; --given:#28251f; --user:#4a67d6;
+  --cell-sel:#dde3f8; --cell-hl:#eeebe0; --cell-same:#e2e7f6; --shadow:0 10px 30px rgba(90,80,60,.18);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0; background:var(--bg); color:var(--text);
+  font-family:'Manrope',-apple-system,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  transition:background .25s,color .25s}
+body.pos-left{align-items:flex-start}
+body.pos-right{align-items:flex-end}
+button{font-family:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
+header{width:100%; max-width:540px; display:flex; align-items:center; gap:8px; padding:16px 18px 8px}
+header h1{font-size:19px; font-weight:800; letter-spacing:.14em; margin:0; flex:1}
+.badge{font-size:11px; font-weight:600; padding:5px 11px; border-radius:20px; border:1px solid var(--line-strong);
+  color:var(--muted); background:transparent; cursor:pointer; transition:color .15s,border-color .15s}
+.badge:hover{color:var(--text)}
+.badge.ok{color:var(--accent); border-color:var(--accent)}
+.iconbtn{background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer;
+  color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
+.iconbtn:hover{color:var(--text); background:var(--panel)}
+.iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+main{width:100%; max-width:540px; padding:6px 18px 26px; flex:1}
+.hidden{display:none !important}
+/* ---------- главный экран ---------- */
+.card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
+.card h2{margin:0 0 4px; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
+.cont-row{display:flex; gap:8px; margin-top:10px}
+.cont-open{flex:1; display:flex; justify-content:space-between; align-items:center;
+  background:var(--panel2); border:1px solid var(--accent); border-radius:14px;
+  padding:13px 16px; cursor:pointer; font-size:14px; font-weight:600; transition:transform .1s}
+.cont-open:active{transform:scale(.985)}
+.cont-open small{color:var(--muted); font-weight:500}
+.cont-del{flex:none; width:44px; border-radius:14px; border:1px solid var(--line); background:var(--panel2);
+  color:var(--muted); cursor:pointer; font-size:15px}
+.cont-del:hover{color:var(--error); border-color:var(--error)}
+.diff-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+.diff-btn{background:var(--panel2); border:1px solid var(--line); border-radius:14px;
+  padding:15px 14px; cursor:pointer; text-align:left; transition:border-color .15s, transform .1s}
+.diff-btn:hover{border-color:var(--accent)}
+.diff-btn:active{transform:scale(.97)}
+.diff-btn b{display:block; font-size:15px; font-weight:700}
+.diff-btn span{font-size:11px; color:var(--muted); font-weight:500}
+.mini-stats{display:flex; gap:22px; margin-top:12px; flex-wrap:wrap}
+.mini-stats div b{display:block; font-size:22px; font-weight:300; font-variant-numeric:tabular-nums}
+.mini-stats div span{font-size:11px; color:var(--muted); font-weight:500}
+/* ---------- верхняя панель игры ---------- */
+.topbar{display:flex; align-items:center; justify-content:space-between; margin:4px 0 12px; font-size:13px; color:var(--muted); gap:6px}
+.topbar .t-item{font-weight:500}
+.topbar .t-item b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+.topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:4px; display:flex; align-items:center; gap:4px}
+.topbar .tbtn:hover{color:var(--text)}
+.topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round}
+/* ---------- поле ---------- */
+.board-wrap{position:relative}
+#board{display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
+  border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
+  user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
+#board.notes-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent); outline-offset:-3px; background:var(--cell-sel)}
+#board.hyp-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent2); outline-offset:-3px; background:var(--cell-sel)}
+.cell{position:relative; display:flex; align-items:center; justify-content:center;
+  border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+  font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
+  color:var(--user); transition:background .1s}
+.cell.given{color:var(--given); font-weight:600}
+.cell.hypv{color:var(--accent2); font-weight:500}
+.cell.br{border-right:2px solid var(--line-strong)}
+.cell.bb{border-bottom:2px solid var(--line-strong)}
+.cell:nth-child(1){border-top-left-radius:10px}
+.cell:nth-child(9){border-top-right-radius:10px}
+.cell:nth-child(73){border-bottom-left-radius:10px}
+.cell:nth-child(81){border-bottom-right-radius:10px}
+.cell.hl{background:var(--cell-hl)}
+.cell.same{background:var(--cell-same)}
+.cell.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--accent)}
+.cell.err{color:var(--error); background:var(--error-soft)}
+.cell.err.sel{background:var(--cell-sel)}
+.cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
+.cell .notes span{font-size:clamp(9px,2.2vw,13px); color:var(--note); display:flex; align-items:center; justify-content:center; font-weight:600}
+.cell .notes span.nhl{color:var(--accent); font-weight:800}
+.cell.pop{animation:pop .2s ease-out}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.cell.uflash{animation:uflash .55s ease-out}
+@keyframes uflash{0%{background:var(--accent-soft)}100%{background:transparent}}
+.cell.wave{animation:wave .5s ease-out both}
+@keyframes wave{0%{transform:scale(1)}45%{transform:scale(1.18); color:var(--accent)}100%{transform:scale(1)}}
+#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:12px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
+#pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
+/* всплывающее окно выбора цифры */
+#picker{position:absolute; z-index:8; background:var(--panel2); border:1px solid var(--line-strong);
+  border-radius:14px; padding:8px; display:grid; grid-template-columns:repeat(3,44px); gap:5px;
+  box-shadow:var(--shadow); animation:mIn .15s ease-out}
+#picker button{width:100%; aspect-ratio:1; border-radius:10px; border:1px solid var(--line);
+  background:var(--panel); font-size:17px; font-weight:500; cursor:pointer; display:flex;
+  align-items:center; justify-content:center; transition:border-color .1s, transform .08s}
+#picker button:hover{border-color:var(--accent)}
+#picker button:active{transform:scale(.9)}
+#picker button.done{opacity:.25; pointer-events:none}
+#picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:13px; font-weight:600}
+#picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; margin-right:6px}
+#picker .pk-mode{grid-column:1/-1; display:flex; gap:4px; margin-bottom:2px}
+#picker .pk-mode button{flex:1; aspect-ratio:auto; height:30px; border-radius:8px; border:1px solid var(--line);
+  background:transparent; color:var(--muted); width:auto; padding:0}
+#picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+#picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+#picker .pk-mode button.on[data-m="hyp"]{background:var(--accent2-soft); border-color:var(--accent2); color:var(--accent2)}
+/* ---------- управление ---------- */
+.controls{display:flex; justify-content:space-between; gap:6px; margin-top:14px}
+.ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  padding:9px 2px; cursor:pointer; color:var(--muted); font-size:10px; font-weight:600;
+  display:flex; flex-direction:column; align-items:center; gap:3px; transition:color .12s,border-color .12s}
+.ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+.ctl:hover{color:var(--text)}
+.ctl:active{transform:scale(.96)}
+.ctl.on{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
+.ctl.on2{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
+.ctl:disabled{opacity:.3; cursor:default; transform:none}
+.numpad{display:grid; grid-template-columns:repeat(9,1fr); gap:6px; margin-top:10px}
+.num{background:var(--panel); border:1px solid var(--line); border-radius:12px; aspect-ratio:.78;
+  cursor:pointer; font-size:clamp(16px,4.5vw,23px); font-weight:300;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+  transition:border-color .12s, transform .08s}
+.num small{font-size:9px; color:var(--muted); font-weight:600}
+.num:hover{border-color:var(--accent)}
+.num:active{transform:scale(.92)}
+.num.done{opacity:.22; pointer-events:none}
+.num.hl{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+/* цвет нумпада по режиму: заметки — акцент, черновик — второй акцент */
+.numpad.mode-note .num{color:var(--accent); border-color:var(--accent-soft); background:var(--accent-soft)}
+.numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
+.numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.22}
+/* ---------- кнопки, модалки ---------- */
+.btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:12px;
+  padding:12px 22px; font-size:14px; font-weight:700; cursor:pointer; transition:transform .1s, filter .15s}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent; color:var(--text); border:1px solid var(--line-strong)}
+.btn.danger{background:transparent; color:var(--error); border:1px solid var(--error)}
+.modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
+  justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
+.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:20px;
+  padding:24px; width:100%; max-width:430px; max-height:86vh; overflow-y:auto; box-shadow:var(--shadow);
+  animation:mIn .22s ease-out}
+@keyframes mIn{from{transform:translateY(14px) scale(.97); opacity:0}to{transform:none; opacity:1}}
+.modal h2{margin:0 0 14px; font-size:18px; font-weight:800}
+.modal h3{margin:18px 0 8px; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
+.modal table{width:100%; border-collapse:collapse; font-size:13px}
+.modal th{text-align:left; color:var(--muted); font-weight:600; padding:6px 4px; border-bottom:1px solid var(--line); font-size:11px}
+.modal td{padding:8px 4px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums}
+.win-big{font-size:44px; font-weight:200; margin:8px 0 2px; font-variant-numeric:tabular-nums}
+.win-sub{color:var(--muted); font-size:13px; margin-bottom:6px; font-weight:500}
+.record{color:var(--accent); font-size:13px; font-weight:700; margin-bottom:8px}
+.win-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px}
+.win-grid div{background:var(--panel2); border-radius:12px; padding:10px 6px}
+.win-grid b{display:block; font-size:17px; font-weight:600; font-variant-numeric:tabular-nums}
+.win-grid span{font-size:10px; color:var(--muted); font-weight:600}
+.hist{font-size:12px; color:var(--muted); margin-top:14px; font-weight:500}
+.hist div{display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--line)}
+.modal .row{display:flex; gap:10px; margin-top:20px; justify-content:flex-end; flex-wrap:wrap}
+/* настройки: вкладки */
+.stabs{display:flex; gap:6px; margin-bottom:14px}
+.stabs button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
+  background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
+.stabs button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+.swatches{display:flex; gap:10px; flex-wrap:wrap}
+.sw{width:64px; border:2px solid var(--line); border-radius:14px; padding:8px 4px 6px; cursor:pointer;
+  background:var(--panel2); display:flex; flex-direction:column; align-items:center; gap:5px; transition:border-color .15s}
+.sw.selq{border-color:var(--accent)}
+.sw i{width:30px; height:30px; border-radius:50%; display:block; border:1px solid rgba(255,255,255,.14); position:relative}
+.sw i::after{content:''; position:absolute; right:1px; bottom:1px; width:13px; height:13px; border-radius:50%; border:1px solid rgba(255,255,255,.12); background:var(--sw-a)}
+.sw span{font-size:10px; font-weight:600; color:var(--muted)}
+.posseg,.langseg{display:flex; gap:8px}
+.posseg button,.langseg button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
+  background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
+.posseg button.on,.langseg button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+.toggle{display:flex; gap:12px; align-items:flex-start; padding:10px 0; cursor:pointer}
+.toggle input{width:18px; height:18px; margin-top:1px; accent-color:var(--accent); cursor:pointer; flex:none}
+.toggle b{display:block; font-size:14px; font-weight:600}
+.toggle span{font-size:12px; color:var(--muted); font-weight:500}
+.keys{display:grid; grid-template-columns:auto 1fr; gap:7px 14px; align-items:center;
+  font-size:12px; color:var(--muted); font-weight:500}
+.keys .kk{display:flex; gap:4px; justify-content:flex-end; white-space:nowrap}
+.keys kbd{background:var(--panel2); border:1px solid var(--line-strong); border-radius:6px; padding:2px 7px;
+  font-family:inherit; font-size:11px; font-weight:700; color:var(--text)}
+/* тост, конфетти, оверлеи */
+#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+  background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
+  padding:10px 18px; border-radius:12px; font-size:13px; font-weight:600; z-index:50;
+  transition:opacity .25s, transform .25s; pointer-events:none; box-shadow:var(--shadow)}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+.confetti{position:fixed; inset:0; pointer-events:none; z-index:40; overflow:hidden}
+.confetti i{position:absolute; top:-14px; width:8px; height:13px; border-radius:2px; opacity:.95;
+  animation:fall 2.8s cubic-bezier(.2,.4,.6,1) forwards}
+@keyframes fall{to{transform:translateY(108vh) rotate(740deg); opacity:.6}}
+#genOverlay{position:fixed; inset:0; background:var(--bg); opacity:.92; z-index:30;
+  display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px; font-weight:600}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>SUDOKU</h1>
+  <button class="iconbtn" id="statsBtn" aria-label="stats">
+    <svg viewBox="0 0 24 24"><path d="M5 20v-7M11 20V5M17 20v-10M3 20h18"/></svg>
+  </button>
+  <button class="iconbtn" id="setBtn" aria-label="settings">
+    <svg viewBox="0 0 24 24"><path d="M4 7h8M17 7h3M4 17h4M12 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg>
+  </button>
+</header>
+<main>
+  <!-- ГЛАВНЫЙ ЭКРАН -->
+  <section id="home">
+    <div class="card" id="continueCard" style="display:none">
+      <h2 data-i18n="continue">Продолжить</h2>
+      <div id="contList"></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="newGame">Новая игра</h2>
+      <div class="diff-grid">
+        <button class="diff-btn" data-diff="easy"><b data-i18n="d_easy">Лёгкий</b><span id="ms-easy"></span></button>
+        <button class="diff-btn" data-diff="medium"><b data-i18n="d_medium">Средний</b><span id="ms-medium"></span></button>
+        <button class="diff-btn" data-diff="hard"><b data-i18n="d_hard">Сложный</b><span id="ms-hard"></span></button>
+        <button class="diff-btn" data-diff="expert"><b data-i18n="d_expert">Эксперт</b><span id="ms-expert"></span></button>
+      </div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="total">Всего</h2>
+      <div class="mini-stats">
+        <div><b id="tot-won">0</b><span data-i18n="solvedL">решено</span></div>
+        <div><b id="tot-perfect">0</b><span data-i18n="cleanL">чистых</span></div>
+        <div><b id="tot-time">—</b><span data-i18n="playtimeL">за игрой</span></div>
+      </div>
+    </div>
+  </section>
+  <!-- ИГРА -->
+  <section id="game" class="hidden">
+    <div class="topbar">
+      <button class="tbtn" id="backBtn"><span data-i18n="menuBack">‹ Меню</span></button>
+      <span class="t-item"><b id="gDiff"></b></span>
+      <span class="t-item" id="gMistWrap"><span data-i18n="errorsL">Ошибки</span>: <b id="gMist">0</b></span>
+      <span class="t-item"><b id="gTimer">0:00</b></span>
+      <button class="tbtn" id="pauseBtn" aria-label="pause">
+        <svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>
+      </button>
+    </div>
+    <div class="board-wrap">
+      <div id="board"></div>
+      <div id="pauseOverlay" class="hidden">
+        <p data-i18n="pauseT">Пауза</p>
+        <button class="btn" id="resumeBtn" data-i18n="resume">Продолжить</button>
+        <button class="btn ghost" id="restartBtn" data-i18n="restart">Начать заново</button>
+      </div>
+      <div id="picker" class="hidden"></div>
+    </div>
+    <div class="controls">
+      <button class="ctl" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a6 6 0 0 1 0 12H11"/></svg><span data-i18n="undo">Отмена</span></button>
+      <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a6 6 0 0 0 0 12H13"/></svg><span data-i18n="redo">Вернуть</span></button>
+      <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="m7 21-4.6-4.6a2 2 0 0 1 0-2.8l9-9a2 2 0 0 1 2.8 0l5.4 5.4a2 2 0 0 1 0 2.8L13 19"/><path d="M22 21H7"/><path d="m5 12 7 7"/></svg><span data-i18n="erase">Стереть</span></button>
+      <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg><span data-i18n="notes">Заметки</span></button>
+      <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24" stroke-dasharray="3 2.4"><rect x="4" y="4" width="16" height="16" rx="3"/></svg><span data-i18n="hyp">Черновик</span></button>
+      <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 3.5 13.8 8.6 19 10.5l-5.2 1.9L12 17.5l-1.8-5.1L5 10.5l5.2-1.9Z"/><path d="m19 16.5.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7Z"/></svg><span data-i18n="auto">Авто</span></button>
+      <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.6.6-1 1.5-1 2.5H9c0-1-.4-1.9-1-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint">Подсказка</span></button>
+    </div>
+    <div class="numpad" id="numpad"></div>
+  </section>
+</main>
+
+<!-- ПОБЕДА -->
+<div class="modal-bg hidden" id="winModal">
+  <div class="modal" style="text-align:center">
+    <h2 data-i18n="winT">Решено!</h2>
+    <div class="win-big" id="winTime"></div>
+    <div class="record hidden" id="winRecord" data-i18n="newRecord">✦ Новый рекорд уровня</div>
+    <div class="win-sub" id="winSub"></div>
+    <div class="win-grid">
+      <div><b id="winBest"></b><span data-i18n="recordL">рекорд</span></div>
+      <div><b id="winMist"></b><span data-i18n="mistakesL">ошибки</span></div>
+      <div><b id="winHints"></b><span data-i18n="hintsL">подсказки</span></div>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="btn ghost" id="winHome" data-i18n="menuBtn">Меню</button>
+      <button class="btn" id="winAgain" data-i18n="again">Ещё одну</button>
+    </div>
+  </div>
+</div>
+
+<!-- ЛИМИТ ОШИБОК -->
+<div class="modal-bg hidden" id="loseModal">
+  <div class="modal" style="text-align:center">
+    <h2 data-i18n="loseT">Три ошибки</h2>
+    <p style="color:var(--muted); font-size:13px; font-weight:500; margin:6px 0 0" data-i18n="loseText">
+      Лимит ошибок исчерпан. Можно продолжить без лимита или начать эту раздачу заново.</p>
+    <div class="row" style="justify-content:center">
+      <button class="btn ghost" id="loseContinue" data-i18n="contNoLimit">Продолжить без лимита</button>
+      <button class="btn" id="loseNew" data-i18n="newGame">Новая игра</button>
+    </div>
+  </div>
+</div>
+
+<!-- СТАТИСТИКА -->
+<div class="modal-bg hidden" id="statsModal">
+  <div class="modal">
+    <h2 data-i18n="stats">Статистика</h2>
+    <table id="statsTable"></table>
+    <div class="hist" id="histList"></div>
+    <div class="row"><button class="btn ghost" id="statsClose" data-i18n="close">Закрыть</button></div>
+  </div>
+</div>
+
+<!-- НАСТРОЙКИ -->
+<div class="modal-bg hidden" id="setModal">
+  <div class="modal">
+    <h2 data-i18n="settings">Настройки</h2>
+    <div class="stabs">
+      <button data-tab="view" class="on" data-i18n="tabView">Вид</button>
+      <button data-tab="game" data-i18n="tabGame">Игра</button>
+      <button data-tab="keys" data-i18n="tabKeys">Клавиши</button>
+    </div>
+    <div class="stab" id="tab-view">
+      <h3 data-i18n="themeT">Тема</h3>
+      <div class="swatches" id="swatches"></div>
+      <h3 data-i18n="posT">Позиция поля</h3>
+      <div class="posseg" id="posseg">
+        <button data-p="left" data-i18n="posLeft">Слева</button>
+        <button data-p="center" data-i18n="posCenter">Центр</button>
+        <button data-p="right" data-i18n="posRight">Справа</button>
+      </div>
+      <h3 data-i18n="langT">Язык</h3>
+      <div class="langseg" id="langseg">
+        <button data-l="ru">Русский</button>
+        <button data-l="en">English</button>
+      </div>
+    </div>
+    <div class="stab hidden" id="tab-game">
+      <label class="toggle"><input type="checkbox" id="optInstant">
+        <div><b data-i18n="instantT">Мгновенная проверка ошибок</b><span data-i18n="instantD">неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии</span></div></label>
+      <label class="toggle"><input type="checkbox" id="optLimit">
+        <div><b data-i18n="limitT">Лимит — 3 ошибки</b><span data-i18n="limitD">после третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)</span></div></label>
+      <label class="toggle"><input type="checkbox" id="optDbl">
+        <div><b data-i18n="pickerT">Окно выбора цифры</b><span data-i18n="pickerD">двойной или правый клик по клетке открывает окно с цифрами</span></div></label>
+      <label class="toggle"><input type="checkbox" id="optSame">
+        <div><b data-i18n="sameT">Подсветка одинаковых чисел</b><span data-i18n="sameD">при выборе клетки подсвечиваются такие же цифры и заметки</span></div></label>
+      <label class="toggle"><input type="checkbox" id="optCounts">
+        <div><b data-i18n="countsT">Счётчик оставшихся чисел</b><span data-i18n="countsD">маленькая цифра на кнопках нумпада — сколько ещё осталось</span></div></label>
+      <label class="toggle"><input type="checkbox" id="optHintBtn">
+        <div><b data-i18n="hintBtnT">Кнопка «Подсказка»</b><span data-i18n="hintBtnD">показывать в панели управления (клавиша H)</span></div></label>
+      <label class="toggle"><input type="checkbox" id="optAutoBtn">
+        <div><b data-i18n="autoBtnT">Кнопка «Авто-заметки»</b><span data-i18n="autoBtnD">показывать в панели управления (клавиша A)</span></div></label>
+    </div>
+    <div class="stab hidden" id="tab-keys">
+      <div class="keys">
+        <span class="kk"><kbd>1–9</kbd></span><span data-i18n="k_digit">ввод цифры</span>
+        <span class="kk"><kbd>Shift</kbd><kbd>1–9</kbd></span><span data-i18n="k_note">заметка в клетку</span>
+        <span class="kk"><kbd>Alt</kbd><kbd>1–9</kbd></span><span data-i18n="k_hyp1">проба в клетку</span>
+        <span class="kk"><kbd>N</kbd></span><span data-i18n="k_notes">режим заметок (и Пробел)</span>
+        <span class="kk"><kbd>D</kbd></span><span data-i18n="k_hypm">режим черновика</span>
+        <span class="kk"><kbd>⌫</kbd></span><span data-i18n="k_erase">стереть</span>
+        <span class="kk"><kbd>Z</kbd><kbd>Y</kbd></span><span data-i18n="k_undo">отмена / вернуть (⌘Z, ⌘⇧Z)</span>
+        <span class="kk"><kbd>H</kbd></span><span data-i18n="k_hint">подсказка (если включена)</span>
+        <span class="kk"><kbd>A</kbd></span><span data-i18n="k_auto">авто-заметки (если включены)</span>
+        <span class="kk"><kbd>P</kbd></span><span data-i18n="k_pause">пауза</span>
+        <span class="kk"><kbd>←↑↓→</kbd></span><span data-i18n="k_nav">навигация по полю</span>
+        <span class="kk"><kbd>Esc</kbd></span><span data-i18n="k_menu">меню</span>
+        <span class="kk"><kbd>2×клик</kbd><kbd>ПКМ</kbd></span><span data-i18n="k_pick">окно выбора цифры</span>
+      </div>
+      <div class="row" style="justify-content:flex-start; margin-top:16px">
+        <button class="btn danger" id="resetStats" data-i18n="reset">Сбросить статистику</button>
+      </div>
+    </div>
+    <div class="row"><button class="btn" id="setClose" data-i18n="done">Готово</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="genOverlay" class="hidden" data-i18n="gen">Генерация поля…</div>
+
+<script>
+'use strict';
+/* ============================================================================
+   SUDOKU — офлайн-игра, все данные хранятся в localStorage браузера.
+   ============================================================================ */
+
+/* ================= i18n ================= */
+const I18N = {
+ru:{
+  continue:'Продолжить', newGame:'Новая игра', total:'Всего',
+  d_easy:'Лёгкий', d_medium:'Средний', d_hard:'Сложный', d_expert:'Эксперт',
+  solvedL:'решено', cleanL:'чистых', playtimeL:'за игрой', notPlayed:'не играл',
+  record:'рекорд', solvedN:'решено',
+  menuBack:'‹ Меню', errorsL:'Ошибки', pauseT:'Пауза', resume:'Продолжить', restart:'Начать заново',
+  undo:'Отмена', redo:'Вернуть', erase:'Стереть', notes:'Заметки', hyp:'Черновик', auto:'Авто', hint:'Подсказка',
+  winT:'Решено!', newRecord:'✦ Новый рекорд уровня', recordL:'рекорд', mistakesL:'ошибки', hintsL:'подсказки',
+  menuBtn:'Меню', again:'Ещё одну', clean:'чистая партия ✦',
+  loseT:'Три ошибки', loseText:'Лимит ошибок исчерпан. Можно продолжить без лимита или начать эту раздачу заново.',
+  contNoLimit:'Продолжить без лимита',
+  stats:'Статистика', level:'Уровень', avgL:'Среднее', histT:'Последние победы', none:'пока нет',
+  dataAt:'Состояние данных', close:'Закрыть',
+  settings:'Настройки', tabView:'Вид', tabGame:'Игра', tabKeys:'Клавиши',
+  themeT:'Тема', posT:'Позиция поля', posLeft:'Слева', posCenter:'Центр', posRight:'Справа', langT:'Язык',
+  instantT:'Мгновенная проверка ошибок', instantD:'неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии',
+  limitT:'Лимит — 3 ошибки', limitD:'после третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)',
+  pickerT:'Окно выбора цифры', pickerD:'двойной или правый клик по клетке открывает окно с цифрами',
+  sameT:'Подсветка одинаковых чисел', sameD:'при выборе клетки подсвечиваются такие же цифры и заметки',
+  countsT:'Счётчик оставшихся чисел', countsD:'маленькая цифра на кнопках нумпада — сколько ещё осталось',
+  hintBtnT:'Кнопка «Подсказка»', hintBtnD:'показывать в панели управления (клавиша H)',
+  autoBtnT:'Кнопка «Авто-заметки»', autoBtnD:'показывать в панели управления (клавиша A)',
+  reset:'Сбросить статистику', resetConfirm:'Сбросить весь журнал решённых партий? Действие затронет все устройства.',
+  resetDone:'Статистика сброшена', resetNeedVault:'Сначала подключи vault — иначе сброс не дойдёт до файла',
+  done:'Готово',
+  k_digit:'ввод цифры', k_note:'заметка в клетку', k_hyp1:'черновик в клетку', k_notes:'режим заметок (и Пробел)',
+  k_hypm:'режим черновика', k_erase:'стереть', k_undo:'отмена / вернуть (⌘Z, ⌘⇧Z)', k_hint:'подсказка (если включена)',
+  k_auto:'авто-заметки (если включены)', k_pause:'пауза', k_nav:'навигация по полю', k_menu:'меню', k_pick:'окно выбора цифры',
+  gen:'Генерация поля…', digitTab:'Цифра', noteTab:'Заметка', hypTab:'Черновик', eraseP:'Стереть',
+  vaultConnect:'Подключить vault', vaultSync:'Vault: нажмите для синка', vaultOk:'Vault ✓',
+  savedVault:'Сохранено в vault', vaultFail:'Не удалось записать в vault — кликни по бейджу',
+  vaultOn:'Vault подключён', fromVault:'Данные обновлены из vault',
+  vaultBrowser:'Этот браузер не умеет писать файлы — нужен Chrome, Edge или Arc',
+  hasErrors:'Неверных цифр: {n}', autoDone:'Кандидаты расставлены', assistNote:'с помощью — не в статистике',
+  delGame:'Удалить эту партию?', restartConfirm:'Начать эту раздачу заново? Прогресс поля будет сброшен.',
+  mist:'ошибок', hintsSm:'подсказок',
+},
+en:{
+  continue:'Continue', newGame:'New game', total:'Overall',
+  d_easy:'Easy', d_medium:'Medium', d_hard:'Hard', d_expert:'Expert',
+  solvedL:'solved', cleanL:'flawless', playtimeL:'time played', notPlayed:'not played',
+  record:'best', solvedN:'solved',
+  menuBack:'‹ Menu', errorsL:'Errors', pauseT:'Paused', resume:'Resume', restart:'Restart puzzle',
+  undo:'Undo', redo:'Redo', erase:'Erase', notes:'Notes', hyp:'Draft', auto:'Auto', hint:'Hint',
+  winT:'Solved!', newRecord:'✦ New level record', recordL:'best', mistakesL:'errors', hintsL:'hints',
+  menuBtn:'Menu', again:'One more', clean:'flawless game ✦',
+  loseT:'Three errors', loseText:'Error limit reached. Continue without the limit or restart this puzzle.',
+  contNoLimit:'Continue without limit',
+  stats:'Statistics', level:'Level', avgL:'Average', histT:'Recent wins', none:'nothing yet',
+  dataAt:'Data as of', close:'Close',
+  settings:'Settings', tabView:'Look', tabGame:'Game', tabKeys:'Keys',
+  themeT:'Theme', posT:'Board position', posLeft:'Left', posCenter:'Center', posRight:'Right', langT:'Language',
+  instantT:'Instant error check', instantD:'wrong digits turn red immediately; off — check runs when the board is full. Applies to new games',
+  limitT:'Limit — 3 errors', limitD:'after the third error — pause with a choice: no limit or restart (instant check only)',
+  pickerT:'Digit picker popup', pickerD:'double or right click on a cell opens the digit popup',
+  sameT:'Highlight matching numbers', sameD:'selecting a cell highlights the same digits and notes',
+  countsT:'Remaining-count on numbers', countsD:'a small number on numpad keys — how many are left',
+  hintBtnT:'“Hint” button', hintBtnD:'show in the control bar (key H)',
+  autoBtnT:'“Auto-notes” button', autoBtnD:'show in the control bar (key A)',
+  reset:'Reset statistics', resetConfirm:'Reset the whole log of solved games? This affects all devices.',
+  resetDone:'Statistics reset', resetNeedVault:'Connect the vault first — otherwise the reset won’t reach the file',
+  done:'Done',
+  k_digit:'enter digit', k_note:'note into cell', k_hyp1:'draft into cell', k_notes:'notes mode (or Space)',
+  k_hypm:'draft mode', k_erase:'erase', k_undo:'undo / redo (⌘Z, ⌘⇧Z)', k_hint:'hint (if enabled)',
+  k_auto:'auto-notes (if enabled)', k_pause:'pause', k_nav:'move around the board', k_menu:'menu', k_pick:'digit picker popup',
+  gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
+  vaultConnect:'Connect vault', vaultSync:'Vault: click to sync', vaultOk:'Vault ✓',
+  savedVault:'Saved to vault', vaultFail:'Failed to write to vault — click the badge',
+  vaultOn:'Vault connected', fromVault:'Data refreshed from vault',
+  vaultBrowser:'This browser can’t write files — use Chrome, Edge or Arc',
+  hasErrors:'Wrong digits: {n}', autoDone:'Candidates filled in', assistNote:'assisted — not recorded',
+  delGame:'Delete this game?', restartConfirm:'Restart this puzzle? Board progress will be reset.',
+  mist:'errors', hintsSm:'hints',
+}};
+function t(k){ return (I18N[SES.settings.lang]||I18N.ru)[k] || I18N.ru[k] || k; }
+function applyLang(){
+  document.documentElement.lang = SES.settings.lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
+  document.querySelectorAll('#langseg button').forEach(b=>b.classList.toggle('on', b.dataset.l===SES.settings.lang));
+}
+
+/* ================= константы / состояние ================= */
+const DIFFS = { easy:{clues:38}, medium:{clues:32}, hard:{clues:27}, expert:{clues:24} };
+const DIFF_KEYS = Object.keys(DIFFS);
+const dName = d => t('d_'+d);
+const THEMES = [
+  {id:'graphite', name:'Графит',  bg:'#1c1e21', accent:'#c9b280', meta:'#141517'},
+  {id:'steel',    name:'Сталь',   bg:'#191e25', accent:'#8ab4d8', meta:'#12151a'},
+  {id:'midnight', name:'Полночь', bg:'#161d2e', accent:'#7aa2f7', meta:'#0e1320'},
+  {id:'emerald',  name:'Изумруд', bg:'#151f1a', accent:'#6fbf8f', meta:'#0e1512'},
+  {id:'amethyst', name:'Аметист', bg:'#1c1730', accent:'#a78bfa', meta:'#141021'},
+  {id:'paper',    name:'Бумага',  bg:'#fdfcf8', accent:'#4a67d6', meta:'#f4f1ea'},
+];
+const DEF_SETTINGS = {theme:'graphite', pos:'center', lang:'ru', instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
+/* LOG — зеркало файла Журнал.md; дополняется ТОЛЬКО через pending (очередь побед) */
+let LOG = { games:[], updated:0 };
+let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
+let pending = [];   // победы, ещё не записанные в файл
+let sel=-1, inputMode='digit', undoStack=[], redoStack=[], timerId=null, lastPlaced=-1, hlDigit=0, lastWinDiff='medium';
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cur = () => SES.games[SES.cur] || null;
+const allGames = () => [...LOG.games, ...pending];
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+/* ================= генератор / решатель ================= */
+const rnd = n => Math.floor(Math.random()*n);
+const shuffle = a => {for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const peersCache=[], rowCells=[], colCells=[], boxCells=[];
+for(let k=0;k<9;k++){rowCells.push([]);colCells.push([]);boxCells.push([])}
+for(let i=0;i<81;i++){
+  const r=(i/9)|0, c=i%9, bx=((r/3)|0)*3+((c/3)|0);
+  rowCells[r].push(i); colCells[c].push(i); boxCells[bx].push(i);
+}
+for(let i=0;i<81;i++){
+  const r=(i/9)|0, c=i%9, bx=((r/3)|0)*3+((c/3)|0), set=new Set([...rowCells[r],...colCells[c],...boxCells[bx]]);
+  set.delete(i); peersCache.push([...set]);
+}
+const UNITS=[...rowCells,...colCells,...boxCells];
+function candMask(b,i){ let m=0b1111111110; for(const p of peersCache[i]) if(b[p]) m&=~(1<<b[p]); return m }
+function bestCell(b){
+  let bi=-1, bn=10, bm=0;
+  for(let i=0;i<81;i++) if(!b[i]){
+    const m=candMask(b,i); let n=0;
+    for(let v=1;v<=9;v++) if(m&(1<<v)) n++;
+    if(n===0) return {i, m:0};
+    if(n<bn){bn=n; bi=i; bm=m; if(n===1) break}
+  }
+  return bi<0 ? null : {i:bi, m:bm};
+}
+function fillBoard(b){
+  const cell=bestCell(b);
+  if(!cell) return true;
+  if(cell.m===0) return false;
+  const vs=shuffle([1,2,3,4,5,6,7,8,9].filter(v=>cell.m&(1<<v)));
+  for(const v of vs){b[cell.i]=v; if(fillBoard(b)) return true; b[cell.i]=0}
+  return false;
+}
+function countSolutions(b,limit){
+  const cell=bestCell(b);
+  if(!cell) return 1;
+  if(cell.m===0) return 0;
+  let n=0;
+  for(let v=1;v<=9;v++) if(cell.m&(1<<v)){
+    b[cell.i]=v; n+=countSolutions(b,limit-n); b[cell.i]=0;
+    if(n>=limit) return n;
+  }
+  return n;
+}
+function generateOnce(clues){
+  const b=new Array(81).fill(0);
+  fillBoard(b);
+  const solution=b.slice();
+  const order=shuffle([...Array(81).keys()]);
+  let remaining=81;
+  for(const i of order){
+    if(remaining<=clues) break;
+    const keep=b[i]; b[i]=0;
+    if(countSolutions(b.slice(),2)!==1) b[i]=keep; else remaining--;
+  }
+  return {puzzle:b, solution};
+}
+/* --- оценка сложности «по-человечески»: какие техники нужны для решения ---
+   1 = голые одиночки · 2 = скрытые одиночки · 3 = locked candidates / голые пары ·
+   4 = скрытые пары / X-wing · 5 = логикой не решается (перебор) */
+function gradeSolve(puz){
+  const b=puz.slice(), cand=new Array(81).fill(0);
+  for(let i=0;i<81;i++) cand[i]= b[i]?0:candMask(b,i);
+  let placed=b.filter(v=>v).length, grade=0;
+  const bits=m=>{let n=0;for(let v=1;v<=9;v++) if(m&(1<<v))n++;return n};
+  const place=(i,v)=>{b[i]=v; placed++; cand[i]=0;
+    for(const p of peersCache[i]) if(!b[p]) cand[p]&=~(1<<v);};
+  while(placed<81){
+    let prog=false;
+    for(let i=0;i<81;i++) if(!b[i] && bits(cand[i])===1){          /* голая одиночка */
+      for(let v=1;v<=9;v++) if(cand[i]&(1<<v)){place(i,v);break}
+      grade=Math.max(grade,1); prog=true;
+    }
+    if(prog) continue;
+    for(const unit of UNITS) for(let v=1;v<=9;v++){                 /* скрытая одиночка */
+      let pos=-1,cnt=0;
+      for(const i of unit) if(!b[i]&&(cand[i]&(1<<v))){cnt++;pos=i;if(cnt>1)break}
+      if(cnt===1){ place(pos,v); grade=Math.max(grade,2); prog=true; }
+    }
+    if(prog) continue;
+    for(let bx=0;bx<9;bx++) for(let v=1;v<=9;v++){                  /* locked candidates */
+      const cs=boxCells[bx].filter(i=>!b[i]&&(cand[i]&(1<<v)));
+      if(cs.length<2) continue;
+      const rows=new Set(cs.map(i=>(i/9)|0)), cols=new Set(cs.map(i=>i%9));
+      if(rows.size===1){ const r=[...rows][0];
+        for(const i of rowCells[r]) if(!b[i] && ((i/9|0)*0, !boxCells[bx].includes(i)) && (cand[i]&(1<<v))){cand[i]&=~(1<<v); prog=true;} }
+      if(cols.size===1){ const c=[...cols][0];
+        for(const i of colCells[c]) if(!b[i] && !boxCells[bx].includes(i) && (cand[i]&(1<<v))){cand[i]&=~(1<<v); prog=true;} }
+    }
+    if(prog){ grade=Math.max(grade,3); continue; }
+    for(const unit of UNITS){                                       /* голые пары */
+      const empt=unit.filter(i=>!b[i]);
+      for(let a=0;a<empt.length;a++){
+        if(bits(cand[empt[a]])!==2) continue;
+        for(let c2=a+1;c2<empt.length;c2++) if(cand[empt[c2]]===cand[empt[a]]){
+          for(const i of empt) if(i!==empt[a]&&i!==empt[c2]&&(cand[i]&cand[empt[a]])){cand[i]&=~cand[empt[a]]; prog=true;}
+        }
+      }
+    }
+    if(prog){ grade=Math.max(grade,3); continue; }
+    for(const unit of UNITS){                                       /* скрытые пары */
+      for(let v1=1;v1<=8;v1++) for(let v2=v1+1;v2<=9;v2++){
+        const p1=unit.filter(i=>!b[i]&&(cand[i]&(1<<v1)));
+        const p2=unit.filter(i=>!b[i]&&(cand[i]&(1<<v2)));
+        if(p1.length===2&&p2.length===2&&p1[0]===p2[0]&&p1[1]===p2[1]){
+          const mask=(1<<v1)|(1<<v2);
+          for(const i of p1) if(cand[i]!==(cand[i]&mask)){cand[i]&=mask; prog=true;}
+        }
+      }
+    }
+    if(prog){ grade=Math.max(grade,4); continue; }
+    for(let v=1;v<=9;v++){                                          /* X-wing по строкам и колонкам */
+      for(const [lines,cross] of [[rowCells,colCells],[colCells,rowCells]]){
+        const pos=lines.map(u=>u.filter(i=>!b[i]&&(cand[i]&(1<<v))));
+        for(let l1=0;l1<8;l1++){ if(pos[l1].length!==2) continue;
+          for(let l2=l1+1;l2<9;l2++){ if(pos[l2].length!==2) continue;
+            const c1=pos[l1].map(i=> lines===rowCells? i%9 : (i/9)|0);
+            const c2=pos[l2].map(i=> lines===rowCells? i%9 : (i/9)|0);
+            if(c1[0]===c2[0]&&c1[1]===c2[1]){
+              for(const cc of c1) for(const i of cross[cc])
+                if(!b[i]&&(cand[i]&(1<<v))&&!pos[l1].includes(i)&&!pos[l2].includes(i)){cand[i]&=~(1<<v); prog=true;}
+            }
+          }
+        }
+      }
+    }
+    if(prog){ grade=Math.max(grade,4); continue; }
+    return {solved:false, grade:5};
+  }
+  return {solved:true, grade};
+}
+/* generate: подбираем раздачу под «человеческий» диапазон техник уровня */
+const GRADE_BAND = { easy:[1,2], medium:[2,3], hard:[3,4], expert:[4,4] };
+function generate(diff){
+  const clues=DIFFS[diff].clues, [lo,hi]=GRADE_BAND[diff];
+  const t0=Date.now();
+  let best=null, bestScore=-1;
+  for(let k=0;k<60 && Date.now()-t0<2600;k++){
+    const g=generateOnce(clues);
+    const gr=gradeSolve(g.puzzle);
+    if(gr.solved && gr.grade>=lo && gr.grade<=hi) return g;
+    /* запасной вариант: решаемая логикой раздача, ближе всего к диапазону */
+    if(gr.solved){
+      const score = 10 - Math.min(Math.abs(gr.grade-lo), Math.abs(gr.grade-hi));
+      if(score>bestScore){ bestScore=score; best=g; }
+    }
+  }
+  return best || generateOnce(clues);
+}
+
+/* ================= локальный кэш ================= */
+const LS_LOG='sudoku-log', LS_SES='sudoku-ses', LS_PEND='sudoku-pending';
+function persistCache(){
+  SES.updated=Date.now();
+  try{
+    localStorage.setItem(LS_LOG, JSON.stringify(LOG));
+    localStorage.setItem(LS_SES, JSON.stringify(SES));
+    localStorage.setItem(LS_PEND, JSON.stringify(pending));
+  }catch(e){}
+  scheduleSaveSes();
+}
+function loadCache(){
+  try{ const l=JSON.parse(localStorage.getItem(LS_LOG)); if(l&&Array.isArray(l.games)) LOG=l; }catch(e){}
+  try{ const s=JSON.parse(localStorage.getItem(LS_SES)); if(s&&s.settings){ SES=s;
+    SES.settings=Object.assign({...DEF_SETTINGS}, s.settings); if(!Array.isArray(SES.games)) SES.games=[]; } }catch(e){}
+  try{ const p=JSON.parse(localStorage.getItem(LS_PEND)); if(Array.isArray(p)) pending=p; }catch(e){}
+}
+
+/* ================= хранение: localStorage ================= */
+function fmtTime(s){ if(s==null) return '—'; const h=(s/3600)|0, m=((s%3600)/60)|0, sec=s%60;
+  return h? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}` }
+function statsByDiff(){
+  const r={};
+  for(const k of DIFF_KEYS) r[k]={solved:0,best:null,total:0,perfect:0};
+  for(const g of allGames()){
+    const s=r[g.diff]; if(!s) continue;
+    s.solved++; s.total+=g.time;
+    if(g.mistakes===0&&g.hints===0) s.perfect++;
+    if(s.best==null||g.time<s.best) s.best=g.time;
+  }
+  return r;
+}
+/* журнал: сливаем pending в LOG (по id) и сохраняем в localStorage */
+function saveLog(){
+  const map=new Map();
+  for(const g of LOG.games) map.set(g.id,g);
+  for(const g of pending) map.set(g.id,g);
+  LOG.games=[...map.values()].sort((a,b)=> a.d<b.d?-1:a.d>b.d?1:0);
+  LOG.updated=Date.now();
+  pending=[];
+  try{ localStorage.setItem(LS_LOG,JSON.stringify(LOG)); localStorage.setItem(LS_PEND,'[]'); }catch(e){}
+}
+function saveSes(){
+  try{ localStorage.setItem(LS_SES,JSON.stringify(SES)); }catch(e){}
+}
+function scheduleSaveSes(){}
+function rerenderAll(){
+  applyTheme(); applyControls(); applyLayout(); applyLang();
+  if($('game').classList.contains('hidden')) renderHome();
+  else if(cur()){ renderBoard(); $('gTimer').textContent=fmtTime(cur().time); }
+}
+
+/* ================= мелкий UI ================= */
+const $=id=>document.getElementById(id);
+let toastTimer=null;
+function toast(msg){
+  const el=$('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+function show(screen){ $('home').classList.toggle('hidden',screen!=='home');
+  $('game').classList.toggle('hidden',screen!=='game'); }
+function applyTheme(){
+  document.documentElement.dataset.theme=SES.settings.theme;
+  const th=THEMES.find(x=>x.id===SES.settings.theme)||THEMES[0];
+  $('metaTheme').setAttribute('content', th.meta);
+  document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('selq', b.dataset.t===SES.settings.theme));
+  setFavicon(th);
+}
+function setFavicon(th){
+  let cellsSvg='';
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++){
+    cellsSvg+=`<rect x="${10+c*16}" y="${10+r*16}" width="12" height="12" rx="3.5" fill="${th.accent}" opacity="${r===c?'1':'.18'}"/>`;
+  }
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="${th.meta}"/>${cellsSvg}</svg>`;
+  document.querySelector('link[rel="icon"]').href='data:image/svg+xml,'+encodeURIComponent(svg);
+}
+function applyControls(){
+  $('hintBtn').classList.toggle('hidden', !SES.settings.showHint);
+  $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto);
+}
+function applyLayout(){
+  const p=SES.settings.pos||'center';
+  document.body.classList.toggle('pos-left', p==='left');
+  document.body.classList.toggle('pos-right', p==='right');
+  document.querySelectorAll('#posseg button').forEach(b=>
+    b.classList.toggle('on', p===b.dataset.p));
+}
+function renderHome(){
+  const list=$('contList');
+  $('continueCard').style.display = SES.games.length? '' : 'none';
+  list.innerHTML = SES.games.map((g,idx)=>{
+    const filled=g.values.filter(v=>v).length + g.hyp.filter(v=>v).length;
+    return `<div class="cont-row">
+      <button class="cont-open" data-idx="${idx}"><span>${dName(g.diff)} · ${filled}/81</span><small>${fmtTime(g.time)}</small></button>
+      <button class="cont-del" data-idx="${idx}" aria-label="delete">✕</button>
+    </div>`;
+  }).join('');
+  const st=statsByDiff();
+  let won=0, perfect=0, total=0;
+  for(const k of DIFF_KEYS){
+    const s=st[k]; won+=s.solved; perfect+=s.perfect; total+=s.total;
+    $('ms-'+k).textContent = s.solved
+      ? `${s.solved} ${t('solvedN')} · ${t('record')} ${fmtTime(s.best)}` : t('notPlayed');
+  }
+  $('tot-won').textContent=won;
+  $('tot-perfect').textContent=perfect;
+  $('tot-time').textContent= total? fmtTime(total) : '—';
+}
+
+/* ================= поле ================= */
+const cells=[];
+function buildBoard(){
+  const b=$('board');
+  for(let i=0;i<81;i++){
+    const r=(i/9)|0, c=i%9;
+    const d=document.createElement('div');
+    d.className='cell'+((c===2||c===5)?' br':'')+((r===2||r===5)?' bb':'');
+    d.addEventListener('pointerdown',()=>{ const g=cur(); if(g && !g.paused){ closePicker(); sel=i; hlDigit=0; renderBoard(); } });
+    d.addEventListener('dblclick',()=>openPicker(i));
+    d.addEventListener('contextmenu',e=>{e.preventDefault(); openPicker(i);});
+    b.appendChild(d); cells.push(d);
+  }
+}
+function buildNumpad(){
+  const np=$('numpad');
+  for(let v=1;v<=9;v++){
+    const btn=document.createElement('button');
+    btn.className='num'; btn.dataset.v=v;
+    btn.innerHTML=`${v}<small></small>`;
+    btn.addEventListener('pointerdown',e=>{e.preventDefault();
+      const g=cur();
+      if(!g || g.paused) return;
+      if(sel<0 || g.given[sel] || g.done){ hlDigit = hlDigit===v? 0 : v; renderBoard(); }
+      else inputDigit(v);
+    });
+    np.appendChild(btn);
+  }
+}
+const merged = (g,i) => g.values[i] || g.hyp[i];
+function renderBoard(){
+  const g=cur(); if(!g) return;
+  const hlSame = SES.settings.highlightSame !== false;
+  const selVal = sel>=0 ? merged(g,sel) : 0;
+  const activeVal = hlSame ? (selVal || hlDigit) : 0;
+  const counts={};
+  for(let i=0;i<81;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1; }
+  for(let i=0;i<81;i++){
+    const d=cells[i], v=g.values[i], hv=g.hyp[i];
+    d.className=d.className.replace(/ (sel|hl|same|err|given|hypv|pop|uflash|wave)/g,'');
+    if(g.given[i]) d.classList.add('given');
+    if(v){
+      d.textContent=v;
+      if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');
+    } else if(hv){
+      d.textContent=hv; d.classList.add('hypv');
+    } else if(g.notes[i].length){
+      d.innerHTML='<div class="notes">'+[1,2,3,4,5,6,7,8,9].map(n=>
+        `<span${activeVal&&n===activeVal?' class="nhl"':''}>${g.notes[i].includes(n)?n:''}</span>`).join('')+'</div>';
+    } else d.textContent='';
+    if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
+    if(sel>=0){
+      if(i===sel) d.classList.add('sel');
+      else if(peersCache[sel].includes(i)) d.classList.add('hl');
+    }
+    if(activeVal && i!==sel){
+      const hasNote = !v && !hv && g.notes[i].includes(activeVal);  // клетки с такой заметкой тоже подсвечиваем
+      if(merged(g,i)===activeVal || hasNote) d.classList.add('same');
+    }
+  }
+  const showCounts = SES.settings.showCounts !== false;
+  document.querySelectorAll('.num').forEach(btn=>{
+    const v=+btn.dataset.v, left=9-(counts[v]||0);
+    btn.querySelector('small').textContent=(showCounts && left>0)?left:'';
+    btn.classList.toggle('done', left<=0);
+    btn.classList.toggle('hl', hlDigit===v);
+  });
+  const np=$('numpad'); if(np){ np.classList.toggle('mode-note', inputMode==='note'); np.classList.toggle('mode-hyp', inputMode==='hyp'); }
+  $('gMistWrap').style.display = g.instant? '' : 'none';
+  $('gMist').textContent = (SES.settings.limit && g.instant && !g.noLimit)? `${g.mistakes}/3` : g.mistakes;
+  $('gDiff').textContent=dName(g.diff);
+  $('board').classList.toggle('notes-on', inputMode==='note');
+  $('board').classList.toggle('hyp-on', inputMode==='hyp');
+  $('undoBtn').disabled=!undoStack.length;
+  $('redoBtn').disabled=!redoStack.length;
+}
+function syncModeButtons(){
+  $('notesBtn').classList.toggle('on', inputMode==='note');
+  $('hypBtn').classList.toggle('on2', inputMode==='hyp');
+  syncPickerMode();
+}
+function setMode(m){ inputMode = inputMode===m ? 'digit' : m; syncModeButtons();
+  if(cur() && !$('game').classList.contains('hidden')) renderBoard(); }
+
+/* всплывающее окно выбора цифры */
+function syncPickerMode(){
+  $('picker').querySelectorAll('.pk-mode button').forEach(b=>{
+    const on = b.dataset.m===inputMode || (b.dataset.m==='digit'&&inputMode==='digit');
+    b.classList.toggle('on', b.dataset.m===inputMode);
+  });
+}
+const PK_ICONS={
+  digit:'<svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>',
+  note:'<svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
+  hyp:'<svg viewBox="0 0 24 24" stroke-dasharray="3 2.4"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>',
+};
+function buildPicker(){
+  const pk=$('picker');
+  const hdr=document.createElement('div');
+  hdr.className='pk-mode';
+  hdr.innerHTML=['digit','note','hyp'].map(m=>
+    `<button data-m="${m}" title="${t(m==='digit'?'digitTab':m==='note'?'noteTab':'hypTab')}">${PK_ICONS[m]}</button>`).join('');
+  hdr.querySelectorAll('button').forEach(b=>b.addEventListener('pointerdown',e=>{
+    e.preventDefault(); e.stopPropagation();
+    inputMode=b.dataset.m; syncModeButtons();
+    renderBoard();
+  }));
+  pk.appendChild(hdr);
+  for(let v=1;v<=9;v++){
+    const b=document.createElement('button');
+    b.dataset.v=v; b.textContent=v;
+    b.addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); inputDigit(v); closePicker();});
+    pk.appendChild(b);
+  }
+  const x=document.createElement('button');
+  x.className='pk-x';
+  x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
+  x.addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); eraseCell(); closePicker();});
+  pk.appendChild(x);
+  pk.addEventListener('pointerdown',e=>e.stopPropagation());
+}
+function refreshPickerLang(){
+  const pk=$('picker');
+  const tabs=pk.querySelectorAll('.pk-mode button');
+  if(tabs.length===3){ tabs[0].title=t('digitTab'); tabs[1].title=t('noteTab'); tabs[2].title=t('hypTab'); }
+  const xt=pk.querySelector('.pk-x-t'); if(xt) xt.textContent=t('eraseP');
+}
+function openPicker(i){
+  if(!SES.settings.dblPick) return;
+  const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
+  sel=i; renderBoard();
+  const pk=$('picker');
+  const counts={};
+  for(let k=0;k<81;k++){ const v=merged(g,k); if(v) counts[v]=(counts[v]||0)+1; }
+  pk.querySelectorAll('button[data-v]').forEach(b=>b.classList.toggle('done',(counts[+b.dataset.v]||0)>=9));
+  syncPickerMode();
+  pk.classList.remove('hidden');
+  const boardR=$('board').getBoundingClientRect(), cellR=cells[i].getBoundingClientRect();
+  const pw=pk.offsetWidth, ph=pk.offsetHeight;
+  let left=cellR.right-boardR.left+8;
+  if(left+pw>boardR.width-4) left=cellR.left-boardR.left-pw-8;
+  left=Math.max(4, Math.min(left, boardR.width-pw-4));
+  let top=cellR.top-boardR.top+cellR.height/2-ph/2;
+  top=Math.max(4, Math.min(top, boardR.height-ph-4));
+  pk.style.left=left+'px'; pk.style.top=top+'px';
+}
+function closePicker(){ $('picker').classList.add('hidden'); }
+
+/* ================= логика ================= */
+function snapshot(){ const g=cur(); return {values:g.values.slice(), notes:g.notes.map(n=>n.slice()), hyp:g.hyp.slice(), endErr:(g.endErr||[]).slice()}; }
+function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>300) undoStack.shift(); redoStack.length=0; }
+function restore(s){ const g=cur(); g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice()); g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice(); }
+function inputDigit(v, forceNote, forceHyp){
+  const g=cur(); if(!g||g.done||g.paused||sel<0||g.given[sel]) return;
+  const mode = forceNote? 'note' : forceHyp? 'hyp' : inputMode;
+  pushUndo();
+  if(mode==='note'){
+    if(g.values[sel]||g.hyp[sel]){undoStack.pop(); return;}
+    const n=g.notes[sel], k=n.indexOf(v);
+    if(k>=0) n.splice(k,1); else {n.push(v); n.sort()}
+  } else if(mode==='hyp'){
+    if(g.values[sel]){undoStack.pop(); return;}
+    /* проба: заметки в клетке сохраняются, ошибки не считаются */
+    g.hyp[sel] = g.hyp[sel]===v? 0 : v;
+    lastPlaced=sel;
+    if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1); }
+  } else {
+    if(g.values[sel]===v){ g.values[sel]=0; }
+    else{
+      g.values[sel]=v; g.notes[sel]=[]; g.hyp[sel]=0; lastPlaced=sel;
+      if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1); }
+      if(v!==g.solution[sel]){
+        if(g.instant){
+          g.mistakes++;
+          if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return; }
+        }
+      } else {
+        for(const p of peersCache[sel]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1); }
+      }
+    }
+  }
+  afterMove();
+}
+function eraseCell(){
+  const g=cur(); if(!g||g.done||g.paused||sel<0||g.given[sel]) return;
+  if(!g.values[sel] && !g.hyp[sel] && !g.notes[sel].length) return;
+  pushUndo();
+  if(g.hyp[sel] && !g.values[sel]){ g.hyp[sel]=0; }   /* сначала снимается проба — заметки возвращаются */
+  else { g.values[sel]=0; g.hyp[sel]=0; g.notes[sel]=[]; }
+  if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1); }
+  afterMove();
+}
+function hint(){
+  const g=cur(); if(!g||g.done||g.paused) return;
+  let i=sel;
+  if(i<0 || g.values[i]===g.solution[i]){
+    const empt=[...Array(81).keys()].filter(k=>g.values[k]!==g.solution[k]);
+    if(!empt.length) return;
+    i=empt[rnd(empt.length)];
+  }
+  pushUndo(); g.values[i]=g.solution[i]; g.notes[i]=[]; g.hyp[i]=0; g.hints++; g.usedAssist=true; sel=i; lastPlaced=i;
+  if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1); }
+  for(const p of peersCache[i]){ const k=g.notes[p].indexOf(g.solution[i]); if(k>=0) g.notes[p].splice(k,1); }
+  afterMove();
+}
+function autoNotes(){
+  const g=cur(); if(!g||g.done||g.paused) return;
+  pushUndo();
+  for(let i=0;i<81;i++) if(!g.values[i]&&!g.hyp[i]){
+    const m=candMask(g.values,i), n=[];
+    for(let v=1;v<=9;v++) if(m&(1<<v)) n.push(v);
+    g.notes[i]=n;
+  }
+  g.usedAssist=true;
+  afterMove(); toast(t('autoDone'));
+}
+function undo(){ const g=cur(); if(!g||g.done||g.paused||!undoStack.length) return;
+  redoStack.push(snapshot()); restore(undoStack.pop()); renderBoard(); persistCache(); }
+function redo(){ const g=cur(); if(!g||g.done||g.paused||!redoStack.length) return;
+  undoStack.push(snapshot()); restore(redoStack.pop()); renderBoard(); persistCache(); }
+function afterMove(){
+  renderBoard();
+  if(lastPlaced>=0 && !reducedMotion){
+    cells[lastPlaced].classList.add('pop');
+    flashUnits(lastPlaced);
+  }
+  lastPlaced=-1;
+  checkWin(); persistCache();
+}
+function flashUnits(i){
+  const g=cur(); if(!g) return;
+  const r=(i/9)|0, c=i%9, bx=((r/3)|0)*3+((c/3)|0), done=new Set();
+  for(const unit of [rowCells[r], colCells[c], boxCells[bx]]){
+    if(unit.every(j=>merged(g,j)===g.solution[j])) unit.forEach(j=>done.add(j));
+  }
+  if(done.size){
+    done.forEach(j=>cells[j].classList.add('uflash'));
+    setTimeout(()=>done.forEach(j=>cells[j].classList.remove('uflash')), 600);
+  }
+}
+function checkWin(){
+  const g=cur(); if(!g) return;
+  let full=true;
+  for(let i=0;i<81;i++) if(!merged(g,i)){ full=false; break; }
+  if(!full){ g.wasFull=false; return; }
+  const wrong=[];
+  for(let i=0;i<81;i++) if(merged(g,i)!==g.solution[i]) wrong.push(i);
+  if(wrong.length){
+    /* поле заполнено, но с ошибками */
+    if(!g.instant){
+      g.endErr=wrong;
+      renderBoard();
+      if(!g.wasFull) toast(t('hasErrors').replace('{n}', wrong.length));
+    } else if(!g.wasFull){
+      toast(t('hasErrors').replace('{n}', wrong.length));
+    }
+    g.wasFull=true;
+    return;
+  }
+  /* победа: пробы считаются подтверждёнными */
+  g.done=true; stopTimer();
+  lastWinDiff=g.diff;
+  const st=statsByDiff()[g.diff];
+  const assisted = !!g.usedAssist;                       // была подсказка/авто-заметки
+  const isRecord = !assisted && (st.best==null || g.time<st.best);
+  const perfect = g.mistakes===0 && g.hints===0 && !assisted;
+  if(!assisted) pending.push({ id:g.id, d:new Date().toISOString().slice(0,10), diff:g.diff,
+    time:g.time, mistakes:g.mistakes, hints:g.hints });   // с помощью — в статистику не идёт
+  SES.games.splice(SES.cur,1); SES.cur=-1;
+  persistCache(); if(!assisted) saveLog(); saveSes();
+  $('winTime').textContent=fmtTime(g.time);
+  $('winRecord').classList.toggle('hidden',!isRecord);
+  $('winSub').textContent=dName(g.diff)+(assisted? ' · '+t('assistNote') : (perfect? ' · '+t('clean'):''));
+  $('winBest').textContent=fmtTime(isRecord? g.time : st.best);
+  $('winMist').textContent=g.mistakes;
+  $('winHints').textContent=g.hints;
+  const showModal=()=>{ $('winModal').classList.remove('hidden'); confetti(); };
+  if(reducedMotion){ showModal(); return; }
+  for(let i=0;i<81;i++){
+    const r=(i/9)|0, c=i%9;
+    cells[i].style.animationDelay=((r+c)*32)+'ms';
+    cells[i].classList.add('wave');
+  }
+  setTimeout(()=>{ cells.forEach(d=>{d.classList.remove('wave'); d.style.animationDelay='';}); showModal(); }, 1050);
+}
+let lastLostDiff='medium';
+function gameLost(){
+  const g=cur(); lastLostDiff=g? g.diff : 'medium';
+  persistCache();
+  setPaused(true);
+  $('loseModal').classList.remove('hidden');
+}
+function confetti(){
+  if(reducedMotion) return;
+  const colors=['#c9b280','#7aa2f7','#6fbf8f','#a78bfa','#e06c75','#e5c07b'];
+  const c=document.createElement('div'); c.className='confetti';
+  for(let i=0;i<44;i++){
+    const p=document.createElement('i');
+    p.style.left=Math.random()*100+'%';
+    p.style.background=colors[rnd(colors.length)];
+    p.style.animationDelay=(Math.random()*.5)+'s';
+    p.style.width=(6+rnd(5))+'px'; p.style.height=(9+rnd(6))+'px';
+    c.appendChild(p);
+  }
+  document.body.appendChild(c);
+  setTimeout(()=>c.remove(), 3400);
+}
+function newGame(diff){
+  $('genOverlay').classList.remove('hidden');
+  setTimeout(()=>{
+    const {puzzle,solution}=generate(diff);
+    if(SES.games.length>=10) SES.games.shift();
+    SES.games.push({
+      id:uid(), diff, solution, given:puzzle.map(v=>!!v),
+      values:puzzle.slice(), hyp:new Array(81).fill(0),
+      notes:Array.from({length:81},()=>[]),
+      time:0, mistakes:0, hints:0, done:false, paused:false, noLimit:false,
+      instant:SES.settings.instant, endErr:[], wasFull:false,
+    });
+    SES.cur=SES.games.length-1;
+    undoStack=[]; redoStack=[]; sel=-1; inputMode='digit'; hlDigit=0;
+    syncModeButtons();
+    persistCache(); saveSes();
+    $('genOverlay').classList.add('hidden');
+    openGame();
+  },30);
+}
+function openGame(idx){
+  if(typeof idx==='number') SES.cur=idx;
+  if(!cur()) return;
+  undoStack=[]; redoStack=[]; sel=-1; hlDigit=0; inputMode='digit'; syncModeButtons();
+  show('game'); setPaused(false); renderBoard(); startTimer();
+}
+function startTimer(){
+  stopTimer();
+  $('gTimer').textContent=fmtTime(cur().time);
+  timerId=setInterval(()=>{
+    const g=cur();
+    if(!g||g.done||g.paused||document.hidden) return;
+    g.time++;
+    $('gTimer').textContent=fmtTime(g.time);
+    if(g.time%20===0) persistCache();
+  },1000);
+}
+function stopTimer(){ clearInterval(timerId); timerId=null; }
+function setPaused(p){
+  const g=cur(); if(!g) return;
+  g.paused=p;
+  closePicker();
+  $('pauseOverlay').classList.toggle('hidden',!p);
+  $('pauseBtn').innerHTML = p
+    ? '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7Z"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>';
+}
+
+/* ================= статистика / настройки ================= */
+function openStats(){
+  const st=statsByDiff();
+  let html=`<tr><th>${t('level')}</th><th>${t('solvedL')}</th><th>${t('recordL')}</th><th>${t('avgL')}</th><th>${t('cleanL')}</th></tr>`;
+  for(const k of DIFF_KEYS){
+    const s=st[k], avg=s.solved?Math.round(s.total/s.solved):null;
+    html+=`<tr><td>${dName(k)}</td><td>${s.solved}</td><td>${fmtTime(s.best)}</td><td>${fmtTime(avg)}</td><td>${s.perfect}</td></tr>`;
+  }
+  $('statsTable').innerHTML=html;
+  const hist=[...allGames()].sort((a,b)=> a.d<b.d?1:-1).slice(0,12);
+  $('histList').innerHTML=
+    `<div><span>${t('dataAt')}</span><span>${LOG.updated? new Date(LOG.updated).toLocaleString(SES.settings.lang==='ru'?'ru-RU':'en-GB') : '—'}</span></div>`+
+    `<br><b style="color:var(--text)">${t('histT')}</b>`+
+    (hist.map(h=>
+      `<div><span>${h.d} · ${dName(h.diff)}</span><span>${fmtTime(h.time)} · ${t('mist')} ${h.mistakes} · ${t('hintsSm')} ${h.hints}</span></div>`).join('')||`<div>${t('none')}</div>`);
+  $('statsModal').classList.remove('hidden');
+}
+function buildSwatches(){
+  const wrap=$('swatches');
+  for(const th of THEMES){
+    const b=document.createElement('button');
+    b.className='sw'; b.dataset.t=th.id;
+    b.innerHTML=`<i style="background:${th.accent}; --sw-a:${th.bg}"></i><span>${th.name}</span>`;
+    b.addEventListener('click',()=>{ SES.settings.theme=th.id; applyTheme(); persistCache(); saveSes(); });
+    wrap.appendChild(b);
+  }
+}
+function openSettings(tab){
+  $('optInstant').checked=SES.settings.instant;
+  $('optLimit').checked=SES.settings.limit;
+  $('optLimit').disabled=!SES.settings.instant;
+  $('optDbl').checked=SES.settings.dblPick;
+  $('optSame').checked=SES.settings.highlightSame!==false;
+  $('optCounts').checked=SES.settings.showCounts!==false;
+  $('optHintBtn').checked=SES.settings.showHint;
+  $('optAutoBtn').checked=SES.settings.showAuto;
+  applyLayout();
+  setTab(tab||'view');
+  $('setModal').classList.remove('hidden');
+}
+function setTab(name){
+  document.querySelectorAll('.stabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name));
+  for(const tb of ['view','game','keys']) $('tab-'+tb).classList.toggle('hidden', tb!==name);
+}
+function resetStats(){
+  if(!confirm(t('resetConfirm'))) return;
+  pending=[]; LOG.games=[]; LOG.updated=Date.now();
+  try{ localStorage.setItem(LS_LOG,JSON.stringify(LOG)); localStorage.setItem(LS_PEND,'[]'); }catch(e){}
+  renderHome(); toast(t('resetDone'));
+}
+
+/* ================= события ================= */
+document.querySelectorAll('.diff-btn').forEach(b=>b.addEventListener('click',()=>newGame(b.dataset.diff)));
+$('contList').addEventListener('click',e=>{
+  const open=e.target.closest('.cont-open');
+  if(open){ openGame(+open.dataset.idx); return; }
+  const del=e.target.closest('.cont-del');
+  if(del && confirm(t('delGame'))){
+    SES.games.splice(+del.dataset.idx,1);
+    if(SES.cur>=SES.games.length) SES.cur=SES.games.length-1;
+    persistCache(); saveSes(); renderHome();
+  }
+});
+$('backBtn').addEventListener('click',()=>{ closePicker(); stopTimer(); persistCache(); saveSes(); show('home'); renderHome(); });
+$('pauseBtn').addEventListener('click',()=>setPaused(!cur().paused));
+$('resumeBtn').addEventListener('click',()=>setPaused(false));
+$('restartBtn').addEventListener('click',()=>{
+  const g=cur(); if(!g) return;
+  if(!confirm(t('restartConfirm'))) return;
+  g.values=g.solution.map((v,i)=>g.given[i]? v : 0);
+  g.notes=Array.from({length:81},()=>[]);
+  g.hyp=new Array(81).fill(0); g.endErr=[]; g.wasFull=false;
+  g.time=0; g.mistakes=0; g.hints=0; g.done=false; g.noLimit=false; g.usedAssist=false;
+  undoStack=[]; redoStack=[]; sel=-1; hlDigit=0;
+  setPaused(false); renderBoard(); startTimer(); persistCache(); saveSes();
+});
+$('undoBtn').addEventListener('click',undo);
+$('redoBtn').addEventListener('click',redo);
+$('eraseBtn').addEventListener('click',eraseCell);
+$('hintBtn').addEventListener('click',hint);
+$('autoNotesBtn').addEventListener('click',autoNotes);
+$('notesBtn').addEventListener('click',()=>setMode('note'));
+$('hypBtn').addEventListener('click',()=>setMode('hyp'));
+$('statsBtn').addEventListener('click',openStats);
+$('statsClose').addEventListener('click',()=>$('statsModal').classList.add('hidden'));
+$('setBtn').addEventListener('click',()=>openSettings());
+$('setClose').addEventListener('click',()=>$('setModal').classList.add('hidden'));
+document.querySelectorAll('.stabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+$('optInstant').addEventListener('change',e=>{ SES.settings.instant=e.target.checked;
+  $('optLimit').disabled=!SES.settings.instant; persistCache(); saveSes(); });
+$('optLimit').addEventListener('change',e=>{ SES.settings.limit=e.target.checked; persistCache(); saveSes();
+  if(cur() && !$('game').classList.contains('hidden')) renderBoard(); });
+$('optDbl').addEventListener('change',e=>{ SES.settings.dblPick=e.target.checked; if(!e.target.checked) closePicker(); persistCache(); saveSes(); });
+$('optSame').addEventListener('change',e=>{ SES.settings.highlightSame=e.target.checked; persistCache(); saveSes();
+  if(cur() && !$('game').classList.contains('hidden')) renderBoard(); });
+$('optCounts').addEventListener('change',e=>{ SES.settings.showCounts=e.target.checked; persistCache(); saveSes();
+  if(cur() && !$('game').classList.contains('hidden')) renderBoard(); });
+$('optHintBtn').addEventListener('change',e=>{ SES.settings.showHint=e.target.checked; applyControls(); persistCache(); saveSes(); });
+$('optAutoBtn').addEventListener('change',e=>{ SES.settings.showAuto=e.target.checked; applyControls(); persistCache(); saveSes(); });
+document.querySelectorAll('#posseg button').forEach(b=>b.addEventListener('click',()=>{
+  SES.settings.pos=b.dataset.p; applyLayout(); persistCache(); saveSes();
+}));
+document.querySelectorAll('#langseg button').forEach(b=>b.addEventListener('click',()=>{
+  SES.settings.lang=b.dataset.l; applyLang(); refreshPickerLang(); renderHome(); persistCache(); saveSes();
+  if(cur() && !$('game').classList.contains('hidden')) renderBoard();
+}));
+$('resetStats').addEventListener('click',resetStats);
+$('winHome').addEventListener('click',()=>{ $('winModal').classList.add('hidden'); show('home'); renderHome(); });
+$('winAgain').addEventListener('click',()=>{ $('winModal').classList.add('hidden'); newGame(lastWinDiff); });
+$('loseNew').addEventListener('click',()=>{ $('loseModal').classList.add('hidden');
+  SES.games.splice(SES.cur,1); SES.cur=-1; persistCache(); saveSes(); newGame(lastLostDiff); });
+$('loseContinue').addEventListener('click',()=>{ $('loseModal').classList.add('hidden');
+  const g=cur(); if(g){ g.noLimit=true; setPaused(false); renderBoard(); persistCache(); } });
+for(const id of ['statsModal','setModal']){
+  $(id).addEventListener('click',e=>{ if(e.target.id===id) $(id).classList.add('hidden'); });
+}
+document.addEventListener('pointerdown',e=>{
+  const pk=$('picker');
+  if(!pk.classList.contains('hidden') && !pk.contains(e.target)) closePicker();
+});
+document.addEventListener('keydown',e=>{
+  const modalOpen=['winModal','loseModal','statsModal','setModal'].some(id=>!$(id).classList.contains('hidden'));
+  if(modalOpen){
+    if(e.key==='Escape'){ $('statsModal').classList.add('hidden'); $('setModal').classList.add('hidden'); }
+    return;
+  }
+  if($('game').classList.contains('hidden')) return;
+  const g=cur(); if(!g) return;
+  const code=e.code;
+  if((e.ctrlKey||e.metaKey) && code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return; }
+  if((e.ctrlKey||e.metaKey) && code==='KeyY'){ e.preventDefault(); redo(); return; }
+  if(e.ctrlKey||e.metaKey) return;
+  const dm=code.match(/^(Digit|Numpad)([1-9])$/);
+  if(dm){ e.preventDefault(); inputDigit(+dm[2], e.shiftKey, e.altKey); return; }
+  if(e.altKey) return;
+  switch(code){
+    case 'Backspace': case 'Delete': case 'Digit0': case 'Numpad0': eraseCell(); break;
+    case 'KeyN': setMode('note'); break;
+    case 'Space': e.preventDefault(); setMode('note'); break;
+    case 'KeyD': setMode('hyp'); break;
+    case 'KeyZ': undo(); break;
+    case 'KeyY': redo(); break;
+    case 'KeyH': if(SES.settings.showHint) hint(); break;
+    case 'KeyA': if(SES.settings.showAuto) autoNotes(); break;
+    case 'KeyP': setPaused(!g.paused); break;
+    case 'Escape':
+      if(!$('picker').classList.contains('hidden')) closePicker();
+      else $('backBtn').click();
+      break;
+    case 'ArrowUp': case 'ArrowDown': case 'ArrowLeft': case 'ArrowRight': {
+      e.preventDefault();
+      if(g.paused) break;
+      if(sel<0){ sel=40; }
+      else{
+        const r=(sel/9)|0, c=sel%9;
+        if(code==='ArrowUp'&&r>0) sel-=9;
+        if(code==='ArrowDown'&&r<8) sel+=9;
+        if(code==='ArrowLeft'&&c>0) sel-=1;
+        if(code==='ArrowRight'&&c<8) sel+=1;
+      }
+      renderBoard();
+      break;
+    }
+  }
+});
+window.addEventListener('beforeunload',()=>{ try{
+  localStorage.setItem(LS_LOG,JSON.stringify(LOG));
+  localStorage.setItem(LS_SES,JSON.stringify(SES));
+  localStorage.setItem(LS_PEND,JSON.stringify(pending));
+}catch(e){} });
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ persistCache(); if(pending.length) saveLog(); }
+});
+
+/* отладочный хук */
+window._sud={
+  get LOG(){return LOG}, get SES(){return SES}, get pending(){return pending},
+  saveLog, saveSes, gradeSolve, generate,
+};
+
+/* ================= старт ================= */
+loadCache();
+buildBoard(); buildNumpad(); buildSwatches(); buildPicker();
+applyTheme(); applyControls(); applyLayout(); applyLang();
+renderHome(); show('home');
+if(pending.length) saveLog();
+</script>
+</body>
+</html>

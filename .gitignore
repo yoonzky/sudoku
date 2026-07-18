@@ -1,0 +1,4 @@
+# Заметки vault — не публикуем
+*.md
+.obsidian/
+.DS_Store
