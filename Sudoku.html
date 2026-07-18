@@ -100,7 +100,7 @@ header #setBtn{right:calc(50% - 478px)}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
 main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
-#home{display:grid; grid-template-columns:540px 300px; gap:40px; justify-content:center; align-items:start}
+#home{display:grid; grid-template-columns:540px 360px; gap:40px; justify-content:center; align-items:start}
 #home>.card{grid-column:1}
 #home .feat{grid-column:2; grid-row:1/span 4}
 #game{max-width:clamp(320px, calc(100vh - 285px), 540px); margin:0 auto}
@@ -118,20 +118,20 @@ body.in-game header .iconbtn{position:static}
 .feat-list{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:13px}
 .feat-list li{display:flex; gap:11px; align-items:flex-start}
 .feat-list li>div{display:flex; flex-direction:column; gap:3px}
-.feat-list li>div.mv{flex-direction:row; gap:7px; height:64px}
-.mv{flex:none; flex-direction:row; width:96px; height:64px; background:var(--panel2); border:1px solid var(--line); border-radius:7px;
+.feat-list li>div.mv{flex-direction:row; gap:9px; height:80px}
+.mv{flex:none; flex-direction:row; width:124px; height:80px; background:var(--panel2); border:1px solid var(--line); border-radius:7px;
   display:flex; align-items:center; justify-content:center; gap:7px; margin-top:1px}
-.mv-cell{width:26px; height:26px; border:1.5px solid var(--line-strong); border-radius:4px; background:var(--cell-sel);
-  display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px}
+.mv-cell{width:32px; height:32px; border:1.5px solid var(--line-strong); border-radius:4px; background:var(--cell-sel);
+  display:flex; align-items:center; justify-content:center; font-weight:600; font-size:15px}
 .mv-cell.dash{border:1.5px dashed var(--accent); color:var(--accent); background:transparent}
-.mv-pop{display:grid; grid-template-columns:repeat(3,13px); gap:2px; background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:3px}
-.mv-pop i{font-style:normal; font-size:7.5px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; background:var(--panel2); border-radius:2px}
-.mv-key{width:21px; height:27px; background:var(--panel); border:1px solid var(--line); border-radius:4px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:10.5px; font-weight:600; line-height:1}
-.mv-key small{font-size:6.5px; color:var(--muted); margin-top:1px}
-.mv kbd{background:var(--panel); border:1px solid var(--line-strong); border-radius:4px; padding:2px 4px; font-family:inherit; font-size:8px; font-weight:700}
-.feat-list b{font-size:13px; font-weight:700}
-.feat-list span{font-size:12px; color:var(--muted); line-height:1.5}
+.mv-pop{display:grid; grid-template-columns:repeat(3,16px); gap:2px; background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:3px}
+.mv-pop i{font-style:normal; font-size:9px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; background:var(--panel2); border-radius:2px}
+.mv-key{width:26px; height:33px; background:var(--panel); border:1px solid var(--line); border-radius:4px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:12.5px; font-weight:600; line-height:1}
+.mv-key small{font-size:8px; color:var(--muted); margin-top:1px}
+.mv kbd{background:var(--panel); border:1px solid var(--line-strong); border-radius:4px; padding:3px 6px; font-family:inherit; font-size:10px; font-weight:700}
+.feat-list b{font-size:14px; font-weight:700}
+.feat-list span{font-size:12.5px; color:var(--muted); line-height:1.5}
 
 @media (max-width:1179px){
   .feat-list{display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
@@ -180,7 +180,6 @@ body.in-game header .iconbtn{position:static}
 #board.notes-on .cell.sel::after{border-style:dashed}
 #board.hyp-on .cell.sel::after{border-style:dashed; border-color:var(--accent2)}
 .cell{position:relative; display:flex; align-items:center; justify-content:center;
-  border-right:1px solid var(--line); border-bottom:1px solid var(--line);
   font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
   color:var(--user); transition:background .1s}
 .cell.given{color:var(--given); font-weight:600}
@@ -190,7 +189,9 @@ body.in-game header .iconbtn{position:static}
     linear-gradient(90deg,var(--line-strong),var(--line-strong)) 33.3333% 0/2px 100% no-repeat,
     linear-gradient(90deg,var(--line-strong),var(--line-strong)) 66.6667% 0/2px 100% no-repeat,
     linear-gradient(var(--line-strong),var(--line-strong)) 0 33.3333%/100% 2px no-repeat,
-    linear-gradient(var(--line-strong),var(--line-strong)) 0 66.6667%/100% 2px no-repeat}
+    linear-gradient(var(--line-strong),var(--line-strong)) 0 66.6667%/100% 2px no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9)),
+    repeating-linear-gradient(180deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9))}
 .cell:nth-child(1){border-top-left-radius:10px}
 .cell:nth-child(9){border-top-right-radius:10px}
 .cell:nth-child(73){border-bottom-left-radius:10px}
@@ -198,7 +199,7 @@ body.in-game header .iconbtn{position:static}
 .cell.hl{background:var(--cell-hl)}
 .cell.same{background:var(--cell-same)}
 .cell.sel{background:var(--cell-sel); z-index:4}
-.cell.sel::after{content:''; position:absolute; inset:-1px 0px 0px -1px; border:2px solid var(--accent); pointer-events:none; z-index:5}
+.cell.sel::after{content:''; position:absolute; inset:-1px; border:2px solid var(--accent); pointer-events:none; z-index:5}
 .cell.err{color:var(--error); background:var(--error-soft)}
 .cell.err.sel{background:var(--cell-sel)}
 .cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
