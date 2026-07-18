@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="sepia">
+<html lang="ru" data-theme="indigo">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#efe9dd" id="metaTheme">
+<meta name="theme-color" content="#eae9e2" id="metaTheme">
 <title>Sudoku</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%23faf7f0' stroke='%23b4552d' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%23b4552d' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%23faf7f0' stroke='%234a67d6' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%234a67d6' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
-:root, html[data-theme="sepia"]{
+html[data-theme="sepia"]{
   --bg:#efe9dd; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
   --text:#2c2921; --muted:#847d6e; --accent:#b4552d; --accent-text:#ffffff; --accent-soft:#f3ded2;
   --accent2:#4a67d6; --accent2-soft:#e2e7f6;
   --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#b4552d;
   --cell-sel:#f3ded2; --cell-hl:#f4efe4; --cell-same:#f0e2d4; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#e4ddcd;
 }
-html[data-theme="indigo"]{
+:root, html[data-theme="indigo"]{
   --bg:#eae9e2; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
   --text:#2c2921; --muted:#847d6e; --accent:#4a67d6; --accent-text:#ffffff; --accent-soft:#e2e7f6;
   --accent2:#b4552d; --accent2-soft:#f3ded2;
@@ -53,21 +53,21 @@ html[data-theme="candle"]{
 html[data-theme="moss"]{
   --bg:#1b201a; --panel:#232922; --panel2:#2b322a; --line:#363e34; --line-strong:#dfe5da;
   --text:#dfe5da; --muted:#8d968a; --accent:#7fae6b; --accent-text:#1b201a; --accent-soft:rgba(127,174,107,.16);
-  --accent2:#d8a05c; --accent2-soft:rgba(216,160,92,.16);
+  --accent2:#8ab4d8; --accent2-soft:rgba(138,180,216,.16);
   --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8d968a; --given:#dfe5da; --user:#7fae6b;
   --cell-sel:#33402c; --cell-hl:#262c24; --cell-same:#2e3a29; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#262c24;
 }
 html[data-theme="midnight"]{
   --bg:#171a22; --panel:#1e222c; --panel2:#262b37; --line:#303645; --line-strong:#dde1ea;
   --text:#dde1ea; --muted:#8a91a3; --accent:#7aa2f7; --accent-text:#171a22; --accent-soft:rgba(122,162,247,.16);
-  --accent2:#d8a05c; --accent2-soft:rgba(216,160,92,.16);
+  --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.16);
   --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8a91a3; --given:#dde1ea; --user:#7aa2f7;
   --cell-sel:#273455; --cell-hl:#21252f; --cell-same:#2b3752; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#232733;
 }
 html[data-theme="coal"]{
   --bg:#17181a; --panel:#1e2023; --panel2:#26292d; --line:#303439; --line-strong:#dde0e4;
   --text:#dde0e4; --muted:#8b9199; --accent:#8ab4d8; --accent-text:#17181a; --accent-soft:rgba(138,180,216,.16);
-  --accent2:#d8a05c; --accent2-soft:rgba(216,160,92,.16);
+  --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.16);
   --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8b9199; --given:#dde0e4; --user:#8ab4d8;
   --cell-sel:#2c3a48; --cell-hl:#222528; --cell-same:#2a3542; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#24262a;
 }
@@ -79,8 +79,8 @@ body{margin:0; background:var(--bg); color:var(--text);
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   transition:background .25s,color .25s}
-body.pos-left{align-items:flex-start}
-body.pos-right{align-items:flex-end}
+body.pos-left #game{margin-left:0}
+body.pos-right #game{margin-left:auto; margin-right:0}
 button{font-family:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
 header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
@@ -137,6 +137,14 @@ body.in-game header .iconbtn{position:static}
   .feat-list{display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
 }
 @media (max-width:560px){.feat-list{grid-template-columns:1fr}}
+@media (max-width:600px){
+  header h1{font-size:32px}
+  .tagline{font-size:12px}
+  main{padding:6px 12px 20px}
+  body.in-game header{padding:10px 12px 2px}
+  body.in-game header h1{font-size:20px}
+  .diff-grid{grid-template-columns:1fr 1fr}
+}
 .card h2{margin:0 0 4px; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
 .cont-row{display:flex; gap:8px; margin-top:10px}
 .cont-open{flex:1; display:flex; justify-content:space-between; align-items:center;
@@ -166,26 +174,30 @@ body.in-game header .iconbtn{position:static}
 .topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round}
 /* ---------- поле ---------- */
 .board-wrap{position:relative}
-#board{display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
+#board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
   border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
-#board.notes-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent); outline-offset:-3px; background:var(--cell-sel)}
-#board.hyp-on .cell.sel{box-shadow:none; outline:2px dashed var(--accent2); outline-offset:-3px; background:var(--cell-sel)}
+#board.notes-on .cell.sel{outline:2px dashed var(--accent); outline-offset:-2px; background:var(--cell-sel); z-index:4}
+#board.hyp-on .cell.sel{outline:2px dashed var(--accent2); outline-offset:-2px; background:var(--cell-sel); z-index:4}
 .cell{position:relative; display:flex; align-items:center; justify-content:center;
   border-right:1px solid var(--line); border-bottom:1px solid var(--line);
   font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
   color:var(--user); transition:background .1s}
 .cell.given{color:var(--given); font-weight:600}
 .cell.hypv{color:var(--accent2); font-weight:500}
-.cell.br{border-right:2px solid var(--line-strong)}
-.cell.bb{border-bottom:2px solid var(--line-strong)}
+#board::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
+  background:
+    linear-gradient(90deg,var(--line-strong),var(--line-strong)) 33.3333% 0/2px 100% no-repeat,
+    linear-gradient(90deg,var(--line-strong),var(--line-strong)) 66.6667% 0/2px 100% no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 0 33.3333%/100% 2px no-repeat,
+    linear-gradient(var(--line-strong),var(--line-strong)) 0 66.6667%/100% 2px no-repeat}
 .cell:nth-child(1){border-top-left-radius:10px}
 .cell:nth-child(9){border-top-right-radius:10px}
 .cell:nth-child(73){border-bottom-left-radius:10px}
 .cell:nth-child(81){border-bottom-right-radius:10px}
 .cell.hl{background:var(--cell-hl)}
 .cell.same{background:var(--cell-same)}
-.cell.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--accent)}
+.cell.sel{background:var(--cell-sel); outline:2px solid var(--accent); outline-offset:-2px; z-index:4}
 .cell.err{color:var(--error); background:var(--error-soft)}
 .cell.err.sel{background:var(--cell-sel)}
 .cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
@@ -365,10 +377,10 @@ body.in-game header .iconbtn{position:static}
     <div class="card feat">
       <h2 data-i18n="featT">Возможности</h2>
       <ul class="feat-list">
-        <li><div class="mv"><span class="mv-cell">5</span><span class="mv-pop"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></div><div><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">или двойной — окно с цифрами прямо у клетки</span></div></li>
-        <li><div class="mv"><span class="mv-cell dash">5</span><span class="mv-cell dash">7</span></div><div><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">пробуй ход пунктиром, потом прими или откати</span></div></li>
-        <li><div class="mv"><span class="mv-key">7<small>3</small></span><span class="mv-key">8<small>1</small></span><span class="mv-key">9<small>4</small></span></div><div><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">видно, сколько каждой цифры осталось</span></div></li>
-        <li><div class="mv"><kbd>Space</kbd><kbd>H</kbd><kbd>←→</kbd></div><div><b data-i18n="f7T">Пробел и клавиши</b><span data-i18n="f7D">пробел — заметки, H — подсказка, стрелки — по полю</span></div></li>
+        <li><div class="mv"><span class="mv-cell">5</span><span class="mv-pop"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></div><div><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">Или двойной — окно с цифрами прямо у клетки</span></div></li>
+        <li><div class="mv"><span class="mv-cell dash">5</span><span class="mv-cell dash">7</span></div><div><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">Пробуй ход пунктиром, потом прими или откати</span></div></li>
+        <li><div class="mv"><span class="mv-key">7<small>3</small></span><span class="mv-key">8<small>1</small></span><span class="mv-key">9<small>4</small></span></div><div><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">Видно, сколько каждой цифры осталось</span></div></li>
+        <li><div class="mv"><kbd>Space</kbd></div><div><b data-i18n="f7T">Пробел и клавиши</b><span data-i18n="f7D">пробел — заметки, H — подсказка, стрелки — по полю</span></div></li>
       </ul>
     </div>
   </section>
@@ -443,7 +455,10 @@ body.in-game header .iconbtn{position:static}
     <h2 data-i18n="stats">Статистика</h2>
     <table id="statsTable"></table>
     <div class="hist" id="histList"></div>
-    <div class="row"><button class="btn ghost" id="statsClose" data-i18n="close">Закрыть</button></div>
+    <div class="row" style="justify-content:space-between">
+      <button class="btn danger" id="resetStats" data-i18n="reset">Сбросить статистику</button>
+      <button class="btn ghost" id="statsClose" data-i18n="close">Закрыть</button>
+    </div>
   </div>
 </div>
 
@@ -477,19 +492,19 @@ body.in-game header .iconbtn{position:static}
     </div>
     <div class="stab hidden" id="tab-game">
       <label class="toggle"><input type="checkbox" id="optInstant">
-        <div><b data-i18n="instantT">Мгновенная проверка ошибок</b><span data-i18n="instantD">неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии</span></div></label>
+        <div><b data-i18n="instantT">Мгновенная проверка ошибок</b><span data-i18n="instantD">Неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии</span></div></label>
       <label class="toggle"><input type="checkbox" id="optLimit">
-        <div><b data-i18n="limitT">Лимит — 3 ошибки</b><span data-i18n="limitD">после третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)</span></div></label>
+        <div><b data-i18n="limitT">Лимит — 3 ошибки</b><span data-i18n="limitD">После третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)</span></div></label>
       <label class="toggle"><input type="checkbox" id="optDbl">
-        <div><b data-i18n="pickerT">Окно выбора цифры</b><span data-i18n="pickerD">двойной или правый клик по клетке открывает окно с цифрами</span></div></label>
+        <div><b data-i18n="pickerT">Окно выбора цифры</b><span data-i18n="pickerD">Двойной или правый клик по клетке открывает окно с цифрами</span></div></label>
       <label class="toggle"><input type="checkbox" id="optSame">
-        <div><b data-i18n="sameT">Подсветка одинаковых чисел</b><span data-i18n="sameD">при выборе клетки подсвечиваются такие же цифры и заметки</span></div></label>
+        <div><b data-i18n="sameT">Подсветка одинаковых чисел</b><span data-i18n="sameD">При выборе клетки подсвечиваются такие же цифры и заметки</span></div></label>
       <label class="toggle"><input type="checkbox" id="optCounts">
-        <div><b data-i18n="countsT">Счётчик оставшихся чисел</b><span data-i18n="countsD">маленькая цифра на кнопках нумпада — сколько ещё осталось</span></div></label>
+        <div><b data-i18n="countsT">Счётчик оставшихся чисел</b><span data-i18n="countsD">Маленькая цифра на кнопках нумпада — сколько ещё осталось</span></div></label>
       <label class="toggle"><input type="checkbox" id="optHintBtn">
-        <div><b data-i18n="hintBtnT">Кнопка «Подсказка»</b><span data-i18n="hintBtnD">показывать в панели управления (клавиша H)</span></div></label>
+        <div><b data-i18n="hintBtnT">Кнопка «Подсказка»</b><span data-i18n="hintBtnD">Показывать в панели управления (клавиша H)</span></div></label>
       <label class="toggle"><input type="checkbox" id="optAutoBtn">
-        <div><b data-i18n="autoBtnT">Кнопка «Авто-заметки»</b><span data-i18n="autoBtnD">показывать в панели управления (клавиша A)</span></div></label>
+        <div><b data-i18n="autoBtnT">Кнопка «Авто-заметки»</b><span data-i18n="autoBtnD">Показывать в панели управления (клавиша A)</span></div></label>
     </div>
     <div class="stab hidden" id="tab-keys">
       <div class="keys">
@@ -499,16 +514,13 @@ body.in-game header .iconbtn{position:static}
         <span class="kk"><kbd>N</kbd></span><span data-i18n="k_notes">режим заметок (и Пробел)</span>
         <span class="kk"><kbd>D</kbd></span><span data-i18n="k_hypm">режим черновика</span>
         <span class="kk"><kbd>Backspace</kbd><kbd>Del</kbd></span><span data-i18n="k_erase">стереть</span>
-        <span class="kk"><kbd>Z</kbd><kbd>Y</kbd></span><span data-i18n="k_undo">отмена / вернуть (⌘Z, ⌘⇧Z)</span>
+        <span class="kk"><kbd>Z</kbd><kbd>Y</kbd></span><span data-i18n="k_undo">отмена / вернуть</span>
         <span class="kk"><kbd>H</kbd></span><span data-i18n="k_hint">подсказка (если включена)</span>
         <span class="kk"><kbd>A</kbd></span><span data-i18n="k_auto">авто-заметки (если включены)</span>
         <span class="kk"><kbd>P</kbd></span><span data-i18n="k_pause">пауза</span>
         <span class="kk"><kbd>←↑↓→</kbd></span><span data-i18n="k_nav">навигация по полю</span>
         <span class="kk"><kbd>Esc</kbd></span><span data-i18n="k_menu">меню</span>
         <span class="kk"><kbd data-i18n="k_dblK">2×клик</kbd><kbd data-i18n="k_rmbK">ПКМ</kbd></span><span data-i18n="k_pick">окно выбора цифры</span>
-      </div>
-      <div class="row" style="justify-content:flex-start; margin-top:16px">
-        <button class="btn danger" id="resetStats" data-i18n="reset">Сбросить статистику</button>
       </div>
     </div>
     <div class="row"><button class="btn" id="setClose" data-i18n="done">Готово</button></div>
@@ -542,25 +554,25 @@ ru:{
   dataAt:'Состояние данных', close:'Закрыть',
   settings:'Настройки', tabView:'Вид', tabGame:'Игра', tabKeys:'Клавиши',
   themeT:'Тема', posT:'Позиция поля', posLeft:'Слева', posCenter:'Центр', posRight:'Справа', langT:'Язык',
-  instantT:'Мгновенная проверка ошибок', instantD:'неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии',
-  limitT:'Лимит — 3 ошибки', limitD:'после третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)',
-  pickerT:'Окно выбора цифры', pickerD:'двойной или правый клик по клетке открывает окно с цифрами',
-  sameT:'Подсветка одинаковых чисел', sameD:'при выборе клетки подсвечиваются такие же цифры и заметки',
-  countsT:'Счётчик оставшихся чисел', countsD:'маленькая цифра на кнопках нумпада — сколько ещё осталось',
-  hintBtnT:'Кнопка «Подсказка»', hintBtnD:'показывать в панели управления (клавиша H)',
-  autoBtnT:'Кнопка «Авто-заметки»', autoBtnD:'показывать в панели управления (клавиша A)',
+  instantT:'Мгновенная проверка ошибок', instantD:'Неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии',
+  limitT:'Лимит — 3 ошибки', limitD:'После третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)',
+  pickerT:'Окно выбора цифры', pickerD:'Двойной или правый клик по клетке открывает окно с цифрами',
+  sameT:'Подсветка одинаковых чисел', sameD:'При выборе клетки подсвечиваются такие же цифры и заметки',
+  countsT:'Счётчик оставшихся чисел', countsD:'Маленькая цифра на кнопках нумпада — сколько ещё осталось',
+  hintBtnT:'Кнопка «Подсказка»', hintBtnD:'Показывать в панели управления (клавиша H)',
+  autoBtnT:'Кнопка «Авто-заметки»', autoBtnD:'Показывать в панели управления (клавиша A)',
   reset:'Сбросить статистику', resetConfirm:'Сбросить весь журнал решённых партий? Действие затронет все устройства.',
   resetDone:'Статистика сброшена', resetNeedVault:'Сначала подключи vault — иначе сброс не дойдёт до файла',
   done:'Готово',
   k_digit:'ввод цифры', k_note:'заметка в клетку', k_hyp1:'черновик в клетку', k_notes:'режим заметок (и Пробел)',
-  k_hypm:'режим черновика', k_erase:'стереть', k_undo:'отмена / вернуть (⌘Z, ⌘⇧Z)', k_hint:'подсказка (если включена)',
+  k_hypm:'режим черновика', k_erase:'стереть',  k_undo:'отмена / вернуть', k_hint:'подсказка (если включена)',
   k_auto:'авто-заметки (если включены)', k_pause:'пауза', k_nav:'навигация по полю', k_menu:'меню', k_pick:'окно выбора цифры',
   gen:'Генерация поля…', digitTab:'Цифра', noteTab:'Заметка', hypTab:'Черновик', eraseP:'Стереть',
   featT:'Возможности',
-  f1T:'Правый клик по клетке', f1D:'или двойной — окно с цифрами прямо у клетки',
-  f2T:'Черновик', f2D:'пробуй ход пунктиром, потом прими или откати',
-  f3T:'Счётчики на нумпаде', f3D:'видно, сколько каждой цифры осталось',
-  f7T:'Пробел и клавиши', f7D:'пробел — заметки, H — подсказка, стрелки — по полю',
+  f1T:'Правый клик по клетке', f1D:'Или двойной — окно с цифрами прямо у клетки',
+  f2T:'Черновик', f2D:'Пробуй ход пунктиром, потом прими или откати',
+  f3T:'Счётчики на нумпаде', f3D:'Видно, сколько каждой цифры осталось',
+  f7T:'Пробел', f7D:'Одно нажатие — режим заметок',
   k_dblK:'2×клик', k_rmbK:'ПКМ',
   vaultConnect:'Подключить vault', vaultSync:'Vault: нажмите для синка', vaultOk:'Vault ✓',
   savedVault:'Сохранено в vault', vaultFail:'Не удалось записать в vault — кликни по бейджу',
@@ -586,18 +598,18 @@ en:{
   dataAt:'Data as of', close:'Close',
   settings:'Settings', tabView:'Look', tabGame:'Game', tabKeys:'Keys',
   themeT:'Theme', posT:'Board position', posLeft:'Left', posCenter:'Center', posRight:'Right', langT:'Language',
-  instantT:'Instant error check', instantD:'wrong digits turn red immediately; off — check runs when the board is full. Applies to new games',
-  limitT:'Limit — 3 errors', limitD:'after the third error — pause with a choice: no limit or restart (instant check only)',
-  pickerT:'Digit picker popup', pickerD:'double or right click on a cell opens the digit popup',
-  sameT:'Highlight matching numbers', sameD:'selecting a cell highlights the same digits and notes',
-  countsT:'Remaining-count on numbers', countsD:'a small number on numpad keys — how many are left',
-  hintBtnT:'“Hint” button', hintBtnD:'show in the control bar (key H)',
-  autoBtnT:'“Auto-notes” button', autoBtnD:'show in the control bar (key A)',
+  instantT:'Instant error check', instantD:'Wrong digits turn red immediately; off — check runs when the board is full. Applies to new games',
+  limitT:'Limit — 3 errors', limitD:'After the third error — pause with a choice: no limit or restart (instant check only)',
+  pickerT:'Digit picker popup', pickerD:'Double or right click on a cell opens the digit popup',
+  sameT:'Highlight matching numbers', sameD:'Selecting a cell highlights the same digits and notes',
+  countsT:'Remaining-count on numbers', countsD:'A small number on numpad keys — how many are left',
+  hintBtnT:'“Hint” button', hintBtnD:'Show in the control bar (key H)',
+  autoBtnT:'“Auto-notes” button', autoBtnD:'Show in the control bar (key A)',
   reset:'Reset statistics', resetConfirm:'Reset the whole log of solved games? This affects all devices.',
   resetDone:'Statistics reset', resetNeedVault:'Connect the vault first — otherwise the reset won’t reach the file',
   done:'Done',
   k_digit:'enter digit', k_note:'note into cell', k_hyp1:'draft into cell', k_notes:'notes mode (or Space)',
-  k_hypm:'draft mode', k_erase:'erase', k_undo:'undo / redo (⌘Z, ⌘⇧Z)', k_hint:'hint (if enabled)',
+  k_hypm:'draft mode', k_erase:'erase',  k_undo:'undo / redo', k_hint:'hint (if enabled)',
   k_auto:'auto-notes (if enabled)', k_pause:'pause', k_nav:'move around the board', k_menu:'menu', k_pick:'digit picker popup',
   gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
   vaultConnect:'Connect vault', vaultSync:'Vault: click to sync', vaultOk:'Vault ✓',
@@ -608,10 +620,10 @@ en:{
   delGame:'Delete this game?', restartConfirm:'Restart this puzzle? Board progress will be reset.',
   mist:'errors', hintsSm:'hints',
   featT:'Features',
-  f1T:'Right-click a cell', f1D:'or double click — a digit popup right at the cell',
-  f2T:'Draft mode', f2D:'try a move dashed, then commit or undo',
-  f3T:'Numpad counters', f3D:'see how many of each digit are left',
-  f7T:'Space & hotkeys', f7D:'Space — notes, H — hint, arrows — move around',
+  f1T:'Right-click a cell', f1D:'Or double click — a digit popup right at the cell',
+  f2T:'Draft mode', f2D:'Try a move dashed, then commit or undo',
+  f3T:'Numpad counters', f3D:'See how many of each digit are left',
+  f7T:'Space bar', f7D:'One tap switches notes mode',
   k_dblK:'2×click', k_rmbK:'RMB',
 },
 es:{
@@ -630,27 +642,27 @@ es:{
   dataAt:'Datos a', close:'Cerrar',
   settings:'Ajustes', tabView:'Vista', tabGame:'Juego', tabKeys:'Teclas',
   themeT:'Tema', posT:'Posición del tablero', posLeft:'Izquierda', posCenter:'Centro', posRight:'Derecha', langT:'Idioma',
-  instantT:'Comprobación instantánea', instantD:'los dígitos erróneos se marcan en rojo al instante; desactivado — se comprueba al llenar el tablero. Para partidas nuevas',
-  limitT:'Límite — 3 errores', limitD:'tras el tercer error — pausa con opción: sin límite o reiniciar (solo comprobación instantánea)',
-  pickerT:'Ventana de dígitos', pickerD:'doble clic o clic derecho en una celda abre la ventana de dígitos',
-  sameT:'Resaltar números iguales', sameD:'al seleccionar una celda se resaltan los mismos dígitos y notas',
-  countsT:'Contador de restantes', countsD:'un número pequeño en las teclas — cuántos quedan',
-  hintBtnT:'Botón «Pista»', hintBtnD:'mostrar en la barra de control (tecla H)',
-  autoBtnT:'Botón «Auto-notas»', autoBtnD:'mostrar en la barra de control (tecla A)',
+  instantT:'Comprobación instantánea', instantD:'Los dígitos erróneos se marcan en rojo al instante; desactivado — se comprueba al llenar el tablero. Para partidas nuevas',
+  limitT:'Límite — 3 errores', limitD:'Tras el tercer error — pausa con opción: sin límite o reiniciar (solo comprobación instantánea)',
+  pickerT:'Ventana de dígitos', pickerD:'Doble clic o clic derecho en una celda abre la ventana de dígitos',
+  sameT:'Resaltar números iguales', sameD:'Al seleccionar una celda se resaltan los mismos dígitos y notas',
+  countsT:'Contador de restantes', countsD:'Un número pequeño en las teclas — cuántos quedan',
+  hintBtnT:'Botón «Pista»', hintBtnD:'Mostrar en la barra de control (tecla H)',
+  autoBtnT:'Botón «Auto-notas»', autoBtnD:'Mostrar en la barra de control (tecla A)',
   reset:'Restablecer estadísticas', resetConfirm:'¿Borrar todo el registro de partidas resueltas?',
   resetDone:'Estadísticas restablecidas', done:'Listo',
   k_digit:'introducir dígito', k_note:'nota en la celda', k_hyp1:'borrador en la celda', k_notes:'modo notas (o Espacio)',
-  k_hypm:'modo borrador', k_erase:'borrar', k_undo:'deshacer / rehacer (⌘Z, ⌘⇧Z)', k_hint:'pista (si está activada)',
+  k_hypm:'modo borrador', k_erase:'borrar',  k_undo:'deshacer / rehacer', k_hint:'pista (si está activada)',
   k_auto:'auto-notas (si están activadas)', k_pause:'pausa', k_nav:'moverse por el tablero', k_menu:'menú', k_pick:'ventana de dígitos',
   gen:'Generando tablero…', digitTab:'Dígito', noteTab:'Nota', hypTab:'Borrador', eraseP:'Borrar',
   hasErrors:'Dígitos erróneos: {n}', autoDone:'Candidatos rellenados', assistNote:'con ayuda — no se registra',
   delGame:'¿Eliminar esta partida?', restartConfirm:'¿Reiniciar este puzle? El progreso se perderá.',
   mist:'errores', hintsSm:'pistas',
   featT:'Funciones',
-  f1T:'Clic derecho en la celda', f1D:'o doble clic — ventana de dígitos junto a la celda',
-  f2T:'Borrador', f2D:'prueba en punteado, luego confirma o deshaz',
-  f3T:'Contadores en el teclado', f3D:'ve cuántos quedan de cada dígito',
-  f7T:'Espacio y teclas', f7D:'espacio — notas, H — pista, flechas — moverse',
+  f1T:'Clic derecho en la celda', f1D:'O doble clic — ventana de dígitos junto a la celda',
+  f2T:'Borrador', f2D:'Prueba en punteado, luego confirma o deshaz',
+  f3T:'Contadores en el teclado', f3D:'Ve cuántos quedan de cada dígito',
+  f7T:'Barra espaciadora', f7D:'Un toque activa el modo notas',
   k_dblK:'2×clic', k_rmbK:'clic der.',
 },
 de:{
@@ -669,27 +681,27 @@ de:{
   dataAt:'Stand', close:'Schließen',
   settings:'Einstellungen', tabView:'Ansicht', tabGame:'Spiel', tabKeys:'Tasten',
   themeT:'Design', posT:'Position des Felds', posLeft:'Links', posCenter:'Mitte', posRight:'Rechts', langT:'Sprache',
-  instantT:'Sofortige Fehlerprüfung', instantD:'falsche Ziffern werden sofort rot; aus — Prüfung erst bei vollem Feld. Gilt für neue Spiele',
-  limitT:'Limit — 3 Fehler', limitD:'nach dem dritten Fehler — Pause mit Wahl: ohne Limit oder neu starten (nur bei Sofortprüfung)',
+  instantT:'Sofortige Fehlerprüfung', instantD:'Falsche Ziffern werden sofort rot; aus — Prüfung erst bei vollem Feld. Gilt für neue Spiele',
+  limitT:'Limit — 3 Fehler', limitD:'Nach dem dritten Fehler — Pause mit Wahl: ohne Limit oder neu starten (nur bei Sofortprüfung)',
   pickerT:'Ziffern-Popup', pickerD:'Doppel- oder Rechtsklick auf eine Zelle öffnet das Ziffernfenster',
-  sameT:'Gleiche Zahlen hervorheben', sameD:'beim Auswählen einer Zelle werden gleiche Ziffern und Notizen markiert',
-  countsT:'Zähler der Restziffern', countsD:'kleine Zahl auf den Tasten — wie viele noch fehlen',
-  hintBtnT:'„Tipp“-Taste', hintBtnD:'in der Steuerleiste anzeigen (Taste H)',
-  autoBtnT:'„Auto-Notizen“-Taste', autoBtnD:'in der Steuerleiste anzeigen (Taste A)',
+  sameT:'Gleiche Zahlen hervorheben', sameD:'Beim Auswählen einer Zelle werden gleiche Ziffern und Notizen markiert',
+  countsT:'Zähler der Restziffern', countsD:'Kleine Zahl auf den Tasten — wie viele noch fehlen',
+  hintBtnT:'„Tipp“-Taste', hintBtnD:'In der Steuerleiste anzeigen (Taste H)',
+  autoBtnT:'„Auto-Notizen“-Taste', autoBtnD:'In der Steuerleiste anzeigen (Taste A)',
   reset:'Statistik zurücksetzen', resetConfirm:'Gesamtes Protokoll gelöster Spiele löschen?',
   resetDone:'Statistik zurückgesetzt', done:'Fertig',
   k_digit:'Ziffer eingeben', k_note:'Notiz in die Zelle', k_hyp1:'Entwurf in die Zelle', k_notes:'Notizmodus (oder Leertaste)',
-  k_hypm:'Entwurfsmodus', k_erase:'löschen', k_undo:'rückgängig / wiederholen (⌘Z, ⌘⇧Z)', k_hint:'Tipp (falls aktiviert)',
+  k_hypm:'Entwurfsmodus', k_erase:'löschen',  k_undo:'rückgängig / wiederholen', k_hint:'Tipp (falls aktiviert)',
   k_auto:'Auto-Notizen (falls aktiviert)', k_pause:'Pause', k_nav:'über das Feld bewegen', k_menu:'Menü', k_pick:'Ziffern-Popup',
   gen:'Feld wird erzeugt…', digitTab:'Ziffer', noteTab:'Notiz', hypTab:'Entwurf', eraseP:'Löschen',
   hasErrors:'Falsche Ziffern: {n}', autoDone:'Kandidaten eingetragen', assistNote:'mit Hilfe — wird nicht gewertet',
   delGame:'Dieses Spiel löschen?', restartConfirm:'Rätsel neu starten? Der Fortschritt geht verloren.',
   mist:'Fehler', hintsSm:'Tipps',
   featT:'Funktionen',
-  f1T:'Rechtsklick auf die Zelle', f1D:'oder Doppelklick — Ziffernfenster direkt an der Zelle',
+  f1T:'Rechtsklick auf die Zelle', f1D:'Oder Doppelklick — Ziffernfenster direkt an der Zelle',
   f2T:'Entwurf', f2D:'Zug gestrichelt testen, dann übernehmen oder verwerfen',
-  f3T:'Zähler am Numpad', f3D:'zeigt, wie viele jeder Ziffer übrig sind',
-  f7T:'Leertaste & Tasten', f7D:'Leertaste — Notizen, H — Tipp, Pfeile — bewegen',
+  f3T:'Zähler am Numpad', f3D:'Zeigt, wie viele jeder Ziffer übrig sind',
+  f7T:'Leertaste', f7D:'Ein Druck wechselt in den Notizmodus',
   k_dblK:'2×Klick', k_rmbK:'RMT',
 },
 fr:{
@@ -708,27 +720,27 @@ fr:{
   dataAt:'Données au', close:'Fermer',
   settings:'Réglages', tabView:'Affichage', tabGame:'Jeu', tabKeys:'Touches',
   themeT:'Thème', posT:'Position de la grille', posLeft:'Gauche', posCenter:'Centre', posRight:'Droite', langT:'Langue',
-  instantT:'Vérification instantanée', instantD:'les chiffres faux passent en rouge aussitôt ; désactivé — vérification quand la grille est pleine. Pour les nouvelles parties',
-  limitT:'Limite — 3 erreurs', limitD:'après la troisième erreur — pause avec choix : sans limite ou recommencer (vérification instantanée uniquement)',
-  pickerT:'Fenêtre de chiffres', pickerD:'double clic ou clic droit sur une case ouvre la fenêtre de chiffres',
-  sameT:'Surligner les chiffres identiques', sameD:'sélectionner une case met en évidence les mêmes chiffres et notes',
-  countsT:'Compteur de chiffres restants', countsD:'un petit nombre sur les touches — combien il en reste',
-  hintBtnT:'Bouton « Indice »', hintBtnD:'afficher dans la barre de contrôle (touche H)',
-  autoBtnT:'Bouton « Auto-notes »', autoBtnD:'afficher dans la barre de contrôle (touche A)',
+  instantT:'Vérification instantanée', instantD:'Les chiffres faux passent en rouge aussitôt ; désactivé — vérification quand la grille est pleine. Pour les nouvelles parties',
+  limitT:'Limite — 3 erreurs', limitD:'Après la troisième erreur — pause avec choix : sans limite ou recommencer (vérification instantanée uniquement)',
+  pickerT:'Fenêtre de chiffres', pickerD:'Double clic ou clic droit sur une case ouvre la fenêtre de chiffres',
+  sameT:'Surligner les chiffres identiques', sameD:'Sélectionner une case met en évidence les mêmes chiffres et notes',
+  countsT:'Compteur de chiffres restants', countsD:'Un petit nombre sur les touches — combien il en reste',
+  hintBtnT:'Bouton « Indice »', hintBtnD:'Afficher dans la barre de contrôle (touche H)',
+  autoBtnT:'Bouton « Auto-notes »', autoBtnD:'Afficher dans la barre de contrôle (touche A)',
   reset:'Réinitialiser les statistiques', resetConfirm:'Effacer tout l’historique des parties résolues ?',
   resetDone:'Statistiques réinitialisées', done:'Terminé',
   k_digit:'saisir un chiffre', k_note:'note dans la case', k_hyp1:'brouillon dans la case', k_notes:'mode notes (ou Espace)',
-  k_hypm:'mode brouillon', k_erase:'effacer', k_undo:'annuler / rétablir (⌘Z, ⌘⇧Z)', k_hint:'indice (si activé)',
+  k_hypm:'mode brouillon', k_erase:'effacer',  k_undo:'annuler / rétablir', k_hint:'indice (si activé)',
   k_auto:'auto-notes (si activées)', k_pause:'pause', k_nav:'se déplacer sur la grille', k_menu:'menu', k_pick:'fenêtre de chiffres',
   gen:'Génération de la grille…', digitTab:'Chiffre', noteTab:'Note', hypTab:'Brouillon', eraseP:'Effacer',
   hasErrors:'Chiffres faux : {n}', autoDone:'Candidats remplis', assistNote:'avec aide — non comptée',
   delGame:'Supprimer cette partie ?', restartConfirm:'Recommencer cette grille ? La progression sera perdue.',
   mist:'erreurs', hintsSm:'indices',
   featT:'Fonctions',
-  f1T:'Clic droit sur la case', f1D:'ou double clic — fenêtre de chiffres près de la case',
-  f2T:'Brouillon', f2D:'essayez en pointillés, puis validez ou annulez',
-  f3T:'Compteurs du pavé', f3D:'combien il reste de chaque chiffre',
-  f7T:'Espace et raccourcis', f7D:'espace — notes, H — indice, flèches — déplacement',
+  f1T:'Clic droit sur la case', f1D:'Ou double clic — fenêtre de chiffres près de la case',
+  f2T:'Brouillon', f2D:'Essayez en pointillés, puis validez ou annulez',
+  f3T:'Compteurs du pavé', f3D:'Combien il reste de chaque chiffre',
+  f7T:'Barre d’espace', f7D:'Une pression active le mode notes',
   k_dblK:'2×clic', k_rmbK:'clic droit',
 },
 zh:{
@@ -757,7 +769,7 @@ zh:{
   reset:'重置统计', resetConfirm:'清空全部已解决记录？',
   resetDone:'统计已重置', done:'完成',
   k_digit:'输入数字', k_note:'填入笔记', k_hyp1:'填入草稿', k_notes:'笔记模式（或空格）',
-  k_hypm:'草稿模式', k_erase:'擦除', k_undo:'撤销 / 重做 (⌘Z, ⌘⇧Z)', k_hint:'提示（若开启）',
+  k_hypm:'草稿模式', k_erase:'擦除',  k_undo:'撤销 / 重做', k_hint:'提示（若开启）',
   k_auto:'自动笔记（若开启）', k_pause:'暂停', k_nav:'在棋盘上移动', k_menu:'菜单', k_pick:'数字弹窗',
   gen:'正在生成棋盘…', digitTab:'数字', noteTab:'笔记', hypTab:'草稿', eraseP:'擦除',
   hasErrors:'错误数字：{n}', autoDone:'候选数已填入', assistNote:'使用辅助 — 不计入统计',
@@ -767,7 +779,7 @@ zh:{
   f1T:'右键点击单元格', f1D:'或双击 — 数字弹窗就在单元格旁',
   f2T:'草稿', f2D:'虚线试探，再采纳或撤销',
   f3T:'数字键计数', f3D:'每个数字还剩几个一目了然',
-  f7T:'空格与快捷键', f7D:'空格 — 笔记，H — 提示，方向键移动',
+  f7T:'空格键', f7D:'一键切换笔记模式',
   k_dblK:'双击', k_rmbK:'右键',
 }};
 function t(k){ const d=I18N[SES.settings.lang]||I18N.en; return d[k] || I18N.en[k] || I18N.ru[k] || k; }
@@ -782,8 +794,8 @@ const DIFFS = { easy:{clues:38}, medium:{clues:32}, hard:{clues:27}, expert:{clu
 const DIFF_KEYS = Object.keys(DIFFS);
 const dName = d => t('d_'+d);
 const THEMES = [
-  {id:'sepia', name:'Sepia', bg:'#efe9dd', accent:'#b4552d', meta:'#efe9dd'},
   {id:'indigo', name:'Indigo', bg:'#eae9e2', accent:'#4a67d6', meta:'#eae9e2'},
+  {id:'sepia', name:'Sepia', bg:'#efe9dd', accent:'#b4552d', meta:'#efe9dd'},
   {id:'olive', name:'Olive', bg:'#edeedd', accent:'#6b7a2f', meta:'#edeedd'},
   {id:'rose', name:'Rose', bg:'#f0e7e2', accent:'#b03a5b', meta:'#f0e7e2'},
   {id:'latte', name:'Latte', bg:'#e6e1d7', accent:'#8a5a36', meta:'#e6e1d7'},
@@ -796,7 +808,7 @@ const SYS_LANG=(()=>{ try{
   const langs=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];
   for(const l of langs){ const p=String(l).slice(0,2).toLowerCase(); if(I18N[p]) return p; }
 }catch(e){} return 'en'; })();
-const DEF_SETTINGS = {theme:'sepia', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
+const DEF_SETTINGS = {theme:'indigo', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
 /* LOG — зеркало файла Журнал.md; дополняется ТОЛЬКО через pending (очередь побед) */
 let LOG = { games:[], updated:0 };
 let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
