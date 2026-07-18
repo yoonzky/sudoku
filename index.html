@@ -100,7 +100,7 @@ header #setBtn{right:calc(50% - 478px)}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
 main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
-#home{display:grid; grid-template-columns:540px 360px; gap:40px; justify-content:center; align-items:start}
+#home{display:grid; grid-template-columns:540px 360px; gap:28px; justify-content:center; align-items:start}
 #home>.card{grid-column:1}
 #home .feat{grid-column:2; grid-row:1/span 4}
 #game{max-width:clamp(320px, calc(100vh - 285px), 540px); margin:0 auto}
@@ -112,8 +112,8 @@ body.in-game header .iconbtn{position:static}
 @media(min-height:640px){body.in-game{overflow:hidden}}
 /* ---------- главный экран ---------- */
 .card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
-#home .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px;
-  box-shadow:0 1px 0 var(--line); margin-bottom:14px}
+#home .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px;
+  box-shadow:0 1px 0 var(--line); margin-bottom:12px}
 #home .card h2{font-family:Fraunces,serif; font-size:17px; color:var(--text); text-transform:none; letter-spacing:0; font-weight:700}
 .feat-list{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:13px}
 .feat-list li{display:flex; gap:11px; align-items:flex-start}
@@ -146,6 +146,10 @@ body.in-game header .iconbtn{position:static}
   .diff-grid{grid-template-columns:1fr 1fr}
 }
 .card h2{margin:0 0 4px; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
+#contList{max-height:216px; overflow-y:auto; scrollbar-gutter:stable; padding-right:2px}
+#contList::-webkit-scrollbar{width:8px}
+#contList::-webkit-scrollbar-track{background:var(--panel2); border-radius:8px}
+#contList::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:8px}
 .cont-row{display:flex; gap:8px; margin-top:10px}
 .cont-open{flex:1; display:flex; justify-content:space-between; align-items:center;
   background:var(--panel2); border:1px solid var(--accent); border-radius:14px;
@@ -174,8 +178,8 @@ body.in-game header .iconbtn{position:static}
 .topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round}
 /* ---------- поле ---------- */
 .board-wrap{position:relative}
-#board{position:relative; overflow:visible; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
-  border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
+#board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
+  border:2px solid var(--line-strong); border-radius:12px; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
 #board.notes-on .cell.sel::before, #board.hyp-on .cell.sel::before{content:''; position:absolute; inset:-1px; border:2px solid var(--cell-sel); pointer-events:none; z-index:5}
 #board.notes-on .cell.sel::after{border-style:dashed; z-index:6}
@@ -280,7 +284,7 @@ body.in-game header .iconbtn{position:static}
   padding:24px; width:100%; max-width:430px; max-height:86vh; overflow-y:auto; box-shadow:var(--shadow);
   animation:mIn .22s ease-out}
 @keyframes mIn{from{transform:translateY(14px) scale(.97); opacity:0}to{transform:none; opacity:1}}
-.modal h2{margin:0 0 14px; font-size:18px; font-weight:800}
+.modal h2{font-family:Fraunces,serif; margin:0 0 14px; font-size:18px; font-weight:800}
 .modal h3{margin:18px 0 8px; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
 .modal table{width:100%; border-collapse:collapse; font-size:13px}
 .modal th{text-align:left; color:var(--muted); font-weight:600; padding:6px 4px; border-bottom:1px solid var(--line); font-size:11px}
@@ -361,7 +365,7 @@ body.in-game header .iconbtn{position:static}
   <section id="home">
     <div class="card" id="continueCard" style="display:none">
       <h2 data-i18n="continue">Продолжить</h2>
-      <div id="contList" style="max-height:216px; overflow-y:auto"></div>
+      <div id="contList"></div>
     </div>
     <div class="card">
       <h2 data-i18n="newGame">Новая игра</h2>
