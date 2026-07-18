@@ -103,7 +103,10 @@ main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
 #home{display:grid; grid-template-columns:540px 300px; gap:40px; justify-content:center; align-items:start}
 #home>.card{grid-column:1}
 #home .feat{grid-column:2; grid-row:1/span 4}
-#game{max-width:540px; margin:0 auto}
+#game{max-width:clamp(320px, calc(100vh - 285px), 540px); margin:0 auto}
+body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4px}
+body.in-game header h1{font-size:24px; flex:1; text-align:left}
+body.in-game header .iconbtn{position:static}
 @media(max-width:940px){#home{display:block}}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
@@ -115,7 +118,7 @@ main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
 .feat-list{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:13px}
 .feat-list li{display:flex; gap:11px; align-items:flex-start}
 .feat-list li>div{display:flex; flex-direction:column; gap:3px}
-.mv{flex:none; width:96px; height:64px; background:var(--panel2); border:1px solid var(--line); border-radius:7px;
+.mv{flex:none; flex-direction:row; width:96px; height:64px; background:var(--panel2); border:1px solid var(--line); border-radius:7px;
   display:flex; align-items:center; justify-content:center; gap:7px; margin-top:1px}
 .mv-cell{width:26px; height:26px; border:1.5px solid var(--line-strong); border-radius:4px; background:var(--cell-sel);
   display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px}
