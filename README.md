@@ -10,7 +10,7 @@ Single html file, no dependencies. Progress and settings are stored in localStor
 - draft mode for testing a hypothesis, commit or roll back in one tap
 - remaining digit counters on the numpad
 - full keyboard control (Space for notes, H for hint, arrows to move)
-- 9 themes, 6 languages, works offline
+- 10 themes, 6 languages, works offline
 
 ## Run locally
 
