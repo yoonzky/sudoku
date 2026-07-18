@@ -174,11 +174,12 @@ body.in-game header .iconbtn{position:static}
 .topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round}
 /* ---------- поле ---------- */
 .board-wrap{position:relative}
-#board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
+#board{position:relative; overflow:visible; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
   border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
-#board.notes-on .cell.sel::after{border-style:dashed}
-#board.hyp-on .cell.sel::after{border-style:dashed; border-color:var(--accent2)}
+#board.notes-on .cell.sel::before, #board.hyp-on .cell.sel::before{content:''; position:absolute; inset:-1px; border:2px solid var(--cell-sel); pointer-events:none; z-index:5}
+#board.notes-on .cell.sel::after{border-style:dashed; z-index:6}
+#board.hyp-on .cell.sel::after{border-style:dashed; border-color:var(--accent2); z-index:6}
 .cell{position:relative; display:flex; align-items:center; justify-content:center;
   font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
   color:var(--user); transition:background .1s}
@@ -262,8 +263,8 @@ body.in-game header .iconbtn{position:static}
 .num.done{opacity:.22; pointer-events:none}
 .num.hl{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 /* цвет нумпада по режиму: заметки — акцент, черновик — второй акцент */
-.numpad.mode-note .num{color:var(--accent); border-color:var(--accent-soft); background:var(--accent-soft)}
-.numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
+.numpad.mode-note .num{color:var(--accent); border-color:var(--accent-soft); background-color:var(--panel); background-image:linear-gradient(var(--accent-soft),var(--accent-soft))}
+.numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2-soft); background-color:var(--panel); background-image:linear-gradient(var(--accent2-soft),var(--accent2-soft))}
 .numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.22}
 /* ---------- кнопки, модалки ---------- */
 .btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:12px;
@@ -360,7 +361,7 @@ body.in-game header .iconbtn{position:static}
   <section id="home">
     <div class="card" id="continueCard" style="display:none">
       <h2 data-i18n="continue">Продолжить</h2>
-      <div id="contList"></div>
+      <div id="contList" style="max-height:216px; overflow-y:auto"></div>
     </div>
     <div class="card">
       <h2 data-i18n="newGame">Новая игра</h2>
@@ -454,6 +455,16 @@ body.in-game header .iconbtn{position:static}
 </div>
 
 <!-- СТАТИСТИКА -->
+<div class="modal-bg hidden" id="confirmModal">
+  <div class="modal" style="max-width:340px">
+    <p id="confirmText" style="margin:4px 0 20px; font-size:14px; line-height:1.55"></p>
+    <div class="row" style="justify-content:flex-end; gap:10px">
+      <button class="btn ghost" id="confirmNo"></button>
+      <button class="btn danger" id="confirmYes"></button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg hidden" id="statsModal">
   <div class="modal">
     <h2 data-i18n="stats">Статистика</h2>
@@ -543,6 +554,7 @@ body.in-game header .iconbtn{position:static}
 /* ================= i18n ================= */
 const I18N = {
 ru:{
+  yes:'Да', cancel:'Отмена',
   tagline:'спокойная головоломка на каждый день',
   continue:'Продолжить', newGame:'Новая игра', total:'Всего',
   d_easy:'Лёгкий', d_medium:'Средний', d_hard:'Сложный', d_expert:'Эксперт',
@@ -587,6 +599,7 @@ ru:{
   mist:'ошибок', hintsSm:'подсказок',
 },
 en:{
+  yes:'Yes', cancel:'Cancel',
   tagline:'a calm puzzle for every day',
   continue:'Continue', newGame:'New game', total:'Overall',
   d_easy:'Easy', d_medium:'Medium', d_hard:'Hard', d_expert:'Expert',
@@ -631,6 +644,7 @@ en:{
   k_dblK:'2×click', k_rmbK:'RMB',
 },
 es:{
+  yes:'Sí', cancel:'Cancelar',
   tagline:'un rompecabezas tranquilo para cada día',
   continue:'Continuar', newGame:'Nueva partida', total:'Total',
   d_easy:'Fácil', d_medium:'Medio', d_hard:'Difícil', d_expert:'Experto',
@@ -670,6 +684,7 @@ es:{
   k_dblK:'2×clic', k_rmbK:'clic der.',
 },
 de:{
+  yes:'Ja', cancel:'Abbrechen',
   tagline:'ein ruhiges Rätsel für jeden Tag',
   continue:'Fortsetzen', newGame:'Neues Spiel', total:'Gesamt',
   d_easy:'Leicht', d_medium:'Mittel', d_hard:'Schwer', d_expert:'Experte',
@@ -709,6 +724,7 @@ de:{
   k_dblK:'2×Klick', k_rmbK:'RMT',
 },
 fr:{
+  yes:'Oui', cancel:'Annuler',
   tagline:'un puzzle paisible pour chaque jour',
   continue:'Continuer', newGame:'Nouvelle partie', total:'Total',
   d_easy:'Facile', d_medium:'Moyen', d_hard:'Difficile', d_expert:'Expert',
@@ -748,6 +764,7 @@ fr:{
   k_dblK:'2×clic', k_rmbK:'clic droit',
 },
 zh:{
+  yes:'确定', cancel:'取消',
   tagline:'每天一局，静心解题',
   continue:'继续', newGame:'新游戏', total:'总计',
   d_easy:'简单', d_medium:'中等', d_hard:'困难', d_expert:'专家',
@@ -1495,20 +1512,34 @@ function setTab(name){
   document.querySelectorAll('.stabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name));
   for(const tb of ['view','game','keys']) $('tab-'+tb).classList.toggle('hidden', tb!==name);
 }
-function resetStats(){
-  if(!confirm(t('resetConfirm'))) return;
+async function resetStats(){
+  if(!await askConfirm(t('resetConfirm'))) return;
   pending=[]; LOG.games=[]; LOG.updated=Date.now();
   try{ localStorage.setItem(LS_LOG,JSON.stringify(LOG)); localStorage.setItem(LS_PEND,'[]'); }catch(e){}
   renderHome(); toast(t('resetDone'));
 }
 
+function askConfirm(msg){
+  return new Promise(res=>{
+    const bg=$('confirmModal');
+    $('confirmText').textContent=msg;
+    $('confirmYes').textContent=t('yes'); $('confirmNo').textContent=t('cancel');
+    bg.classList.remove('hidden');
+    const done=v=>{ bg.classList.add('hidden');
+      $('confirmYes').onclick=$('confirmNo').onclick=bg.onclick=null; res(v); };
+    $('confirmYes').onclick=()=>done(true);
+    $('confirmNo').onclick=()=>done(false);
+    bg.onclick=e=>{ if(e.target===bg) done(false); };
+  });
+}
+
 /* ================= события ================= */
 document.querySelectorAll('.diff-btn').forEach(b=>b.addEventListener('click',()=>newGame(b.dataset.diff)));
-$('contList').addEventListener('click',e=>{
+$('contList').addEventListener('click',async e=>{
   const open=e.target.closest('.cont-open');
   if(open){ openGame(+open.dataset.idx); return; }
   const del=e.target.closest('.cont-del');
-  if(del && confirm(t('delGame'))){
+  if(del && await askConfirm(t('delGame'))){
     SES.games.splice(+del.dataset.idx,1);
     if(SES.cur>=SES.games.length) SES.cur=SES.games.length-1;
     persistCache(); saveSes(); renderHome();
@@ -1517,9 +1548,9 @@ $('contList').addEventListener('click',e=>{
 $('backBtn').addEventListener('click',()=>{ closePicker(); stopTimer(); persistCache(); saveSes(); show('home'); renderHome(); });
 $('pauseBtn').addEventListener('click',()=>setPaused(!cur().paused));
 $('resumeBtn').addEventListener('click',()=>setPaused(false));
-$('restartBtn').addEventListener('click',()=>{
+$('restartBtn').addEventListener('click',async()=>{
   const g=cur(); if(!g) return;
-  if(!confirm(t('restartConfirm'))) return;
+  if(!await askConfirm(t('restartConfirm'))) return;
   g.values=g.solution.map((v,i)=>g.given[i]? v : 0);
   g.notes=Array.from({length:81},()=>[]);
   g.hyp=new Array(81).fill(0); g.endErr=[]; g.wasFull=false;
