@@ -128,7 +128,12 @@ header #setBtn{right:calc(50% - 478px)}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
 main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
-#game{max-width:clamp(320px, calc(100vh - 285px), 540px); margin:0 auto}
+#game{max-width:clamp(320px, calc(100vh - 300px), 540px); margin:0 auto}
+body.has-hint #game{max-width:clamp(320px, calc(100vh - 356px), 540px)}
+@supports (height:100dvh){
+  #game{max-width:clamp(320px, calc(100dvh - 300px), 540px)}
+  body.has-hint #game{max-width:clamp(320px, calc(100dvh - 356px), 540px)}
+}
 body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4px}
 body.in-game header h1{font-size:24px; flex:1; text-align:left; cursor:pointer}
 body.in-game header h1:hover{color:var(--accent)}
@@ -1216,11 +1221,16 @@ function closePicker(){ $('picker').classList.add('hidden'); }
 function updatePickHint(){
   const el=$('pickHint'); if(!el) return;
   let seen=false; try{ seen=!!localStorage.getItem('sudoku-pickHint'); }catch(e){}
-  el.classList.toggle('hidden', seen || !pickerAllowed() || !SES.settings.dblPick);
+  const show = !seen && pickerAllowed() && SES.settings.dblPick;
+  el.classList.toggle('hidden', !show);
+  document.body.classList.toggle('has-hint', show);
 }
 function dismissPickHint(){
   try{ localStorage.setItem('sudoku-pickHint','1'); }catch(e){}
-  const el=$('pickHint'); if(el) el.classList.add('hidden');
+  const el=$('pickHint'); if(!el || el.classList.contains('hidden')) return;
+  el.classList.add('hidden');
+  document.body.classList.remove('has-hint');
+  snapBoard();
 }
 
 /* логика */
@@ -1406,7 +1416,7 @@ function openGame(idx){
   if(typeof idx==='number') SES.cur=idx;
   if(!cur()) return;
   undoStack=[]; redoStack=[]; sel=-1; hlDigit=0; inputMode='digit'; syncModeButtons();
-  show('game'); setPaused(false); renderBoard(); startTimer(); updatePickHint();
+  updatePickHint(); show('game'); setPaused(false); renderBoard(); startTimer(); snapBoard();
 }
 function startTimer(){
   stopTimer();
@@ -1632,6 +1642,8 @@ function snapBoard(){
   if(c>0) b.style.width=(c*9+bw)+'px';
 }
 window.addEventListener('resize',()=>{ snapBoard(); updatePickHint(); });
+/* шрифты подгружаются асинхронно и меняют метрики — пересчитаем поле, когда они готовы */
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(snapBoard);
 $('board').addEventListener('animationend',e=>{
   if(e.animationName==='pop') e.target.classList.remove('pop');
 });
