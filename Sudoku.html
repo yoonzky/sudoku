@@ -387,6 +387,12 @@ header, main, .site-foot{position:relative; z-index:1}
 .stab-body{display:grid}
 .stab-body>.stab{grid-area:1/1}
 .stab-body>.stab.hidden{display:block !important; visibility:hidden; pointer-events:none}
+/* На телефоне вкладки различаются по высоте слишком сильно: общая высота дала бы
+   пустое поле и прокрутку на короткой вкладке. Там каждая вкладка живёт своим ростом. */
+@media (max-width:620px){
+  .stab-body{display:block}
+  .stab-body>.stab.hidden{display:none !important}
+}
 .swatches{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:3px; overflow:hidden}
 .sw{width:100%; border:0; border-right:1px solid var(--line); border-radius:0; padding:12px 0; cursor:pointer;
   background:transparent; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:background .15s}
