@@ -184,7 +184,11 @@ header, main, .site-foot{position:relative; z-index:1}
   @supports (height:100dvh){ body{min-height:100dvh} }
 
   main{padding:4px 10px calc(14px + env(safe-area-inset-bottom))}
-  body.in-game main{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
+  /* в игре поле квадратное и упирается в ширину — отдаём ему поля почти целиком */
+  body.in-game main{padding:4px 4px calc(6px + env(safe-area-inset-bottom)); flex:0 1 auto}
+  body.in-game #game{width:100%}
+  /* шапка и поле центрируются как одна группа, иначе под логотипом зияет дыра */
+  body.in-game{justify-content:center}
   body.in-game header{padding:calc(6px + env(safe-area-inset-top)) 12px 2px}
 
   /* поле подгоняется под остаток высоты, чтобы клавиатура всегда была видна */
