@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="indigo">
+<html lang="ru" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#eae9e2" id="metaTheme">
+<meta name="theme-color" content="#ebeef6" id="metaTheme">
 <title>Sudoku</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
@@ -11,84 +11,78 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sudoku">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%23faf7f0' stroke='%234a67d6' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%234a67d6' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1119'/%3E%3Cg stroke='%239ec1f5' stroke-width='.9' opacity='.55'%3E%3Cpath d='M11.3 6v20M20.7 6v20M6 11.3h20M6 20.7h20'/%3E%3C/g%3E%3Ctext x='16' y='22.5' font-size='15' text-anchor='middle' fill='%239ec1f5' font-family='Georgia,serif' font-weight='700'%3E9%3C/text%3E%3C/svg%3E">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
-html[data-theme="sepia"]{
-  --bg:#efe9dd; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
-  --text:#2c2921; --muted:#847d6e; --accent:#b4552d; --accent-text:#ffffff; --accent-soft:#f3ded2;
-  --accent2:#4a67d6; --accent2-soft:#e2e7f6;
-  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#b4552d;
-  --cell-sel:#f3ded2; --cell-hl:#f4efe4; --cell-same:#f0e2d4; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#e4ddcd;
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
+/* Angelic core. Светлая — холодный перламутр с лиловым подтоном и сусальным золотом;
+   тёмная — глубокая полуночная синь с тем же золотом. Третьей темы нет намеренно. */
+:root, html[data-theme="light"]{
+  --bg:#ebeef6; --panel:#f7f9fd; --panel2:#ffffff; --line:#d7dced; --line-strong:#1b2130;
+  --text:#1b2130; --muted:#737c93; --accent:#3a5aa0; --accent-text:#ffffff; --accent-soft:#dbe3f5;
+  --accent2:#6f5fa8; --accent2-soft:#e5e0f4;
+  --error:#b04a52; --error-soft:rgba(176,74,82,.12); --note:#737c93; --given:#1b2130; --user:#3a5aa0;
+  --cell-sel:#c3d1ee; --cell-hl:#e3e8f4; --cell-same:#d3dcf0;
+  --shadow:0 18px 44px rgba(30,45,80,.11);
+  --rule:rgba(58,90,160,.42); --frame:rgba(58,90,160,.30);
+  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(58,90,160,.13), transparent 68%);
 }
-:root, html[data-theme="indigo"]{
-  --bg:#eae9e2; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
-  --text:#2c2921; --muted:#847d6e; --accent:#4a67d6; --accent-text:#ffffff; --accent-soft:#e2e7f6;
-  --accent2:#b4552d; --accent2-soft:#f3ded2;
-  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#4a67d6;
-  --cell-sel:#dde3f8; --cell-hl:#f0efe8; --cell-same:#e2e7f6; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#dedcd2;
+html[data-theme="dark"]{
+  --bg:#0d1119; --panel:#141926; --panel2:#1b2130; --line:#252c3d; --line-strong:#e4e9f4;
+  --text:#e4e9f4; --muted:#7f8aa3; --accent:#9ec1f5; --accent-text:#0d1119; --accent-soft:rgba(158,193,245,.20);
+  --accent2:#b8a6f0; --accent2-soft:rgba(184,166,240,.18);
+  --error:#e28089; --error-soft:rgba(226,128,137,.16); --note:#7f8aa3; --given:#e4e9f4; --user:#9ec1f5;
+  --cell-sel:#2b3a5c; --cell-hl:#151b28; --cell-same:#1e2739;
+  --shadow:0 18px 44px rgba(0,0,0,.5);
+  --rule:rgba(158,193,245,.32); --frame:rgba(158,193,245,.22);
+  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(158,193,245,.11), transparent 68%);
 }
-html[data-theme="olive"]{
-  --bg:#edeedd; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
-  --text:#2c2921; --muted:#847d6e; --accent:#6b7a2f; --accent-text:#ffffff; --accent-soft:#e8ecd4;
-  --accent2:#b4552d; --accent2-soft:#f3ded2;
-  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#6b7a2f;
-  --cell-sel:#e3e8c9; --cell-hl:#f2f3e6; --cell-same:#e8ecd4; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#e0e2cc;
-}
-html[data-theme="rose"]{
-  --bg:#f0e7e2; --panel:#faf7f0; --panel2:#ffffff; --line:#d9d2c2; --line-strong:#2c2921;
-  --text:#2c2921; --muted:#847d6e; --accent:#b03a5b; --accent-text:#ffffff; --accent-soft:#f5dde5;
-  --accent2:#4a67d6; --accent2-soft:#e2e7f6;
-  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#847d6e; --given:#2c2921; --user:#b03a5b;
-  --cell-sel:#f3d6df; --cell-hl:#f5eeea; --cell-same:#f5dde5; --shadow:0 14px 30px rgba(90,80,55,.10); --dot:#e6d8d1;
-}
-html[data-theme="fog"]{
-  --bg:#e7eaee; --panel:#f4f6f9; --panel2:#fbfcfe; --line:#ccd3dd; --line-strong:#2a2e35;
-  --text:#262a31; --muted:#76808d; --accent:#3f7fc2; --accent-text:#ffffff; --accent-soft:#dfeaf6;
-  --accent2:#b3762a; --accent2-soft:rgba(179,118,42,.14);
-  --error:#c0392b; --error-soft:rgba(192,57,43,.10); --note:#76808d; --given:#262a31; --user:#3f7fc2;
-  --cell-sel:#d9e6f4; --cell-hl:#eef1f5; --cell-same:#e0eaf5; --shadow:0 14px 30px rgba(70,80,100,.12); --dot:#dbdfe6;
-}
-html[data-theme="wine"]{
-  --bg:#221419; --panel:#2b1a21; --panel2:#342129; --line:#422a33; --line-strong:#e8d7dd;
-  --text:#e8d7dd; --muted:#a08891; --accent:#d17a95; --accent-text:#221419; --accent-soft:rgba(209,122,149,.16);
-  --accent2:#8ab4d8; --accent2-soft:rgba(138,180,216,.16);
-  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#a08891; --given:#e8d7dd; --user:#d17a95;
-  --cell-sel:#4a2c38; --cell-hl:#2e1e25; --cell-same:#402631; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#2d1c22;
-}
-html[data-theme="candle"]{
-  --bg:#211c14; --panel:#2a241a; --panel2:#332c20; --line:#403828; --line-strong:#e6dcc8;
-  --text:#e6dcc8; --muted:#9c9179; --accent:#d8a05c; --accent-text:#211c14; --accent-soft:rgba(216,160,92,.16);
-  --accent2:#8ab4d8; --accent2-soft:rgba(138,180,216,.16);
-  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#9c9179; --given:#e6dcc8; --user:#d8a05c;
-  --cell-sel:#443a24; --cell-hl:#2e2820; --cell-same:#3c3422; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#2b251b;
-}
-html[data-theme="moss"]{
-  --bg:#1b201a; --panel:#232922; --panel2:#2b322a; --line:#363e34; --line-strong:#dfe5da;
-  --text:#dfe5da; --muted:#8d968a; --accent:#7fae6b; --accent-text:#1b201a; --accent-soft:rgba(127,174,107,.16);
-  --accent2:#8ab4d8; --accent2-soft:rgba(138,180,216,.16);
-  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8d968a; --given:#dfe5da; --user:#7fae6b;
-  --cell-sel:#33402c; --cell-hl:#262c24; --cell-same:#2e3a29; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#262c24;
-}
-html[data-theme="midnight"]{
-  --bg:#171a22; --panel:#1e222c; --panel2:#262b37; --line:#303645; --line-strong:#dde1ea;
-  --text:#dde1ea; --muted:#8a91a3; --accent:#7aa2f7; --accent-text:#171a22; --accent-soft:rgba(122,162,247,.16);
-  --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.16);
-  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8a91a3; --given:#dde1ea; --user:#7aa2f7;
-  --cell-sel:#273455; --cell-hl:#21252f; --cell-same:#2b3752; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#232733;
-}
-html[data-theme="coal"]{
-  --bg:#17181a; --panel:#1e2023; --panel2:#26292d; --line:#303439; --line-strong:#dde0e4;
-  --text:#dde0e4; --muted:#8b9199; --accent:#8ab4d8; --accent-text:#17181a; --accent-soft:rgba(138,180,216,.16);
-  --accent2:#b48ae0; --accent2-soft:rgba(180,138,224,.16);
-  --error:#e06c75; --error-soft:rgba(224,108,117,.14); --note:#8b9199; --given:#dde0e4; --user:#8ab4d8;
-  --cell-sel:#2c3a48; --cell-hl:#222528; --cell-same:#2a3542; --shadow:0 14px 30px rgba(0,0,0,.35); --dot:#24262a;
-}
+#home{max-width:560px; margin:0 auto; width:100%}
+body:not(.in-game) main{padding-top:22px}
+.hsec{margin:0 0 30px}
+.hsec h2{font-family:'Cormorant Garamond',Georgia,serif; font-size:13px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted); font-weight:600; margin:0 0 2px}
+.diff-grid{display:flex; flex-direction:column}
+.diff-btn{position:relative; display:flex; align-items:baseline; gap:14px; width:100%;
+  background:transparent; border:0; border-top:1px solid var(--line);
+  padding:14px 4px 13px; cursor:pointer; text-align:left; color:var(--text);
+  font-family:inherit; transition:color .18s, padding-left .18s}
+.diff-btn:last-child{border-bottom:1px solid var(--line)}
+.diff-btn i{font-family:Cinzel,Georgia,serif; font-style:normal; font-size:11px; color:var(--accent);
+  letter-spacing:.1em; width:22px; flex:none; opacity:.75; transition:opacity .18s}
+.diff-btn b{flex:1; font-size:20px; font-weight:400; letter-spacing:.01em}
+.diff-btn span{font-size:13px; color:var(--muted); font-weight:300; font-style:italic}
+.diff-btn:hover,.diff-btn:focus-visible{color:var(--accent); padding-left:12px; outline:none}
+.diff-btn:hover i,.diff-btn:focus-visible i{opacity:1}
+.cont-row{display:flex; align-items:stretch; border-top:1px solid var(--line)}
+.cont-row:last-child{border-bottom:1px solid var(--line)}
+.cont-open{flex:1; display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  background:transparent; border:0; padding:14px 4px 13px; cursor:pointer; color:var(--text);
+  font-family:inherit; font-size:19px; font-weight:400; text-align:left; transition:color .18s, padding-left .18s}
+.cont-open:hover{color:var(--accent); padding-left:12px}
+.cont-open small{color:var(--muted); font-size:13px; font-style:italic; font-weight:300}
+.cont-del{flex:none; width:40px; background:transparent; border:0; color:var(--muted);
+  cursor:pointer; font-size:15px; transition:color .18s}
+.cont-del:hover{color:var(--error)}
+.tot{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 20px; margin:0 0 30px;
+  color:var(--muted); font-size:14px; font-style:italic; font-weight:300}
+.tot b{font-style:normal; font-weight:400; font-size:19px; color:var(--text); margin-right:5px}
+.howto{border-top:1px solid var(--line); padding-top:14px}
+.howto summary{font-family:'Cormorant Garamond',Georgia,serif; font-size:13px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted); font-weight:600; cursor:pointer; list-style:none;
+  transition:color .18s}
+.howto summary::-webkit-details-marker{display:none}
+.howto summary::after{content:'+'; color:var(--accent); margin-left:8px}
+.howto[open] summary::after{content:'\2013'}
+.howto summary:hover{color:var(--accent)}
+.howto dl{margin:14px 0 0}
+.howto dt{font-size:17px; font-weight:400; margin-top:13px}
+.howto dd{margin:2px 0 0; font-size:14px; color:var(--muted); font-weight:300; line-height:1.55}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{margin:0; background:var(--bg); color:var(--text);
-  background-image:radial-gradient(var(--dot) 1px, transparent 1px); background-size:22px 22px;
-  font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  background-image:var(--halo); background-attachment:fixed;
+  font-family:'Cormorant Garamond',Georgia,serif;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   transition:background .25s,color .25s}
@@ -98,87 +92,52 @@ body.pos-right #game{margin-left:auto; margin-right:0}
 button{font-family:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
 header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
-header h1{font-family:Fraunces,serif; font-size:42px; font-weight:700; letter-spacing:.02em; margin:0}
-.badge{font-size:11px; font-weight:600; padding:5px 11px; border-radius:20px; border:1px solid var(--line-strong);
-  color:var(--muted); background:transparent; cursor:pointer; transition:color .15s,border-color .15s}
-.badge:hover{color:var(--text)}
-.badge.ok{color:var(--accent); border-color:var(--accent)}
+header h1{font-family:Cinzel,Georgia,serif; font-size:38px; font-weight:500; letter-spacing:.2em; margin:0 0 0 .2em}
 .tagline{margin:0; color:var(--muted); font-size:14px}
 body.in-game .tagline{display:none}
 header .iconbtn{position:absolute; top:30px}
 header #statsBtn{right:calc(50% - 440px)}
 header #setBtn{right:calc(50% - 478px)}
-@media(max-width:990px){header #statsBtn{right:58px} header #setBtn{right:18px}}
+@media(max-width:990px){header #statsBtn{right:60px} header #setBtn{right:16px}}
 .iconbtn{background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer;
   color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
-.iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+.iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
 main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
-#home{display:grid; grid-template-columns:540px 360px; gap:28px; justify-content:center; align-items:start}
-#home>.card{grid-column:1}
-#home .feat{grid-column:2; grid-row:1/span 4}
 #game{max-width:clamp(320px, calc(100vh - 285px), 540px); margin:0 auto}
 body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4px}
 body.in-game header h1{font-size:24px; flex:1; text-align:left; cursor:pointer}
 body.in-game header h1:hover{color:var(--accent)}
 body.in-game header .iconbtn{position:static}
-@media(max-width:940px){#home{display:block}}
 .site-foot{width:100%; max-width:940px; text-align:center; padding:6px 18px 18px; font-size:12px; color:var(--muted)}
 .site-foot a{color:var(--muted)}
 .site-foot a:hover{color:var(--text)}
 body.in-game .site-foot{display:none}
 .wel-grid{display:flex; gap:12px; margin:18px 0 14px}
-.wel-card{flex:1; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:10px 10px 12px;
-  cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:9px; align-items:center;
-  transition:border-color .15s, transform .1s}
+.wel-card{flex:1; background:transparent; border:1px solid var(--line); border-radius:4px; padding:11px 11px 13px;
+  cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:10px; align-items:center;
+  transition:border-color .15s, background .15s}
 .wel-card:hover{border-color:var(--accent)}
-.wel-card:active{transform:scale(.97)}
-.wel-card b{font-size:13px}
-.wel-prev{width:100%; aspect-ratio:16/10; border-radius:8px; display:grid; grid-template-columns:1fr 1fr;
+.wel-card:active{background:var(--accent-soft)}
+.wel-card b{font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+.wel-prev{width:100%; aspect-ratio:16/10; border-radius:3px; display:grid; grid-template-columns:1fr 1fr;
   grid-template-rows:1fr 1fr; gap:5px; padding:9px; border:1px solid rgba(127,127,127,.25)}
-.wel-prev i{display:block; border-radius:4px}
-.wp-light{background:#eae9e2}
-.wp-light i{background:#faf7f0; border:1px solid #d9d2c2}
-.wp-light i.a{background:#4a67d6; border-color:#4a67d6}
-.wp-dark{background:#171a22}
-.wp-dark i{background:#1e222c; border:1px solid #303645}
-.wp-dark i.a{background:#7aa2f7; border-color:#7aa2f7}
+.wel-prev i{display:block; border-radius:2px}
+.wp-light{background:#ebeef6}
+.wp-light i{background:#f7f9fd; border:1px solid #d7dced}
+.wp-light i.a{background:#3a5aa0; border-color:#3a5aa0}
+.wp-dark{background:#0d1119}
+.wp-dark i{background:#141926; border:1px solid #252c3d}
+.wp-dark i.a{background:#9ec1f5; border-color:#9ec1f5}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
 /* главный экран */
-.card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:18px; margin-bottom:14px}
-#home .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px;
-  box-shadow:0 1px 0 var(--line); margin-bottom:12px}
-#home .card h2{font-family:Fraunces,serif; font-size:17px; color:var(--text); text-transform:none; letter-spacing:0; font-weight:700}
-.feat-list{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:13px}
-.feat-list li{display:flex; gap:11px; align-items:flex-start}
-.feat-list li>div{display:flex; flex-direction:column; gap:3px}
-.feat-list li>div.mv{flex-direction:row; gap:9px; height:80px}
-.mv{flex:none; flex-direction:row; width:124px; height:80px; background:var(--panel2); border:1px solid var(--line); border-radius:7px;
-  display:flex; align-items:center; justify-content:center; gap:7px; margin-top:1px}
-.mv-cell{width:32px; height:32px; border:2px solid var(--accent); border-radius:2px; background:var(--cell-sel);
-  display:flex; align-items:center; justify-content:center; font-weight:600; font-size:15px}
-.mv-cell.dash{border:2px dashed var(--accent2); color:var(--accent2); background:transparent}
-.mv-pop{display:grid; grid-template-columns:repeat(3,16px); gap:3px; background:var(--panel2); border:1px solid var(--line-strong); border-radius:8px; padding:4px; box-shadow:var(--shadow)}
-.mv-pop i{font-style:normal; font-size:9px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; background:var(--panel); border:1px solid var(--line); border-radius:4px}
-.mv-key{position:relative; width:28px; height:36px; background:var(--panel); border:1px solid var(--line); border-radius:8px;
-  display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:300; line-height:1}
-.mv-key small{position:absolute; right:3px; bottom:2px; font-size:7.5px; color:var(--muted); font-weight:600}
-.mv kbd{background:var(--panel); border:1px solid var(--line-strong); border-radius:4px; padding:3px 6px; font-family:inherit; font-size:10px; font-weight:700}
-.feat-list b{font-size:14px; font-weight:700}
-.feat-list span{font-size:12.5px; color:var(--muted); line-height:1.5}
-
-@media (max-width:1179px){
-  .feat-list{display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
-}
-@media (max-width:560px){.feat-list{grid-template-columns:1fr}}
 @media (max-width:600px){
-  header h1{font-size:32px}
+  header h1{font-size:25px; letter-spacing:.15em; margin-left:.15em}
   .tagline{font-size:12px}
   main{padding:6px 12px 20px}
   body.in-game header{padding:10px 12px 2px}
   body.in-game header h1{font-size:20px}
-  .diff-grid{grid-template-columns:1fr 1fr}
 }
 
 /* ===== мобильный режим: игра целиком в один экран, крупные тач-цели ===== */
@@ -203,13 +162,12 @@ body.in-game .site-foot{display:none}
   .topbar .tbtn{padding:6px 4px}
   #board{border-radius:10px}
   .cell{font-size:clamp(19px,6.2vw,30px)}
-  .cell .notes span{font-size:clamp(8px,2.5vw,11px)}
+  .cell .notes span{font-size:clamp(10px,2.9vw,13px)}
 
   /* панель действий: 7 кнопок в ряд, но выше и с большей зоной нажатия */
   .controls{gap:5px; margin-top:10px}
   .ctl{padding:9px 1px 7px; font-size:8.5px; letter-spacing:-.2px; gap:4px; border-radius:11px; min-height:50px}
   .ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .ctl svg{width:20px; height:20px}
 
   /* цифры: два ряда по 5 и 4 — под большой палец */
   .numpad{display:flex; flex-wrap:wrap; justify-content:center; gap:7px; margin-top:9px}
@@ -225,53 +183,34 @@ body.in-game .site-foot{display:none}
   .board-wrap{max-width:100%}
   body.in-game{overflow:auto}
 }
-.card h2{margin:0 0 4px; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
 #contList{max-height:216px; overflow-y:auto; scrollbar-gutter:stable; padding-right:2px}
 #contList::-webkit-scrollbar{width:8px}
 #contList::-webkit-scrollbar-track{background:var(--panel2); border-radius:8px}
-#contList::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:8px}
-.cont-row{display:flex; gap:8px; margin-top:10px}
-.cont-open{flex:1; display:flex; justify-content:space-between; align-items:center;
-  background:var(--panel2); border:1px solid var(--accent); border-radius:14px;
-  padding:13px 16px; cursor:pointer; font-size:14px; font-weight:600; transition:transform .1s}
-.cont-open:active{transform:scale(.985)}
-.cont-open small{color:var(--muted); font-weight:500}
-.cont-del{flex:none; width:44px; border-radius:14px; border:1px solid var(--line); background:var(--panel2);
-  color:var(--muted); cursor:pointer; font-size:15px}
-.cont-del:hover{color:var(--error); border-color:var(--error)}
-.diff-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
-.diff-btn{background:var(--panel2); border:1px solid var(--line); border-radius:14px;
-  padding:15px 14px; cursor:pointer; text-align:left; transition:border-color .15s, transform .1s}
-.diff-btn:hover{border-color:var(--accent)}
-.diff-btn:active{transform:scale(.97)}
-.diff-btn b{display:block; font-size:15px; font-weight:700}
-.diff-btn span{font-size:11px; color:var(--muted); font-weight:500}
-.mini-stats{display:flex; gap:22px; margin-top:12px; flex-wrap:wrap}
-.mini-stats div b{display:block; font-size:22px; font-weight:300; font-variant-numeric:tabular-nums}
-.mini-stats div span{font-size:11px; color:var(--muted); font-weight:500}
+#contList::-webkit-scrollbar-thumb{background:var(--line); border-radius:8px}
 /* верхняя панель игры */
 .topbar{display:flex; align-items:center; justify-content:space-between; margin:4px 0 12px; font-size:13px; color:var(--muted); gap:6px}
 .topbar .t-item{font-weight:500}
 .topbar .t-item b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
 .topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:4px; display:flex; align-items:center; gap:4px}
 .topbar .tbtn:hover{color:var(--text)}
-.topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round}
+.topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:square}
 /* поле */
 .board-wrap{position:relative}
 #board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
-  border:2px solid var(--line-strong); border-radius:12px; overflow:hidden; background:var(--panel);
+  border:1px solid var(--frame); border-radius:12px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
-#board.notes-on .cell.sel{outline:2px dashed var(--accent); outline-offset:-3px}
-#board.hyp-on .cell.sel{outline:2px dashed var(--accent2); outline-offset:-3px}
-.cell{position:relative; display:flex; align-items:center; justify-content:center;
+#board.notes-on .cell.sel{box-shadow:inset 0 0 0 2px var(--accent)}
+#board.hyp-on .cell.sel{background:var(--accent2-soft); box-shadow:inset 0 0 0 2px var(--accent2)}
+.cell{position:relative; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
   font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
   color:var(--user); transition:background .1s}
-.cell.given{color:var(--given); font-weight:600}
-.cell.hypv{color:var(--accent2); font-weight:500; text-decoration:underline dashed; text-decoration-thickness:1.5px; text-underline-offset:4px}
+.cell.given{color:var(--given); font-weight:700}
+.cell.hypv{color:var(--accent2); font-weight:600; text-decoration:underline dashed; text-decoration-thickness:2px; text-underline-offset:4px}
 #board::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
   background:
-    linear-gradient(90deg, transparent 0 calc(33.3333% - 1px), var(--line-strong) 0 calc(33.3333% + 1px), transparent 0 calc(66.6667% - 1px), var(--line-strong) 0 calc(66.6667% + 1px), transparent 0),
-    linear-gradient(180deg, transparent 0 calc(33.3333% - 1px), var(--line-strong) 0 calc(33.3333% + 1px), transparent 0 calc(66.6667% - 1px), var(--line-strong) 0 calc(66.6667% + 1px), transparent 0),
+    linear-gradient(90deg, transparent 0 calc(33.3333% - 1px), var(--rule) 0 calc(33.3333% + 1px), transparent 0 calc(66.6667% - 1px), var(--rule) 0 calc(66.6667% + 1px), transparent 0),
+    linear-gradient(180deg, transparent 0 calc(33.3333% - 1px), var(--rule) 0 calc(33.3333% + 1px), transparent 0 calc(66.6667% - 1px), var(--rule) 0 calc(66.6667% + 1px), transparent 0),
     repeating-linear-gradient(90deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9)),
     repeating-linear-gradient(180deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9))}
 #board{margin:0 auto}
@@ -281,12 +220,12 @@ body.in-game .site-foot{display:none}
 .cell:nth-child(81){border-bottom-right-radius:10px}
 .cell.hl{background:var(--cell-hl)}
 .cell.same{background:var(--cell-same)}
-.cell.sel{background:var(--cell-sel)}
-.cell.err{color:var(--error); background:var(--error-soft)}
-.cell.err.sel{background:var(--cell-sel)}
+.cell.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--accent)}
+.cell.err{color:var(--error); background:var(--error-soft); font-weight:700}
+.cell.err.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--error)}
 .cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
-.cell .notes span{font-size:clamp(8px,1.9vw,11px); color:var(--note); opacity:.75; display:flex; align-items:center; justify-content:center; font-weight:500}
-.cell .notes span.nhl{color:var(--accent); font-weight:800; opacity:1}
+.cell .notes span{font-size:clamp(9px,2.2vw,12.5px); color:var(--note); opacity:1; display:flex; align-items:center; justify-content:center; font-weight:500}
+.cell .notes span.nhl{color:var(--accent); font-weight:700; opacity:1}
 .cell.pop{animation:pop .2s ease-out}
 @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 .cell.uflash{animation:uflash .55s ease-out}
@@ -307,11 +246,11 @@ body.in-game .site-foot{display:none}
 #picker button:active{transform:scale(.9)}
 #picker button.done{opacity:.25; pointer-events:none}
 #picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:13px; font-weight:600}
-#picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; margin-right:6px}
+#picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:square; margin-right:6px}
 #picker .pk-mode{grid-column:1/-1; display:flex; gap:4px; margin-bottom:2px}
 #picker .pk-mode button{flex:1; aspect-ratio:auto; height:30px; border-radius:8px; border:1px solid var(--line);
   background:transparent; color:var(--muted); width:auto; padding:0}
-#picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+#picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:square; stroke-linejoin:miter}
 #picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
 #picker .pk-mode button.on[data-m="hyp"]{background:var(--accent2-soft); border-color:var(--accent2); color:var(--accent2)}
 #picker button[data-v]{position:relative}
@@ -320,92 +259,101 @@ body.in-game .site-foot{display:none}
 #picker.mode-hyp button[data-v]{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
 #picker.mode-note button[data-v].done, #picker.mode-hyp button[data-v].done{opacity:.22}
 /* управление */
-.controls{display:flex; justify-content:space-between; gap:6px; margin-top:14px}
-.ctl{flex:1; background:var(--panel); border:1px solid var(--line); border-radius:12px;
-  padding:9px 2px; cursor:pointer; color:var(--muted); font-size:10px; font-weight:600;
-  display:flex; flex-direction:column; align-items:center; gap:3px; transition:color .12s,border-color .12s}
-.ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
-.ctl:hover{color:var(--text)}
-.ctl:active{transform:scale(.96)}
-.ctl.on{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
-.ctl.on2{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
-.ctl:disabled{opacity:.3; cursor:default; transform:none}
+.controls{display:flex; flex-wrap:wrap; margin-top:16px;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+.ctl{flex:1 1 auto; background:transparent; border:0; border-right:1px solid var(--line);
+  padding:13px 10px; cursor:pointer; color:var(--muted); font-family:inherit;
+  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  transition:color .15s, background .15s}
+.ctl:last-child{border-right:0}
+.ctl:hover:not(:disabled){color:var(--text); background:var(--cell-hl)}
+.ctl.on{color:var(--accent); background:var(--accent-soft)}
+.ctl.on2{color:var(--accent2); background:var(--accent2-soft)}
+.ctl:disabled{opacity:.32; cursor:default}
 .numpad{display:grid; grid-template-columns:repeat(9,1fr); gap:6px; margin-top:10px}
-.num{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:12px; aspect-ratio:.78;
-  cursor:pointer; font-size:clamp(16px,4.5vw,23px); font-weight:300;
+.num{position:relative; touch-action:manipulation; background:transparent;
+  border:1px solid var(--line); border-radius:4px; aspect-ratio:.78; cursor:pointer;
+  font-family:inherit; font-size:clamp(20px,5.2vw,28px); font-weight:400; color:var(--text);
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
   display:flex; align-items:center; justify-content:center;
-  transition:border-color .12s, transform .08s}
-.num small{position:absolute; right:6px; bottom:4px; font-size:10px; color:var(--muted); font-weight:600; line-height:1}
-.num:hover{border-color:var(--accent)}
-.num:active{transform:scale(.92)}
+  transition:border-color .12s, color .12s, background .12s}
+.num small{position:absolute; right:6px; bottom:4px; font-size:10px; color:var(--muted); font-weight:400; font-style:italic; line-height:1}
+.num:hover{border-color:var(--accent); color:var(--accent)}
+.num:active{background:var(--accent-soft)}
 .num.done{opacity:.22; pointer-events:none}
 .num.hl{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 /* цвет нумпада по режиму: заметки — акцент, черновик — второй акцент */
-.numpad.mode-note .num{color:var(--accent); border-color:var(--accent-soft); background-color:var(--panel); background-image:linear-gradient(var(--accent-soft),var(--accent-soft))}
-.numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2-soft); background-color:var(--panel); background-image:linear-gradient(var(--accent2-soft),var(--accent2-soft))}
-.numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.22}
+.numpad.mode-note .num{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
+.numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
+.numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.28}
 /* кнопки, модалки */
-.btn{background:var(--accent); color:var(--accent-text); border:none; border-radius:12px;
-  padding:12px 22px; font-size:14px; font-weight:700; cursor:pointer; transition:transform .1s, filter .15s}
-.btn:hover{filter:brightness(1.08)}
-.btn:active{transform:scale(.97)}
-.btn.ghost{background:transparent; color:var(--text); border:1px solid var(--line-strong)}
-.btn.danger{background:transparent; color:var(--error); border:1px solid var(--error)}
+.btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:4px;
+  padding:11px 24px; font-family:inherit; font-size:12px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; cursor:pointer; transition:background .15s, color .15s}
+.btn:hover{background:transparent; color:var(--accent)}
+.btn.ghost{background:transparent; color:var(--muted); border-color:var(--line)}
+.btn.ghost:hover{color:var(--text); border-color:var(--text)}
+.btn.danger{background:transparent; color:var(--error); border-color:var(--error)}
+.btn.danger:hover{background:var(--error); color:var(--panel)}
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
   justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
 .modal .row:last-child{position:sticky; bottom:-24px; background:var(--panel); padding:12px 0 14px; margin-bottom:-14px}
-.modal{background:var(--panel); border:1px solid var(--line-strong); border-radius:14px;
+.modal{background:var(--panel); border:1px solid var(--line); border-radius:6px;
   padding:24px; width:100%; max-width:430px; max-height:86vh; overflow-y:auto; box-shadow:var(--shadow);
   animation:mIn .22s ease-out}
 @keyframes mIn{from{transform:translateY(14px) scale(.97); opacity:0}to{transform:none; opacity:1}}
-.modal h2{font-family:Fraunces,serif; margin:0 0 14px; font-size:18px; font-weight:800}
-.modal h3{margin:18px 0 8px; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
+.modal h2{font-family:'Cormorant Garamond',Georgia,serif; text-transform:uppercase; margin:0 0 14px; font-size:15px; font-weight:500; letter-spacing:.1em}
+.modal h3{margin:22px 0 9px; font-family:'Cormorant Garamond',Georgia,serif; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.18em}
 .modal table{width:100%; border-collapse:collapse; font-size:13px}
 .modal th{text-align:left; color:var(--muted); font-weight:600; padding:6px 4px; border-bottom:1px solid var(--line); font-size:11px}
 .modal td{padding:8px 4px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums}
-.win-big{font-size:44px; font-weight:200; margin:8px 0 2px; font-variant-numeric:tabular-nums}
-.win-sub{color:var(--muted); font-size:13px; margin-bottom:6px; font-weight:500}
+.win-big{font-size:52px; font-weight:300; margin:10px 0 4px; font-variant-numeric:tabular-nums}
+.win-sub{color:var(--muted); font-size:14px; margin-bottom:6px; font-weight:300; font-style:italic}
 .record{color:var(--accent); font-size:13px; font-weight:700; margin-bottom:8px}
-.win-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px}
-.win-grid div{background:var(--panel2); border-radius:12px; padding:10px 6px}
-.win-grid b{display:block; font-size:17px; font-weight:600; font-variant-numeric:tabular-nums}
-.win-grid span{font-size:10px; color:var(--muted); font-weight:600}
+.win-grid{display:grid; grid-template-columns:repeat(3,1fr); margin:18px 0 6px; border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+.win-grid div{background:transparent; border-right:1px solid var(--line); padding:14px 6px}
+.win-grid div:last-child{border-right:0}
+.win-grid b{display:block; font-size:20px; font-weight:400; font-variant-numeric:tabular-nums; margin-bottom:3px}
+.win-grid span{font-size:11px; color:var(--muted); font-weight:600; letter-spacing:.12em; text-transform:uppercase}
 .hist{font-size:12px; color:var(--muted); margin-top:14px; font-weight:500}
 .hist div{display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--line)}
 .modal .row{display:flex; gap:10px; margin-top:20px; justify-content:flex-end; flex-wrap:wrap}
 /* настройки: вкладки */
-.stabs{display:flex; gap:6px; margin-bottom:14px}
-.stabs button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
-  background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
-.stabs button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
-.swatches{display:grid; grid-template-rows:repeat(2,auto); grid-auto-flow:column; gap:10px; justify-content:start; overflow-x:auto; padding-bottom:4px}
-.sw{width:64px; border:2px solid var(--line); border-radius:14px; padding:8px 4px 6px; cursor:pointer;
-  background:var(--panel2); display:flex; flex-direction:column; align-items:center; gap:5px; transition:border-color .15s}
-.sw.selq{border-color:var(--accent)}
-.sw i{width:30px; height:30px; border-radius:50%; display:block; border:1px solid rgba(255,255,255,.14); position:relative}
-.sw i::after{content:''; position:absolute; right:1px; bottom:1px; width:13px; height:13px; border-radius:50%; border:1px solid rgba(255,255,255,.12); background:var(--sw-a)}
-.sw span{font-size:10px; font-weight:600; color:var(--muted)}
-.posseg,.langseg{display:flex; gap:8px}
-.langseg{flex-wrap:wrap}
-.langseg button{flex:1 1 30%; min-width:90px}
-.posseg button,.langseg button{flex:1; padding:9px 0; border-radius:10px; border:1px solid var(--line);
-  background:var(--panel2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer}
-.posseg button.on,.langseg button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
-.toggle{display:flex; gap:12px; align-items:flex-start; padding:10px 0; cursor:pointer}
-.toggle input{appearance:none; -webkit-appearance:none; width:38px; height:22px; margin-top:1px; flex:none;
-  border-radius:22px; background:var(--panel2); border:1px solid var(--line-strong); cursor:pointer;
+.stabs{display:flex; gap:0; margin-bottom:18px; border-bottom:1px solid var(--line)}
+.stabs button{flex:1; padding:11px 0; border:0; background:transparent; color:var(--muted);
+  font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:color .15s,border-color .15s}
+.stabs button:hover{color:var(--text)}
+.stabs button.on{color:var(--accent); border-bottom-color:var(--accent)}
+.swatches{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:4px; overflow:hidden}
+.sw{width:100%; border:0; border-right:1px solid var(--line); border-radius:0; padding:12px 0; cursor:pointer;
+  background:transparent; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:background .15s}
+.sw:last-child{border-right:0}
+.sw.selq{background:var(--accent-soft)} .sw.selq span{color:var(--accent)}
+.sw span{font-size:12px; font-weight:600; color:var(--muted); letter-spacing:.16em; text-transform:uppercase}
+.posseg,.langseg{display:flex; border:1px solid var(--line); border-radius:4px; overflow:hidden}
+.posseg button,.langseg button{flex:1; padding:11px 0; border:0; border-right:1px solid var(--line);
+  background:transparent; color:var(--muted); font-family:inherit; font-size:13px; font-weight:500;
+  letter-spacing:.04em; cursor:pointer; transition:color .15s, background .15s}
+.posseg button:last-child,.langseg button:last-child{border-right:0}
+.posseg button:hover,.langseg button:hover{color:var(--text)}
+.posseg button.on,.langseg button.on{color:var(--accent); background:var(--accent-soft)}
+.toggle{display:flex; gap:14px; align-items:flex-start; padding:15px 0; cursor:pointer; border-bottom:1px solid var(--line)}
+.toggle:last-of-type{border-bottom:0}
+.toggle input{appearance:none; -webkit-appearance:none; width:34px; height:19px; margin-top:4px; flex:none;
+  border-radius:3px; background:transparent; border:1px solid var(--line); cursor:pointer;
   position:relative; transition:background .18s, border-color .18s}
-.toggle input::before{content:''; position:absolute; top:2px; left:2px; width:16px; height:16px;
-  border-radius:50%; background:var(--muted); transition:transform .18s, background .18s}
-.toggle input:checked{background:var(--accent); border-color:var(--accent)}
-.toggle input:checked::before{transform:translateX(16px); background:var(--accent-text)}
-.toggle b{display:block; font-size:14px; font-weight:600}
-.toggle span{font-size:12px; color:var(--muted); font-weight:500}
+.toggle input::before{content:''; position:absolute; top:2px; left:2px; width:13px; height:13px;
+  border-radius:2px; background:var(--muted); transition:transform .18s, background .18s}
+.toggle input:checked{background:var(--accent-soft); border-color:var(--accent)}
+.toggle input:checked::before{transform:translateX(15px); background:var(--accent)}
+.toggle b{display:block; font-size:16px; font-weight:400; margin-bottom:2px}
+.toggle span{font-size:13.5px; color:var(--muted); font-weight:300; line-height:1.5}
 .keys{display:grid; grid-template-columns:auto 1fr; gap:7px 14px; align-items:center;
   font-size:12px; color:var(--muted); font-weight:500}
 .keys .kk{display:flex; gap:4px; justify-content:flex-end; white-space:nowrap}
-.keys kbd{background:var(--panel2); border:1px solid var(--line-strong); border-radius:6px; padding:2px 7px;
-  font-family:inherit; font-size:11px; font-weight:700; color:var(--text)}
+.keys kbd{background:transparent; border:1px solid var(--line); border-radius:3px; padding:3px 8px;
+  font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.06em; color:var(--muted)}
 /* тост, конфетти, оверлеи */
 #toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
   background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
@@ -421,6 +369,19 @@ body.in-game .site-foot{display:none}
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important; transition:none !important}
 }
+
+/* ===== мобильные переопределения: идут последними, чтобы победить базовые правила ===== */
+@media (max-width:600px){
+  .numpad{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:10px}
+  .num{flex:0 0 calc(20% - 7px); aspect-ratio:1.15; font-size:30px; font-weight:400; border-radius:14px}
+  .num small{right:7px; bottom:5px; font-size:11px}
+  .controls{gap:6px; margin-top:12px}
+  .ctl{padding:10px 2px 8px; font-size:9px; gap:5px; border-radius:12px; min-height:54px}
+  .diff-btn b{font-size:19px}
+  .diff-btn{padding:15px 4px}
+  .cont-open{font-size:18px}
+}
+@media (pointer:coarse){ #optDblRow{display:none} }
 </style>
 </head>
 <body>
@@ -428,44 +389,44 @@ body.in-game .site-foot{display:none}
   <h1>SUDOKU</h1>
   <p class="tagline" data-i18n="tagline">спокойная головоломка на каждый день</p>
   <button class="iconbtn" id="statsBtn" aria-label="stats">
-    <svg viewBox="0 0 24 24"><path d="M5 20v-7M11 20V5M17 20v-10M3 20h18"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M4 20h16M7 20v-6M12 20V6M17 20v-9"/></svg>
   </button>
   <button class="iconbtn" id="setBtn" aria-label="settings">
-    <svg viewBox="0 0 24 24"><path d="M4 7h8M17 7h3M4 17h4M12 17h8"/><circle cx="14.5" cy="7" r="2.5"/><circle cx="9.5" cy="17" r="2.5"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16M13 5v6M9 13v6"/></svg>
   </button>
 </header>
 <main>
   <!-- ГЛАВНЫЙ ЭКРАН -->
   <section id="home">
-    <div class="card" id="continueCard" style="display:none">
+    <div class="hsec" id="continueCard" style="display:none">
       <h2 data-i18n="continue">Продолжить</h2>
       <div id="contList"></div>
     </div>
-    <div class="card">
+    <div class="hsec">
       <h2 data-i18n="newGame">Новая игра</h2>
       <div class="diff-grid">
-        <button class="diff-btn" data-diff="easy"><b data-i18n="d_easy">Лёгкий</b><span id="ms-easy"></span></button>
-        <button class="diff-btn" data-diff="medium"><b data-i18n="d_medium">Средний</b><span id="ms-medium"></span></button>
-        <button class="diff-btn" data-diff="hard"><b data-i18n="d_hard">Сложный</b><span id="ms-hard"></span></button>
-        <button class="diff-btn" data-diff="expert"><b data-i18n="d_expert">Эксперт</b><span id="ms-expert"></span></button>
+        <button class="diff-btn" data-diff="easy"><i>I</i><b data-i18n="d_easy">Лёгкий</b><span id="ms-easy"></span></button>
+        <button class="diff-btn" data-diff="medium"><i>II</i><b data-i18n="d_medium">Средний</b><span id="ms-medium"></span></button>
+        <button class="diff-btn" data-diff="hard"><i>III</i><b data-i18n="d_hard">Сложный</b><span id="ms-hard"></span></button>
+        <button class="diff-btn" data-diff="expert"><i>IV</i><b data-i18n="d_expert">Эксперт</b><span id="ms-expert"></span></button>
       </div>
     </div>
-    <div class="card">
-      <h2 data-i18n="total">Всего</h2>
-      <div class="mini-stats">
-        <div><b id="tot-won">0</b><span data-i18n="solvedL">решено</span></div>
-        <div><b id="tot-perfect">0</b><span data-i18n="cleanL">чистых</span></div>
-        <div><b id="tot-time">—</b><span data-i18n="playtimeL">за игрой</span></div>
-      </div>
-    </div>
-    <div class="card feat">
-      <h2 data-i18n="featT">Возможности</h2>
-      <ul class="feat-list">
-        <li><div class="mv"><span class="mv-cell">5</span><span class="mv-pop"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></div><div><b data-i18n="f1T">Правый клик по клетке</b><span data-i18n="f1D">Или двойной — окно с цифрами прямо у клетки</span></div></li>
-        <li><div class="mv"><span class="mv-cell dash">5</span><span class="mv-cell dash">7</span></div><div><b data-i18n="f2T">Черновик</b><span data-i18n="f2D">Пробуй ход пунктиром, потом прими или откати</span></div></li>
-        <li><div class="mv"><span class="mv-key">7<small>3</small></span><span class="mv-key">8<small>1</small></span><span class="mv-key">9<small>4</small></span></div><div><b data-i18n="f3T">Счётчики на нумпаде</b><span data-i18n="f3D">Видно, сколько каждой цифры осталось</span></div></li>
-      </ul>
-    </div>
+    <p class="tot">
+      <b id="tot-won">0</b><span data-i18n="solvedL">решено</span>
+      <b id="tot-perfect">0</b><span data-i18n="cleanL">чистых</span>
+      <b id="tot-time">—</b><span data-i18n="playtimeL">за игрой</span>
+    </p>
+    <details class="howto">
+      <summary data-i18n="featT">Возможности</summary>
+      <dl>
+        <dt data-i18n="f1T">Правый клик по клетке</dt>
+        <dd data-i18n="f1D">Или двойной — окно с цифрами прямо у клетки</dd>
+        <dt data-i18n="f2T">Черновик</dt>
+        <dd data-i18n="f2D">Пробуй ход пунктиром, потом прими или откати</dd>
+        <dt data-i18n="f3T">Счётчики на нумпаде</dt>
+        <dd data-i18n="f3D">Видно, сколько каждой цифры осталось</dd>
+      </dl>
+    </details>
   </section>
   <!-- ИГРА -->
   <section id="game" class="hidden">
@@ -487,13 +448,13 @@ body.in-game .site-foot{display:none}
       <div id="picker" class="hidden"></div>
     </div>
     <div class="controls">
-      <button class="ctl" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a6 6 0 0 1 0 12H11"/></svg><span data-i18n="undo">Отмена</span></button>
-      <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a6 6 0 0 0 0 12H13"/></svg><span data-i18n="redo">Вернуть</span></button>
-      <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="m7 21-4.6-4.6a2 2 0 0 1 0-2.8l9-9a2 2 0 0 1 2.8 0l5.4 5.4a2 2 0 0 1 0 2.8L13 19"/><path d="M22 21H7"/><path d="m5 12 7 7"/></svg><span data-i18n="erase">Стереть</span></button>
-      <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg><span data-i18n="notes">Заметки</span></button>
-      <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24" stroke-dasharray="3 2.4"><rect x="4" y="4" width="16" height="16" rx="3"/></svg><span data-i18n="hyp">Черновик</span></button>
-      <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 3.5 13.8 8.6 19 10.5l-5.2 1.9L12 17.5l-1.8-5.1L5 10.5l5.2-1.9Z"/><path d="m19 16.5.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7Z"/></svg><span data-i18n="auto">Авто</span></button>
-      <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.6.6-1 1.5-1 2.5H9c0-1-.4-1.9-1-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint">Подсказка</span></button>
+      <button class="ctl" id="undoBtn"><span data-i18n="undo">Отмена</span></button>
+      <button class="ctl" id="redoBtn"><span data-i18n="redo">Вернуть</span></button>
+      <button class="ctl" id="eraseBtn"><span data-i18n="erase">Стереть</span></button>
+      <button class="ctl" id="notesBtn"><span data-i18n="notes">Заметки</span></button>
+      <button class="ctl" id="hypBtn"><span data-i18n="hyp">Черновик</span></button>
+      <button class="ctl" id="autoNotesBtn"><span data-i18n="auto">Авто</span></button>
+      <button class="ctl" id="hintBtn"><span data-i18n="hint">Подсказка</span></button>
     </div>
     <div class="numpad" id="numpad"></div>
   </section>
@@ -593,10 +554,6 @@ body.in-game .site-foot{display:none}
       <div class="langseg" id="langseg">
         <button data-l="en">English</button>
         <button data-l="ru">Русский</button>
-        <button data-l="es">Español</button>
-        <button data-l="de">Deutsch</button>
-        <button data-l="fr">Français</button>
-        <button data-l="zh">中文</button>
       </div>
     </div>
     <div class="stab hidden" id="tab-game">
@@ -604,7 +561,7 @@ body.in-game .site-foot{display:none}
         <div><b data-i18n="instantT">Мгновенная проверка ошибок</b><span data-i18n="instantD">Неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии</span></div></label>
       <label class="toggle"><input type="checkbox" id="optLimit">
         <div><b data-i18n="limitT">Лимит — 3 ошибки</b><span data-i18n="limitD">После третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)</span></div></label>
-      <label class="toggle"><input type="checkbox" id="optDbl">
+      <label class="toggle" id="optDblRow"><input type="checkbox" id="optDbl">
         <div><b data-i18n="pickerT">Окно выбора цифры</b><span data-i18n="pickerD">Двойной или правый клик по клетке открывает окно с цифрами</span></div></label>
       <label class="toggle"><input type="checkbox" id="optSame">
         <div><b data-i18n="sameT">Подсветка одинаковых чисел</b><span data-i18n="sameD">При выборе клетки подсвечиваются такие же цифры и заметки</span></div></label>
@@ -647,8 +604,8 @@ body.in-game .site-foot{display:none}
 /* i18n */
 const I18N = {
 ru:{
-  th_indigo:'Индиго', th_midnight:'Полночь', th_sepia:'Сепия', th_candle:'Свеча', th_olive:'Олива', th_moss:'Мох', th_rose:'Роза', th_wine:'Вино', th_fog:'Туман', th_coal:'Уголь',
-  welT:'Как тебе удобнее?', welLight:'Светлая', welDark:'Тёмная', welNote:'Остальные темы — в настройках',
+  th_light:'Свет', th_dark:'Ночь',
+  welT:'Как тебе удобнее?', welLight:'Светлая', welDark:'Тёмная', welNote:'Можно поменять в настройках',
   yes:'Да', cancel:'Отмена',
   tagline:'спокойная головоломка на каждый день',
   continue:'Продолжить', newGame:'Новая игра', total:'Всего',
@@ -694,8 +651,8 @@ ru:{
   mist:'ошибок', hintsSm:'подсказок',
 },
 en:{
-  th_indigo:'Indigo', th_midnight:'Midnight', th_sepia:'Sepia', th_candle:'Candlelight', th_olive:'Olive', th_moss:'Moss', th_rose:'Rose', th_wine:'Wine', th_fog:'Fog', th_coal:'Charcoal',
-  welT:'Pick your look', welLight:'Light', welDark:'Dark', welNote:'More themes in settings',
+  th_light:'Light', th_dark:'Dark',
+  welT:'Pick your look', welLight:'Light', welDark:'Dark', welNote:'You can change this in settings',
   yes:'Yes', cancel:'Cancel',
   tagline:'a calm puzzle for every day',
   continue:'Continue', newGame:'New game', total:'Overall',
@@ -739,175 +696,7 @@ en:{
   f3T:'Numpad counters', f3D:'See how many of each digit are left',
   f7T:'Space bar', f7D:'One tap switches notes mode',
   k_dblK:'2×click', k_rmbK:'RMB',
-},
-es:{
-  th_indigo:'Índigo', th_midnight:'Medianoche', th_sepia:'Sepia', th_candle:'Vela', th_olive:'Oliva', th_moss:'Musgo', th_rose:'Rosa', th_wine:'Vino', th_fog:'Niebla', th_coal:'Carbón',
-  welT:'Elige tu estilo', welLight:'Clara', welDark:'Oscura', welNote:'Más temas en los ajustes',
-  yes:'Sí', cancel:'Cancelar',
-  tagline:'un rompecabezas tranquilo para cada día',
-  continue:'Continuar', newGame:'Nueva partida', total:'Total',
-  d_easy:'Fácil', d_medium:'Medio', d_hard:'Difícil', d_expert:'Experto',
-  solvedL:'resueltos', cleanL:'perfectos', playtimeL:'tiempo jugado', notPlayed:'sin jugar',
-  record:'récord', solvedN:'resueltos',
-  menuBack:'‹ Menú', errorsL:'Errores', pauseT:'Pausa', resume:'Continuar', restart:'Reiniciar puzle',
-  undo:'Deshacer', redo:'Rehacer', erase:'Borrar', notes:'Notas', hyp:'Borrador', auto:'Auto', hint:'Pista',
-  winT:'¡Resuelto!', newRecord:'✦ Nuevo récord del nivel', recordL:'récord', mistakesL:'errores', hintsL:'pistas',
-  menuBtn:'Menú', again:'Otra más', clean:'partida perfecta ✦',
-  loseT:'Tres errores', loseText:'Límite de errores alcanzado. Continúa sin límite o reinicia el puzle.',
-  contNoLimit:'Continuar sin límite',
-  stats:'Estadísticas', level:'Nivel', avgL:'Media', histT:'Victorias recientes', none:'nada aún',
-  dataAt:'Datos a', close:'Cerrar',
-  settings:'Ajustes', tabView:'Vista', tabGame:'Juego', tabKeys:'Teclas',
-  themeT:'Tema', posT:'Posición del tablero', posLeft:'Izquierda', posCenter:'Centro', posRight:'Derecha', langT:'Idioma',
-  instantT:'Comprobación instantánea', instantD:'Los dígitos erróneos se marcan en rojo al instante; desactivado — se comprueba al llenar el tablero. Para partidas nuevas',
-  limitT:'Límite — 3 errores', limitD:'Tras el tercer error — pausa con opción: sin límite o reiniciar (solo comprobación instantánea)',
-  pickerT:'Ventana de dígitos', pickerD:'Doble clic o clic derecho en una celda abre la ventana de dígitos',
-  sameT:'Resaltar números iguales', sameD:'Al seleccionar una celda se resaltan los mismos dígitos y notas',
-  countsT:'Contador de restantes', countsD:'Un número pequeño en las teclas — cuántos quedan',
-  hintBtnT:'Botón «Pista»', hintBtnD:'Mostrar en la barra de control (tecla H)',
-  autoBtnT:'Botón «Auto-notas»', autoBtnD:'Mostrar en la barra de control (tecla A)',
-  reset:'Restablecer estadísticas', resetConfirm:'¿Borrar todo el registro de partidas resueltas?',
-  resetDone:'Estadísticas restablecidas', done:'Listo',
-  k_digit:'introducir dígito', k_note:'nota en la celda', k_hyp1:'borrador en la celda', k_notes:'modo notas (o Espacio)',
-  k_hypm:'modo borrador', k_erase:'borrar',  k_undo:'deshacer / rehacer', k_hint:'pista (si está activada)',
-  k_auto:'auto-notas (si están activadas)', k_pause:'pausa', k_nav:'moverse por el tablero', k_menu:'menú', k_pick:'ventana de dígitos',
-  gen:'Generando tablero…', digitTab:'Dígito', noteTab:'Nota', hypTab:'Borrador', eraseP:'Borrar',
-  hasErrors:'Dígitos erróneos: {n}', autoDone:'Candidatos rellenados', assistNote:'con ayuda — no se registra',
-  delGame:'¿Eliminar esta partida?', restartConfirm:'¿Reiniciar este puzle? El progreso se perderá.',
-  mist:'errores', hintsSm:'pistas',
-  featT:'Funciones',
-  f1T:'Clic derecho en la celda', f1D:'O doble clic — ventana de dígitos junto a la celda',
-  f2T:'Borrador', f2D:'Prueba en punteado, luego confirma o deshaz',
-  f3T:'Contadores en el teclado', f3D:'Ve cuántos quedan de cada dígito',
-  f7T:'Barra espaciadora', f7D:'Un toque activa el modo notas',
-  k_dblK:'2×clic', k_rmbK:'clic der.',
-},
-de:{
-  th_indigo:'Indigo', th_midnight:'Mitternacht', th_sepia:'Sepia', th_candle:'Kerzenlicht', th_olive:'Olive', th_moss:'Moos', th_rose:'Rose', th_wine:'Wein', th_fog:'Nebel', th_coal:'Kohle',
-  welT:'Wähle deinen Stil', welLight:'Hell', welDark:'Dunkel', welNote:'Weitere Designs in den Einstellungen',
-  yes:'Ja', cancel:'Abbrechen',
-  tagline:'ein ruhiges Rätsel für jeden Tag',
-  continue:'Fortsetzen', newGame:'Neues Spiel', total:'Gesamt',
-  d_easy:'Leicht', d_medium:'Mittel', d_hard:'Schwer', d_expert:'Experte',
-  solvedL:'gelöst', cleanL:'fehlerfrei', playtimeL:'Spielzeit', notPlayed:'nicht gespielt',
-  record:'Rekord', solvedN:'gelöst',
-  menuBack:'‹ Menü', errorsL:'Fehler', pauseT:'Pause', resume:'Weiter', restart:'Rätsel neu starten',
-  undo:'Rückgängig', redo:'Wiederholen', erase:'Löschen', notes:'Notizen', hyp:'Entwurf', auto:'Auto', hint:'Tipp',
-  winT:'Gelöst!', newRecord:'✦ Neuer Levelrekord', recordL:'Rekord', mistakesL:'Fehler', hintsL:'Tipps',
-  menuBtn:'Menü', again:'Noch eins', clean:'fehlerfreies Spiel ✦',
-  loseT:'Drei Fehler', loseText:'Fehlerlimit erreicht. Ohne Limit weiterspielen oder neu starten.',
-  contNoLimit:'Ohne Limit weiter',
-  stats:'Statistik', level:'Stufe', avgL:'Durchschnitt', histT:'Letzte Siege', none:'noch nichts',
-  dataAt:'Stand', close:'Schließen',
-  settings:'Einstellungen', tabView:'Ansicht', tabGame:'Spiel', tabKeys:'Tasten',
-  themeT:'Design', posT:'Position des Felds', posLeft:'Links', posCenter:'Mitte', posRight:'Rechts', langT:'Sprache',
-  instantT:'Sofortige Fehlerprüfung', instantD:'Falsche Ziffern werden sofort rot; aus — Prüfung erst bei vollem Feld. Gilt für neue Spiele',
-  limitT:'Limit — 3 Fehler', limitD:'Nach dem dritten Fehler — Pause mit Wahl: ohne Limit oder neu starten (nur bei Sofortprüfung)',
-  pickerT:'Ziffern-Popup', pickerD:'Doppel- oder Rechtsklick auf eine Zelle öffnet das Ziffernfenster',
-  sameT:'Gleiche Zahlen hervorheben', sameD:'Beim Auswählen einer Zelle werden gleiche Ziffern und Notizen markiert',
-  countsT:'Zähler der Restziffern', countsD:'Kleine Zahl auf den Tasten — wie viele noch fehlen',
-  hintBtnT:'„Tipp“-Taste', hintBtnD:'In der Steuerleiste anzeigen (Taste H)',
-  autoBtnT:'„Auto-Notizen“-Taste', autoBtnD:'In der Steuerleiste anzeigen (Taste A)',
-  reset:'Statistik zurücksetzen', resetConfirm:'Gesamtes Protokoll gelöster Spiele löschen?',
-  resetDone:'Statistik zurückgesetzt', done:'Fertig',
-  k_digit:'Ziffer eingeben', k_note:'Notiz in die Zelle', k_hyp1:'Entwurf in die Zelle', k_notes:'Notizmodus (oder Leertaste)',
-  k_hypm:'Entwurfsmodus', k_erase:'löschen',  k_undo:'rückgängig / wiederholen', k_hint:'Tipp (falls aktiviert)',
-  k_auto:'Auto-Notizen (falls aktiviert)', k_pause:'Pause', k_nav:'über das Feld bewegen', k_menu:'Menü', k_pick:'Ziffern-Popup',
-  gen:'Feld wird erzeugt…', digitTab:'Ziffer', noteTab:'Notiz', hypTab:'Entwurf', eraseP:'Löschen',
-  hasErrors:'Falsche Ziffern: {n}', autoDone:'Kandidaten eingetragen', assistNote:'mit Hilfe — wird nicht gewertet',
-  delGame:'Dieses Spiel löschen?', restartConfirm:'Rätsel neu starten? Der Fortschritt geht verloren.',
-  mist:'Fehler', hintsSm:'Tipps',
-  featT:'Funktionen',
-  f1T:'Rechtsklick auf die Zelle', f1D:'Oder Doppelklick — Ziffernfenster direkt an der Zelle',
-  f2T:'Entwurf', f2D:'Zug gestrichelt testen, dann übernehmen oder verwerfen',
-  f3T:'Zähler am Numpad', f3D:'Zeigt, wie viele jeder Ziffer übrig sind',
-  f7T:'Leertaste', f7D:'Ein Druck wechselt in den Notizmodus',
-  k_dblK:'2×Klick', k_rmbK:'RMT',
-},
-fr:{
-  th_indigo:'Indigo', th_midnight:'Minuit', th_sepia:'Sépia', th_candle:'Bougie', th_olive:'Olive', th_moss:'Mousse', th_rose:'Rose', th_wine:'Vin', th_fog:'Brume', th_coal:'Charbon',
-  welT:'Choisissez votre style', welLight:'Clair', welDark:'Sombre', welNote:'Plus de thèmes dans les réglages',
-  yes:'Oui', cancel:'Annuler',
-  tagline:'un puzzle paisible pour chaque jour',
-  continue:'Continuer', newGame:'Nouvelle partie', total:'Total',
-  d_easy:'Facile', d_medium:'Moyen', d_hard:'Difficile', d_expert:'Expert',
-  solvedL:'résolues', cleanL:'parfaites', playtimeL:'temps de jeu', notPlayed:'pas joué',
-  record:'record', solvedN:'résolues',
-  menuBack:'‹ Menu', errorsL:'Erreurs', pauseT:'Pause', resume:'Reprendre', restart:'Recommencer la grille',
-  undo:'Annuler', redo:'Rétablir', erase:'Effacer', notes:'Notes', hyp:'Brouillon', auto:'Auto', hint:'Indice',
-  winT:'Résolu !', newRecord:'✦ Nouveau record du niveau', recordL:'record', mistakesL:'erreurs', hintsL:'indices',
-  menuBtn:'Menu', again:'Encore une', clean:'partie parfaite ✦',
-  loseT:'Trois erreurs', loseText:'Limite d’erreurs atteinte. Continuez sans limite ou recommencez la grille.',
-  contNoLimit:'Continuer sans limite',
-  stats:'Statistiques', level:'Niveau', avgL:'Moyenne', histT:'Victoires récentes', none:'rien pour l’instant',
-  dataAt:'Données au', close:'Fermer',
-  settings:'Réglages', tabView:'Affichage', tabGame:'Jeu', tabKeys:'Touches',
-  themeT:'Thème', posT:'Position de la grille', posLeft:'Gauche', posCenter:'Centre', posRight:'Droite', langT:'Langue',
-  instantT:'Vérification instantanée', instantD:'Les chiffres faux passent en rouge aussitôt ; désactivé — vérification quand la grille est pleine. Pour les nouvelles parties',
-  limitT:'Limite — 3 erreurs', limitD:'Après la troisième erreur — pause avec choix : sans limite ou recommencer (vérification instantanée uniquement)',
-  pickerT:'Fenêtre de chiffres', pickerD:'Double clic ou clic droit sur une case ouvre la fenêtre de chiffres',
-  sameT:'Surligner les chiffres identiques', sameD:'Sélectionner une case met en évidence les mêmes chiffres et notes',
-  countsT:'Compteur de chiffres restants', countsD:'Un petit nombre sur les touches — combien il en reste',
-  hintBtnT:'Bouton « Indice »', hintBtnD:'Afficher dans la barre de contrôle (touche H)',
-  autoBtnT:'Bouton « Auto-notes »', autoBtnD:'Afficher dans la barre de contrôle (touche A)',
-  reset:'Réinitialiser les statistiques', resetConfirm:'Effacer tout l’historique des parties résolues ?',
-  resetDone:'Statistiques réinitialisées', done:'Terminé',
-  k_digit:'saisir un chiffre', k_note:'note dans la case', k_hyp1:'brouillon dans la case', k_notes:'mode notes (ou Espace)',
-  k_hypm:'mode brouillon', k_erase:'effacer',  k_undo:'annuler / rétablir', k_hint:'indice (si activé)',
-  k_auto:'auto-notes (si activées)', k_pause:'pause', k_nav:'se déplacer sur la grille', k_menu:'menu', k_pick:'fenêtre de chiffres',
-  gen:'Génération de la grille…', digitTab:'Chiffre', noteTab:'Note', hypTab:'Brouillon', eraseP:'Effacer',
-  hasErrors:'Chiffres faux : {n}', autoDone:'Candidats remplis', assistNote:'avec aide — non comptée',
-  delGame:'Supprimer cette partie ?', restartConfirm:'Recommencer cette grille ? La progression sera perdue.',
-  mist:'erreurs', hintsSm:'indices',
-  featT:'Fonctions',
-  f1T:'Clic droit sur la case', f1D:'Ou double clic — fenêtre de chiffres près de la case',
-  f2T:'Brouillon', f2D:'Essayez en pointillés, puis validez ou annulez',
-  f3T:'Compteurs du pavé', f3D:'Combien il reste de chaque chiffre',
-  f7T:'Barre d’espace', f7D:'Une pression active le mode notes',
-  k_dblK:'2×clic', k_rmbK:'clic droit',
-},
-zh:{
-  th_indigo:'靛蓝', th_midnight:'午夜', th_sepia:'棕褐', th_candle:'烛光', th_olive:'橄榄', th_moss:'苔藓', th_rose:'玫瑰', th_wine:'酒红', th_fog:'雾灰', th_coal:'炭黑',
-  welT:'选择外观', welLight:'浅色', welDark:'深色', welNote:'更多主题见设置',
-  yes:'确定', cancel:'取消',
-  tagline:'每天一局，静心解题',
-  continue:'继续', newGame:'新游戏', total:'总计',
-  d_easy:'简单', d_medium:'中等', d_hard:'困难', d_expert:'专家',
-  solvedL:'已解决', cleanL:'零失误', playtimeL:'游戏时长', notPlayed:'未玩过',
-  record:'纪录', solvedN:'已解决',
-  menuBack:'‹ 菜单', errorsL:'错误', pauseT:'已暂停', resume:'继续', restart:'重新开始',
-  undo:'撤销', redo:'重做', erase:'擦除', notes:'笔记', hyp:'草稿', auto:'自动', hint:'提示',
-  winT:'完成！', newRecord:'✦ 新纪录', recordL:'纪录', mistakesL:'错误', hintsL:'提示',
-  menuBtn:'菜单', again:'再来一局', clean:'零失误 ✦',
-  loseT:'三次错误', loseText:'已达错误上限。可以无限制继续，或重新开始本局。',
-  contNoLimit:'无限制继续',
-  stats:'统计', level:'难度', avgL:'平均', histT:'最近胜局', none:'暂无',
-  dataAt:'数据截至', close:'关闭',
-  settings:'设置', tabView:'外观', tabGame:'游戏', tabKeys:'按键',
-  themeT:'主题', posT:'棋盘位置', posLeft:'居左', posCenter:'居中', posRight:'居右', langT:'语言',
-  instantT:'即时检查错误', instantD:'错误数字立即变红；关闭后在棋盘填满时检查。对新游戏生效',
-  limitT:'限制 — 3 次错误', limitD:'第三次错误后暂停并选择：无限制继续或重新开始（仅即时检查模式）',
-  pickerT:'数字选择弹窗', pickerD:'双击或右键单元格打开数字弹窗',
-  sameT:'高亮相同数字', sameD:'选中单元格时高亮相同的数字和笔记',
-  countsT:'剩余数字计数', countsD:'数字键上的小数字 — 还剩多少个',
-  hintBtnT:'“提示”按钮', hintBtnD:'显示在控制栏（按键 H）',
-  autoBtnT:'“自动笔记”按钮', autoBtnD:'显示在控制栏（按键 A）',
-  reset:'重置统计', resetConfirm:'清空全部已解决记录？',
-  resetDone:'统计已重置', done:'完成',
-  k_digit:'输入数字', k_note:'填入笔记', k_hyp1:'填入草稿', k_notes:'笔记模式（或空格）',
-  k_hypm:'草稿模式', k_erase:'擦除',  k_undo:'撤销 / 重做', k_hint:'提示（若开启）',
-  k_auto:'自动笔记（若开启）', k_pause:'暂停', k_nav:'在棋盘上移动', k_menu:'菜单', k_pick:'数字弹窗',
-  gen:'正在生成棋盘…', digitTab:'数字', noteTab:'笔记', hypTab:'草稿', eraseP:'擦除',
-  hasErrors:'错误数字：{n}', autoDone:'候选数已填入', assistNote:'使用辅助 — 不计入统计',
-  delGame:'删除这局？', restartConfirm:'重新开始本局？进度将被清除。',
-  mist:'错误', hintsSm:'提示',
-  featT:'功能',
-  f1T:'右键点击单元格', f1D:'或双击 — 数字弹窗就在单元格旁',
-  f2T:'草稿', f2D:'虚线试探，再采纳或撤销',
-  f3T:'数字键计数', f3D:'每个数字还剩几个一目了然',
-  f7T:'空格键', f7D:'一键切换笔记模式',
-  k_dblK:'双击', k_rmbK:'右键',
-}};
+},};
 function t(k){ const d=I18N[SES.settings.lang]||I18N.en; return d[k] || I18N.en[k] || I18N.ru[k] || k; }
 function applyLang(){
   document.documentElement.lang = SES.settings.lang;
@@ -921,22 +710,22 @@ const DIFFS = { easy:{clues:38}, medium:{clues:32}, hard:{clues:27}, expert:{clu
 const DIFF_KEYS = Object.keys(DIFFS);
 const dName = d => t('d_'+d);
 const THEMES = [
-  {id:'indigo', name:'Indigo', bg:'#eae9e2', accent:'#4a67d6', meta:'#eae9e2'},
-  {id:'midnight', name:'Midnight', bg:'#171a22', accent:'#7aa2f7', meta:'#171a22'},
-  {id:'sepia', name:'Sepia', bg:'#efe9dd', accent:'#b4552d', meta:'#efe9dd'},
-  {id:'candle', name:'Candlelight', bg:'#211c14', accent:'#d8a05c', meta:'#211c14'},
-  {id:'olive', name:'Olive', bg:'#edeedd', accent:'#6b7a2f', meta:'#edeedd'},
-  {id:'moss', name:'Moss', bg:'#1b201a', accent:'#7fae6b', meta:'#1b201a'},
-  {id:'rose', name:'Rose', bg:'#f0e7e2', accent:'#b03a5b', meta:'#f0e7e2'},
-  {id:'wine', name:'Wine', bg:'#221419', accent:'#d17a95', meta:'#221419'},
-  {id:'fog', name:'Fog', bg:'#e7eaee', accent:'#3f7fc2', meta:'#e7eaee'},
-  {id:'coal', name:'Charcoal', bg:'#17181a', accent:'#8ab4d8', meta:'#17181a'},
+  {id:'light', name:'Light',  bg:'#ebeef6', accent:'#3a5aa0', meta:'#ebeef6'},
+  {id:'dark',  name:'Dark',   bg:'#0d1119', accent:'#9ec1f5', meta:'#0d1119'},
 ];
 const SYS_LANG=(()=>{ try{
   const langs=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];
   for(const l of langs){ const p=String(l).slice(0,2).toLowerCase(); if(I18N[p]) return p; }
 }catch(e){} return 'en'; })();
-const DEF_SETTINGS = {theme:'indigo', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
+/* Чем именно ткнули в последний раз. Окно выбора цифры — только для мыши:
+   на телефоне пара тапов по клетке открывала его и мешала играть. */
+let lastPointerType='mouse';
+function pickerAllowed(){
+  if(lastPointerType==='touch') return false;
+  try{ if(!matchMedia('(pointer:fine)').matches) return false; }catch(e){}
+  return true;
+}
+const DEF_SETTINGS = {theme:'light', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
 /* LOG — зеркало файла Журнал.md; дополняется ТОЛЬКО через pending (очередь побед) */
 let LOG = { games:[], updated:0 };
 let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
@@ -1218,7 +1007,7 @@ function buildBoard(){
     const r=(i/9)|0, c=i%9;
     const d=document.createElement('div');
     d.className='cell'+((c===2||c===5)?' br':'')+((r===2||r===5)?' bb':'');
-    d.addEventListener('pointerdown',()=>{ const g=cur(); if(g && !g.paused){ closePicker(); sel=i; hlDigit=0; renderBoard(); } });
+    d.addEventListener('pointerdown',e=>{ lastPointerType=e.pointerType||'mouse'; const g=cur(); if(g && !g.paused){ closePicker(); sel=i; hlDigit=0; renderBoard(); } });
     d.addEventListener('dblclick',()=>openPicker(i));
     d.addEventListener('contextmenu',e=>{e.preventDefault(); openPicker(i);});
     b.appendChild(d); cells.push(d);
@@ -1352,6 +1141,7 @@ function refreshPickerLang(){
   const xt=pk.querySelector('.pk-x-t'); if(xt) xt.textContent=t('eraseP');
 }
 function openPicker(i){
+  if(!pickerAllowed()) return;
   if(!SES.settings.dblPick) return;
   const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
   sel=i; renderBoard();
@@ -1516,7 +1306,7 @@ function gameLost(){
 }
 function confetti(){
   if(reducedMotion) return;
-  const colors=['#c9b280','#7aa2f7','#6fbf8f','#a78bfa','#e06c75','#e5c07b'];
+  const colors=['#9ec1f5','#b8a6f0','#c3d1ee','#e4e9f4','#7d9fd4','#a9b8e8'];
   const c=document.createElement('div'); c.className='confetti';
   for(let i=0;i<44;i++){
     const p=document.createElement('i');
@@ -1599,7 +1389,7 @@ function buildSwatches(){
   for(const th of THEMES){
     const b=document.createElement('button');
     b.className='sw'; b.dataset.t=th.id;
-    b.innerHTML=`<i style="background:${th.accent}; --sw-a:${th.bg}"></i><span>${t('th_'+th.id)||th.name}</span>`;
+    b.innerHTML=`<span>${t('th_'+th.id)||th.name}</span>`;
     b.addEventListener('click',()=>{ SES.settings.theme=th.id; applyTheme(); persistCache(); saveSes(); });
     wrap.appendChild(b);
   }
@@ -1779,8 +1569,9 @@ function snapBoard(){
   const b=$('board'); if(!b) return;
   b.style.width='';
   const w=b.getBoundingClientRect().width;
-  const c=Math.floor((w-4)/9);           // 4px — рамка поля (2+2)
-  if(c>0) b.style.width=(c*9+4)+'px';
+  const bw=(parseFloat(getComputedStyle(b).borderLeftWidth)||0)*2;
+  const c=Math.floor((w-bw)/9);          // рамка поля читается из стилей
+  if(c>0) b.style.width=(c*9+bw)+'px';
 }
 window.addEventListener('resize',snapBoard);
 snapBoard();
@@ -1795,8 +1586,8 @@ if(pending.length) saveLog();
   const pick=id=>{ SES.settings.theme=id; applyTheme(); persistCache(); saveSes();
     try{ localStorage.setItem('sudoku-welcomed','1'); }catch(e){}
     bg.classList.add('hidden'); };
-  $('welLight').onclick=()=>pick('indigo');
-  $('welDark').onclick=()=>pick('midnight');
+  $('welLight').onclick=()=>pick('light');
+  $('welDark').onclick=()=>pick('dark');
   bg.addEventListener('click',e=>{ if(e.target===bg){ try{ localStorage.setItem('sudoku-welcomed','1'); }catch(err){} bg.classList.add('hidden'); } });
 })();
 
