@@ -193,8 +193,14 @@ header, main, .site-foot{position:relative; z-index:1}
 
   /* поле подгоняется под остаток высоты, чтобы клавиатура всегда была видна */
   #game{max-width:100%}
-  .board-wrap{max-width:min(100%, calc(100vh - 340px)); margin:0 auto}
-  @supports (height:100dvh){ .board-wrap{max-width:min(100%, calc(100dvh - 340px))} }
+  body.has-hint #game{max-width:100%}
+  /* под доску отдаём всё, кроме шапки, строки состояния, панели и цифр */
+  .board-wrap{max-width:min(100%, calc(100vh - 240px)); margin:0 auto}
+  body.has-hint .board-wrap{max-width:min(100%, calc(100vh - 288px))}
+  @supports (height:100dvh){
+    .board-wrap{max-width:min(100%, calc(100dvh - 240px))}
+    body.has-hint .board-wrap{max-width:min(100%, calc(100dvh - 288px))}
+  }
   .topbar{margin:2px 0 8px; font-size:12.5px}
   .topbar .tbtn{padding:6px 4px}
   #board{border-radius:5px}
@@ -216,9 +222,8 @@ header, main, .site-foot{position:relative; z-index:1}
   #picker button{font-size:19px}
 }
 /* на низких экранах — обычная прокрутка вместо подгонки в экран */
-@media (max-width:600px) and (max-height:600px){
-  .board-wrap{max-width:100%}
-  body.in-game{overflow:auto}
+@media (max-width:600px) and (max-height:560px){
+  body.in-game{justify-content:flex-start; overflow:auto}
 }
 #contList{max-height:216px; overflow-y:auto; overscroll-behavior:contain}
 #contList::-webkit-scrollbar{width:8px}
@@ -328,6 +333,8 @@ header, main, .site-foot{position:relative; z-index:1}
 .numpad.mode-note .num{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
 .numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
 .numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.28}
+.num.armed{border-color:var(--accent); color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent)}
+.numpad.mode-hyp .num.armed{border-color:var(--accent2); color:var(--accent2); background:var(--accent2-soft); box-shadow:inset 0 0 0 1px var(--accent2)}
 /* кнопки, модалки */
 .btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:3px;
   padding:11px 24px; font-family:inherit; font-size:12px; font-weight:600; letter-spacing:.14em;
@@ -444,6 +451,7 @@ header, main, .site-foot{position:relative; z-index:1}
   .cont-open{font-size:18px}
 }
 @media (pointer:coarse){ #optDblRow{display:none} }
+@media (max-width:600px){ #posRow, #posseg{display:none} }
 #pickHint{margin:0 0 10px; text-align:center; font-size:13.5px; font-style:italic; font-weight:300;
   color:var(--muted); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:9px 0}
 #pickHint b{font-style:normal; font-weight:400; color:var(--accent)}
@@ -612,7 +620,7 @@ header, main, .site-foot{position:relative; z-index:1}
       <div class="scols">
       <h3 data-i18n="themeT">Тема</h3>
       <div class="swatches" id="swatches"></div>
-      <h3 data-i18n="posT">Позиция поля</h3>
+      <h3 data-i18n="posT" id="posRow">Позиция поля</h3>
       <div class="posseg" id="posseg">
         <button data-p="left" data-i18n="posLeft">Слева</button>
         <button data-p="center" data-i18n="posCenter">Центр</button>
@@ -635,6 +643,8 @@ header, main, .site-foot{position:relative; z-index:1}
         <div><b data-i18n="pickerT">Окно выбора цифры</b><span data-i18n="pickerD">Двойной или правый клик по клетке открывает окно с цифрами</span></div></label>
       <label class="toggle"><input type="checkbox" id="optSame">
         <div><b data-i18n="sameT">Подсветка одинаковых чисел</b><span data-i18n="sameD">При выборе клетки подсвечиваются такие же цифры и заметки</span></div></label>
+      <label class="toggle"><input type="checkbox" id="optDigitFirst">
+        <div><b data-i18n="digitFirstT">Сначала цифра, потом клетка</b><span data-i18n="digitFirstD">Нажми цифру внизу — она подсветит все такие же на поле; дальше тап по клетке ставит её. Удобно одной рукой</span></div></label>
       <label class="toggle"><input type="checkbox" id="optCounts">
         <div><b data-i18n="countsT">Счётчик оставшихся чисел</b><span data-i18n="countsD">Маленькая цифра на кнопках нумпада — сколько ещё осталось</span></div></label>
       <label class="toggle"><input type="checkbox" id="optHintBtn">
@@ -698,6 +708,7 @@ ru:{
   limitT:'Лимит — 3 ошибки', limitD:'После третьей ошибки — пауза с выбором: без лимита или заново (только при мгновенной проверке)',
   pickerT:'Окно выбора цифры', pickerD:'Двойной или правый клик по клетке открывает окно с цифрами',
   sameT:'Подсветка одинаковых чисел', sameD:'При выборе клетки подсвечиваются такие же цифры и заметки',
+  digitFirstT:'Сначала цифра, потом клетка', digitFirstD:'Нажми цифру внизу — она подсветит все такие же на поле; дальше тап по клетке ставит её. Удобно одной рукой',
   countsT:'Счётчик оставшихся чисел', countsD:'Маленькая цифра на кнопках нумпада — сколько ещё осталось',
   hintBtnT:'Кнопка «Подсказка»', hintBtnD:'Показывать в панели управления (клавиша H)',
   autoBtnT:'Кнопка «Авто-заметки»', autoBtnD:'Показывать в панели управления (клавиша A)',
@@ -740,6 +751,7 @@ en:{
   limitT:'Limit: 3 mistakes', limitD:'After the third mistake the game pauses: carry on without a limit, or start the puzzle over. Works with instant check only',
   pickerT:'Digit picker popup', pickerD:'Double-click or right-click a cell to open the digit popup',
   sameT:'Highlight matching numbers', sameD:'Selecting a cell highlights matching digits and notes',
+  digitFirstT:'Pick the digit first', digitFirstD:'Tap a digit below — it highlights every matching cell; after that a tap on any cell places it. Handy one-handed',
   countsT:'Remaining count', countsD:'A small figure on each numpad key shows how many of that digit are left',
   hintBtnT:'“Hint” button', hintBtnD:'Show in the control bar (key H)',
   autoBtnT:'“Auto-notes” button', autoBtnD:'Show in the control bar (key A)',
@@ -787,11 +799,12 @@ function pickerAllowed(){
   try{ if(!matchMedia('(pointer:fine)').matches) return false; }catch(e){}
   return true;
 }
-const DEF_SETTINGS = {theme:'light', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
+const DEF_SETTINGS = {theme:'light', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true, digitFirst:false};
 /* LOG — журнал побед, копится в localStorage; пополняется только через pending */
 let LOG = { games:[], updated:0 };
 let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
 let pending = [];   // победы, ещё не слитые в журнал
+let armed=0;      // цифра, выбранная первой: следующий тап по клетке поставит её
 let sel=-1, inputMode='digit', undoStack=[], redoStack=[], timerId=null, lastPlaced=-1, hlDigit=0, lastWinDiff='medium';
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const cur = () => SES.games[SES.cur] || null;
@@ -1069,7 +1082,15 @@ function buildBoard(){
     const r=(i/9)|0, c=i%9;
     const d=document.createElement('div');
     d.className='cell'+((c===2||c===5)?' br':'')+((r===2||r===5)?' bb':'');
-    d.addEventListener('pointerdown',e=>{ lastPointerType=e.pointerType||'mouse'; const g=cur(); if(g && !g.paused){ closePicker(); sel=i; hlDigit=0; renderBoard(); } });
+    d.addEventListener('pointerdown',e=>{
+      lastPointerType=e.pointerType||'mouse';
+      const g=cur(); if(!g || g.paused) return;
+      closePicker();
+      if(SES.settings.digitFirst && armed && !g.done && !g.given[i]){
+        sel=i; inputDigit(armed); hlDigit=armed; renderBoard(); return;
+      }
+      sel=i; hlDigit=0; renderBoard();
+    });
     d.addEventListener('dblclick',()=>openPicker(i));
     d.addEventListener('contextmenu',e=>{e.preventDefault(); openPicker(i);});
     b.appendChild(d); cells.push(d);
@@ -1084,6 +1105,11 @@ function buildNumpad(){
     btn.addEventListener('pointerdown',e=>{e.preventDefault();
       const g=cur();
       if(!g || g.paused) return;
+      if(SES.settings.digitFirst){
+        armed = armed===v? 0 : v;
+        hlDigit = armed; sel = -1;
+        renderBoard(); return;
+      }
       if(sel<0 || g.given[sel] || g.done){ hlDigit = hlDigit===v? 0 : v; renderBoard(); }
       else inputDigit(v);
     });
@@ -1127,6 +1153,7 @@ function renderBoard(){
     btn.querySelector('small').textContent=(showCounts && left>0)?left:'';
     btn.classList.toggle('done', left<=0);
     btn.classList.toggle('hl', hlDigit===v);
+    btn.classList.toggle('armed', SES.settings.digitFirst && armed===v);
   });
   const np=$('numpad'); if(np){ np.classList.toggle('mode-note', inputMode==='note'); np.classList.toggle('mode-hyp', inputMode==='hyp'); }
   $('gMistWrap').style.display = g.instant? '' : 'none';
@@ -1222,6 +1249,7 @@ function openPicker(i){
   pk.style.left=left+'px'; pk.style.top=top+'px';
 }
 function closePicker(){ $('picker').classList.add('hidden'); }
+function disarm(){ armed=0; }
 function updatePickHint(){
   const el=$('pickHint'); if(!el) return;
   let seen=false; try{ seen=!!localStorage.getItem('sudoku-pickHint'); }catch(e){}
@@ -1478,6 +1506,7 @@ function openSettings(tab){
   $('optDbl').checked=SES.settings.dblPick;
   $('optSame').checked=SES.settings.highlightSame!==false;
   $('optCounts').checked=SES.settings.showCounts!==false;
+  $('optDigitFirst').checked=!!SES.settings.digitFirst;
   $('optHintBtn').checked=SES.settings.showHint;
   $('optAutoBtn').checked=SES.settings.showAuto;
   applyLayout();
@@ -1554,6 +1583,7 @@ $('optLimit').addEventListener('change',e=>{ SES.settings.limit=e.target.checked
 $('optDbl').addEventListener('change',e=>{ SES.settings.dblPick=e.target.checked; if(!e.target.checked) closePicker(); persistCache(); saveSes(); });
 $('optSame').addEventListener('change',e=>{ SES.settings.highlightSame=e.target.checked; persistCache(); saveSes();
   if(cur() && !$('game').classList.contains('hidden')) renderBoard(); });
+$('optDigitFirst').addEventListener('change',e=>{ SES.settings.digitFirst=e.target.checked; if(!e.target.checked){ disarm(); hlDigit=0; } renderBoard(); persistCache(); saveSes(); });
 $('optCounts').addEventListener('change',e=>{ SES.settings.showCounts=e.target.checked; persistCache(); saveSes();
   if(cur() && !$('game').classList.contains('hidden')) renderBoard(); });
 $('optHintBtn').addEventListener('change',e=>{ SES.settings.showHint=e.target.checked; applyControls(); persistCache(); saveSes(); });
