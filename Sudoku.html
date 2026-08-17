@@ -387,9 +387,9 @@ header, main, .site-foot{position:relative; z-index:1}
 .stab-body{display:grid}
 .stab-body>.stab{grid-area:1/1}
 .stab-body>.stab.hidden{display:block !important; visibility:hidden; pointer-events:none}
-/* На телефоне вкладки различаются по высоте слишком сильно: общая высота дала бы
-   пустое поле и прокрутку на короткой вкладке. Там каждая вкладка живёт своим ростом. */
-@media (max-width:620px){
+/* Если самая длинная вкладка в экран не влезает, общая высота дала бы прокрутку
+   в пустоту на короткой вкладке. На таких экранах каждая вкладка живёт своим ростом. */
+@media (max-height:740px){
   .stab-body{display:block}
   .stab-body>.stab.hidden{display:none !important}
 }
@@ -458,9 +458,26 @@ header, main, .site-foot{position:relative; z-index:1}
 }
 @media (pointer:coarse){ #optDblRow{display:none} }
 @media (max-width:600px){ #posRow, #posseg{display:none} }
+@media (pointer:coarse) and (max-width:620px){ #tabKeysBtn{display:none} }
 #pickHint{margin:0 0 10px; text-align:center; font-size:13.5px; font-style:italic; font-weight:300;
   color:var(--muted); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:9px 0}
 #pickHint b{font-style:normal; font-weight:400; color:var(--accent)}
+/* На телефоне вкладки складываются в общую высоту, поэтому самая длинная из них
+   должна влезать в экран целиком — иначе на короткой вкладке появляется пустая прокрутка. */
+@media (max-width:620px){
+  .modal{padding:18px 16px; max-height:94vh}
+  .modal h2{margin-bottom:11px}
+  .stabs{margin-bottom:11px}
+  .stabs button{padding:8px 0}
+  .modal h3{margin:14px 0 6px}
+  .toggle{padding:7px 0; gap:11px}
+  .toggle b{font-size:15px; margin-bottom:1px}
+  .toggle span{font-size:12.5px; line-height:1.32}
+  .modal .row{margin-top:12px}
+  .btn{padding:12px 20px; min-height:44px}
+  .keys{font-size:12.5px}
+  .keys>*{padding:7px 0}
+}
 </style>
 </head>
 <body>
@@ -572,7 +589,7 @@ header, main, .site-foot{position:relative; z-index:1}
   </div>
 </div>
 
-<!-- СТАТИСТИКА -->
+<!-- ПЕРВЫЙ ЗАПУСК -->
 <div class="modal-bg hidden" id="welcomeModal">
   <div class="modal" style="max-width:360px; text-align:center">
     <h2 data-i18n="welT">Как тебе удобнее?</h2>
@@ -600,6 +617,7 @@ header, main, .site-foot{position:relative; z-index:1}
   </div>
 </div>
 
+<!-- СТАТИСТИКА -->
 <div class="modal-bg hidden" id="statsModal">
   <div class="modal">
     <h2 data-i18n="stats">Статистика</h2>
@@ -619,7 +637,7 @@ header, main, .site-foot{position:relative; z-index:1}
     <div class="stabs">
       <button data-tab="view" class="on" data-i18n="tabView">Вид</button>
       <button data-tab="game" data-i18n="tabGame">Игра</button>
-      <button data-tab="keys" data-i18n="tabKeys">Клавиши</button>
+      <button data-tab="keys" id="tabKeysBtn" data-i18n="tabKeys">Клавиши</button>
     </div>
     <div class="stab-body">
     <div class="stab" id="tab-view">
@@ -1520,6 +1538,7 @@ function openSettings(tab){
   $('setModal').classList.remove('hidden');
 }
 function setTab(name){
+  if(name==='keys' && getComputedStyle($('tabKeysBtn')).display==='none') name='view';
   document.querySelectorAll('.stabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name));
   for(const tb of ['view','game','keys']) $('tab-'+tb).classList.toggle('hidden', tb!==name);
 }
