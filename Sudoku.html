@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ebeef6" id="metaTheme">
+<script>
+/* Тему ставим до первой отрисовки, иначе тёмная моргает белым при перезагрузке. */
+(function(){
+  try{
+    var s=JSON.parse(localStorage.getItem('sudoku-ses')||'null');
+    var t=s&&s.settings&&s.settings.theme;
+    if(t!=='light'&&t!=='dark') return;
+    document.documentElement.setAttribute('data-theme',t);
+    var m=document.getElementById('metaTheme');
+    if(m) m.setAttribute('content', t==='dark'?'#0d1119':'#ebeef6');
+  }catch(e){}
+})();
+</script>
 <title>Sudoku</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
@@ -18,28 +31,44 @@
    тёмная — глубокая полуночная синь с тем же золотом. Третьей темы нет намеренно. */
 :root, html[data-theme="light"]{
   --bg:#ebeef6; --panel:#f7f9fd; --panel2:#ffffff; --line:#d7dced; --line-strong:#1b2130;
-  --text:#1b2130; --muted:#737c93; --accent:#3a5aa0; --accent-text:#ffffff; --accent-soft:#dbe3f5;
+  --text:#1b2130; --muted:#5e6880; --accent:#3a5aa0; --accent-text:#ffffff; --accent-soft:#dbe3f5;
   --accent2:#6f5fa8; --accent2-soft:#e5e0f4;
-  --error:#b04a52; --error-soft:rgba(176,74,82,.12); --note:#737c93; --given:#1b2130; --user:#3a5aa0;
+  --error:#b04a52; --error-soft:rgba(176,74,82,.12); --note:#5e6880; --given:#1b2130; --user:#3a5aa0;
   --cell-sel:#c3d1ee; --cell-hl:#e3e8f4; --cell-same:#d3dcf0;
   --shadow:0 18px 44px rgba(30,45,80,.11);
   --rule:rgba(58,90,160,.42); --frame:rgba(58,90,160,.30);
   --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(58,90,160,.13), transparent 68%);
 }
 html[data-theme="dark"]{
-  --bg:#0d1119; --panel:#141926; --panel2:#1b2130; --line:#252c3d; --line-strong:#e4e9f4;
+  --bg:#0d1119; --panel:#151c2b; --panel2:#1c2434; --line:#252c3d; --line-strong:#e4e9f4;
   --text:#e4e9f4; --muted:#7f8aa3; --accent:#9ec1f5; --accent-text:#0d1119; --accent-soft:rgba(158,193,245,.20);
-  --accent2:#b8a6f0; --accent2-soft:rgba(184,166,240,.18);
-  --error:#e28089; --error-soft:rgba(226,128,137,.16); --note:#7f8aa3; --given:#e4e9f4; --user:#9ec1f5;
-  --cell-sel:#2b3a5c; --cell-hl:#151b28; --cell-same:#1e2739;
+  --accent2:#bda9ef; --accent2-soft:rgba(189,169,239,.20);
+  --error:#e2848c; --error-soft:rgba(226,132,140,.18); --note:#8b96ae; --given:#e4e9f4; --user:#9ec1f5;
+  --cell-sel:#2c3d61; --cell-hl:#19212f; --cell-same:#233049;
   --shadow:0 18px 44px rgba(0,0,0,.5);
-  --rule:rgba(158,193,245,.32); --frame:rgba(158,193,245,.22);
-  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(158,193,245,.11), transparent 68%);
+  --rule:rgba(158,193,245,.36); --frame:rgba(158,193,245,.24);
+  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(158,193,245,.14), transparent 68%);
 }
 #home{max-width:560px; margin:0 auto; width:100%}
+/* широкий экран: две колонки, справа «Возможности» — прокрутки нет */
+@media (min-width:760px){
+  #home{display:grid; grid-template-columns:1fr 1fr; gap:0 42px; max-width:900px; align-items:start}
+  #home>.hsec, #home>.tot{grid-column:1}
+  #home>.howto{grid-column:2; grid-row:1/span 4; border-top:0; padding-top:0}
+}
 body:not(.in-game) main{padding-top:22px}
+/* низкий экран: поджимаем ритм, чтобы главная влезала целиком */
+@media (max-height:760px){
+  header{padding:20px 18px 6px}
+  body:not(.in-game) main{padding-top:10px}
+  .hsec{margin-bottom:20px}
+  .tot{margin-bottom:20px}
+  .diff-btn{padding:11px 4px 10px}
+  .cont-open{padding:11px 4px 10px}
+  .howto dt{margin-top:10px}
+}
 .hsec{margin:0 0 30px}
-.hsec h2{font-family:'Cormorant Garamond',Georgia,serif; font-size:13px; letter-spacing:.18em;
+.hsec h2{font-family:'Cormorant Garamond',Georgia,serif; font-size:13px; letter-spacing:.1em;
   text-transform:uppercase; color:var(--muted); font-weight:600; margin:0 0 2px}
 .diff-grid{display:flex; flex-direction:column}
 .diff-btn{position:relative; display:flex; align-items:baseline; gap:14px; width:100%;
@@ -61,27 +90,22 @@ body:not(.in-game) main{padding-top:22px}
 .cont-open:hover{color:var(--accent); padding-left:12px}
 .cont-open small{color:var(--muted); font-size:13px; font-style:italic; font-weight:300}
 .cont-del{flex:none; width:40px; background:transparent; border:0; color:var(--muted);
-  cursor:pointer; font-size:15px; transition:color .18s}
+  cursor:pointer; display:flex; align-items:center; justify-content:center; transition:color .18s}
+.cont-del svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square}
 .cont-del:hover{color:var(--error)}
 .tot{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 20px; margin:0 0 30px;
   color:var(--muted); font-size:14px; font-style:italic; font-weight:300}
 .tot b{font-style:normal; font-weight:400; font-size:19px; color:var(--text); margin-right:5px}
 .howto{border-top:1px solid var(--line); padding-top:14px}
-.howto summary{font-family:'Cormorant Garamond',Georgia,serif; font-size:13px; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--muted); font-weight:600; cursor:pointer; list-style:none;
-  transition:color .18s}
-.howto summary::-webkit-details-marker{display:none}
-.howto summary::after{content:'+'; color:var(--accent); margin-left:8px}
-.howto[open] summary::after{content:'\2013'}
-.howto summary:hover{color:var(--accent)}
-.howto dl{margin:14px 0 0}
+.howto h2{font-family:'Cormorant Garamond',Georgia,serif; font-size:13px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); font-weight:600; margin:0}
+.howto dl{margin:12px 0 0; display:grid; gap:0}
 .howto dt{font-size:17px; font-weight:400; margin-top:13px}
 .howto dd{margin:2px 0 0; font-size:14px; color:var(--muted); font-weight:300; line-height:1.55}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{margin:0; background:var(--bg); color:var(--text);
   font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
-  background-image:var(--halo); background-attachment:fixed;
   font-family:'Cormorant Garamond',Georgia,serif;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
@@ -90,7 +114,7 @@ body.in-game main{max-width:100%}
 body.pos-left #game{margin-left:0}
 body.pos-right #game{margin-left:auto; margin-right:0}
 button{font-family:inherit; color:inherit}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
 header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
 header h1{font-family:Cinzel,Georgia,serif; font-size:38px; font-weight:500; letter-spacing:.2em; margin:0 0 0 .2em}
 .tagline{margin:0; color:var(--muted); font-size:14px}
@@ -99,7 +123,7 @@ header .iconbtn{position:absolute; top:30px}
 header #statsBtn{right:calc(50% - 440px)}
 header #setBtn{right:calc(50% - 478px)}
 @media(max-width:990px){header #statsBtn{right:60px} header #setBtn{right:16px}}
-.iconbtn{background:transparent; border:1px solid transparent; border-radius:10px; cursor:pointer;
+.iconbtn{background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer;
   color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
@@ -113,8 +137,12 @@ body.in-game header .iconbtn{position:static}
 .site-foot a{color:var(--muted)}
 .site-foot a:hover{color:var(--text)}
 body.in-game .site-foot{display:none}
+/* Нимб: свет, падающий сверху. */
+body::before{content:''; position:fixed; inset:0; background:var(--halo); pointer-events:none; z-index:0; transition:opacity .3s}
+body.in-game::before{opacity:.4}
+header, main, .site-foot{position:relative; z-index:1}
 .wel-grid{display:flex; gap:12px; margin:18px 0 14px}
-.wel-card{flex:1; background:transparent; border:1px solid var(--line); border-radius:4px; padding:11px 11px 13px;
+.wel-card{flex:1; background:transparent; border:1px solid var(--line); border-radius:3px; padding:11px 11px 13px;
   cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:10px; align-items:center;
   transition:border-color .15s, background .15s}
 .wel-card:hover{border-color:var(--accent)}
@@ -127,7 +155,7 @@ body.in-game .site-foot{display:none}
 .wp-light i{background:#f7f9fd; border:1px solid #d7dced}
 .wp-light i.a{background:#3a5aa0; border-color:#3a5aa0}
 .wp-dark{background:#0d1119}
-.wp-dark i{background:#141926; border:1px solid #252c3d}
+.wp-dark i{background:#151c2b; border:1px solid #252c3d}
 .wp-dark i.a{background:#9ec1f5; border-color:#9ec1f5}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
@@ -160,18 +188,18 @@ body.in-game .site-foot{display:none}
   @supports (height:100dvh){ .board-wrap{max-width:min(100%, calc(100dvh - 340px))} }
   .topbar{margin:2px 0 8px; font-size:12.5px}
   .topbar .tbtn{padding:6px 4px}
-  #board{border-radius:10px}
+  #board{border-radius:5px}
   .cell{font-size:clamp(19px,6.2vw,30px)}
   .cell .notes span{font-size:clamp(10px,2.9vw,13px)}
 
-  /* панель действий: 7 кнопок в ряд, но выше и с большей зоной нажатия */
-  .controls{gap:5px; margin-top:10px}
-  .ctl{padding:9px 1px 7px; font-size:8.5px; letter-spacing:-.2px; gap:4px; border-radius:11px; min-height:50px}
+  /* панель действий: переносится по строкам, зона нажатия крупнее */
+  .controls{margin-top:10px}
+  .ctl{padding:9px 1px 7px; font-size:9px; letter-spacing:.02em; gap:4px; min-height:50px}
   .ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 
-  /* цифры: два ряда по 5 и 4 — под большой палец */
+  /* цифры одним рядом, но с высокой кнопкой — попадать пальцем удобно */
   .numpad{display:flex; flex-wrap:wrap; justify-content:center; gap:7px; margin-top:9px}
-  .num{flex:0 0 calc(20% - 6px); aspect-ratio:1.25; font-size:26px; font-weight:400; border-radius:14px}
+  .num{flex:0 0 calc(20% - 6px); aspect-ratio:1.25; font-size:26px; font-weight:400; border-radius:3px}
   .num small{right:7px; bottom:5px; font-size:10.5px}
 
   /* всплывающий выбор цифры крупнее */
@@ -183,29 +211,29 @@ body.in-game .site-foot{display:none}
   .board-wrap{max-width:100%}
   body.in-game{overflow:auto}
 }
-#contList{max-height:216px; overflow-y:auto; scrollbar-gutter:stable; padding-right:2px}
+#contList{max-height:216px; overflow-y:auto; overscroll-behavior:contain}
 #contList::-webkit-scrollbar{width:8px}
-#contList::-webkit-scrollbar-track{background:var(--panel2); border-radius:8px}
-#contList::-webkit-scrollbar-thumb{background:var(--line); border-radius:8px}
+#contList::-webkit-scrollbar-track{background:var(--panel2); border-radius:5px}
+#contList::-webkit-scrollbar-thumb{background:var(--line); border-radius:5px}
 /* верхняя панель игры */
 .topbar{display:flex; align-items:center; justify-content:space-between; margin:4px 0 12px; font-size:13px; color:var(--muted); gap:6px}
 .topbar .t-item{font-weight:500}
 .topbar .t-item b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
-.topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:4px; display:flex; align-items:center; gap:4px}
+.topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
 .topbar .tbtn:hover{color:var(--text)}
-.topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:square}
+.topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square}
 /* поле */
 .board-wrap{position:relative}
 #board{position:relative; display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr); width:100%; aspect-ratio:1;
-  border:1px solid var(--frame); border-radius:12px; overflow:hidden; background:var(--panel);
+  border:1px solid var(--frame); border-radius:6px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
-#board.notes-on .cell.sel{box-shadow:inset 0 0 0 2px var(--accent)}
-#board.hyp-on .cell.sel{background:var(--accent2-soft); box-shadow:inset 0 0 0 2px var(--accent2)}
+#board.notes-on .cell.sel{box-shadow:inset 0 0 0 2px var(--accent); z-index:4}
+#board.hyp-on .cell.sel{background:var(--accent2-soft); box-shadow:inset 0 0 0 2px var(--accent2); z-index:4}
 .cell{position:relative; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
   font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
-  font-size:clamp(17px,4.6vw,27px); font-weight:400; cursor:pointer; background:transparent;
-  color:var(--user); transition:background .1s}
-.cell.given{color:var(--given); font-weight:700}
+  font-size:clamp(17px,4.6vw,27px); font-weight:600; cursor:pointer; background:transparent;
+  color:var(--user)}
+.cell.given{color:var(--given); font-weight:600}
 .cell.hypv{color:var(--accent2); font-weight:600; text-decoration:underline dashed; text-decoration-thickness:2px; text-underline-offset:4px}
 #board::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
   background:
@@ -214,65 +242,70 @@ body.in-game .site-foot{display:none}
     repeating-linear-gradient(90deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9)),
     repeating-linear-gradient(180deg, transparent 0 calc(100%/9 - 1px), var(--line) calc(100%/9 - 1px) calc(100%/9))}
 #board{margin:0 auto}
-.cell:nth-child(1){border-top-left-radius:10px}
-.cell:nth-child(9){border-top-right-radius:10px}
-.cell:nth-child(73){border-bottom-left-radius:10px}
-.cell:nth-child(81){border-bottom-right-radius:10px}
+.cell:nth-child(1){border-top-left-radius:5px}
+.cell:nth-child(9){border-top-right-radius:5px}
+.cell:nth-child(73){border-bottom-left-radius:5px}
+.cell:nth-child(81){border-bottom-right-radius:5px}
 .cell.hl{background:var(--cell-hl)}
 .cell.same{background:var(--cell-same)}
-.cell.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--accent)}
+.cell.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--accent); z-index:4}
 .cell.err{color:var(--error); background:var(--error-soft); font-weight:700}
-.cell.err.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--error)}
+.cell.err.sel{background:var(--cell-sel); box-shadow:inset 0 0 0 2px var(--error); z-index:4}
 .cell .notes{position:absolute; inset:1px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); pointer-events:none}
 .cell .notes span{font-size:clamp(9px,2.2vw,12.5px); color:var(--note); opacity:1; display:flex; align-items:center; justify-content:center; font-weight:500}
 .cell .notes span.nhl{color:var(--accent); font-weight:700; opacity:1}
-.cell.pop{animation:pop .2s ease-out}
-@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.cell.pop{animation:pop .16s ease-out}
+@keyframes pop{from{transform:scale(.9); opacity:.6}to{transform:none; opacity:1}}
 .cell.uflash{animation:uflash .55s ease-out}
 @keyframes uflash{0%{background:var(--accent-soft)}100%{background:transparent}}
 .cell.wave{animation:wave .5s ease-out both}
-@keyframes wave{0%{transform:scale(1)}45%{transform:scale(1.18); color:var(--accent)}100%{transform:scale(1)}}
-#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:12px;
+@keyframes wave{0%{transform:scale(1)}45%{transform:scale(1.08); color:var(--accent)}100%{transform:scale(1)}}
+#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:6px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
 #pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
 /* всплывающее окно выбора цифры */
-#picker{position:absolute; z-index:8; background:var(--panel2); border:1px solid var(--line-strong);
-  border-radius:14px; padding:8px; display:grid; grid-template-columns:repeat(3,44px); gap:5px;
+#picker{position:absolute; z-index:8; background:var(--panel2); border:1px solid var(--line);
+  border-radius:5px; padding:8px; display:grid; grid-template-columns:repeat(3,46px); gap:5px;
   box-shadow:var(--shadow); animation:mIn .15s ease-out}
-#picker button{width:100%; aspect-ratio:1; border-radius:10px; border:1px solid var(--line);
-  background:var(--panel); font-size:17px; font-weight:500; cursor:pointer; display:flex;
-  align-items:center; justify-content:center; transition:border-color .1s, transform .08s}
-#picker button:hover{border-color:var(--accent)}
-#picker button:active{transform:scale(.9)}
+#picker button{width:100%; aspect-ratio:1; border-radius:3px; border:1px solid var(--line);
+  background:transparent; font-family:inherit; font-size:22px; font-weight:400; color:var(--text);
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:border-color .12s, color .12s, background .12s}
+#picker button:hover{border-color:var(--accent); color:var(--accent)}
+#picker button:active{background:var(--accent-soft)}
 #picker button.done{opacity:.25; pointer-events:none}
-#picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:13px; font-weight:600}
-#picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:square; margin-right:6px}
+#picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; border-radius:3px}
+#picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; margin-right:6px}
 #picker .pk-mode{grid-column:1/-1; display:flex; gap:4px; margin-bottom:2px}
-#picker .pk-mode button{flex:1; aspect-ratio:auto; height:30px; border-radius:8px; border:1px solid var(--line);
+#picker .pk-mode button{flex:1; aspect-ratio:auto; height:32px; border-radius:3px; border:1px solid var(--line);
   background:transparent; color:var(--muted); width:auto; padding:0}
-#picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.3; stroke-linecap:square; stroke-linejoin:miter}
+#picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
 #picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
 #picker .pk-mode button.on[data-m="hyp"]{background:var(--accent2-soft); border-color:var(--accent2); color:var(--accent2)}
 #picker button[data-v]{position:relative}
-#picker button[data-v] small{position:absolute; right:4px; bottom:2px; font-size:9px; font-weight:600; color:var(--muted); line-height:1}
+#picker button[data-v] small{position:absolute; right:5px; bottom:3px; font-size:9px; font-weight:400; font-style:italic; color:var(--muted); line-height:1}
 #picker.mode-note button[data-v]{color:var(--accent); border-color:var(--accent-soft); background:var(--accent-soft)}
 #picker.mode-hyp button[data-v]{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
 #picker.mode-note button[data-v].done, #picker.mode-hyp button[data-v].done{opacity:.22}
 /* управление */
 .controls{display:flex; flex-wrap:wrap; margin-top:16px;
   border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
-.ctl{flex:1 1 auto; background:transparent; border:0; border-right:1px solid var(--line);
-  padding:13px 10px; cursor:pointer; color:var(--muted); font-family:inherit;
-  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+.ctl{flex:1 1 auto; background:transparent; border:0;
+  padding:11px 6px 9px; cursor:pointer; color:var(--muted); font-family:inherit;
+  font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
   transition:color .15s, background .15s}
-.ctl:last-child{border-right:0}
+.ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2;
+  stroke-linecap:square; stroke-linejoin:miter}
+.ctl + .ctl{border-left:1px solid var(--line)}
 .ctl:hover:not(:disabled){color:var(--text); background:var(--cell-hl)}
 .ctl.on{color:var(--accent); background:var(--accent-soft)}
 .ctl.on2{color:var(--accent2); background:var(--accent2-soft)}
 .ctl:disabled{opacity:.32; cursor:default}
 .numpad{display:grid; grid-template-columns:repeat(9,1fr); gap:6px; margin-top:10px}
 .num{position:relative; touch-action:manipulation; background:transparent;
-  border:1px solid var(--line); border-radius:4px; aspect-ratio:.78; cursor:pointer;
+  border:1px solid var(--line); border-radius:3px; aspect-ratio:.78; cursor:pointer;
   font-family:inherit; font-size:clamp(20px,5.2vw,28px); font-weight:400; color:var(--text);
   font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
   display:flex; align-items:center; justify-content:center;
@@ -287,7 +320,7 @@ body.in-game .site-foot{display:none}
 .numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
 .numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.28}
 /* кнопки, модалки */
-.btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:4px;
+.btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:3px;
   padding:11px 24px; font-family:inherit; font-size:12px; font-weight:600; letter-spacing:.14em;
   text-transform:uppercase; cursor:pointer; transition:background .15s, color .15s}
 .btn:hover{background:transparent; color:var(--accent)}
@@ -298,18 +331,19 @@ body.in-game .site-foot{display:none}
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
   justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
 .modal .row:last-child{position:sticky; bottom:-24px; background:var(--panel); padding:12px 0 14px; margin-bottom:-14px}
-.modal{background:var(--panel); border:1px solid var(--line); border-radius:6px;
-  padding:24px; width:100%; max-width:430px; max-height:86vh; overflow-y:auto; box-shadow:var(--shadow);
+.modal{background:var(--panel); border:1px solid var(--line); border-radius:5px;
+  padding:26px 28px; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; box-shadow:var(--shadow);
   animation:mIn .22s ease-out}
-@keyframes mIn{from{transform:translateY(14px) scale(.97); opacity:0}to{transform:none; opacity:1}}
+@keyframes mIn{from{transform:translateY(8px); opacity:0}to{transform:none; opacity:1}}
 .modal h2{font-family:'Cormorant Garamond',Georgia,serif; text-transform:uppercase; margin:0 0 14px; font-size:15px; font-weight:500; letter-spacing:.1em}
-.modal h3{margin:22px 0 9px; font-family:'Cormorant Garamond',Georgia,serif; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.18em}
+.modal h3{margin:22px 0 9px; font-family:'Cormorant Garamond',Georgia,serif; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.1em}
 .modal table{width:100%; border-collapse:collapse; font-size:13px}
 .modal th{text-align:left; color:var(--muted); font-weight:600; padding:6px 4px; border-bottom:1px solid var(--line); font-size:11px}
 .modal td{padding:8px 4px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums}
 .win-big{font-size:52px; font-weight:300; margin:10px 0 4px; font-variant-numeric:tabular-nums}
 .win-sub{color:var(--muted); font-size:14px; margin-bottom:6px; font-weight:300; font-style:italic}
-.record{color:var(--accent); font-size:13px; font-weight:700; margin-bottom:8px}
+.record{color:var(--accent); font-size:13px; font-weight:600; margin-bottom:8px; letter-spacing:.03em}
+.win-sub .mk{font-style:normal; color:var(--accent)}
 .win-grid{display:grid; grid-template-columns:repeat(3,1fr); margin:18px 0 6px; border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
 .win-grid div{background:transparent; border-right:1px solid var(--line); padding:14px 6px}
 .win-grid div:last-child{border-right:0}
@@ -320,18 +354,30 @@ body.in-game .site-foot{display:none}
 .modal .row{display:flex; gap:10px; margin-top:20px; justify-content:flex-end; flex-wrap:wrap}
 /* настройки: вкладки */
 .stabs{display:flex; gap:0; margin-bottom:18px; border-bottom:1px solid var(--line)}
+#tab-view .scols{display:grid; grid-template-columns:auto 1fr; gap:16px 30px; align-items:center}
+#tab-view .scols>h3{margin:0}
+#tab-game .scols{display:grid; grid-template-columns:1fr 1fr; gap:0 34px}
+@media (max-width:620px){
+  #tab-view .scols{grid-template-columns:1fr; gap:0}
+  #tab-view .scols>h3{margin:20px 0 9px}
+  #tab-game .scols{grid-template-columns:1fr}
+}
 .stabs button{flex:1; padding:11px 0; border:0; background:transparent; color:var(--muted);
   font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
   cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:color .15s,border-color .15s}
 .stabs button:hover{color:var(--text)}
 .stabs button.on{color:var(--accent); border-bottom-color:var(--accent)}
-.swatches{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:4px; overflow:hidden}
+/* Вкладки лежат в одной ячейке: окно берёт высоту самой высокой и не скачет при переключении. */
+.stab-body{display:grid}
+.stab-body>.stab{grid-area:1/1}
+.stab-body>.stab.hidden{display:block !important; visibility:hidden; pointer-events:none}
+.swatches{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:3px; overflow:hidden}
 .sw{width:100%; border:0; border-right:1px solid var(--line); border-radius:0; padding:12px 0; cursor:pointer;
   background:transparent; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:background .15s}
 .sw:last-child{border-right:0}
 .sw.selq{background:var(--accent-soft)} .sw.selq span{color:var(--accent)}
-.sw span{font-size:12px; font-weight:600; color:var(--muted); letter-spacing:.16em; text-transform:uppercase}
-.posseg,.langseg{display:flex; border:1px solid var(--line); border-radius:4px; overflow:hidden}
+.sw span{font-size:12px; font-weight:600; color:var(--muted); letter-spacing:.1em; text-transform:uppercase}
+.posseg,.langseg{display:flex; border:1px solid var(--line); border-radius:3px; overflow:hidden}
 .posseg button,.langseg button{flex:1; padding:11px 0; border:0; border-right:1px solid var(--line);
   background:transparent; color:var(--muted); font-family:inherit; font-size:13px; font-weight:500;
   letter-spacing:.04em; cursor:pointer; transition:color .15s, background .15s}
@@ -349,15 +395,21 @@ body.in-game .site-foot{display:none}
 .toggle input:checked::before{transform:translateX(15px); background:var(--accent)}
 .toggle b{display:block; font-size:16px; font-weight:400; margin-bottom:2px}
 .toggle span{font-size:13.5px; color:var(--muted); font-weight:300; line-height:1.5}
-.keys{display:grid; grid-template-columns:auto 1fr; gap:7px 14px; align-items:center;
-  font-size:12px; color:var(--muted); font-weight:500}
-.keys .kk{display:flex; gap:4px; justify-content:flex-end; white-space:nowrap}
+.keys{display:grid; grid-template-columns:1fr auto; gap:0 18px; align-items:center; font-size:14px}
+.keys>*{padding:12px 0; border-bottom:1px solid var(--line)}
+.keys>*:nth-last-child(-n+2){border-bottom:0}
+.keys span:not(.kk){color:var(--text); font-weight:300}
+.keys .kk{display:flex; gap:5px; justify-content:flex-end; white-space:nowrap}
+@media (min-width:620px){
+  .keys{grid-template-columns:1fr auto 1fr auto; gap:0 18px}
+  .keys>*:nth-child(4n+3){padding-left:36px}
+}
 .keys kbd{background:transparent; border:1px solid var(--line); border-radius:3px; padding:3px 8px;
   font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.06em; color:var(--muted)}
 /* тост, конфетти, оверлеи */
 #toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
   background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
-  padding:10px 18px; border-radius:12px; font-size:13px; font-weight:600; z-index:50;
+  padding:10px 18px; border-radius:3px; font-size:13px; font-weight:600; z-index:50;
   transition:opacity .25s, transform .25s; pointer-events:none; box-shadow:var(--shadow)}
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed; inset:0; pointer-events:none; z-index:40; overflow:hidden}
@@ -372,16 +424,20 @@ body.in-game .site-foot{display:none}
 
 /* ===== мобильные переопределения: идут последними, чтобы победить базовые правила ===== */
 @media (max-width:600px){
-  .numpad{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:10px}
-  .num{flex:0 0 calc(20% - 7px); aspect-ratio:1.15; font-size:30px; font-weight:400; border-radius:14px}
-  .num small{right:7px; bottom:5px; font-size:11px}
-  .controls{gap:6px; margin-top:12px}
-  .ctl{padding:10px 2px 8px; font-size:9px; gap:5px; border-radius:12px; min-height:54px}
+  .numpad{display:grid; grid-template-columns:repeat(9,1fr); gap:4px; margin-top:10px}
+  .num{aspect-ratio:.72; font-size:23px; font-weight:400; border-radius:3px}
+  .num small{right:4px; bottom:3px; font-size:9px}
+  .controls{margin-top:12px}
+  .ctl{padding:11px 2px 9px; font-size:9px; letter-spacing:.02em; gap:5px; min-height:54px}
+  .ctl svg{width:20px; height:20px}
   .diff-btn b{font-size:19px}
   .diff-btn{padding:15px 4px}
   .cont-open{font-size:18px}
 }
 @media (pointer:coarse){ #optDblRow{display:none} }
+#pickHint{margin:0 0 10px; text-align:center; font-size:13.5px; font-style:italic; font-weight:300;
+  color:var(--muted); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:9px 0}
+#pickHint b{font-style:normal; font-weight:400; color:var(--accent)}
 </style>
 </head>
 <body>
@@ -416,8 +472,8 @@ body.in-game .site-foot{display:none}
       <b id="tot-perfect">0</b><span data-i18n="cleanL">чистых</span>
       <b id="tot-time">—</b><span data-i18n="playtimeL">за игрой</span>
     </p>
-    <details class="howto">
-      <summary data-i18n="featT">Возможности</summary>
+    <section class="howto">
+      <h2 data-i18n="featT">Возможности</h2>
       <dl>
         <dt data-i18n="f1T">Правый клик по клетке</dt>
         <dd data-i18n="f1D">Или двойной — окно с цифрами прямо у клетки</dd>
@@ -426,7 +482,7 @@ body.in-game .site-foot{display:none}
         <dt data-i18n="f3T">Счётчики на нумпаде</dt>
         <dd data-i18n="f3D">Видно, сколько каждой цифры осталось</dd>
       </dl>
-    </details>
+    </section>
   </section>
   <!-- ИГРА -->
   <section id="game" class="hidden">
@@ -438,6 +494,7 @@ body.in-game .site-foot{display:none}
         <svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>
       </button>
     </div>
+    <p id="pickHint" class="hidden" data-i18n="pickHint">Двойной или правый клик по клетке — быстрый ввод цифры</p>
     <div class="board-wrap">
       <div id="board"></div>
       <div id="pauseOverlay" class="hidden">
@@ -448,13 +505,13 @@ body.in-game .site-foot{display:none}
       <div id="picker" class="hidden"></div>
     </div>
     <div class="controls">
-      <button class="ctl" id="undoBtn"><span data-i18n="undo">Отмена</span></button>
-      <button class="ctl" id="redoBtn"><span data-i18n="redo">Вернуть</span></button>
-      <button class="ctl" id="eraseBtn"><span data-i18n="erase">Стереть</span></button>
-      <button class="ctl" id="notesBtn"><span data-i18n="notes">Заметки</span></button>
-      <button class="ctl" id="hypBtn"><span data-i18n="hyp">Черновик</span></button>
-      <button class="ctl" id="autoNotesBtn"><span data-i18n="auto">Авто</span></button>
-      <button class="ctl" id="hintBtn"><span data-i18n="hint">Подсказка</span></button>
+      <button class="ctl" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10h-4"/><path d="M8 5 4 9l4 4"/></svg><span data-i18n="undo">Отмена</span></button>
+      <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="M20 9H9a5 5 0 0 0 0 10h4"/><path d="m16 5 4 4-4 4"/></svg><span data-i18n="redo">Вернуть</span></button>
+      <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span data-i18n="erase">Стереть</span></button>
+      <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg><span data-i18n="notes">Заметки</span></button>
+      <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg><span data-i18n="hyp">Черновик</span></button>
+      <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg><span data-i18n="auto">Авто</span></button>
+      <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 19h6M10 22h4"/><path d="M12 3a6 6 0 0 1 4 10.5V16H8v-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint">Подсказка</span></button>
     </div>
     <div class="numpad" id="numpad"></div>
   </section>
@@ -541,7 +598,9 @@ body.in-game .site-foot{display:none}
       <button data-tab="game" data-i18n="tabGame">Игра</button>
       <button data-tab="keys" data-i18n="tabKeys">Клавиши</button>
     </div>
+    <div class="stab-body">
     <div class="stab" id="tab-view">
+      <div class="scols">
       <h3 data-i18n="themeT">Тема</h3>
       <div class="swatches" id="swatches"></div>
       <h3 data-i18n="posT">Позиция поля</h3>
@@ -555,8 +614,10 @@ body.in-game .site-foot{display:none}
         <button data-l="en">English</button>
         <button data-l="ru">Русский</button>
       </div>
+      </div>
     </div>
     <div class="stab hidden" id="tab-game">
+      <div class="scols">
       <label class="toggle"><input type="checkbox" id="optInstant">
         <div><b data-i18n="instantT">Мгновенная проверка ошибок</b><span data-i18n="instantD">Неверные цифры сразу красным; выключено — проверка, когда поле заполнено. Действует на новые партии</span></div></label>
       <label class="toggle"><input type="checkbox" id="optLimit">
@@ -571,29 +632,31 @@ body.in-game .site-foot{display:none}
         <div><b data-i18n="hintBtnT">Кнопка «Подсказка»</b><span data-i18n="hintBtnD">Показывать в панели управления (клавиша H)</span></div></label>
       <label class="toggle"><input type="checkbox" id="optAutoBtn">
         <div><b data-i18n="autoBtnT">Кнопка «Авто-заметки»</b><span data-i18n="autoBtnD">Показывать в панели управления (клавиша A)</span></div></label>
+      </div>
     </div>
     <div class="stab hidden" id="tab-keys">
       <div class="keys">
-        <span class="kk"><kbd>1–9</kbd></span><span data-i18n="k_digit">ввод цифры</span>
-        <span class="kk"><kbd>Shift</kbd><kbd>1–9</kbd></span><span data-i18n="k_note">заметка в клетку</span>
-        <span class="kk"><kbd>Alt</kbd><kbd>1–9</kbd></span><span data-i18n="k_hyp1">проба в клетку</span>
-        <span class="kk"><kbd>N</kbd></span><span data-i18n="k_notes">режим заметок (и Пробел)</span>
-        <span class="kk"><kbd>D</kbd></span><span data-i18n="k_hypm">режим черновика</span>
-        <span class="kk"><kbd>Backspace</kbd><kbd>Del</kbd></span><span data-i18n="k_erase">стереть</span>
-        <span class="kk"><kbd>Z</kbd><kbd>Y</kbd></span><span data-i18n="k_undo">отмена / вернуть</span>
-        <span class="kk"><kbd>H</kbd></span><span data-i18n="k_hint">подсказка (если включена)</span>
-        <span class="kk"><kbd>A</kbd></span><span data-i18n="k_auto">авто-заметки (если включены)</span>
-        <span class="kk"><kbd>P</kbd></span><span data-i18n="k_pause">пауза</span>
-        <span class="kk"><kbd>←↑↓→</kbd></span><span data-i18n="k_nav">навигация по полю</span>
-        <span class="kk"><kbd>Esc</kbd></span><span data-i18n="k_menu">меню</span>
-        <span class="kk"><kbd data-i18n="k_dblK">2×клик</kbd><kbd data-i18n="k_rmbK">ПКМ</kbd></span><span data-i18n="k_pick">окно выбора цифры</span>
+        <span data-i18n="k_digit">ввод цифры</span><span class="kk"><kbd>1–9</kbd></span>
+        <span data-i18n="k_note">заметка в клетку</span><span class="kk"><kbd>Shift</kbd><kbd>1–9</kbd></span>
+        <span data-i18n="k_hyp1">проба в клетку</span><span class="kk"><kbd>Alt</kbd><kbd>1–9</kbd></span>
+        <span data-i18n="k_notes">режим заметок</span><span class="kk"><kbd>N</kbd><kbd data-i18n="k_spaceK">Пробел</kbd></span>
+        <span data-i18n="k_hypm">режим черновика</span><span class="kk"><kbd>D</kbd></span>
+        <span data-i18n="k_erase">стереть</span><span class="kk"><kbd>Backspace</kbd><kbd>Del</kbd></span>
+        <span data-i18n="k_undo">отмена / вернуть</span><span class="kk"><kbd>Z</kbd><kbd>Y</kbd></span>
+        <span data-i18n="k_hint">подсказка</span><span class="kk"><kbd>H</kbd></span>
+        <span data-i18n="k_auto">авто-заметки</span><span class="kk"><kbd>A</kbd></span>
+        <span data-i18n="k_pause">пауза</span><span class="kk"><kbd>P</kbd></span>
+        <span data-i18n="k_nav">навигация по полю</span><span class="kk"><kbd>←↑↓→</kbd></span>
+        <span data-i18n="k_menu">меню</span><span class="kk"><kbd>Esc</kbd></span>
+        <span data-i18n="k_pick">окно выбора цифры</span><span class="kk"><kbd data-i18n="k_dblK">2×клик</kbd><kbd data-i18n="k_rmbK">ПКМ</kbd></span>
       </div>
+    </div>
     </div>
     <div class="row"><button class="btn" id="setClose" data-i18n="done">Готово</button></div>
   </div>
 </div>
 
-<footer class="site-foot">© 2026 <a href="https://github.com/yoonzky/sudoku" target="_blank" rel="noopener">yoonzky</a></footer>
+<footer class="site-foot">2026 · <a href="https://github.com/yoonzky/sudoku" target="_blank" rel="noopener">yoonzky</a></footer>
 
 <div id="toast"></div>
 <div id="genOverlay" class="hidden" data-i18n="gen">Генерация поля…</div>
@@ -608,14 +671,14 @@ ru:{
   welT:'Как тебе удобнее?', welLight:'Светлая', welDark:'Тёмная', welNote:'Можно поменять в настройках',
   yes:'Да', cancel:'Отмена',
   tagline:'спокойная головоломка на каждый день',
-  continue:'Продолжить', newGame:'Новая игра', total:'Всего',
+  continue:'Продолжить', newGame:'Новая игра',
   d_easy:'Лёгкий', d_medium:'Средний', d_hard:'Сложный', d_expert:'Эксперт',
   solvedL:'решено', cleanL:'чистых', playtimeL:'за игрой', notPlayed:'не играл',
-  record:'рекорд', solvedN:'решено',
-  menuBack:'‹ Меню', errorsL:'Ошибки', pauseT:'Пауза', resume:'Продолжить', restart:'Начать заново',
+  record:'рекорд', solvedN:'решено', errorsL:'Ошибки', pauseT:'Пауза', resume:'Продолжить', restart:'Начать заново',
   undo:'Отмена', redo:'Вернуть', erase:'Стереть', notes:'Заметки', hyp:'Черновик', auto:'Авто', hint:'Подсказка',
+  pickHint:'Двойной или правый клик по клетке — быстрый ввод цифры',
   winT:'Решено!', newRecord:'✦ Новый рекорд уровня', recordL:'рекорд', mistakesL:'ошибки', hintsL:'подсказки',
-  menuBtn:'Меню', again:'Ещё одну', clean:'чистая партия ✦',
+  menuBtn:'Меню', again:'Ещё одну', clean:'<span class="mk">✦</span> чистая партия',
   loseT:'Три ошибки', loseText:'Лимит ошибок исчерпан. Можно продолжить без лимита или начать эту раздачу заново.',
   contNoLimit:'Продолжить без лимита',
   stats:'Статистика', level:'Уровень', avgL:'Среднее', histT:'Последние победы', none:'пока нет',
@@ -629,72 +692,62 @@ ru:{
   countsT:'Счётчик оставшихся чисел', countsD:'Маленькая цифра на кнопках нумпада — сколько ещё осталось',
   hintBtnT:'Кнопка «Подсказка»', hintBtnD:'Показывать в панели управления (клавиша H)',
   autoBtnT:'Кнопка «Авто-заметки»', autoBtnD:'Показывать в панели управления (клавиша A)',
-  reset:'Сбросить статистику', resetConfirm:'Сбросить весь журнал решённых партий? Действие затронет все устройства.',
-  resetDone:'Статистика сброшена', resetNeedVault:'Сначала подключи vault — иначе сброс не дойдёт до файла',
+  reset:'Сбросить статистику', resetConfirm:'Сбросить весь журнал решённых партий?',
+  resetDone:'Статистика сброшена',
   done:'Готово',
-  k_digit:'ввод цифры', k_note:'заметка в клетку', k_hyp1:'черновик в клетку', k_notes:'режим заметок (и Пробел)',
-  k_hypm:'режим черновика', k_erase:'стереть',  k_undo:'отмена / вернуть', k_hint:'подсказка (если включена)',
-  k_auto:'авто-заметки (если включены)', k_pause:'пауза', k_nav:'навигация по полю', k_menu:'меню', k_pick:'окно выбора цифры',
+  k_digit:'ввод цифры', k_note:'заметка в клетку', k_hyp1:'черновик в клетку', k_notes:'режим заметок', k_spaceK:'Пробел',
+  k_hypm:'режим черновика', k_erase:'стереть',  k_undo:'отмена / вернуть', k_hint:'подсказка',
+  k_auto:'авто-заметки', k_pause:'пауза', k_nav:'навигация по полю', k_menu:'меню', k_pick:'окно выбора цифры',
   gen:'Генерация поля…', digitTab:'Цифра', noteTab:'Заметка', hypTab:'Черновик', eraseP:'Стереть',
   featT:'Возможности',
   f1T:'Правый клик по клетке', f1D:'Или двойной — окно с цифрами прямо у клетки',
   f2T:'Черновик', f2D:'Пробуй ход пунктиром, потом прими или откати',
   f3T:'Счётчики на нумпаде', f3D:'Видно, сколько каждой цифры осталось',
-  f7T:'Пробел', f7D:'Одно нажатие — режим заметок',
   k_dblK:'2×клик', k_rmbK:'ПКМ',
-  vaultConnect:'Подключить vault', vaultSync:'Vault: нажмите для синка', vaultOk:'Vault ✓',
-  savedVault:'Сохранено в vault', vaultFail:'Не удалось записать в vault — кликни по бейджу',
-  vaultOn:'Vault подключён', fromVault:'Данные обновлены из vault',
-  vaultBrowser:'Этот браузер не умеет писать файлы — нужен Chrome, Edge или Arc',
   hasErrors:'Неверных цифр: {n}', autoDone:'Кандидаты расставлены', assistNote:'с помощью — не в статистике',
   delGame:'Удалить эту партию?', restartConfirm:'Начать эту раздачу заново? Прогресс поля будет сброшен.',
   mist:'ошибок', hintsSm:'подсказок',
 },
 en:{
   th_light:'Light', th_dark:'Dark',
-  welT:'Pick your look', welLight:'Light', welDark:'Dark', welNote:'You can change this in settings',
+  welT:'Pick your look', welLight:'Light', welDark:'Dark', welNote:'You can change this later in settings',
   yes:'Yes', cancel:'Cancel',
   tagline:'a calm puzzle for every day',
-  continue:'Continue', newGame:'New game', total:'Overall',
+  continue:'Continue', newGame:'New game',
   d_easy:'Easy', d_medium:'Medium', d_hard:'Hard', d_expert:'Expert',
   solvedL:'solved', cleanL:'flawless', playtimeL:'time played', notPlayed:'not played',
-  record:'best', solvedN:'solved',
-  menuBack:'‹ Menu', errorsL:'Errors', pauseT:'Paused', resume:'Resume', restart:'Restart puzzle',
+  record:'best', solvedN:'solved', errorsL:'Mistakes', pauseT:'Paused', resume:'Resume', restart:'Restart puzzle',
   undo:'Undo', redo:'Redo', erase:'Erase', notes:'Notes', hyp:'Draft', auto:'Auto', hint:'Hint',
-  winT:'Solved!', newRecord:'✦ New level record', recordL:'best', mistakesL:'errors', hintsL:'hints',
-  menuBtn:'Menu', again:'One more', clean:'flawless game ✦',
-  loseT:'Three errors', loseText:'Error limit reached. Continue without the limit or restart this puzzle.',
+  pickHint:'Double-click or right-click a cell for quick entry',
+  winT:'Solved!', newRecord:'✦ New level record', recordL:'best', mistakesL:'mistakes', hintsL:'hints',
+  menuBtn:'Menu', again:'One more', clean:'<span class="mk">✦</span> flawless game',
+  loseT:'Three mistakes', loseText:'You have used all three mistakes. Carry on without the limit, or start this puzzle over.',
   contNoLimit:'Continue without limit',
   stats:'Statistics', level:'Level', avgL:'Average', histT:'Recent wins', none:'nothing yet',
-  dataAt:'Data as of', close:'Close',
+  dataAt:'Last updated', close:'Close',
   settings:'Settings', tabView:'Look', tabGame:'Game', tabKeys:'Keys',
   themeT:'Theme', posT:'Board position', posLeft:'Left', posCenter:'Center', posRight:'Right', langT:'Language',
-  instantT:'Instant error check', instantD:'Wrong digits turn red immediately; off — check runs when the board is full. Applies to new games',
-  limitT:'Limit — 3 errors', limitD:'After the third error — pause with a choice: no limit or restart (instant check only)',
-  pickerT:'Digit picker popup', pickerD:'Double or right click on a cell opens the digit popup',
-  sameT:'Highlight matching numbers', sameD:'Selecting a cell highlights the same digits and notes',
-  countsT:'Remaining-count on numbers', countsD:'A small number on numpad keys — how many are left',
+  instantT:'Instant error check', instantD:'Wrong digits turn red at once. When off, the check runs only after the board is full. Applies to new games',
+  limitT:'Limit: 3 mistakes', limitD:'After the third mistake the game pauses: carry on without a limit, or start the puzzle over. Works with instant check only',
+  pickerT:'Digit picker popup', pickerD:'Double-click or right-click a cell to open the digit popup',
+  sameT:'Highlight matching numbers', sameD:'Selecting a cell highlights matching digits and notes',
+  countsT:'Remaining count', countsD:'A small figure on each numpad key shows how many of that digit are left',
   hintBtnT:'“Hint” button', hintBtnD:'Show in the control bar (key H)',
   autoBtnT:'“Auto-notes” button', autoBtnD:'Show in the control bar (key A)',
-  reset:'Reset statistics', resetConfirm:'Reset the whole log of solved games? This affects all devices.',
-  resetDone:'Statistics reset', resetNeedVault:'Connect the vault first — otherwise the reset won’t reach the file',
+  reset:'Reset statistics', resetConfirm:'Reset the whole record of solved games?',
+  resetDone:'Statistics reset',
   done:'Done',
-  k_digit:'enter digit', k_note:'note into cell', k_hyp1:'draft into cell', k_notes:'notes mode (or Space)',
-  k_hypm:'draft mode', k_erase:'erase',  k_undo:'undo / redo', k_hint:'hint (if enabled)',
-  k_auto:'auto-notes (if enabled)', k_pause:'pause', k_nav:'move around the board', k_menu:'menu', k_pick:'digit picker popup',
+  k_digit:'enter digit', k_note:'note into cell', k_hyp1:'draft into cell', k_notes:'notes mode', k_spaceK:'Space',
+  k_hypm:'draft mode', k_erase:'erase',  k_undo:'undo / redo', k_hint:'hint',
+  k_auto:'auto-notes', k_pause:'pause', k_nav:'move around the board', k_menu:'menu', k_pick:'digit picker popup',
   gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
-  vaultConnect:'Connect vault', vaultSync:'Vault: click to sync', vaultOk:'Vault ✓',
-  savedVault:'Saved to vault', vaultFail:'Failed to write to vault — click the badge',
-  vaultOn:'Vault connected', fromVault:'Data refreshed from vault',
-  vaultBrowser:'This browser can’t write files — use Chrome, Edge or Arc',
-  hasErrors:'Wrong digits: {n}', autoDone:'Candidates filled in', assistNote:'assisted — not recorded',
-  delGame:'Delete this game?', restartConfirm:'Restart this puzzle? Board progress will be reset.',
-  mist:'errors', hintsSm:'hints',
+  hasErrors:'Wrong digits: {n}', autoDone:'Candidates filled in', assistNote:'assisted, not recorded',
+  delGame:'Delete this game?', restartConfirm:'Start this puzzle over? Everything you have entered will be cleared.',
+  mist:'mistakes', hintsSm:'hints',
   featT:'Features',
-  f1T:'Right-click a cell', f1D:'Or double click — a digit popup right at the cell',
-  f2T:'Draft mode', f2D:'Try a move dashed, then commit or undo',
+  f1T:'Right-click a cell', f1D:'Or double-click, and the digit popup opens right at the cell',
+  f2T:'Draft mode', f2D:'Pencil a move in dashes, then keep it or roll it back',
   f3T:'Numpad counters', f3D:'See how many of each digit are left',
-  f7T:'Space bar', f7D:'One tap switches notes mode',
   k_dblK:'2×click', k_rmbK:'RMB',
 },};
 function t(k){ const d=I18N[SES.settings.lang]||I18N.en; return d[k] || I18N.en[k] || I18N.ru[k] || k; }
@@ -726,10 +779,10 @@ function pickerAllowed(){
   return true;
 }
 const DEF_SETTINGS = {theme:'light', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true, showHint:false, showAuto:false, highlightSame:true, showCounts:true};
-/* LOG — зеркало файла Журнал.md; дополняется ТОЛЬКО через pending (очередь побед) */
+/* LOG — журнал побед, копится в localStorage; пополняется только через pending */
 let LOG = { games:[], updated:0 };
 let SES = { settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0 };
-let pending = [];   // победы, ещё не записанные в файл
+let pending = [];   // победы, ещё не слитые в журнал
 let sel=-1, inputMode='digit', undoStack=[], redoStack=[], timerId=null, lastPlaced=-1, hlDigit=0, lastWinDiff='medium';
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const cur = () => SES.games[SES.cur] || null;
@@ -984,7 +1037,7 @@ function renderHome(){
     const filled=g.values.filter(v=>v).length + g.hyp.filter(v=>v).length;
     return `<div class="cont-row">
       <button class="cont-open" data-idx="${idx}"><span>${dName(g.diff)} · ${filled}/81</span><small>${fmtTime(g.time)}</small></button>
-      <button class="cont-del" data-idx="${idx}" aria-label="delete">✕</button>
+      <button class="cont-del" data-idx="${idx}" aria-label="delete"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>`;
   }).join('');
   const st=statsByDiff();
@@ -1038,7 +1091,7 @@ function renderBoard(){
   for(let i=0;i<81;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1; }
   for(let i=0;i<81;i++){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
-    d.className=d.className.replace(/ (sel|hl|same|err|given|hypv|pop|uflash|wave)/g,'');
+    d.className=d.className.replace(/ (sel|hl|same|err|given|hypv)/g,'');
     if(g.given[i]) d.classList.add('given');
     if(v){
       d.textContent=v;
@@ -1105,9 +1158,9 @@ function refreshPickerCounts(){
   });
 }
 const PK_ICONS={
-  digit:'<svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>',
-  note:'<svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
-  hyp:'<svg viewBox="0 0 24 24" stroke-dasharray="3 2.4"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>',
+  digit:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>',
+  note:'<svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg>',
+  hyp:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg>',
 };
 function buildPicker(){
   const pk=$('picker');
@@ -1129,7 +1182,7 @@ function buildPicker(){
   }
   const x=document.createElement('button');
   x.className='pk-x';
-  x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
+  x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
   x.addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); eraseCell(); closePicker();});
   pk.appendChild(x);
   pk.addEventListener('pointerdown',e=>e.stopPropagation());
@@ -1142,6 +1195,7 @@ function refreshPickerLang(){
 }
 function openPicker(i){
   if(!pickerAllowed()) return;
+  dismissPickHint();
   if(!SES.settings.dblPick) return;
   const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
   sel=i; renderBoard();
@@ -1159,6 +1213,15 @@ function openPicker(i){
   pk.style.left=left+'px'; pk.style.top=top+'px';
 }
 function closePicker(){ $('picker').classList.add('hidden'); }
+function updatePickHint(){
+  const el=$('pickHint'); if(!el) return;
+  let seen=false; try{ seen=!!localStorage.getItem('sudoku-pickHint'); }catch(e){}
+  el.classList.toggle('hidden', seen || !pickerAllowed() || !SES.settings.dblPick);
+}
+function dismissPickHint(){
+  try{ localStorage.setItem('sudoku-pickHint','1'); }catch(e){}
+  const el=$('pickHint'); if(el) el.classList.add('hidden');
+}
 
 /* логика */
 function snapshot(){ const g=cur(); return {values:g.values.slice(), notes:g.notes.map(n=>n.slice()), hyp:g.hyp.slice(), endErr:(g.endErr||[]).slice()}; }
@@ -1284,7 +1347,7 @@ function checkWin(){
   persistCache(); if(!assisted) saveLog(); saveSes();
   $('winTime').textContent=fmtTime(g.time);
   $('winRecord').classList.toggle('hidden',!isRecord);
-  $('winSub').textContent=dName(g.diff)+(assisted? ' · '+t('assistNote') : (perfect? ' · '+t('clean'):''));
+  $('winSub').innerHTML=dName(g.diff)+(assisted? ' · '+t('assistNote') : (perfect? ' · '+t('clean'):''));
   $('winBest').textContent=fmtTime(isRecord? g.time : st.best);
   $('winMist').textContent=g.mistakes;
   $('winHints').textContent=g.hints;
@@ -1306,7 +1369,7 @@ function gameLost(){
 }
 function confetti(){
   if(reducedMotion) return;
-  const colors=['#9ec1f5','#b8a6f0','#c3d1ee','#e4e9f4','#7d9fd4','#a9b8e8'];
+  const colors=['#9ec1f5','#bda9ef','#3a5aa0','#e4e9f4','#8fa9d8','#b9c8e8'];
   const c=document.createElement('div'); c.className='confetti';
   for(let i=0;i<44;i++){
     const p=document.createElement('i');
@@ -1343,7 +1406,7 @@ function openGame(idx){
   if(typeof idx==='number') SES.cur=idx;
   if(!cur()) return;
   undoStack=[]; redoStack=[]; sel=-1; hlDigit=0; inputMode='digit'; syncModeButtons();
-  show('game'); setPaused(false); renderBoard(); startTimer();
+  show('game'); setPaused(false); renderBoard(); startTimer(); updatePickHint();
 }
 function startTimer(){
   stopTimer();
@@ -1556,11 +1619,6 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){ persistCache(); if(pending.length) saveLog(); }
 });
 
-/* отладочный хук */
-window._sud={
-  get LOG(){return LOG}, get SES(){return SES}, get pending(){return pending},
-  saveLog, saveSes, gradeSolve, generate,
-};
 
 /* старт */
 loadCache();
@@ -1573,7 +1631,10 @@ function snapBoard(){
   const c=Math.floor((w-bw)/9);          // рамка поля читается из стилей
   if(c>0) b.style.width=(c*9+bw)+'px';
 }
-window.addEventListener('resize',snapBoard);
+window.addEventListener('resize',()=>{ snapBoard(); updatePickHint(); });
+$('board').addEventListener('animationend',e=>{
+  if(e.animationName==='pop') e.target.classList.remove('pop');
+});
 snapBoard();
 applyTheme(); applyControls(); applyLayout(); applyLang();
 renderHome(); show('home');
