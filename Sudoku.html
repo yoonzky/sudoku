@@ -2,9 +2,15 @@
 <html lang="ru" data-theme="indigo">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#eae9e2" id="metaTheme">
 <title>Sudoku</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sudoku">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='6' fill='%23faf7f0' stroke='%234a67d6' stroke-width='2'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%234a67d6' font-family='sans-serif'%3E9%3C/text%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
@@ -173,6 +179,51 @@ body.in-game .site-foot{display:none}
   body.in-game header{padding:10px 12px 2px}
   body.in-game header h1{font-size:20px}
   .diff-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ===== мобильный режим: игра целиком в один экран, крупные тач-цели ===== */
+@media (max-width:600px){
+  html{-webkit-text-size-adjust:100%}
+  body{-webkit-touch-callout:none; touch-action:manipulation;
+    padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right)}
+  button{touch-action:manipulation}
+  header{padding:22px 14px 8px}
+  header .iconbtn{top:20px; width:40px; height:40px}
+  @supports (height:100dvh){ body{min-height:100dvh} }
+
+  main{padding:4px 10px calc(14px + env(safe-area-inset-bottom))}
+  body.in-game main{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
+  body.in-game header{padding:calc(6px + env(safe-area-inset-top)) 12px 2px}
+
+  /* поле подгоняется под остаток высоты, чтобы клавиатура всегда была видна */
+  #game{max-width:100%}
+  .board-wrap{max-width:min(100%, calc(100vh - 340px)); margin:0 auto}
+  @supports (height:100dvh){ .board-wrap{max-width:min(100%, calc(100dvh - 340px))} }
+  .topbar{margin:2px 0 8px; font-size:12.5px}
+  .topbar .tbtn{padding:6px 4px}
+  #board{border-radius:10px}
+  .cell{font-size:clamp(19px,6.2vw,30px)}
+  .cell .notes span{font-size:clamp(8px,2.5vw,11px)}
+
+  /* панель действий: 7 кнопок в ряд, но выше и с большей зоной нажатия */
+  .controls{gap:5px; margin-top:10px}
+  .ctl{padding:9px 1px 7px; font-size:8.5px; letter-spacing:-.2px; gap:4px; border-radius:11px; min-height:50px}
+  .ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .ctl svg{width:20px; height:20px}
+
+  /* цифры: два ряда по 5 и 4 — под большой палец */
+  .numpad{display:flex; flex-wrap:wrap; justify-content:center; gap:7px; margin-top:9px}
+  .num{flex:0 0 calc(20% - 6px); aspect-ratio:1.25; font-size:26px; font-weight:400; border-radius:14px}
+  .num small{right:7px; bottom:5px; font-size:10.5px}
+
+  /* всплывающий выбор цифры крупнее */
+  #picker{grid-template-columns:repeat(3,52px); gap:6px}
+  #picker button{font-size:19px}
+}
+/* на низких экранах — обычная прокрутка вместо подгонки в экран */
+@media (max-width:600px) and (max-height:600px){
+  .board-wrap{max-width:100%}
+  body.in-game{overflow:auto}
 }
 .card h2{margin:0 0 4px; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em}
 #contList{max-height:216px; overflow-y:auto; scrollbar-gutter:stable; padding-right:2px}
@@ -1748,6 +1799,13 @@ if(pending.length) saveLog();
   $('welDark').onclick=()=>pick('midnight');
   bg.addEventListener('click',e=>{ if(e.target===bg){ try{ localStorage.setItem('sudoku-welcomed','1'); }catch(err){} bg.classList.add('hidden'); } });
 })();
+
+/* офлайн-режим и добавление на домашний экран; при file:// пропускается */
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+/* перерисовать поле при смене высоты окна (адресная строка на телефоне) */
+if(window.visualViewport) window.visualViewport.addEventListener('resize',snapBoard);
 </script>
 </body>
 </html>
