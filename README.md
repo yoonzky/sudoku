@@ -11,10 +11,12 @@ Single html file, no dependencies. Progress and settings are stored in localStor
 - remaining digit counters on the numpad
 - full keyboard control (Space for notes, H for hint, arrows to move)
 - 10 themes, 6 languages, works offline
+- phone layout: board fits the screen, thumb-sized numpad, no page scrolling
+- installable — add to home screen on iOS or Android and it runs like an app
 
 ## Run locally
 
-Just open `index.html` in a browser.
+Just open `index.html` in a browser. The service worker (offline cache) only runs over http/https, not from `file://`.
 
 ## License
 
