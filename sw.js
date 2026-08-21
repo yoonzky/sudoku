@@ -1,5 +1,5 @@
 /* Офлайн-кэш оболочки. Версию бампать при каждом релизе — старый кэш удаляется. */
-const CACHE = 'sudoku-v2';
+const CACHE = 'sudoku-v3';
 const ASSETS = [
   './',
   './index.html',
