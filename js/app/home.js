@@ -7,7 +7,7 @@ const MODE_GROUPS=[
   {key:'extra', ids:['killer','dots','suguru','numerator','kakuro']},
 ];
 const DICE='<svg class="dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>';
-const ROMAN={easy:'I',medium:'II',hard:'III',expert:'IV'};
+const LEVEL_N={easy:1,medium:2,hard:3,expert:4};
 let pickedMode='classic';
 let contSel=null;
 
@@ -22,7 +22,6 @@ function renderContinue(){
   if(!has) contSel=null;
   const picking=!!contSel;
   if(contSel) for(const id of [...contSel]) if(!SES.games.some(g=>g.id===id)) contSel.delete(id);
-  list.classList.toggle('picking',picking);
   $('contBar').classList.toggle('hidden',!picking);
   $('contPick').classList.toggle('hidden',picking);
   $('contPick').textContent=t('pickMany');
@@ -31,12 +30,12 @@ function renderContinue(){
     const n=g.solution.length;
     const filled=g.values.filter(v=>v).length+g.hyp.filter(v=>v).length;
     const on=picking&&contSel.has(g.id);
-    return `<div class="cont-row${on?' on':''}">
-      <button class="cont-open" data-idx="${idx}" data-id="${g.id}">
-        ${picking?`<i class="cbox${on?' on':''}"></i>`:''}
-        <span>${t('m_'+g.mode)}<em>${t('d_'+g.diff)} · ${filled}/${n}</em></span><small>${fmtTime(g.time)}</small></button>
-      ${picking?'':`<button class="cont-del" data-idx="${idx}" aria-label="delete"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`}
-    </div>`;
+    return `<button class="cont-card${on?' on':''}" data-idx="${idx}" data-id="${g.id}">
+      <b>${t('m_'+g.mode)}</b><span>${t('d_'+g.diff)} · ${filled}/${n}</span>
+      <small>${fmtTime(g.time)}</small>
+      ${picking? `<i class="cbox${on?' on':''}"></i>`
+        : `<i class="cont-x" data-del="${idx}"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></i>`}
+    </button>`;
   }).join('');
 }
 function contPickStart(){ contSel=new Set(); renderContinue() }
@@ -56,9 +55,8 @@ async function contDelete(){
   const all=contSel.size===SES.games.length;
   const ask = all? t('delAllConfirm') : t('delSelConfirm').replace('{n}',contSel.size);
   if(!await askConfirm(ask)) return;
-  const keep=SES.games.filter(g=>!contSel.has(g.id));
   const curId=SES.cur>=0? SES.games[SES.cur].id : null;
-  SES.games=keep;
+  SES.games=SES.games.filter(g=>!contSel.has(g.id));
   SES.cur = curId? SES.games.findIndex(g=>g.id===curId) : -1;
   contSel=null;
   persistCache(); renderHome(); toast(t('delDone'));
@@ -72,12 +70,14 @@ function renderModeList(){
     for(const id of grp.ids){
       const st=statsFor(id,null);
       const note=st.solved? fmtTime(st.best) : '';
-      h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}" title="${t('m_'+id)}">
+      h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
         <span class="mcard-prev">${previewSVG(id)}</span>
         <b>${t('m_'+id)}</b><small>${note}</small></button>`;
     }
   }
   $('modeList').innerHTML=h+'</div>';
+  const on=$('modeList').querySelector('.mcard.on');
+  if(on && on.scrollIntoView) on.scrollIntoView({block:'nearest'});
 }
 function renderModePanel(){
   const m=pickedMode;
@@ -90,7 +90,8 @@ function renderModePanel(){
   for(const d of DIFFS){
     const st = m==='random'? statsFor(null,d) : statsFor(m,d);
     const note = st.solved? `${st.solved} · ${fmtTime(st.best)}` : t('notPlayed');
-    h+=`<button class="diff-btn" data-diff="${d}"><i>${ROMAN[d]}</i><b>${t('d_'+d)}</b><span>${t('lv_'+d)}</span><em>${note}</em></button>`;
+    const bars=[1,2,3,4].map(k=>`<b class="${k<=LEVEL_N[d]?'on':''}"></b>`).join('');
+    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl">${bars}</i><span>${t('d_'+d)}</span><em>${note}</em></button>`;
   }
   $('diffGrid').innerHTML=h;
 }

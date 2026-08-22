@@ -73,8 +73,7 @@ function makeRegions(w,h,lo,hi){
       if(!size[r]||size[r]>=lo) continue;
       const cells=[]; for(let i=0;i<n;i++) if(reg[i]===r) cells.push(i);
       let host=-1;
-      for(const i of cells) for(const j of nb(i)) if(reg[j]!==r && size[reg[j]]+size[r]<=hi+1){ host=reg[j]; break }
-      if(host<0) for(const i of cells) for(const j of nb(i)) if(reg[j]!==r){ host=reg[j]; break }
+      for(const i of cells) for(const j of nb(i)) if(reg[j]!==r && size[reg[j]]+size[r]<=hi){ host=reg[j]; break }
       if(host<0) continue;
       for(const i of cells) reg[i]=host;
       changed=true; break;
@@ -221,7 +220,7 @@ const MODES={
     keep:{easy:92,medium:80,hard:70,expert:62} },
 
   butterfly:{ time:7000, tries:3, tight:1,
-    build(){ return multi('butterfly',[[0,0],[3,0],[0,3],[3,3]],true) },
+    build(){ return multi('butterfly',[[0,0],[3,0],[0,3],[3,3]]) },
     keep:{easy:58,medium:48,hard:41,expert:36} },
 
   samurai:{ time:20000, tries:2, tight:1,
@@ -239,11 +238,12 @@ const MODES={
     keep:{easy:22,medium:14,hard:8,expert:4} },
 
   suguru:{
-    time:6000, tries:14, budget:60000,
-    pre(){ return {regions:suguruRegions(7,7,4,6), w:7, h:7} },
+    time:6000, tries:4, budget:200000,
+    band:{easy:[1,2],medium:[2,3],hard:[2,4],expert:[2,5]},
+    pre(){ return {regions:suguruRegions(9,9,4,6), w:9, h:9} },
     build(ex){
       const sp=newSpec('suguru');
-      const w=ex.w||7, h=ex.h||7, reg=ex.regions;
+      const w=ex.w||9, h=ex.h||9, reg=ex.regions;
       const byReg={};
       for(let y=0;y<h;y++) for(let x=0;x<w;x++){
         const i=addCell(sp,x,y,9), r=reg[y*w+x];
@@ -252,7 +252,7 @@ const MODES={
       for(const r in byReg) sp.groups.push(byReg[r]);
       for(let i=0;i<sp.cells.length;i++) for(const j of allN(sp,i)) if(j>i) sp.neq.push([i,j]);
       return sp },
-    keep:{easy:22,medium:17,hard:13,expert:10} },
+    keep:{easy:34,medium:27,hard:22,expert:18} },
 };
 const MODE_IDS=['classic','x','evenodd','windoku','asterisk','mosaic','r10','r12',
   'double','wing','butterfly','samurai','killer','dots','suguru','numerator','kakuro'];

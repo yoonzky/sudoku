@@ -4,7 +4,7 @@ const PREV_CACHE={};
 
 function previewSpec(mode){
   if(mode==='numerator') return numBuild({w:9,h:9});
-  if(mode==='suguru') return MODES.suguru.build({regions:suguruRegions(7,7,4,6),w:7,h:7});
+  if(mode==='suguru') return MODES.suguru.build({regions:suguruRegions(9,9,4,6),w:9,h:9});
   if(mode==='kakuro'){
     const w=8,h=8;
     let mask=null;
@@ -61,6 +61,21 @@ function previewSVG(mode){
   const wThin = W<=10? .8 : 1.5, wThick = W<=10? 1.8 : 2.8;
   out+=`<g stroke="var(--line)" stroke-width="${wThin}">${thin}</g>`;
   out+=`<g stroke="var(--rule)" stroke-width="${wThick}">${thick}</g>`;
+  let zone='';
+  const inZone=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && sp.zone[j]===1 };
+  const zi=u*0.1;
+  for(let i=0;i<sp.cells.length;i++){
+    if(sp.zone[i]!==1) continue;
+    const c=sp.cells[i], X=px(c), Y=py(c);
+    const up=inZone(c.x,c.y-1), dn=inZone(c.x,c.y+1), lf=inZone(c.x-1,c.y), rt=inZone(c.x+1,c.y);
+    const x0=lf? X : X+zi, x1=rt? X+u : X+u-zi;
+    const y0=up? Y : Y+zi, y1=dn? Y+u : Y+u-zi;
+    if(!up) zone+=`<line x1="${x0}" y1="${Y+zi}" x2="${x1}" y2="${Y+zi}"/>`;
+    if(!dn) zone+=`<line x1="${x0}" y1="${Y+u-zi}" x2="${x1}" y2="${Y+u-zi}"/>`;
+    if(!lf) zone+=`<line x1="${X+zi}" y1="${y0}" x2="${X+zi}" y2="${y1}"/>`;
+    if(!rt) zone+=`<line x1="${X+u-zi}" y1="${y0}" x2="${X+u-zi}" y2="${y1}"/>`;
+  }
+  if(zone) out+=`<g stroke="var(--zone-edge)" stroke-width="${wThin*1.2}">${zone}</g>`;
 
   if(mode==='killer'){
     for(const r of DEC.killer){

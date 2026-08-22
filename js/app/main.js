@@ -6,6 +6,7 @@ $('board').addEventListener('pointerdown',e=>{
   const g=cur(); if(!g||g.paused) return;
   const i=+el.dataset.i;
   closePicker();
+  if(i!==sel) numFlush();
   if(SES.settings.digitFirst && armed && !g.done && !g.given[i] && SPEC.kind!=='num'){
     sel=i; inputDigit(armed); hlDigit=armed; renderBoard(); return;
   }
@@ -36,25 +37,27 @@ $('contAll').addEventListener('click',()=>contMark(true));
 $('contNone').addEventListener('click',()=>contMark(false));
 $('contDel').addEventListener('click',contDelete);
 $('contList').addEventListener('click',async e=>{
-  const open=e.target.closest('.cont-open');
-  if(open){
-    if(contSel) contToggle(open.dataset.id);
-    else openGame(+open.dataset.idx);
+  const del=e.target.closest('.cont-x');
+  if(del){
+    e.stopPropagation();
+    if(await askConfirm(t('delGame'))){
+      SES.games.splice(+del.dataset.del,1);
+      if(SES.cur>=SES.games.length) SES.cur=SES.games.length-1;
+      persistCache(); renderHome();
+    }
     return;
   }
-  const del=e.target.closest('.cont-del');
-  if(del && await askConfirm(t('delGame'))){
-    SES.games.splice(+del.dataset.idx,1);
-    if(SES.cur>=SES.games.length) SES.cur=SES.games.length-1;
-    persistCache(); renderHome();
-  }
+  const card=e.target.closest('.cont-card');
+  if(!card) return;
+  if(contSel) contToggle(card.dataset.id);
+  else openGame(+card.dataset.idx);
 });
 $('poolOpen').addEventListener('click',openPool);
 $('poolAll').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=true));
 $('poolNone').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=false));
 $('poolClose').addEventListener('click',()=>{ if(savePool()) $('poolModal').classList.add('hidden') });
 
-function goHome(){ clearWin(); closePicker(); stopTimer(); persistCache(); show('home'); renderHome() }
+function goHome(){ numFlush(); clearWin(); closePicker(); stopTimer(); persistCache(); show('home'); renderHome() }
 $('backBtn').addEventListener('click',goHome);
 $('rulesBtn').addEventListener('click',openRules);
 $('rulesClose').addEventListener('click',()=>$('rulesModal').classList.add('hidden'));
@@ -122,6 +125,9 @@ for(const id of ['statsModal','setModal','poolModal','rulesModal']){
 document.addEventListener('pointerdown',e=>{
   const pk=$('picker');
   if(!pk.classList.contains('hidden')&&!pk.contains(e.target)) closePicker();
+  if($('game').classList.contains('hidden')||sel<0) return;
+  if(e.target.closest('#board,#numpad,.controls,#picker,.topbar,header,.modal-bg')) return;
+  numFlush(); sel=-1; hlDigit=0; armed=0; renderBoard();
 });
 
 const LETTER_DIGIT={KeyA:10,KeyB:11,KeyC:12};
@@ -170,7 +176,7 @@ document.addEventListener('keydown',e=>{
     case 'ArrowUp': case 'ArrowDown': case 'ArrowLeft': case 'ArrowRight': {
       e.preventDefault();
       if(g.paused) break;
-      moveSel(code);
+      numFlush(); moveSel(code);
       break;
     }
   }

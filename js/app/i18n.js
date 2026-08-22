@@ -15,8 +15,6 @@ ru:{
   r_random:'Жребий среди отмеченных режимов. Уровень выбираешь сам — режим достаётся случайно.',
   poolT:'Что попадает в жребий', poolAll:'Отметить все', poolNone:'Снять все',
   poolCount:'в жребии: {n}', poolEmpty:'Отметь хотя бы один режим',
-  lv_easy:'берётся одиночками', lv_medium:'нужны запертые кандидаты и пары',
-  lv_hard:'скрытые пары, тройки, X-wing', lv_expert:'минимум подсказок, вся техника',
   rulesT:'Правила режима', bestL:'рекорд', playedL:'сыграно',
 
   m_classic:'Классическая',
@@ -109,8 +107,6 @@ en:{
   r_random:'Draws one of the ticked modes. You choose the level, the mode comes up by chance.',
   poolT:'What goes into the draw', poolAll:'Tick all', poolNone:'Untick all',
   poolCount:'in the draw: {n}', poolEmpty:'Tick at least one mode',
-  lv_easy:'falls to singles', lv_medium:'locked candidates and pairs',
-  lv_hard:'hidden pairs, triples, X-wing', lv_expert:'fewest clues, the full toolkit',
   rulesT:'Rules of the mode', bestL:'best', playedL:'played',
   m_classic:'Classic',
   r_classic:'Digits 1 to 9 once in every row, every column and every 3×3 box.',

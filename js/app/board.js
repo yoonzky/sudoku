@@ -40,65 +40,140 @@ function buildBoard(sp){
     const d=document.createElement('div');
     d.className='cell';
     d.style.gridColumn=c.x+1; d.style.gridRow=c.y+1;
-    const up=cellAt(sp,c.x,c.y-1), lf=cellAt(sp,c.x-1,c.y);
-    const dn=cellAt(sp,c.x,c.y+1), rt=cellAt(sp,c.x+1,c.y);
-    const edge=(n)=> n<0? 'strong' : (sp.region[n]!==sp.region[i]? 'strong' : 'thin');
-    const line=k=> k==='strong'? '2px solid var(--rule)' : '1px solid var(--line)';
-    d.style.setProperty('--bt',line(edge(up)));
-    d.style.setProperty('--bl',line(edge(lf)));
-    if(dn<0) d.style.setProperty('--bb',line('strong'));
-    if(rt<0) d.style.setProperty('--br',line('strong'));
     if(sp.zone[i]===1) d.classList.add('zone');
     if(sp.zone[i]===2) d.classList.add('even');
     d.dataset.i=i;
     b.appendChild(d); cells.push(d);
   }
+  buildGrid(sp);
   buildDeco(sp);
+  const sb=document.createElement('div');
+  sb.id='selBox'; sb.className='hidden';
+  b.appendChild(sb);
+}
+
+function buildGrid(sp){
+  const b=$('board');
+  const old=b.querySelector('.grid'); if(old) old.remove();
+  let thin='', thick='';
+  for(let i=0;i<sp.cells.length;i++){
+    const c=sp.cells[i], x=c.x, y=c.y;
+    const up=cellAt(sp,x,y-1), lf=cellAt(sp,x-1,y);
+    const dn=cellAt(sp,x,y+1), rt=cellAt(sp,x+1,y);
+    const wall=n=> n<0 || sp.region[n]!==sp.region[i];
+    (wall(up)? thick=thick+`M${x} ${y}H${x+1}` : thin=thin+`M${x} ${y}H${x+1}`);
+    (wall(lf)? thick=thick+`M${x} ${y}V${y+1}` : thin=thin+`M${x} ${y}V${y+1}`);
+    if(dn<0) thick+=`M${x} ${y+1}H${x+1}`;
+    if(rt<0) thick+=`M${x+1} ${y}V${y+1}`;
+  }
+  const g=document.createElement('div');
+  g.className='grid';
+  g.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}" shape-rendering="crispEdges">`+
+    `<path d="${thin}" fill="none" stroke="var(--line)" stroke-width=".022"/>`+
+    `<path d="${thick}" fill="none" stroke="var(--rule)" stroke-width=".05"/></svg>`;
+  b.appendChild(g);
+}
+
+function joinSegments(segs){
+  const key=(x,y)=>x.toFixed(4)+','+y.toFixed(4);
+  const at=new Map();
+  for(const s of segs){
+    for(const k of [key(s[0],s[1]),key(s[2],s[3])]){
+      if(!at.has(k)) at.set(k,[]);
+      at.get(k).push(s);
+    }
+  }
+  const used=new Set();
+  const same=(a,b)=>Math.abs(a-b)<1e-6;
+  let d='';
+  for(const seed of segs){
+    if(used.has(seed)) continue;
+    used.add(seed);
+    const chain=[seed.slice()];
+    let end=[seed[2],seed[3]];
+    for(;;){
+      const list=at.get(key(end[0],end[1]))||[];
+      const next=list.find(t=>!used.has(t));
+      if(!next) break;
+      used.add(next);
+      const fromStart=same(next[0],end[0])&&same(next[1],end[1]);
+      const seg=fromStart? next.slice() : [next[2],next[3],next[0],next[1]];
+      chain.push(seg);
+      end=[seg[2],seg[3]];
+    }
+    let start=[chain[0][0],chain[0][1]];
+    for(;;){
+      const list=at.get(key(start[0],start[1]))||[];
+      const prev=list.find(t=>!used.has(t));
+      if(!prev) break;
+      used.add(prev);
+      const toStart=same(prev[2],start[0])&&same(prev[3],start[1]);
+      const seg=toStart? prev.slice() : [prev[2],prev[3],prev[0],prev[1]];
+      chain.unshift(seg);
+      start=[seg[0],seg[1]];
+    }
+    d+=`M${chain[0][0]} ${chain[0][1]}`;
+    for(const c of chain) d+=`L${c[2]} ${c[3]}`;
+  }
+  return d;
 }
 
 function buildDeco(sp){
   const b=$('board');
   const old=b.querySelector('.deco'); if(old) old.remove();
   if(sp.kind==='kakuro') return;
-  if(!sp.cages.length && !sp.dots.length && !sp.frames) return;
+  const hasZone=sp.zone.some(z=>z===1);
+  if(!sp.cages.length && !sp.dots.length && !hasZone) return;
   const deco=document.createElement('div');
   deco.className='deco';
-  const d=0.1;
-  let path='';
+  const d=0.13;
+  const cageSegs=[];
+  let sums='';
   const inCage=(cg,x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && cg.cells.indexOf(j)>=0 };
   for(const cg of sp.cages){
     for(const i of cg.cells){
       const c=sp.cells[i], x=c.x, y=c.y;
-      if(!inCage(cg,x,y-1)) path+=`M${x+d} ${y+d}H${x+1-d}`;
-      if(!inCage(cg,x,y+1)) path+=`M${x+d} ${y+1-d}H${x+1-d}`;
-      if(!inCage(cg,x-1,y)) path+=`M${x+d} ${y+d}V${y+1-d}`;
-      if(!inCage(cg,x+1,y)) path+=`M${x+1-d} ${y+d}V${y+1-d}`;
+      const up=inCage(cg,x,y-1), dn=inCage(cg,x,y+1), lf=inCage(cg,x-1,y), rt=inCage(cg,x+1,y);
+      const x0=lf? x : x+d, x1=rt? x+1 : x+1-d;
+      const y0=up? y : y+d, y1=dn? y+1 : y+1-d;
+      if(!up) cageSegs.push([x0,y+d,x1,y+d]);
+      if(!dn) cageSegs.push([x0,y+1-d,x1,y+1-d]);
+      if(!lf) cageSegs.push([x+d,y0,x+d,y1]);
+      if(!rt) cageSegs.push([x+1-d,y0,x+1-d,y1]);
+    }
+    const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
+    sums+=`<text x="${a.x+0.19}" y="${a.y+0.36}">${cg.sum}</text>`;
+  }
+  const zoneSegs=[];
+  if(hasZone){
+    const inZone=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && sp.zone[j]===1 };
+    const z=0.06;
+    for(let i=0;i<sp.cells.length;i++){
+      if(sp.zone[i]!==1) continue;
+      const c=sp.cells[i], x=c.x, y=c.y;
+      const up=inZone(x,y-1), dn=inZone(x,y+1), lf=inZone(x-1,y), rt=inZone(x+1,y);
+      const x0=lf? x : x+z, x1=rt? x+1 : x+1-z;
+      const y0=up? y : y+z, y1=dn? y+1 : y+1-z;
+      if(!up) zoneSegs.push([x0,y+z,x1,y+z]);
+      if(!dn) zoneSegs.push([x0,y+1-z,x1,y+1-z]);
+      if(!lf) zoneSegs.push([x+z,y0,x+z,y1]);
+      if(!rt) zoneSegs.push([x+1-z,y0,x+1-z,y1]);
     }
   }
-  let frames='';
-  if(sp.frames) for(const f of sp.frames)
-    frames+=`<rect x="${f.x+0.04}" y="${f.y+0.04}" width="${f.w-0.08}" height="${f.h-0.08}" rx=".14"/>`;
   let dots='';
   for(const dt of sp.dots){
     const a=sp.cells[dt.a], c=sp.cells[dt.b];
     const cx=(a.x+c.x+1)/2, cy=(a.y+c.y+1)/2;
-    dots+=`<circle cx="${cx}" cy="${cy}" r=".12" fill="${dt.k===2?'var(--text)':'var(--panel2)'}" stroke="var(--text)" stroke-width=".04"/>`;
+    const fill=dt.k===2? 'var(--dot-b-bg)' : 'var(--dot-w-bg)';
+    const line=dt.k===2? 'var(--dot-b-line)' : 'var(--dot-w-line)';
+    dots+=`<circle cx="${cx}" cy="${cy}" r=".095" fill="${fill}" stroke="${line}" stroke-width=".026"/>`;
   }
-  deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}" preserveAspectRatio="none">`+
-    (frames? `<g fill="none" stroke="var(--accent)" stroke-width=".05" opacity=".55">${frames}</g>`:'')+
-    (path? `<path d="${path}" fill="none" stroke="var(--accent)" stroke-width=".035" stroke-dasharray=".11 .09" stroke-linecap="butt"/>`:'')+
+  const cagePath=joinSegments(cageSegs), zonePath=joinSegments(zoneSegs);
+  deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
+    (zonePath? `<path d="${zonePath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
+    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".026" stroke-dasharray=".07 .06" stroke-linejoin="round" stroke-linecap="butt"/>`:'')+
+    (sums? `<g class="sums" font-size=".26">${sums}</g>`:'')+
     dots+'</svg>';
-  for(const cg of sp.cages){
-    const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
-    const lab=document.createElement('u');
-    lab.className='cgs';
-    lab.style.left=(a.x/sp.W*100)+'%';
-    lab.style.top=(a.y/sp.H*100)+'%';
-    lab.style.width=(100/sp.W)+'%';
-    lab.style.height=(100/sp.H)+'%';
-    lab.textContent=cg.sum;
-    deco.appendChild(lab);
-  }
   b.appendChild(deco);
 }
 
@@ -106,7 +181,10 @@ function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
   const max=sp.kind==='num'? 9 : sp.maxD;
-  np.style.gridTemplateColumns=`repeat(${sp.kind==='num'? 10 : max},1fr)`;
+  const cols = sp.kind==='num'? 5 : max>9? Math.ceil(max/2) : max;
+  np.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  np.classList.toggle('two-row', sp.kind!=='num' && max>9);
+  document.body.classList.toggle('pad-two', sp.kind==='num' || max>9);
   const keys=[];
   for(let v=1;v<=max;v++) keys.push(v);
   if(sp.kind==='num') keys.push(0);
@@ -134,7 +212,7 @@ function renderBoard(){
   const isNum=sp.kind==='num';
   const hlSame=SES.settings.highlightSame!==false;
   const selVal=sel>=0? merged(g,sel) : 0;
-  const activeVal=hlSame? (selVal||hlDigit) : 0;
+  const activeVal=(hlSame && sp.kind!=='num')? (selVal||hlDigit) : 0;
   const counts={};
   for(let i=0;i<n;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1 }
   const peers=sel>=0? sp.peers[sel] : null;
@@ -149,11 +227,15 @@ function renderBoard(){
     } else if(hv){
       d.textContent=cellNum(hv); d.classList.add('hypv');
       if(hv>9) d.classList.add('d2');
-    } else if(!isNum && g.notes[i].length){
-      let h='<div class="notes">';
-      for(let k=1;k<=sp.maxD;k++)
-        h+=`<span${activeVal&&k===activeVal?' class="nhl"':''}>${g.notes[i].includes(k)?k:''}</span>`;
-      d.innerHTML=h+'</div>';
+    } else if(g.notes[i].length){
+      if(isNum){
+        d.innerHTML='<div class="notes wide">'+g.notes[i].slice(0,6).map(v=>`<span>${v}</span>`).join('')+'</div>';
+      } else {
+        let h='<div class="notes">';
+        for(let k=1;k<=sp.maxD;k++)
+          h+=`<span${activeVal&&k===activeVal?' class="nhl"':''}>${g.notes[i].includes(k)?k:''}</span>`;
+        d.innerHTML=h+'</div>';
+      }
     } else d.textContent='';
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
     if(sel>=0){
@@ -178,6 +260,7 @@ function renderBoard(){
   });
   const np=$('numpad');
   if(np){ np.classList.toggle('mode-note', inputMode==='note'); np.classList.toggle('mode-hyp', inputMode==='hyp') }
+  placeSelBox(g,sp);
   $('gMistWrap').style.display=g.instant? '' : 'none';
   $('gMist').textContent=(SES.settings.limit&&g.instant&&!g.noLimit)? `${g.mistakes}/3` : g.mistakes;
   $('gMode').textContent=t('m_'+g.mode);
@@ -188,11 +271,28 @@ function renderBoard(){
   $('redoBtn').disabled=!redoStack.length;
 }
 
+function placeSelBox(g,sp){
+  const sb=$('selBox'); if(!sb) return;
+  if(sel<0){ sb.classList.add('hidden'); return }
+  const c=sp.cells[sel];
+  sb.style.left=(c.x/sp.W*100)+'%';
+  sb.style.top=(c.y/sp.H*100)+'%';
+  sb.style.width=(100/sp.W)+'%';
+  sb.style.height=(100/sp.H)+'%';
+  sb.className='';
+  if(g.instant && g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel]) sb.classList.add('err');
+  else if(inputMode==='hyp' || g.hyp[sel]) sb.classList.add('hyp');
+}
+
 function snapBoard(){
   const b=$('board'); if(!b||!SPEC) return;
   b.style.width='';
   const w=b.getBoundingClientRect().width;
   const bw=(parseFloat(getComputedStyle(b).borderLeftWidth)||0)*2;
   const c=Math.floor((w-bw)/SPEC.W);
-  if(c>0) b.style.width=(c*SPEC.W+bw)+'px';
+  if(c>0){
+    const px=c*SPEC.W+bw;
+    b.style.width=px+'px';
+    $('game').style.setProperty('--board-px',px+'px');
+  }
 }

@@ -50,46 +50,44 @@
 <main>
 
   <section id="home">
-    <div class="hsec" id="continueCard" style="display:none">
-      <div class="hsec-head">
-        <h2 data-i18n="continue">Продолжить</h2>
-        <button class="linkbtn" id="contPick" data-i18n="pickMany">Выбрать</button>
-      </div>
-      <div id="contList"></div>
-      <div class="cont-bar hidden" id="contBar">
-        <span id="contCount"></span>
-        <button class="linkbtn" id="contAll" data-i18n="pickAll">Все</button>
-        <button class="linkbtn" id="contNone" data-i18n="pickNone">Снять</button>
-        <button class="linkbtn danger" id="contDel" data-i18n="delSel">Удалить</button>
-        <button class="linkbtn quiet" id="contCancel" data-i18n="pickCancel">Отмена</button>
-      </div>
-    </div>
-    <div class="home-grid">
-      <div class="hsec" style="margin:0">
-        <h2 data-i18n="modesT">Режимы</h2>
+    <div class="home-main">
+      <div class="modes-col">
+        <h2 class="hcap" data-i18n="modesT">Режимы</h2>
         <div id="modeList"></div>
       </div>
       <aside class="mp" id="modePanel">
-        <div class="mp-head">
-          <div class="mp-prev" id="mpPrev"></div>
-          <div class="mp-txt">
-            <h3 id="mpName"></h3>
-            <p id="mpRules"></p>
-            <div class="mp-pool hidden" id="mpPool">
-              <span id="poolCount"></span>
-              <button id="poolOpen" data-i18n="poolBtn">Настроить жребий</button>
-            </div>
-          </div>
+        <div class="mp-prev" id="mpPrev"></div>
+        <h3 id="mpName"></h3>
+        <p id="mpRules"></p>
+        <div class="mp-pool hidden" id="mpPool">
+          <span id="poolCount"></span>
+          <button id="poolOpen" data-i18n="poolBtn">Настроить жребий</button>
         </div>
         <h4 data-i18n="lvlT">Уровень</h4>
         <div class="diff-grid" id="diffGrid"></div>
       </aside>
     </div>
-    <p class="tot">
-      <b id="tot-won">0</b><span data-i18n="solvedL">решено</span>
-      <b id="tot-perfect">0</b><span data-i18n="cleanL">чистых</span>
-      <b id="tot-time">—</b><span data-i18n="playtimeL">за игрой</span>
-    </p>
+    <div class="home-foot">
+      <div id="continueCard" style="display:none">
+        <div class="hsec-head">
+          <h2 class="hcap" data-i18n="continue">Продолжить</h2>
+          <button class="linkbtn" id="contPick" data-i18n="pickMany">Выбрать</button>
+          <div class="cont-bar hidden" id="contBar">
+            <span id="contCount"></span>
+            <button class="linkbtn" id="contAll" data-i18n="pickAll">Все</button>
+            <button class="linkbtn" id="contNone" data-i18n="pickNone">Снять</button>
+            <button class="linkbtn danger" id="contDel" data-i18n="delSel">Удалить</button>
+            <button class="linkbtn quiet" id="contCancel" data-i18n="pickCancel">Отмена</button>
+          </div>
+        </div>
+        <div id="contList"></div>
+      </div>
+      <p class="tot">
+        <b id="tot-won">0</b><span data-i18n="solvedL">решено</span>
+        <b id="tot-perfect">0</b><span data-i18n="cleanL">чистых</span>
+        <b id="tot-time">—</b><span data-i18n="playtimeL">за игрой</span>
+      </p>
+    </div>
   </section>
 
   <section id="game" class="hidden">

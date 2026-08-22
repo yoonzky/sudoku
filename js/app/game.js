@@ -1,7 +1,7 @@
 'use strict';
 
 let sel=-1, inputMode='digit', undoStack=[], redoStack=[], timerId=null,
-    lastPlaced=-1, hlDigit=0, armed=0, lastNumTs=0;
+    lastPlaced=-1, hlDigit=0, armed=0, lastNumTs=0, numPending=false, numTimer=null;
 let lastRequest={mode:'classic',diff:'medium'};
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -63,7 +63,7 @@ function newGame(mode,diff){
   });
 }
 function openGame(idx){
-  clearWin();
+  clearWin(); numArm(false);
   if(typeof idx==='number') SES.cur=idx;
   const g=cur(); if(!g) return;
   const sp=buildSpec(g.mode,g.ex);
@@ -91,16 +91,42 @@ function numpadPress(v){
   else inputDigit(v);
 }
 
+function numArm(on){
+  clearTimeout(numTimer);
+  numPending=on;
+  if(on) numTimer=setTimeout(numFlush,2600);
+}
+function numFlush(){
+  if(!numPending) return;
+  clearTimeout(numTimer);
+  numPending=false;
+  if(cur()) checkWin();
+}
 function inputNumber(d){
   const g=cur(); if(!g||g.done||g.paused||sel<0||g.given[sel]) return;
+  const chain=(Date.now()-lastNumTs)<2600 && lastPlaced===sel;
+  if(inputMode==='note'){
+    const nn=g.notes[sel];
+    const prev=chain? nn[nn.length-1] : 0;
+    pushUndo();
+    if(chain && prev>0 && prev*10+d<=SPEC.maxD){ nn[nn.length-1]=prev*10+d }
+    else if(d>0){
+      const k=nn.indexOf(d);
+      if(k>=0) nn.splice(k,1); else nn.push(d);
+    } else { undoStack.pop(); return }
+    lastPlaced=sel; lastNumTs=Date.now();
+    dismissPickHint();
+    afterMove(true);
+    return;
+  }
   const prev=g.values[sel]||0;
-  const chain=(Date.now()-lastNumTs)<2500 && lastPlaced===sel;
   let nv = (chain && prev>0 && prev*10+d<=SPEC.maxD)? prev*10+d : d;
   if(nv<1||nv>SPEC.maxD) return;
   pushUndo();
-  g.values[sel]=nv; g.hyp[sel]=0; lastPlaced=sel; lastNumTs=Date.now();
+  g.values[sel]=nv; g.hyp[sel]=0; g.notes[sel]=[]; lastPlaced=sel; lastNumTs=Date.now();
   dismissPickHint();
   if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
+  numArm(nv*10<=SPEC.maxD);
   afterMove(true);
 }
 function inputDigit(v,forceNote,forceHyp){
@@ -208,12 +234,14 @@ function checkWin(){
   const wrong=[];
   for(let i=0;i<n;i++) if(merged(g,i)!==g.solution[i]) wrong.push(i);
   if(wrong.length){
+    if(numPending) return;
     if(!g.instant){ g.endErr=wrong; renderBoard() }
     if(!g.wasFull) toast(t('hasErrors').replace('{n}',wrong.length));
     g.wasFull=true;
     return;
   }
   g.done=true; stopTimer();
+  sel=-1; hlDigit=0; armed=0; renderBoard();
   const st=statsFor(g.mode,g.diff);
   const assisted=!!g.usedAssist;
   const isRecord=!assisted && (st.best==null||g.time<st.best);
@@ -299,7 +327,7 @@ function syncModeButtons(){
   syncPickerMode();
 }
 function setMode(m){
-  if(SPEC && SPEC.kind==='num') return;
+  if(SPEC && SPEC.kind==='num' && m!=='note') return;
   inputMode = inputMode===m? 'digit' : m;
   syncModeButtons();
   if(cur() && !$('game').classList.contains('hidden')) renderBoard();
@@ -308,6 +336,5 @@ function applyControls(){
   const num=SPEC && SPEC.kind==='num';
   $('hintBtn').classList.toggle('hidden', !SES.settings.showHint);
   $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num);
-  $('notesBtn').classList.toggle('hidden', num);
   $('hypBtn').classList.toggle('hidden', num);
 }
