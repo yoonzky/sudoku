@@ -70,7 +70,10 @@ function openGame(idx){
   buildBoard(sp); buildNumpad(sp); buildPicker(sp);
   undoStack=[]; redoStack=[]; sel=-1; hlDigit=0; armed=0; inputMode='digit';
   syncModeButtons(); applyControls();
-  show('game'); setPaused(false); renderBoard(); startTimer(); snapBoard(); updatePickHint();
+  show('game'); setPaused(false); renderBoard(); startTimer();
+  /* лёжа поле и так узкое по высоте — крупный масштаб включается кнопкой */
+  boardZoom = isPhone() && !isLand() && fitCell()>0 && fitCell()<26;
+  snapBoard(); centerBoardPan(); panHint(); updatePickHint();
   closePicker();
 }
 
@@ -181,6 +184,7 @@ function hint(){
   }
   pushUndo();
   g.values[i]=g.solution[i]; g.notes[i]=[]; g.hyp[i]=0; g.hints++; g.usedAssist=true; sel=i; lastPlaced=i;
+  scrollSelIntoView();
   if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
   for(const p of SPEC.peers[i]){ const k=g.notes[p].indexOf(g.solution[i]); if(k>=0) g.notes[p].splice(k,1) }
   afterMove();
@@ -224,7 +228,7 @@ function flashUnits(i){
   }
 }
 
-let lastWin=null;
+let lastWin=null, winTimer=null;
 function checkWin(){
   const g=cur(); if(!g) return;
   const n=g.solution.length;
@@ -241,6 +245,7 @@ function checkWin(){
     return;
   }
   g.done=true; stopTimer();
+  if(boardZoom) setZoom(false);
   sel=-1; hlDigit=0; armed=0; renderBoard();
   const st=statsFor(g.mode,g.diff);
   const assisted=!!g.usedAssist;
@@ -251,7 +256,7 @@ function checkWin(){
   SES.games.splice(SES.cur,1); SES.cur=-1;
   persistCache(); if(!assisted) saveLog();
   lastWin={mode:g.mode, diff:g.diff, time:g.time, best:st.best, mistakes:g.mistakes, hints:g.hints,
-    isRecord, assisted, perfect};
+    isRecord, assisted, perfect, instant:g.instant};
   renderWinPanel();
   const showWin=()=>{
     const top=document.querySelector('header').getBoundingClientRect().top;
@@ -266,7 +271,8 @@ function checkWin(){
     cells[i].style.animationDelay=((c.x+c.y)*26)+'ms';
     cells[i].classList.add('wave');
   }
-  setTimeout(()=>{ cells.forEach(d=>{ d.classList.remove('wave'); d.style.animationDelay='' }); showWin() },1050);
+  winTimer=setTimeout(()=>{ winTimer=null;
+    cells.forEach(d=>{ d.classList.remove('wave'); d.style.animationDelay='' }); showWin() },1050);
 }
 function renderWinPanel(){
   const w=lastWin; if(!w) return;
@@ -274,9 +280,16 @@ function renderWinPanel(){
   $('winRecord').classList.toggle('hidden',!w.isRecord);
   $('winSub').innerHTML=t('m_'+w.mode)+' · '+t('d_'+w.diff)+
     (w.assisted? ' · '+t('assistNote') : (w.perfect? ' · '+t('clean') : ''));
+  /* при новом рекорде время уже стоит крупно — в сетке показываем, что было до него */
+  const lbl=$('winBestLbl');
+  lbl.dataset.i18n = w.isRecord? 'wasL' : 'recordL';
+  lbl.textContent=t(lbl.dataset.i18n);
   $('winBest').textContent=fmtTime(w.best);
+  $('winBestCell').classList.toggle('hidden', w.isRecord && w.best==null);
   $('winMist').textContent=w.mistakes;
   $('winHints').textContent=w.hints;
+  /* без мгновенной проверки ошибки не считаются — колонку не показываем */
+  $('winMistCell').classList.toggle('hidden', !w.instant);
 }
 let lastLost={mode:'classic',diff:'medium'};
 function gameLost(){
@@ -286,12 +299,14 @@ function gameLost(){
   $('loseModal').classList.remove('hidden');
 }
 function placeWinGlow(){
-  const el=$('winGlow'), b=$('board').getBoundingClientRect();
+  const el=$('winGlow'), pan=$('boardPan');
+  const b=(pan&&pan.classList.contains('pan')? pan : $('board')).getBoundingClientRect();
   if(!el||!b.width) return;
   el.style.setProperty('--wgx',Math.round(b.left+b.width/2)+'px');
   el.style.setProperty('--wgy',Math.round(b.top-b.height*0.30)+'px');
 }
 function clearWin(){
+  clearTimeout(winTimer); winTimer=null;
   document.body.classList.remove('won');
   document.body.style.removeProperty('--won-top');
   $('winPanel').classList.add('hidden');

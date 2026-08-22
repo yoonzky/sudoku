@@ -30,6 +30,9 @@ and starts it at the level you choose.
 - notes, auto-candidates, hint, undo/redo, mistake limit — all optional
 - full keyboard control (1–9, A/B/C for 10–12, Shift for notes, Alt for draft, arrows to move)
 - light and dark theme, Russian and English
+- on a phone: picking a mode opens a sheet with its rules and the four levels; boards wider than
+  the screen (Samurai, Wing, Double) open in a window you drag around, with a button to fit them
+  back; a long press on a cell brings up the pad — digit, note, draft, erase
 - works offline, installable to the home screen on iOS and Android
 
 ## Layout
@@ -41,7 +44,7 @@ css/base.css          palette, type, page frame, buttons, toast
 css/home.css          home screen: continue, mode grid, mode card
 css/game.css          board, rule marks, controls, keypad, result panel
 css/modals.css        settings, statistics, rules, confirmations
-css/mobile.css        phone overrides
+css/mobile.css        phone: home sheet, board window, keypad, landscape
 js/engine/core.js     cells, groups, solver, clue digging
 js/engine/grade.js    grading by technique, level tuning
 js/engine/modes.js    the mode table and puzzle generation

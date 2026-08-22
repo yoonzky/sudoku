@@ -10,11 +10,9 @@
   --text:#1b2130; --muted:#57617a; --accent:#3a5aa0; --accent-text:#ffffff; --accent-soft:#dbe3f5;
   --accent2:#6f5fa8; --accent2-soft:#e5e0f4;
   --error:#b04a52; --note:#4d5871; --given:#1b2130; --user:#3a5aa0; --cell-hl:#dde4f3; --cell-same:#cbd6ef; --note-sel:#3c4761;
-  --shadow:0 18px 44px rgba(30,45,80,.11);
+  --shadow:0 18px 44px rgba(30,45,80,.11); --shadow-up:0 -14px 38px rgba(30,45,80,.14);
   --rule:rgba(27,33,48,.45); --frame:rgba(58,90,160,.30);
   --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(58,90,160,.13), transparent 68%);
-  --halo-win:radial-gradient(ellipse 30% 58% at var(--wgx) var(--wgy),
-    rgba(255,255,255,1) 0%, rgba(233,241,255,.96) 16%, rgba(158,186,235,.62) 34%, rgba(58,90,160,.24) 54%, rgba(34,52,92,.05) 74%, rgba(34,52,92,.10) 100%);
   --glow-edge:rgba(58,90,160,.62);
   --pop:#ffffff; --pop-shadow:0 16px 38px rgba(24,37,66,.24), 0 2px 8px rgba(24,37,66,.14);
   --key-bg:#ffffff; --key-line:#cdd5e8;
@@ -31,11 +29,9 @@ html[data-theme="dark"]{
   --text:#e4e9f4; --muted:#8b96af; --accent:#9ec1f5; --accent-text:#0d1119; --accent-soft:rgba(158,193,245,.20);
   --accent2:#bda9ef; --accent2-soft:rgba(189,169,239,.20);
   --error:#e2848c; --note:#98a3bb; --given:#e4e9f4; --user:#9ec1f5; --cell-hl:#1d2637; --cell-same:#293857; --note-sel:#c9d3e6;
-  --shadow:0 18px 44px rgba(0,0,0,.5);
+  --shadow:0 18px 44px rgba(0,0,0,.5); --shadow-up:0 -14px 38px rgba(0,0,0,.42);
   --rule:rgba(228,233,244,.34); --frame:rgba(158,193,245,.24);
   --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(158,193,245,.14), transparent 68%);
-  --halo-win:radial-gradient(ellipse 30% 58% at var(--wgx) var(--wgy),
-    rgba(244,250,255,.60) 0%, rgba(158,193,245,.38) 18%, rgba(158,193,245,.15) 40%, transparent 70%);
   --glow-edge:rgba(158,193,245,.62);
   --pop:#232e44; --pop-shadow:0 16px 38px rgba(0,0,0,.62), 0 2px 8px rgba(0,0,0,.45);
   --key-bg:#1a2333; --key-line:#3b4963;
@@ -109,7 +105,7 @@ header, main, .site-foot{position:relative; z-index:1}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
 
-@media (max-width:600px){
+@media (max-width:700px){
   html{-webkit-text-size-adjust:100%}
   body{-webkit-touch-callout:none; touch-action:manipulation;
     padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right)}
@@ -132,12 +128,14 @@ header, main, .site-foot{position:relative; z-index:1}
   #game{max-width:100%}
 
   .board-wrap{max-width:min(100%, calc(100vh - 268px)); margin:0 auto}
+  body.pad-two .board-wrap{max-width:min(100%, calc(100vh - 330px))}
   @supports (height:100dvh){
     .board-wrap{max-width:min(100%, calc(100dvh - 268px))}
+    body.pad-two .board-wrap{max-width:min(100%, calc(100dvh - 330px))}
   }
 }
 
-@media (max-width:600px) and (max-height:560px){
+@media (max-width:700px) and (max-height:560px){
   body.in-game{justify-content:flex-start; overflow:auto}
 }
 

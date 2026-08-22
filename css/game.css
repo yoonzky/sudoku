@@ -1,4 +1,6 @@
-.topbar{display:flex; align-items:center; justify-content:space-between; margin:4px auto 12px; width:var(--board-px,100%); font-size:12.5px; color:var(--muted); gap:6px}
+.topbar{display:flex; align-items:center; margin:4px auto 12px; width:var(--board-px,100%);
+  font-size:12.5px; color:var(--muted); gap:14px}
+.topbar .t-item:last-of-type{margin-left:auto}
 .topbar .t-item{font-weight:500}
 .topbar .t-item b{font-family:var(--f-num); color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
 .topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
@@ -59,11 +61,17 @@ body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
 
 body.won.in-game{overflow:auto}
 
-@media (max-width:600px){
+@media (max-width:700px){
   body.won.in-game{justify-content:flex-start; padding-top:var(--won-top,0px)}
 }
 #winGlow{position:fixed; inset:0; pointer-events:none; z-index:6; opacity:0;
-  --wgx:50%; --wgy:-4%; background:var(--halo-win)}
+  --wgx:50%; --wgy:-4%; --wgw:30%; --wgh:58%;
+  background:radial-gradient(ellipse var(--wgw) var(--wgh) at var(--wgx) var(--wgy),
+    rgba(255,255,255,1) 0%, rgba(233,241,255,.96) 16%, rgba(158,186,235,.62) 34%,
+    rgba(58,90,160,.24) 54%, rgba(34,52,92,.05) 74%, rgba(34,52,92,.10) 100%)}
+html[data-theme="dark"] #winGlow{
+  background:radial-gradient(ellipse var(--wgw) var(--wgh) at var(--wgx) var(--wgy),
+    rgba(244,250,255,.60) 0%, rgba(158,193,245,.38) 18%, rgba(158,193,245,.15) 40%, transparent 70%)}
 #winGlow.on{opacity:.62; animation:haloIn 2.9s cubic-bezier(.22,.68,.3,1) forwards}
 @keyframes haloIn{
   0%{opacity:0; transform:scale(.84) translateY(-5%)}
@@ -152,7 +160,7 @@ body.won:not(.board-wide) #board{box-shadow:0 -26px 80px -14px var(--glow-edge),
 .grid{position:absolute; inset:0; pointer-events:none; z-index:3}
 .grid svg{position:absolute; inset:0; width:100%; height:100%}
 #selBox{position:absolute; z-index:7; pointer-events:none; border:2px solid var(--accent);
-  border-radius:2px; box-shadow:0 0 0 1px var(--bg-soft, transparent)}
+  border-radius:2px}
 #selBox.hyp{border-color:var(--accent2)}
 #selBox.err{border-color:var(--error)}
 #selBox.hidden{display:none}

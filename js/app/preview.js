@@ -49,7 +49,7 @@ function previewSVG(mode){
     const c=sp.cells[i];
     const up=cellAt(sp,c.x,c.y-1), lf=cellAt(sp,c.x-1,c.y);
     const dn=cellAt(sp,c.x,c.y+1), rt=cellAt(sp,c.x+1,c.y);
-    const seg=(x1,y1,x2,y2,strong)=>{ const s=`M${x1} ${y1}H${x2==null?x1:x2}${y2==null?'':'V'+y2}`;
+    const seg=(x1,y1,x2,y2,strong)=>{
       const l=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
       if(strong) thick+=l; else thin+=l };
     const X=px(c), Y=py(c);

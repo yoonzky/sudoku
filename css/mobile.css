@@ -1,23 +1,5 @@
-@media (max-width:600px){
-  .topbar{margin:2px 0 8px}
-
-  .topbar .tbtn{padding:6px 4px; margin-right:0}
-  #board{border-radius:5px}
-  .numpad{gap:4px; margin-top:10px}
-  .num{aspect-ratio:.72; font-size:22px; font-weight:500; border-radius:4px}
-  .num small{right:4px; bottom:3px; font-size:10px}
-  .controls{margin-top:12px}
-  .ctl{padding:11px 1px 9px; letter-spacing:0; gap:5px; min-height:54px}
-  .ctl svg{width:20px; height:20px}
-  .diff-btn b{font-size:19px}
-  .diff-btn{padding:15px 4px}
-  .cont-open{font-size:18px}
-  #picker{grid-template-columns:repeat(3,52px); gap:6px}
-  #picker button{font-size:19px}
-}
-
-@media (pointer:coarse){ .only-fine{display:none !important} #tabKeysBtn{display:none} }
-@media (max-width:600px){ #posRow, #posseg{display:none} }
+#sheetBg{position:fixed; inset:0; z-index:24; background:rgba(6,9,16,.5);
+  opacity:0; pointer-events:none; transition:opacity .24s}
 
 #pickHint{position:fixed; z-index:5; width:176px; margin:0; padding:2px 0 2px 13px;
   text-align:left; font-size:13px; font-weight:400; line-height:1.55; color:var(--muted);
@@ -26,21 +8,214 @@
   border-left:0; border-right:1px solid var(--line)}
 #pickHint b{font-weight:500; color:var(--accent)}
 
+
+@media (max-width:700px){
+
+/* — главный экран — */
+body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom)); min-height:auto; flex:none}
+#home{gap:16px; flex:none; min-height:auto}
+.home-main{display:block}
+.modes-col{display:block; min-height:0}
+#modeList{overflow:visible; flex:none}
+.home-foot{display:contents}
+#continueCard{order:-1}
+.tot{order:5; margin:2px 0 0; padding-top:14px; border-top:1px solid var(--line);
+  justify-content:space-between; gap:4px 10px}
+.tot b{font-size:17px}
+
+.hcap{font-size:11px; margin-bottom:9px}
+.hsec-head{gap:10px; margin-bottom:10px; flex-wrap:wrap}
+.hsec-head:has(.cont-bar:not(.hidden)) .hcap{display:none}
+.linkbtn{font-size:12.5px; padding:6px 0}
+.cont-bar{margin-left:0; width:100%; justify-content:space-between; gap:6px; font-size:12px}
+.cont-bar #contCount{margin-right:auto}
+#contList{gap:8px; padding-bottom:8px; scrollbar-width:none;
+  margin:0 -10px; padding-left:10px; padding-right:10px}
+#contList::-webkit-scrollbar{height:0}
+.cont-card{width:154px; padding:11px 12px 12px; border-radius:6px}
+.cont-card b{font-size:14px}
+.cont-card span{font-size:11.5px}
+.cont-x{width:30px; height:30px; right:2px; bottom:2px; opacity:.75}
+.cbox{width:17px; height:17px; right:11px; bottom:11px}
+
+.mrand{padding:14px 14px; border-radius:6px; margin-bottom:13px}
+.mrand b{font-size:14.5px}
+.mrand small{font-size:11.5px}
+.mrand .dice{width:18px; height:18px}
+
+.mode-grid{grid-template-columns:repeat(3,1fr); gap:8px}
+.mgroup{font-size:10px; margin:8px 0 -2px}
+.mcard{padding:11px 4px 10px; gap:7px; border-radius:6px}
+.mcard-prev{height:52px}
+.mcard-prev svg{max-width:52px; max-height:52px}
+.mcard b{font-size:11.5px}
+.mcard small{font-size:10px; min-height:12px}
+.mcard:hover{transform:none}
+.mcard:active{background:var(--accent-soft); border-color:var(--accent)}
+
+/* — лист режима — */
+body.sheet{overflow:hidden}
+body.sheet #sheetBg{opacity:1; pointer-events:auto}
+.mp{position:fixed; left:0; right:0; bottom:0; z-index:25;
+  border:0; border-top:1px solid var(--line); border-radius:12px 12px 0 0;
+  background:var(--panel); box-shadow:var(--shadow-up);
+  padding:0 16px calc(12px + env(safe-area-inset-bottom));
+  max-height:86vh; overflow-y:auto; overscroll-behavior:contain;
+  display:grid; grid-template-columns:64px 1fr; gap:0 15px; align-content:start;
+  transform:translateY(103%); transition:transform .26s cubic-bezier(.2,.7,.3,1)}
+@supports (height:100dvh){ .mp{max-height:86dvh} }
+body.sheet .mp{transform:none}
+.sheet-grab{display:block; grid-column:1/-1; width:100%; padding:10px 0 12px; margin:0;
+  background:none; border:0; cursor:pointer; touch-action:none}
+.sheet-grab i{display:block; width:38px; height:4px; margin:0 auto; border-radius:2px; background:var(--line)}
+.mp-prev{grid-column:1; grid-row:2; max-width:64px; margin:0; align-self:center}
+.mp h3{grid-column:2; grid-row:2; align-self:center; font-size:21px; margin:0}
+.mp p{grid-column:1/-1; margin:13px 0 0; font-size:13.5px; line-height:1.55; min-height:0}
+.mp-pool{grid-column:1/-1; margin:14px 0 0; font-size:12.5px}
+.mp-pool button{font-size:12.5px; padding:6px 0}
+.mp h4{grid-column:1/-1; margin:18px 0 2px; padding-top:0; font-size:11px}
+.diff-grid{grid-column:1/-1}
+
+/* — партия — */
+body.in-game main{padding:2px 8px calc(4px + env(safe-area-inset-bottom)); flex:0 1 auto}
+body.in-game #game{width:100%; max-width:100%}
+body.in-game .site-foot{display:none}
+.topbar{margin:2px auto 8px; font-size:13px}
+.topbar .t-item em{margin-left:6px; font-size:12px}
+.topbar .tbtn{padding:8px 6px; margin:-8px -6px -8px 0; min-width:38px}
+.topbar .tbtn svg{width:18px; height:18px}
+#board{border-radius:5px}
+
+.board-pan{width:100%; margin:0 auto}
+body.board-zoom .board-wrap{max-width:100%}
+.board-pan.pan{overflow:auto; overscroll-behavior:contain;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  border-radius:6px; box-shadow:var(--shadow)}
+.board-pan.pan::-webkit-scrollbar{width:0; height:0}
+.board-pan.pan #board{box-shadow:none; margin:0}
+
+.controls{margin-top:11px; border-radius:3px}
+.ctl{padding:10px 1px 8px; letter-spacing:0; gap:5px; min-height:52px; font-size:10px}
+.ctl svg{width:20px; height:20px}
+.ctl:hover:not(:disabled){color:var(--muted); background:transparent}
+.ctl:active:not(:disabled){background:var(--cell-hl); color:var(--text)}
+.ctl.on:active{color:var(--accent)}
+
+.numpad{gap:5px; margin-top:9px}
+.num{aspect-ratio:auto; height:54px; font-size:23px; font-weight:500; border-radius:4px}
+.num small{right:4px; bottom:3px; font-size:10px}
+.num:hover{border-color:var(--key-line); color:var(--text)}
+.numpad.two-row .num{aspect-ratio:auto; height:46px}
+body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
+.numpad.mode-note .num:hover{color:var(--accent); border-color:var(--accent)}
+.numpad.mode-hyp .num:hover{color:var(--accent2); border-color:var(--accent2)}
+
+#pickHint{position:static; width:auto; margin:0 auto 7px; padding:0;
+  text-align:center; font-size:12px; line-height:1.4; border:0; color:var(--muted)}
+#pickHint.right-side{padding:0; text-align:center; border:0}
+
+#picker{padding:9px; grid-template-columns:repeat(3,58px); gap:6px}
+#picker button{font-size:22px}
+#picker.pk-wide{grid-template-columns:repeat(4,52px)}
+#picker.pk-num{grid-template-columns:repeat(5,46px)}
+#picker .pk-mode button{height:38px}
+#picker .pk-x{height:38px}
+
+/* — итог партии — */
+#winGlow{--wgw:64%; --wgh:40%}
+.win-lead{font-size:10.5px}
+.win-big{font-size:36px}
+#winPanel{margin-top:13px; padding-top:12px}
+.win-grid b{font-size:16px}
+.win-grid span{font-size:9.5px; letter-spacing:.1em}
+
+/* — окна — */
+#pauseOverlay{gap:12px}
+#pauseOverlay .btn{min-width:190px}
+.diff-btn{padding:15px 4px; gap:14px}
+.diff-btn b{font-size:19px}
+.diff-btn span{font-size:17px}
+.diff-btn em{font-size:11.5px}
+.diff-btn:hover,.diff-btn:focus-visible{padding-left:4px}
+.diff-btn:active{color:var(--accent); background:var(--accent-soft)}
+}
+
+@media (pointer:coarse){
+  #tabKeysBtn{display:none}
+  .mcard:hover,.cont-card:hover,.mrand:hover{border-color:var(--line); color:var(--text); background:var(--panel)}
+  .mcard.on:hover{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+  .mrand.on:hover{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+  .num:active{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+}
+@media (max-width:700px){ #posRow, #posseg{display:none} }
+
 @media (max-width:620px){
-  .modal{padding:18px 16px; max-height:94vh}
+  .modal{padding:18px 16px 0; max-height:94vh}
+  #welcomeModal .modal{padding-bottom:18px}
   .modal h2{margin-bottom:11px}
+  .modal .row:last-child{position:sticky; bottom:0; z-index:2;
+    margin:10px -16px 0; padding:12px 16px calc(14px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line); background:var(--panel)}
 
   .stabs{flex-direction:row; border-right:0; border-bottom:1px solid var(--line);
     padding:0; margin-bottom:14px; gap:0}
-  .stabs button{flex:1; text-align:center; padding:12px 4px; border-radius:0;
+  .stabs button{flex:1; text-align:center; padding:13px 4px; border-radius:0;
     border-bottom:2px solid transparent; margin-bottom:-1px}
   .stabs button.on{background:transparent; border-bottom-color:var(--accent)}
   .modal h3{margin:14px 0 6px}
-  .toggle{padding:7px 0; gap:11px}
+  .toggle{padding:9px 0; gap:12px}
+  .toggle input{width:40px; height:23px; margin-top:3px}
+  .toggle input::before{width:17px; height:17px}
+  .toggle input:checked::before{transform:translateX(17px)}
   .toggle b{font-size:15px; margin-bottom:1px}
-  .toggle span{font-size:12.5px; line-height:1.32}
-  .modal .row{margin-top:12px}
-  .btn{padding:12px 20px; min-height:44px}
+  .toggle span{font-size:12.5px; line-height:1.35}
+  .modal .row{margin-top:12px; gap:8px}
+  .modal .row .btn{flex:1 1 40%}
+  .btn{padding:13px 16px; min-height:46px}
   .keys{gap:16px 0}
   .krow{font-size:13px; padding:7px 0}
+  .rules-body{gap:16px}
+  .rules-prev{width:96px}
+  .pool-item{padding:11px 0; font-size:14px}
+  .pool-item input{width:20px; height:20px}
+  .modal td{padding:9px 4px}
+  .hist div{padding:8px 0}
+  .wel-card{padding:13px 12px 15px}
+}
+
+/* — телефон лёжа — */
+@media (orientation:landscape) and (max-height:560px) and (min-width:560px){
+  body.in-game{justify-content:flex-start; overflow:hidden}
+  body.in-game header{padding:5px 12px 0}
+  body.in-game header h1{font-size:18px}
+  body.in-game header .iconbtn{width:34px; height:34px}
+  body.in-game main{flex:1 1 auto; min-height:0; padding:0 12px 6px; display:flex; max-width:100%}
+  body.in-game .site-foot{display:none}
+
+  body.in-game #game{width:100%; max-width:100%; display:grid; align-content:start;
+    grid-template-columns:minmax(0,1fr) minmax(146px,208px);
+    grid-template-rows:auto auto minmax(0,1fr); gap:4px 14px}
+  #game .topbar{grid-area:1/1/2/3; width:auto; margin:0 0 2px}
+  #pickHint{display:none}
+  .board-wrap{grid-area:2/1/4/2; height:calc(100vh - 74px); max-width:none; margin:0}
+  .board-pan{display:flex; justify-content:center}
+  .controls{grid-area:2/2/3/3; width:auto; margin:0; flex-wrap:wrap}
+  .ctl{flex:1 1 30%; min-height:44px; padding:7px 1px 6px}
+  .ctl:nth-child(n+4){border-left:0}
+  .numpad{grid-area:3/2/4/3; width:auto; margin:6px 0 0; align-content:start;
+    grid-template-columns:repeat(3,1fr) !important; gap:5px}
+  .num{height:auto; aspect-ratio:1.35; font-size:20px}
+  .numpad.two-row .num, body.board-num .num{height:auto; aspect-ratio:1.35}
+  body.won #game{grid-template-columns:minmax(0,1fr) minmax(190px,282px)}
+  #winPanel{grid-area:2/2/4/3; width:auto; margin:0; padding-top:0; border-top:0; overflow-y:auto}
+  .win-big{font-size:26px}
+  .win-head{gap:8px}
+  .win-foot{flex-direction:column; align-items:stretch; gap:8px; margin-top:8px}
+  .win-act .btn{flex:1}
+  body.won.in-game{overflow:hidden; padding-top:0}
+}
+@supports (height:100dvh){
+  @media (orientation:landscape) and (max-height:560px) and (min-width:560px){
+    .board-wrap{height:calc(100dvh - 74px)}
+  }
 }

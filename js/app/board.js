@@ -265,7 +265,6 @@ function renderBoard(){
   $('gMist').textContent=(SES.settings.limit&&g.instant&&!g.noLimit)? `${g.mistakes}/3` : g.mistakes;
   $('gMode').textContent=t('m_'+g.mode);
   $('gDiff').textContent=t('d_'+g.diff);
-  $('board').classList.toggle('notes-on', inputMode==='note');
   $('board').classList.toggle('hyp-on', inputMode==='hyp');
   $('undoBtn').disabled=!undoStack.length;
   $('redoBtn').disabled=!redoStack.length;
@@ -284,15 +283,94 @@ function placeSelBox(g,sp){
   else if(inputMode==='hyp' || g.hyp[sel]) sb.classList.add('hyp');
 }
 
+const ZOOM_CELL=38;
+let boardZoom=false;
+
+/* клетка вписывается и по ширине, и по высоте — высоту задаёт .board-wrap */
+function fitBoth(bw){
+  const pan=$('boardPan'), wrap=document.querySelector('.board-wrap');
+  const byW=Math.floor(((pan.clientWidth||0)-bw)/SPEC.W);
+  if(!isLand()||!wrap) return byW;
+  const byH=Math.floor((wrap.clientHeight-bw)/SPEC.H);
+  return byH>0? Math.min(byW,byH) : byW;
+}
+function freeSpace(){
+  let used=0;
+  for(const el of [document.querySelector('header'), document.querySelector('main'), document.querySelector('.site-foot')])
+    if(el && el.offsetParent!==null) used+=el.getBoundingClientRect().height;
+  return window.innerHeight-used;
+}
+function fitCell(){
+  const b=$('board');
+  if(!b||!SPEC) return 0;
+  return fitBoth((parseFloat(getComputedStyle(b).borderLeftWidth)||0)*2);
+}
+function zoomUseful(){ return isPhone() && SPEC && fitCell()<ZOOM_CELL-2 }
 function snapBoard(){
-  const b=$('board'); if(!b||!SPEC) return;
-  b.style.width='';
-  const w=b.getBoundingClientRect().width;
+  const b=$('board'), pan=$('boardPan'); if(!b||!SPEC||!pan) return;
+  b.style.width=''; pan.style.width=''; pan.style.maxHeight='';
+  pan.classList.remove('pan');
   const bw=(parseFloat(getComputedStyle(b).borderLeftWidth)||0)*2;
-  const c=Math.floor((w-bw)/SPEC.W);
-  if(c>0){
-    const px=c*SPEC.W+bw;
-    b.style.width=px+'px';
-    $('game').style.setProperty('--board-px',px+'px');
+  const wantZoom=boardZoom && isPhone();
+  document.body.classList.toggle('board-zoom',wantZoom);
+  let fit=fitBoth(bw);
+  const zoom=wantZoom && fit<ZOOM_CELL;
+  if(wantZoom && !zoom){ document.body.classList.remove('board-zoom'); fit=fitBoth(bw) }
+  if(fit<=0) return;
+  const box=fit*SPEC.W+bw;
+  $('game').style.setProperty('--board-px',box+'px');
+  if(zoom){
+    pan.classList.add('pan');
+    const fitH=fit*SPEC.H+bw;
+    pan.style.maxHeight=fitH+'px';
+    b.style.width=(ZOOM_CELL*SPEC.W+bw)+'px';
+    /* окно поля забирает всю свободную ширину и высоту экрана */
+    $('game').style.setProperty('--board-px',(pan.clientWidth||box)+'px');
+    const grow=Math.max(0,freeSpace()-16);
+    pan.style.maxHeight=Math.round(Math.min(ZOOM_CELL*SPEC.H+bw, fitH+grow))+'px';
+  } else {
+    b.style.width=box+'px';
   }
+  syncZoomBtn();
+}
+function syncZoomBtn(){
+  const btn=$('zoomBtn'); if(!btn) return;
+  const on=boardZoom && isPhone();
+  btn.classList.toggle('hidden', !zoomUseful());
+  btn.classList.toggle('on', on);
+  btn.innerHTML = on
+    ? '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M8.4 11h5.2"/></svg>'
+    : '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M8.4 11h5.2M11 8.4v5.2"/></svg>';
+  const lab=t(on? 'zoomFit' : 'zoomIn');
+  btn.title=lab; btn.setAttribute('aria-label',lab);
+}
+function setZoom(on){
+  boardZoom=!!on;
+  snapBoard();
+  if(!boardZoom) return;
+  if(sel>=0) scrollSelIntoView(); else centerBoardPan();
+  panHint();
+}
+function panHint(){
+  if(!$('boardPan').classList.contains('pan')) return;
+  try{
+    if(localStorage.getItem('sudoku-panHint')) return;
+    localStorage.setItem('sudoku-panHint','1');
+  }catch(e){}
+  toast(t('panHint'));
+}
+function scrollSelIntoView(){
+  const pan=$('boardPan');
+  if(!pan||!pan.classList.contains('pan')||sel<0||!cells[sel]) return;
+  const p=pan.getBoundingClientRect(), c=cells[sel].getBoundingClientRect();
+  if(c.left<p.left) pan.scrollLeft-=p.left-c.left+8;
+  else if(c.right>p.right) pan.scrollLeft+=c.right-p.right+8;
+  if(c.top<p.top) pan.scrollTop-=p.top-c.top+8;
+  else if(c.bottom>p.bottom) pan.scrollTop+=c.bottom-p.bottom+8;
+}
+function centerBoardPan(){
+  const pan=$('boardPan');
+  if(!pan||!pan.classList.contains('pan')) return;
+  pan.scrollLeft=(pan.scrollWidth-pan.clientWidth)/2;
+  pan.scrollTop=(pan.scrollHeight-pan.clientHeight)/2;
 }

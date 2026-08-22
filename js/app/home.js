@@ -77,7 +77,7 @@ function renderModeList(){
   }
   $('modeList').innerHTML=h+'</div>';
   const on=$('modeList').querySelector('.mcard.on');
-  if(on && on.scrollIntoView) on.scrollIntoView({block:'nearest'});
+  if(on && on.scrollIntoView && !isPhone()) on.scrollIntoView({block:'nearest'});
 }
 function renderModePanel(){
   const m=pickedMode;
@@ -109,6 +109,7 @@ function pickMode(id){
   pickedMode=id;
   SES.settings.mode=id; persistCache();
   renderModeList(); renderModePanel();
+  openSheet();
 }
 
 function openPool(){

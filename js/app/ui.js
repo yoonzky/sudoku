@@ -6,8 +6,13 @@ const THEMES=[
   {id:'dark',  accent:'#9ec1f5', meta:'#0d1119'},
 ];
 let lastPointerType='mouse';
+const PHONE_Q=matchMedia('(max-width:700px)');
+const LAND_Q=matchMedia('(orientation:landscape) and (max-height:560px) and (min-width:560px)');
+const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
+const isLand=()=>LAND_Q.matches;
+const COARSE=(()=>{ try{ return matchMedia('(pointer:coarse)').matches }catch(e){} return false })();
 function pickerAllowed(){
-  if(lastPointerType==='touch') return false;
+  if(lastPointerType==='touch'||COARSE) return true;
   try{ if(!matchMedia('(pointer:fine)').matches) return false }catch(e){}
   return true;
 }
@@ -17,11 +22,21 @@ function toast(msg){
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
 }
 function show(screen){
+  closeSheet();
   $('home').classList.toggle('hidden',screen!=='home');
   $('game').classList.toggle('hidden',screen!=='game');
   document.body.classList.toggle('in-game',screen==='game');
   if(screen==='game') snapBoard();
 }
+function openSheet(){
+  if(!isPhone()) return;
+  const mp=$('modePanel');
+  document.body.classList.add('sheet');
+  mp.scrollTop=0;
+}
+function closeSheet(){ document.body.classList.remove('sheet') }
+function sheetOpen(){ return document.body.classList.contains('sheet') }
+
 function applyTheme(){
   if(!THEMES.find(x=>x.id===SES.settings.theme)) SES.settings.theme=THEMES[0].id;
   document.documentElement.dataset.theme=SES.settings.theme;
@@ -72,6 +87,10 @@ function buildPicker(sp){
     b.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); inputDigit(v); closePicker() });
     pk.appendChild(b);
   }
+  addEraseRow(pk);
+}
+
+function addEraseRow(pk){
   const x=document.createElement('button');
   x.className='pk-x';
   x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
@@ -83,12 +102,7 @@ function buildPicker(sp){
 function buildNumPicker(pk){
   for(let v=1;v<=9;v++) pk.appendChild(numKey(v));
   pk.appendChild(numKey(0));
-  const x=document.createElement('button');
-  x.className='pk-x';
-  x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
-  x.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); eraseCell(); closePicker() });
-  pk.appendChild(x);
-  pk.addEventListener('pointerdown',e=>e.stopPropagation());
+  addEraseRow(pk);
 }
 function numKey(v){
   const b=document.createElement('button');
@@ -122,23 +136,29 @@ function refreshPickerCounts(){
   });
 }
 function openPicker(i){
-  if(!pickerAllowed()||!SPEC) return;
+  if(!pickerAllowed()||!SPEC||!SES.settings.dblPick) return;
   dismissPickHint();
-  if(!SES.settings.dblPick) return;
   const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
   sel=i; renderBoard();
   const pk=$('picker');
   if(SPEC.kind!=='num') syncPickerMode();
   pk.classList.remove('hidden');
   if(SPEC.kind!=='num') refreshPickerCounts();
-  const boardR=$('board').getBoundingClientRect(), cellR=cells[i].getBoundingClientRect();
-  const pw=pk.offsetWidth, ph=pk.offsetHeight;
-  let left=cellR.right-boardR.left+8;
-  const maxLeft=window.innerWidth-8-pw-boardR.left;
-  left=Math.max(4,Math.min(left,maxLeft));
-  let top=cellR.top-boardR.top+cellR.height/2-ph/2;
-  top=Math.max(4,Math.min(top,boardR.height-ph-4));
-  pk.style.left=left+'px'; pk.style.top=top+'px';
+  placePicker(i);
+}
+function placePicker(i){
+  const pk=$('picker'), wrap=document.querySelector('.board-wrap');
+  if(!wrap||!cells[i]) return;
+  const wrapR=wrap.getBoundingClientRect(), cellR=cells[i].getBoundingClientRect();
+  const pw=pk.offsetWidth, ph=pk.offsetHeight, pad=6;
+  let left=cellR.right+8;
+  if(left+pw>window.innerWidth-pad) left=cellR.left-8-pw;
+  if(left<pad) left=Math.max(pad,(window.innerWidth-pw)/2);
+  left=Math.min(left,Math.max(pad,window.innerWidth-pw-pad));
+  let top=cellR.top+cellR.height/2-ph/2;
+  top=Math.max(pad,Math.min(top,window.innerHeight-ph-pad));
+  pk.style.left=Math.round(left-wrapR.left)+'px';
+  pk.style.top=Math.round(top-wrapR.top)+'px';
 }
 function closePicker(){ $('picker').classList.add('hidden') }
 function refreshPickerLang(){
@@ -150,6 +170,11 @@ function refreshPickerLang(){
 function placePickHint(){
   const el=$('pickHint');
   if(!el||el.classList.contains('hidden')) return;
+  if(isPhone()){
+    el.classList.remove('right-side');
+    el.style.left=el.style.top=''; el.style.visibility='';
+    return;
+  }
   const b=$('board').getBoundingClientRect();
   if(!b.width) return;
   const w=el.offsetWidth||176, gap=20;
@@ -167,8 +192,9 @@ function updatePickHint(){
   const el=$('pickHint'); if(!el||!SPEC) return;
   let seen=false; try{ seen=!!localStorage.getItem(hintKey()) }catch(e){}
   const num=SPEC.kind==='num';
-  el.textContent = num? t('numHint') : t('pickHint');
-  el.classList.toggle('hidden', seen || !pickerAllowed() || (!num && !SES.settings.dblPick));
+  el.textContent = num? (COARSE? t('numHintTouch') : t('numHint'))
+    : COARSE? t('pickHintTouch') : t('pickHint');
+  el.classList.toggle('hidden', seen || (!num && (!SES.settings.dblPick || !pickerAllowed())));
   placePickHint();
 }
 function dismissPickHint(){

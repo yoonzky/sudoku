@@ -56,6 +56,7 @@
         <div id="modeList"></div>
       </div>
       <aside class="mp" id="modePanel">
+        <button class="sheet-grab" id="sheetGrab" aria-label="close"><i></i></button>
         <div class="mp-prev" id="mpPrev"></div>
         <h3 id="mpName"></h3>
         <p id="mpRules"></p>
@@ -95,13 +96,16 @@
       <span class="t-item"><b id="gMode"></b><em id="gDiff"></em></span>
       <span class="t-item" id="gMistWrap"><span data-i18n="errorsL">Ошибки</span>: <b id="gMist">0</b></span>
       <span class="t-item"><b id="gTimer">0:00</b></span>
+      <button class="tbtn hidden" id="zoomBtn">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      </button>
       <button class="tbtn" id="pauseBtn">
         <svg viewBox="0 0 24 24"><path d="M9.5 5.5v13M14.5 5.5v13"/></svg>
       </button>
     </div>
     <p id="pickHint" class="hidden" data-i18n="pickHint">Двойной или правый клик по клетке — быстрый ввод цифры</p>
     <div class="board-wrap">
-      <div id="board"></div>
+      <div class="board-pan" id="boardPan"><div id="board"></div></div>
       <div id="pauseOverlay" class="hidden">
         <p data-i18n="pauseT">Пауза</p>
         <button class="btn" id="resumeBtn" data-i18n="resume">Продолжить</button>
@@ -130,8 +134,8 @@
       </div>
       <div class="win-foot">
         <div class="win-grid">
-          <div><b id="winBest"></b><span data-i18n="recordL">рекорд</span></div>
-          <div><b id="winMist"></b><span data-i18n="mistakesL">ошибки</span></div>
+          <div id="winBestCell"><b id="winBest"></b><span id="winBestLbl" data-i18n="recordL">рекорд</span></div>
+          <div id="winMistCell"><b id="winMist"></b><span data-i18n="mistakesL">ошибки</span></div>
           <div><b id="winHints"></b><span data-i18n="hintsL">подсказки</span></div>
         </div>
         <div class="win-act">
@@ -141,6 +145,8 @@
       </div>
     </section>
   </section>
+
+  <div id="sheetBg"></div>
 </main>
 
 <div class="modal-bg hidden" id="loseModal">

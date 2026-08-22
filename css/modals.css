@@ -21,8 +21,8 @@
 .win-big{font-family:var(--f-num); font-size:40px; font-weight:400; line-height:1; font-variant-numeric:tabular-nums}
 .win-sub{color:var(--muted); font-size:13.5px; font-weight:400}
 .record{color:var(--accent); font-size:12.5px; font-weight:600; letter-spacing:.03em}
-.win-sub .mk{color:var(--accent)}
-.win-grid{display:grid; grid-template-columns:repeat(3,1fr); margin:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+.win-grid{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; margin:0;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
 .win-grid div{background:transparent; border-right:1px solid var(--line); padding:9px 6px}
 .win-grid div:last-child{border-right:0}
 .win-grid b{display:block; font-family:var(--f-num); font-size:17px; font-weight:500; font-variant-numeric:tabular-nums; margin-bottom:3px}

@@ -1,23 +1,58 @@
 'use strict';
 
-$('board').addEventListener('pointerdown',e=>{
-  const el=e.target.closest('.cell'); if(!el) return;
-  lastPointerType=e.pointerType||'mouse';
+let lpTimer=null, lpX=0, lpY=0, lpIdx=-1;
+function lpCancel(){ clearTimeout(lpTimer); lpTimer=null; lpIdx=-1 }
+
+function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
-  const i=+el.dataset.i;
   closePicker();
   if(i!==sel) numFlush();
   if(SES.settings.digitFirst && armed && !g.done && !g.given[i] && SPEC.kind!=='num'){
     sel=i; inputDigit(armed); hlDigit=armed; renderBoard(); return;
   }
   sel=i; hlDigit=0; renderBoard();
+}
+
+$('board').addEventListener('pointerdown',e=>{
+  const el=e.target.closest('.cell'); if(!el) return;
+  lastPointerType=e.pointerType||'mouse';
+  const g=cur(); if(!g||g.paused) return;
+  const i=+el.dataset.i;
+  if(e.pointerType!=='touch'){ tapCell(i); return }
+  /* палец: клетка выбирается на отпускании — так листание поля не сбивает выбор */
+  lpIdx=i; lpX=e.clientX; lpY=e.clientY;
+  clearTimeout(lpTimer);
+  lpTimer=setTimeout(()=>{
+    lpTimer=null;
+    if(lpIdx!==i) return;
+    lpIdx=-1;
+    tapCell(i);
+    openPicker(i);
+    if(!$('picker').classList.contains('hidden') && navigator.vibrate) navigator.vibrate(8);
+  },460);
 });
+$('board').addEventListener('pointermove',e=>{
+  if(lpIdx>=0 && (Math.abs(e.clientX-lpX)>10 || Math.abs(e.clientY-lpY)>10)) lpCancel();
+});
+$('board').addEventListener('pointerup',e=>{
+  const i=lpIdx; lpCancel();
+  if(i<0 || e.pointerType!=='touch') return;
+  if(Math.abs(e.clientX-lpX)>10 || Math.abs(e.clientY-lpY)>10) return;
+  tapCell(i);
+});
+for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,lpCancel);
+$('boardPan').addEventListener('scroll',lpCancel);
+$('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
+
 $('board').addEventListener('dblclick',e=>{
-  const el=e.target.closest('.cell'); if(el) openPicker(+el.dataset.i);
+  const el=e.target.closest('.cell');
+  if(el && lastPointerType!=='touch') openPicker(+el.dataset.i);
 });
 $('board').addEventListener('contextmenu',e=>{
   const el=e.target.closest('.cell'); if(!el) return;
-  e.preventDefault(); openPicker(+el.dataset.i);
+  e.preventDefault();
+  /* на пальце панель открывает долгое нажатие — системное меню только гасим */
+  if(lastPointerType!=='touch') openPicker(+el.dataset.i);
 });
 $('board').addEventListener('animationend',e=>{
   if(e.animationName==='pop') e.target.classList.remove('pop');
@@ -29,8 +64,32 @@ $('modeList').addEventListener('click',e=>{
 });
 $('diffGrid').addEventListener('click',e=>{
   const b=e.target.closest('.diff-btn'); if(!b) return;
+  closeSheet();
   newGame(pickedMode,b.dataset.diff);
 });
+$('sheetBg').addEventListener('click',closeSheet);
+(function(){
+  const mp=$('modePanel'), grab=$('sheetGrab');
+  let y0=null;
+  grab.addEventListener('pointerdown',e=>{
+    y0=e.clientY; mp.style.transition='none';
+    try{ grab.setPointerCapture(e.pointerId) }catch(err){}
+  });
+  grab.addEventListener('pointermove',e=>{
+    if(y0==null) return;
+    const dy=Math.max(0,e.clientY-y0);
+    mp.style.transform=dy? `translateY(${dy}px)` : '';
+  });
+  const end=e=>{
+    if(y0==null) return;
+    const dy=e.clientY-y0; y0=null;
+    mp.style.transition=''; mp.style.transform='';
+    if(dy>60) closeSheet();
+  };
+  grab.addEventListener('pointerup',end);
+  grab.addEventListener('pointercancel',()=>{ y0=null; mp.style.transition=''; mp.style.transform='' });
+  grab.addEventListener('click',closeSheet);
+})();
 $('contPick').addEventListener('click',contPickStart);
 $('contCancel').addEventListener('click',contPickStop);
 $('contAll').addEventListener('click',()=>contMark(true));
@@ -142,7 +201,10 @@ document.addEventListener('keydown',e=>{
     }
     return;
   }
-  if($('game').classList.contains('hidden')) return;
+  if($('game').classList.contains('hidden')){
+    if(e.key==='Escape'&&sheetOpen()) closeSheet();
+    return;
+  }
   const g=cur(); if(!g) return;
   const code=e.code;
   if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
@@ -204,6 +266,7 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){ persistCache(); if(pending.length) saveLog() }
 });
 window.addEventListener('resize',()=>{
+  if(!isPhone()) closeSheet();
   snapBoard(); updatePickHint();
   if(document.body.classList.contains('won')) placeWinGlow();
 });
@@ -213,6 +276,15 @@ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);
 loadCache();
 pickedMode=SES.settings.mode||'classic';
 buildSwatches();
+if(COARSE){
+  const row=$('optDblRow');
+  if(row){
+    row.classList.remove('only-fine');
+    const b=row.querySelector('b'), sp=row.querySelector('span');
+    if(b) b.dataset.i18n='pickerTouchT';
+    if(sp) sp.dataset.i18n='pickerTouchD';
+  }
+}
 applyTheme(); applyLayout(); applyLang();
 renderHome(); show('home');
 if(pending.length) saveLog();
