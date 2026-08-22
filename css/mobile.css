@@ -1,0 +1,46 @@
+@media (max-width:600px){
+  .topbar{margin:2px 0 8px}
+
+  .topbar .tbtn{padding:6px 4px; margin-right:0}
+  #board{border-radius:5px}
+  .numpad{gap:4px; margin-top:10px}
+  .num{aspect-ratio:.72; font-size:22px; font-weight:500; border-radius:4px}
+  .num small{right:4px; bottom:3px; font-size:10px}
+  .controls{margin-top:12px}
+  .ctl{padding:11px 1px 9px; letter-spacing:0; gap:5px; min-height:54px}
+  .ctl svg{width:20px; height:20px}
+  .diff-btn b{font-size:19px}
+  .diff-btn{padding:15px 4px}
+  .cont-open{font-size:18px}
+  #picker{grid-template-columns:repeat(3,52px); gap:6px}
+  #picker button{font-size:19px}
+}
+
+@media (pointer:coarse){ .only-fine{display:none !important} #tabKeysBtn{display:none} }
+@media (max-width:600px){ #posRow, #posseg{display:none} }
+
+#pickHint{position:fixed; z-index:5; width:176px; margin:0; padding:2px 0 2px 13px;
+  text-align:left; font-size:13px; font-weight:400; line-height:1.55; color:var(--muted);
+  border-left:1px solid var(--line)}
+#pickHint.right-side{padding:2px 13px 2px 0; text-align:right;
+  border-left:0; border-right:1px solid var(--line)}
+#pickHint b{font-weight:500; color:var(--accent)}
+
+@media (max-width:620px){
+  .modal{padding:18px 16px; max-height:94vh}
+  .modal h2{margin-bottom:11px}
+
+  .stabs{flex-direction:row; border-right:0; border-bottom:1px solid var(--line);
+    padding:0; margin-bottom:14px; gap:0}
+  .stabs button{flex:1; text-align:center; padding:12px 4px; border-radius:0;
+    border-bottom:2px solid transparent; margin-bottom:-1px}
+  .stabs button.on{background:transparent; border-bottom-color:var(--accent)}
+  .modal h3{margin:14px 0 6px}
+  .toggle{padding:7px 0; gap:11px}
+  .toggle b{font-size:15px; margin-bottom:1px}
+  .toggle span{font-size:12.5px; line-height:1.32}
+  .modal .row{margin-top:12px}
+  .btn{padding:12px 20px; min-height:44px}
+  .keys{gap:16px 0}
+  .krow{font-size:13px; padding:7px 0}
+}

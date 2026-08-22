@@ -1,5 +1,5 @@
-# Заметки vault — не публикуем
 *.md
+!README.md
 .obsidian/
 .DS_Store
-!README.md
+test/

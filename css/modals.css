@@ -1,0 +1,110 @@
+.btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:3px;
+  padding:11px 24px; font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; cursor:pointer; transition:background .15s, color .15s}
+.btn:hover{background:transparent; color:var(--accent)}
+.btn.ghost{background:transparent; color:var(--muted); border-color:var(--line)}
+.btn.ghost:hover{color:var(--text); border-color:var(--text)}
+.btn.danger{background:transparent; color:var(--error); border-color:var(--error)}
+.btn.danger:hover{background:var(--error); color:var(--panel)}
+.modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
+  justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
+.modal .row:last-child{position:sticky; bottom:-24px; background:var(--panel); padding:12px 0 14px; margin-bottom:-14px}
+.modal{background:var(--panel); border:1px solid var(--line); border-radius:5px;
+  padding:26px 28px; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; box-shadow:var(--shadow);
+  animation:mIn .22s ease-out}
+@keyframes mIn{from{transform:translateY(8px); opacity:0}to{transform:none; opacity:1}}
+.modal h2{font-family:var(--f-disp); text-transform:uppercase; margin:0 0 14px; font-size:13.5px; font-weight:400; letter-spacing:.13em}
+.modal h3{margin:22px 0 9px; font-family:var(--f-disp); font-size:11px; font-weight:400; color:var(--muted); text-transform:uppercase; letter-spacing:.13em}
+.modal table{width:100%; border-collapse:collapse; font-size:12.5px}
+.modal th{text-align:left; color:var(--muted); font-weight:600; padding:6px 4px; border-bottom:1px solid var(--line); font-size:10.5px}
+.modal td{padding:8px 4px; border-bottom:1px solid var(--line); font-family:var(--f-num); font-size:12.5px; font-variant-numeric:tabular-nums}
+.win-big{font-family:var(--f-num); font-size:40px; font-weight:400; line-height:1; font-variant-numeric:tabular-nums}
+.win-sub{color:var(--muted); font-size:13.5px; font-weight:400}
+.record{color:var(--accent); font-size:12.5px; font-weight:600; letter-spacing:.03em}
+.win-sub .mk{color:var(--accent)}
+.win-grid{display:grid; grid-template-columns:repeat(3,1fr); margin:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+.win-grid div{background:transparent; border-right:1px solid var(--line); padding:9px 6px}
+.win-grid div:last-child{border-right:0}
+.win-grid b{display:block; font-family:var(--f-num); font-size:17px; font-weight:500; font-variant-numeric:tabular-nums; margin-bottom:3px}
+.win-grid span{font-size:10px; color:var(--muted); font-weight:600; letter-spacing:.12em; text-transform:uppercase}
+.note-line{margin:8px 0 0; font-size:12px; color:var(--muted); font-weight:400}
+.hist{font-size:12px; color:var(--muted); margin-top:6px; font-weight:400}
+.hist h3{margin:20px 0 4px}
+.hist div{display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--line)}
+.hist div:last-of-type{border-bottom:0}
+.hist b{font-family:var(--f-num); color:var(--text); font-weight:500; font-variant-numeric:tabular-nums}
+.hist .hist-foot{color:var(--muted); opacity:.8; font-size:11.5px; padding-top:10px}
+.btn.quiet{background:transparent; color:var(--muted); border-color:var(--line)}
+.btn.quiet:hover{color:var(--error); border-color:var(--error)}
+.modal .row{display:flex; gap:10px; margin-top:20px; justify-content:flex-end; flex-wrap:wrap}
+
+#confirmModal{z-index:40}
+#setModal{align-items:flex-start; padding-top:min(9vh,80px)}
+#setModal .modal{max-width:900px}
+.set-body{display:grid; grid-template-columns:158px 1fr; gap:0 30px}
+.stabs{display:flex; flex-direction:column; gap:2px; border-right:1px solid var(--line); padding-right:14px}
+#tab-view .scols{display:grid; grid-template-columns:auto 1fr; gap:16px 30px; align-items:center}
+#tab-view .scols>h3{margin:0}
+#tab-game .scols{display:grid; grid-template-columns:1fr 1fr; gap:20px 34px; align-items:start}
+.modal .sgrp h3{margin:0 0 3px}
+.sgrp .toggle:last-of-type{border-bottom:0}
+.toggle:has(input:disabled){opacity:.45; cursor:default}
+@media (max-width:620px){
+  #tab-view .scols{grid-template-columns:1fr; gap:0}
+  #tab-view .scols>h3{margin:20px 0 9px}
+  #tab-game .scols{grid-template-columns:1fr}
+  .set-body{grid-template-columns:1fr; gap:0}
+}
+.stabs button{padding:10px 12px; border:0; background:transparent; color:var(--muted); text-align:left;
+  font-family:inherit; font-size:13px; font-weight:500; letter-spacing:.01em; border-radius:3px;
+  cursor:pointer; transition:color .15s, background .15s}
+.stabs button:hover{color:var(--text); background:var(--cell-hl)}
+.stabs button.on{color:var(--accent); background:var(--accent-soft); font-weight:600}
+.swatches{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:3px; overflow:hidden}
+.sw{width:100%; border:0; border-right:1px solid var(--line); border-radius:0; padding:12px 0; cursor:pointer;
+  background:transparent; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:background .15s}
+.sw:last-child{border-right:0}
+.sw.selq{background:var(--accent-soft)} .sw.selq span{color:var(--accent)}
+.sw span{font-size:12.5px; font-weight:500; color:var(--muted); letter-spacing:.04em}
+.posseg,.langseg{display:flex; border:1px solid var(--line); border-radius:3px; overflow:hidden}
+.posseg button,.langseg button{flex:1; padding:11px 0; border:0; border-right:1px solid var(--line);
+  background:transparent; color:var(--muted); font-family:inherit; font-size:12.5px; font-weight:500;
+  letter-spacing:.04em; cursor:pointer; transition:color .15s, background .15s}
+.posseg button:last-child,.langseg button:last-child{border-right:0}
+.posseg button:hover,.langseg button:hover{color:var(--text)}
+.posseg button.on,.langseg button.on{color:var(--accent); background:var(--accent-soft)}
+.toggle{display:flex; gap:14px; align-items:flex-start; padding:15px 0; cursor:pointer; border-bottom:1px solid var(--line)}
+.toggle:last-of-type{border-bottom:0}
+.toggle input{appearance:none; -webkit-appearance:none; width:34px; height:19px; margin-top:4px; flex:none;
+  border-radius:3px; background:transparent; border:1px solid var(--line); cursor:pointer;
+  position:relative; transition:background .18s, border-color .18s}
+.toggle input::before{content:''; position:absolute; top:2px; left:2px; width:13px; height:13px;
+  border-radius:2px; background:var(--muted); transition:transform .18s, background .18s}
+.toggle input:checked{background:var(--accent-soft); border-color:var(--accent)}
+.toggle input:checked::before{transform:translateX(15px); background:var(--accent)}
+.toggle b{display:block; font-size:14.5px; font-weight:500; margin-bottom:2px}
+.toggle span{font-size:13px; color:var(--muted); font-weight:400; line-height:1.5}
+.keys{display:grid; gap:22px 38px}
+@media (min-width:620px){ .keys{grid-template-columns:1fr 1fr} }
+.modal .kgrp h3{margin:0 0 4px}
+.krow{display:flex; align-items:center; gap:6px 14px; flex-wrap:wrap;
+  padding:8px 0; border-bottom:1px solid var(--line); font-size:13px}
+.kgrp .krow:last-child{border-bottom:0}
+.krow>span:first-child{color:var(--text); font-weight:400}
+.krow .kk{display:flex; align-items:center; gap:4px; margin-left:auto; white-space:nowrap}
+.krow .kk.gest{color:var(--muted); font-size:12.5px}
+
+.keys kbd{display:inline-flex; align-items:center; justify-content:center;
+  min-width:23px; height:22px; padding:0 6px; background:var(--key-bg);
+  border:1px solid var(--key-line); border-bottom-width:2px; border-radius:4px;
+  font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.02em; color:var(--text)}
+.keys .sep{font-style:normal; color:var(--muted); font-size:11px; font-weight:400; padding:0 1px}
+
+.rules-body{display:flex; gap:22px; align-items:flex-start}
+.rules-prev{flex:none; width:128px}
+.rules-prev svg{display:block; width:100%; height:auto}
+.rules-body h3{font-family:var(--f-disp); font-size:19px; font-weight:400; letter-spacing:.02em;
+  color:var(--text); text-transform:none; margin:0 0 8px}
+.rules-body p{margin:0; font-size:13.5px; line-height:1.6; color:var(--muted)}
+.modal table.t-modes{margin-top:22px}
+.modal table.t-modes:empty{display:none}

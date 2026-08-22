@@ -1,0 +1,263 @@
+'use strict';
+
+const $=id=>document.getElementById(id);
+const THEMES=[
+  {id:'light', accent:'#3a5aa0', meta:'#ebeef6'},
+  {id:'dark',  accent:'#9ec1f5', meta:'#0d1119'},
+];
+let lastPointerType='mouse';
+function pickerAllowed(){
+  if(lastPointerType==='touch') return false;
+  try{ if(!matchMedia('(pointer:fine)').matches) return false }catch(e){}
+  return true;
+}
+let toastTimer=null;
+function toast(msg){
+  const el=$('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+function show(screen){
+  $('home').classList.toggle('hidden',screen!=='home');
+  $('game').classList.toggle('hidden',screen!=='game');
+  document.body.classList.toggle('in-game',screen==='game');
+  if(screen==='game') snapBoard();
+}
+function applyTheme(){
+  if(!THEMES.find(x=>x.id===SES.settings.theme)) SES.settings.theme=THEMES[0].id;
+  document.documentElement.dataset.theme=SES.settings.theme;
+  const th=THEMES.find(x=>x.id===SES.settings.theme)||THEMES[0];
+  $('metaTheme').setAttribute('content',th.meta);
+  document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('selq',b.dataset.t===SES.settings.theme));
+  setFavicon(th);
+}
+function setFavicon(th){
+  let cellsSvg='';
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++)
+    cellsSvg+=`<rect x="${10+c*16}" y="${10+r*16}" width="12" height="12" rx="3.5" fill="${th.accent}" opacity="${r===c?'1':'.18'}"/>`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="${th.meta}"/>${cellsSvg}</svg>`;
+  document.querySelector('link[rel="icon"]').href='data:image/svg+xml,'+encodeURIComponent(svg);
+}
+function applyLayout(){
+  const p=SES.settings.pos||'center';
+  document.body.classList.toggle('pos-left',p==='left');
+  document.body.classList.toggle('pos-right',p==='right');
+  document.querySelectorAll('#posseg button').forEach(b=>b.classList.toggle('on',p===b.dataset.p));
+  placePickHint();
+  if(document.body.classList.contains('won')) placeWinGlow();
+}
+
+const PK_ICONS={
+  digit:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>',
+  note:'<svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg>',
+  hyp:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg>',
+};
+function buildPicker(sp){
+  const pk=$('picker');
+  pk.innerHTML='';
+  pk.classList.toggle('pk-wide', sp.maxD>9 && sp.kind!=='num');
+  pk.classList.toggle('pk-num', sp.kind==='num');
+  if(sp.kind==='num'){ buildNumPicker(pk); return }
+  const hdr=document.createElement('div');
+  hdr.className='pk-mode';
+  hdr.innerHTML=['digit','note','hyp'].map(m=>
+    `<button data-m="${m}" title="${t(m==='digit'?'digitTab':m==='note'?'noteTab':'hypTab')}">${PK_ICONS[m]}</button>`).join('');
+  hdr.querySelectorAll('button').forEach(b=>b.addEventListener('pointerdown',e=>{
+    e.preventDefault(); e.stopPropagation();
+    inputMode=b.dataset.m; syncModeButtons(); renderBoard();
+  }));
+  pk.appendChild(hdr);
+  for(let v=1;v<=sp.maxD;v++){
+    const b=document.createElement('button');
+    b.dataset.v=v; b.innerHTML=`${v}<small></small>`;
+    b.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); inputDigit(v); closePicker() });
+    pk.appendChild(b);
+  }
+  const x=document.createElement('button');
+  x.className='pk-x';
+  x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
+  x.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); eraseCell(); closePicker() });
+  pk.appendChild(x);
+  pk.addEventListener('pointerdown',e=>e.stopPropagation());
+}
+
+function buildNumPicker(pk){
+  for(let v=1;v<=9;v++) pk.appendChild(numKey(v));
+  pk.appendChild(numKey(0));
+  const x=document.createElement('button');
+  x.className='pk-x';
+  x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
+  x.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); eraseCell(); closePicker() });
+  pk.appendChild(x);
+  pk.addEventListener('pointerdown',e=>e.stopPropagation());
+}
+function numKey(v){
+  const b=document.createElement('button');
+  b.dataset.v=v; b.textContent=v;
+  b.addEventListener('pointerdown',e=>{
+    e.preventDefault(); e.stopPropagation();
+    const cell=sel;
+    inputDigit(v);
+    const now=cell>=0? (cur()? cur().values[cell] : 0) : 0;
+    if(!now || now*10>SPEC.maxD) closePicker();
+  });
+  return b;
+}
+function syncPickerMode(){
+  const pk=$('picker');
+  pk.querySelectorAll('.pk-mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===inputMode));
+  pk.classList.toggle('mode-note',inputMode==='note');
+  pk.classList.toggle('mode-hyp',inputMode==='hyp');
+}
+function refreshPickerCounts(){
+  const pk=$('picker'); if(pk.classList.contains('hidden')) return;
+  const g=cur(); if(!g){ closePicker(); return }
+  const counts={};
+  for(let k=0;k<SPEC.cells.length;k++){ const v=merged(g,k); if(v) counts[v]=(counts[v]||0)+1 }
+  const tot=digitTotals(g);
+  const showCounts=SES.settings.showCounts!==false;
+  pk.querySelectorAll('button[data-v]').forEach(b=>{
+    const v=+b.dataset.v, left=(tot[v]||0)-(counts[v]||0);
+    b.classList.toggle('done',left<=0);
+    const s=b.querySelector('small'); if(s) s.textContent=(showCounts&&left>0)?left:'';
+  });
+}
+function openPicker(i){
+  if(!pickerAllowed()||!SPEC) return;
+  dismissPickHint();
+  if(!SES.settings.dblPick) return;
+  const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
+  sel=i; renderBoard();
+  const pk=$('picker');
+  if(SPEC.kind!=='num') syncPickerMode();
+  pk.classList.remove('hidden');
+  if(SPEC.kind!=='num') refreshPickerCounts();
+  const boardR=$('board').getBoundingClientRect(), cellR=cells[i].getBoundingClientRect();
+  const pw=pk.offsetWidth, ph=pk.offsetHeight;
+  let left=cellR.right-boardR.left+8;
+  const maxLeft=window.innerWidth-8-pw-boardR.left;
+  left=Math.max(4,Math.min(left,maxLeft));
+  let top=cellR.top-boardR.top+cellR.height/2-ph/2;
+  top=Math.max(4,Math.min(top,boardR.height-ph-4));
+  pk.style.left=left+'px'; pk.style.top=top+'px';
+}
+function closePicker(){ $('picker').classList.add('hidden') }
+function refreshPickerLang(){
+  const pk=$('picker');
+  const tabs=pk.querySelectorAll('.pk-mode button');
+  if(tabs.length===3){ tabs[0].title=t('digitTab'); tabs[1].title=t('noteTab'); tabs[2].title=t('hypTab') }
+  const xt=pk.querySelector('.pk-x-t'); if(xt) xt.textContent=t('eraseP');
+}
+function placePickHint(){
+  const el=$('pickHint');
+  if(!el||el.classList.contains('hidden')) return;
+  const b=$('board').getBoundingClientRect();
+  if(!b.width) return;
+  const w=el.offsetWidth||176, gap=20;
+  const rightRoom=window.innerWidth-b.right, leftRoom=b.left;
+  const useRight=rightRoom>=leftRoom;
+  const room=useRight? rightRoom : leftRoom;
+  if(room<w+gap+6){ el.style.visibility='hidden'; return }
+  el.style.visibility='';
+  el.classList.toggle('right-side',!useRight);
+  el.style.left=Math.round(useRight? b.right+gap : b.left-gap-w)+'px';
+  el.style.top=Math.round(b.top+b.height/2-el.offsetHeight/2)+'px';
+}
+const hintKey=()=> SPEC&&SPEC.kind==='num'? 'sudoku-numHint' : 'sudoku-pickHint';
+function updatePickHint(){
+  const el=$('pickHint'); if(!el||!SPEC) return;
+  let seen=false; try{ seen=!!localStorage.getItem(hintKey()) }catch(e){}
+  const num=SPEC.kind==='num';
+  el.textContent = num? t('numHint') : t('pickHint');
+  el.classList.toggle('hidden', seen || !pickerAllowed() || (!num && !SES.settings.dblPick));
+  placePickHint();
+}
+function dismissPickHint(){
+  try{ localStorage.setItem(hintKey(),'1') }catch(e){}
+  const el=$('pickHint'); if(!el||el.classList.contains('hidden')) return;
+  el.classList.add('hidden');
+}
+
+function openStats(){
+  let h=`<tr><th>${t('level')}</th><th>${t('hSolved')}</th><th>${t('hBest')}</th><th>${t('avgL')}</th><th>${t('hClean')}</th></tr>`;
+  for(const d of DIFFS){
+    const s=statsFor(null,d), avg=s.solved?Math.round(s.total/s.solved):null;
+    h+=`<tr><td>${t('d_'+d)}</td><td>${s.solved}</td><td>${fmtTime(s.best)}</td><td>${fmtTime(avg)}</td><td>${s.perfect}</td></tr>`;
+  }
+  $('statsTable').innerHTML=h;
+  let h2='';
+  for(const id of MODE_IDS){
+    const s=statsFor(id,null);
+    if(!s.solved) continue;
+    const avg=Math.round(s.total/s.solved);
+    h2+=`<tr><td>${t('m_'+id)}</td><td>${s.solved}</td><td>${fmtTime(s.best)}</td><td>${fmtTime(avg)}</td><td>${s.perfect}</td></tr>`;
+  }
+  $('statsModes').innerHTML = h2
+    ? `<tr><th>${t('modesT')}</th><th>${t('hSolved')}</th><th>${t('hBest')}</th><th>${t('avgL')}</th><th>${t('hClean')}</th></tr>`+h2
+    : '';
+  const hist=[...allGames()].sort((a,b)=> a.d<b.d?1:-1).slice(0,12);
+  const loc=SES.settings.lang==='ru'?'ru-RU':'en-GB';
+  const fmtDay=d=>{ const p=d.split('-'); return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString(loc,{day:'numeric',month:'short'}) };
+  $('histList').innerHTML=
+    `<h3>${t('histT')}</h3>`+
+    (hist.map(x=>`<div><span>${fmtDay(x.d)} · ${t('m_'+x.mode)} · ${t('d_'+x.diff)}</span><span><b>${fmtTime(x.time)}</b>${x.mistakes?` · ${t('mist')} ${x.mistakes}`:''}${x.hints?` · ${t('hintsSm')} ${x.hints}`:''}</span></div>`).join('')||`<div>${t('none')}</div>`)+
+    `<div class="hist-foot"><span>${t('dataAt')}</span><span>${LOG.updated? new Date(LOG.updated).toLocaleString(loc,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—'}</span></div>`;
+  $('statsModal').classList.remove('hidden');
+}
+async function resetStats(){
+  if(!await askConfirm(t('resetConfirm'))) return;
+  pending=[]; LOG.games=[]; LOG.updated=Date.now();
+  try{ localStorage.setItem(LS_LOG,JSON.stringify(LOG)); localStorage.setItem(LS_PEND,'[]') }catch(e){}
+  renderHome();
+  if(!$('statsModal').classList.contains('hidden')) openStats();
+  toast(t('resetDone'));
+}
+
+function buildSwatches(){
+  const wrap=$('swatches');
+  for(const th of THEMES){
+    const b=document.createElement('button');
+    b.className='sw'; b.dataset.t=th.id;
+    b.innerHTML=`<span>${t('th_'+th.id)}</span>`;
+    b.addEventListener('click',()=>{ SES.settings.theme=th.id; applyTheme(); persistCache() });
+    wrap.appendChild(b);
+  }
+}
+function openSettings(tab){
+  $('optInstant').checked=SES.settings.instant;
+  $('optLimit').checked=SES.settings.limit;
+  $('optLimit').disabled=!SES.settings.instant;
+  $('optDbl').checked=SES.settings.dblPick;
+  $('optSame').checked=SES.settings.highlightSame!==false;
+  $('optCounts').checked=SES.settings.showCounts!==false;
+  $('optDigitFirst').checked=!!SES.settings.digitFirst;
+  $('optHintBtn').checked=SES.settings.showHint;
+  $('optAutoBtn').checked=SES.settings.showAuto;
+  applyLayout(); setTab(tab||'view');
+  $('setModal').classList.remove('hidden');
+}
+function setTab(name){
+  if(name==='keys'&&getComputedStyle($('tabKeysBtn')).display==='none') name='view';
+  document.querySelectorAll('.stabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  for(const tb of ['view','game','keys']) $('tab-'+tb).classList.toggle('hidden',tb!==name);
+}
+function askConfirm(msg){
+  return new Promise(res=>{
+    const bg=$('confirmModal');
+    $('confirmText').textContent=msg;
+    $('confirmYes').textContent=t('yes'); $('confirmNo').textContent=t('cancel');
+    bg.classList.remove('hidden');
+    const done=v=>{ bg.classList.add('hidden');
+      $('confirmYes').onclick=$('confirmNo').onclick=bg.onclick=null; res(v) };
+    $('confirmYes').onclick=()=>done(true);
+    $('confirmNo').onclick=()=>done(false);
+    bg.onclick=e=>{ if(e.target===bg) done(false) };
+  });
+}
+
+function openRules(){
+  const g=cur(); if(!g) return;
+  $('rulesName').textContent=t('m_'+g.mode);
+  $('rulesText').textContent=t('r_'+g.mode);
+  $('rulesPrev').innerHTML=previewSVG(g.mode);
+  $('rulesModal').classList.remove('hidden');
+}

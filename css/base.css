@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Tenor+Sans&family=Onest:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&display=swap');
+
+:root{
+  --f-disp:'Tenor Sans',system-ui,sans-serif;
+  --f-body:Onest,system-ui,sans-serif;
+  --f-num:Lora,Georgia,serif;
+}
+:root, html[data-theme="light"]{
+  --bg:#ebeef6; --panel:#f7f9fd; --panel2:#ffffff; --line:#d7dced; --line-strong:#1b2130;
+  --text:#1b2130; --muted:#57617a; --accent:#3a5aa0; --accent-text:#ffffff; --accent-soft:#dbe3f5;
+  --accent2:#6f5fa8; --accent2-soft:#e5e0f4;
+  --error:#b04a52; --note:#4d5871; --given:#1b2130; --user:#3a5aa0; --cell-hl:#dde4f3; --cell-same:#cbd6ef; --note-sel:#3c4761;
+  --shadow:0 18px 44px rgba(30,45,80,.11);
+  --rule:rgba(58,90,160,.42); --frame:rgba(58,90,160,.30);
+  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(58,90,160,.13), transparent 68%);
+  --halo-win:radial-gradient(ellipse 30% 58% at var(--wgx) var(--wgy),
+    rgba(255,255,255,1) 0%, rgba(233,241,255,.96) 16%, rgba(158,186,235,.62) 34%, rgba(58,90,160,.24) 54%, rgba(34,52,92,.05) 74%, rgba(34,52,92,.10) 100%);
+  --glow-edge:rgba(58,90,160,.62);
+  --pop:#ffffff; --pop-shadow:0 16px 38px rgba(24,37,66,.24), 0 2px 8px rgba(24,37,66,.14);
+  --key-bg:#ffffff; --key-line:#cdd5e8;
+  --kk:#c6cee2; --kk-dark:#8d99b8;
+  --zone-fill:#e5ecfa; --even-fill:#ece7f8;
+  --tint-hl:rgba(58,90,160,.10); --tint-same:rgba(58,90,160,.21); --tint-sel:rgba(58,90,160,.30);
+  --tint-hyp:rgba(111,95,168,.16); --tint-hyp-sel:rgba(111,95,168,.30); --tint-err:rgba(176,74,82,.16);
+}
+html[data-theme="dark"]{
+  --bg:#0d1119; --panel:#151c2b; --panel2:#1c2434; --line:#252c3d; --line-strong:#e4e9f4;
+  --text:#e4e9f4; --muted:#8b96af; --accent:#9ec1f5; --accent-text:#0d1119; --accent-soft:rgba(158,193,245,.20);
+  --accent2:#bda9ef; --accent2-soft:rgba(189,169,239,.20);
+  --error:#e2848c; --note:#98a3bb; --given:#e4e9f4; --user:#9ec1f5; --cell-hl:#1d2637; --cell-same:#293857; --note-sel:#c9d3e6;
+  --shadow:0 18px 44px rgba(0,0,0,.5);
+  --rule:rgba(158,193,245,.36); --frame:rgba(158,193,245,.24);
+  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(158,193,245,.14), transparent 68%);
+  --halo-win:radial-gradient(ellipse 30% 58% at var(--wgx) var(--wgy),
+    rgba(244,250,255,.60) 0%, rgba(158,193,245,.38) 18%, rgba(158,193,245,.15) 40%, transparent 70%);
+  --glow-edge:rgba(158,193,245,.62);
+  --pop:#232e44; --pop-shadow:0 16px 38px rgba(0,0,0,.62), 0 2px 8px rgba(0,0,0,.45);
+  --key-bg:#1a2333; --key-line:#3b4963;
+  --kk:#232c3f; --kk-dark:#121824;
+  --zone-fill:rgba(158,193,245,.12); --even-fill:rgba(189,169,239,.13);
+  --tint-hl:rgba(158,193,245,.09); --tint-same:rgba(158,193,245,.19); --tint-sel:rgba(158,193,245,.30);
+  --tint-hyp:rgba(189,169,239,.16); --tint-hyp-sel:rgba(189,169,239,.30); --tint-err:rgba(226,132,140,.22);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0; background:var(--bg); color:var(--text);
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  font-family:var(--f-body);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  transition:background .25s,color .25s}
+body.in-game main{max-width:100%}
+body.pos-left #game{margin-left:0}
+body.pos-right #game{margin-left:auto; margin-right:0}
+button{font-family:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
+header h1{font-family:var(--f-disp); font-size:35px; font-weight:400; letter-spacing:.2em; margin:0 0 0 .2em}
+.tagline{margin:0; color:var(--muted); font-size:13px}
+body.in-game .tagline{display:none}
+header .iconbtn{position:absolute; top:30px}
+#backBtn{display:none}
+body.in-game #backBtn{display:flex; margin-left:-6px; margin-right:4px}
+header #statsBtn{right:calc(50% - 440px)}
+header #setBtn{right:calc(50% - 478px)}
+@media(max-width:990px){header #statsBtn{right:60px} header #setBtn{right:16px}}
+.iconbtn{background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer;
+  color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
+.iconbtn:hover{color:var(--text); background:var(--panel)}
+.iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
+main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
+#game{container-type:inline-size; max-width:clamp(320px, calc(100vh - 328px), 540px); margin:0 auto}
+@supports (height:100dvh){
+  #game{max-width:clamp(320px, calc(100dvh - 328px), 540px)}
+}
+body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4px}
+body.in-game header h1{font-size:24px; flex:1; text-align:left}
+body.in-game header .iconbtn{position:static}
+.site-foot{width:100%; max-width:940px; text-align:center; padding:6px 18px 18px; font-size:11.5px; color:var(--muted)}
+.site-foot a{color:var(--muted)}
+.site-foot a:hover{color:var(--text)}
+body.in-game .site-foot{padding:4px 18px 10px; font-size:10.5px; opacity:.75}
+
+body::before{content:''; position:fixed; inset:0; background:var(--halo); pointer-events:none; z-index:0; transition:opacity .3s}
+body.in-game::before{opacity:.4}
+header, main, .site-foot{position:relative; z-index:1}
+.wel-grid{display:flex; gap:12px; margin:18px 0 14px}
+.wel-card{flex:1; background:transparent; border:1px solid var(--line); border-radius:3px; padding:11px 11px 13px;
+  cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:10px; align-items:center;
+  transition:border-color .15s, background .15s}
+.wel-card:hover{border-color:var(--accent)}
+.wel-card:active{background:var(--accent-soft)}
+.wel-card b{font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+.wel-prev{width:100%; aspect-ratio:16/10; border-radius:3px; display:grid; grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr; gap:5px; padding:9px; border:1px solid rgba(127,127,127,.25)}
+.wel-prev i{display:block; border-radius:2px}
+.wp-light{background:#ebeef6}
+.wp-light i{background:#f7f9fd; border:1px solid #d7dced}
+.wp-light i.a{background:#3a5aa0; border-color:#3a5aa0}
+.wp-dark{background:#0d1119}
+.wp-dark i{background:#151c2b; border:1px solid #252c3d}
+.wp-dark i.a{background:#9ec1f5; border-color:#9ec1f5}
+.hidden{display:none !important}
+@media(min-height:640px){body.in-game{overflow:hidden}}
+
+@media (max-width:600px){
+  html{-webkit-text-size-adjust:100%}
+  body{-webkit-touch-callout:none; touch-action:manipulation;
+    padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right)}
+  button{touch-action:manipulation}
+  header{padding:22px 14px 8px}
+  header h1{font-size:25px; letter-spacing:.15em; margin-left:.15em}
+  header .iconbtn{top:20px; width:40px; height:40px}
+  .tagline{font-size:12px}
+  @supports (height:100dvh){ body{min-height:100dvh} }
+
+  main{padding:4px 10px calc(14px + env(safe-area-inset-bottom))}
+
+  body.in-game main{padding:4px 4px calc(6px + env(safe-area-inset-bottom)); flex:0 1 auto}
+  body.in-game #game{width:100%}
+
+  body.in-game{justify-content:center}
+  body.in-game header{padding:calc(6px + env(safe-area-inset-top)) 12px 2px}
+  body.in-game header h1{font-size:20px}
+
+  #game{max-width:100%}
+
+  .board-wrap{max-width:min(100%, calc(100vh - 268px)); margin:0 auto}
+  @supports (height:100dvh){
+    .board-wrap{max-width:min(100%, calc(100dvh - 268px))}
+  }
+}
+
+@media (max-width:600px) and (max-height:560px){
+  body.in-game{justify-content:flex-start; overflow:auto}
+}
+
+#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+  background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
+  padding:10px 18px; border-radius:3px; font-size:13px; font-weight:600; z-index:50;
+  transition:opacity .25s, transform .25s; pointer-events:none; box-shadow:var(--shadow)}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+#genOverlay{position:fixed; inset:0; background:var(--bg); opacity:.92; z-index:30;
+  display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px; font-weight:600}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+
+.in-game-only{display:none}
+body.in-game .in-game-only{display:flex}
+#rulesBtn{position:static}

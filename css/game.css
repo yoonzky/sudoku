@@ -1,0 +1,182 @@
+.topbar{display:flex; align-items:center; justify-content:space-between; margin:4px 0 12px; font-size:12.5px; color:var(--muted); gap:6px}
+.topbar .t-item{font-weight:500}
+.topbar .t-item b{font-family:var(--f-num); color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+.topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
+.topbar .tbtn:hover{color:var(--text)}
+.topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
+
+.board-wrap{position:relative}
+#board{position:relative; container-type:inline-size;
+  display:grid; width:100%; --bw:9; --bh:9; --nc:3; --nr:3;
+  border:1px solid var(--frame); border-radius:6px; overflow:hidden; background:var(--panel);
+  user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
+#board.notes-on .cell.sel{box-shadow:inset 0 0 0 2px var(--accent); z-index:4}
+#board.hyp-on .cell.sel{--tint:var(--tint-hyp-sel); box-shadow:inset 0 0 0 2px var(--accent2); z-index:4}
+.cell{position:relative; z-index:0; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  font-family:var(--f-num); font-size:calc(58cqw / var(--bw)); line-height:1; font-weight:600; cursor:pointer; background:transparent;
+  color:var(--user)}
+.cell.given{color:var(--given); font-weight:600}
+.cell.hypv{color:var(--accent2); font-weight:600; text-decoration:underline dashed; text-decoration-thickness:2px; text-underline-offset:4px}
+#board{margin:0 auto}
+.cell.hl{--tint:var(--tint-hl)}
+.cell.same{--tint:var(--tint-same)}
+
+.cell.hypv{--tint:var(--tint-hyp)}
+.cell.sel{--tint:var(--tint-sel); box-shadow:inset 0 0 0 2px var(--accent); z-index:4}
+.cell.hypv.sel{--tint:var(--tint-hyp-sel); box-shadow:inset 0 0 0 2px var(--accent2)}
+.cell.err{color:var(--error); --tint:var(--tint-err); font-weight:700}
+.cell.err.sel{--tint:var(--tint-sel); box-shadow:inset 0 0 0 2px var(--error); z-index:4}
+.cell .notes{position:absolute; inset:1px; display:grid;
+  grid-template-columns:repeat(var(--nc),1fr); grid-template-rows:repeat(var(--nr),1fr); pointer-events:none}
+.cell .notes span{font-family:var(--f-num); font-size:calc(23cqw / var(--bw)); line-height:1; color:var(--note); opacity:1; display:flex; align-items:center; justify-content:center; font-weight:600}
+
+.cell.sel .notes span{color:var(--note-sel)}
+.cell .notes span.nhl{color:var(--accent); font-weight:700; opacity:1}
+.cell.pop{animation:pop .16s ease-out}
+@keyframes pop{from{transform:scale(.9); opacity:.6}to{transform:none; opacity:1}}
+.cell.uflash{animation:uflash .55s ease-out}
+@keyframes uflash{0%{background:var(--accent-soft)}100%{background:var(--panel)}}
+.cell.wave{animation:wave .5s ease-out both}
+@keyframes wave{0%{transform:scale(1)}45%{transform:scale(1.08); color:var(--accent)}100%{transform:scale(1)}}
+
+body.won .controls, body.won .numpad, body.won #pickHint{display:none}
+
+body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
+.win-lead{font-family:var(--f-disp); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:7px}
+#winPanel{border-top:1px solid var(--line); margin-top:16px; padding-top:14px;
+  animation:winIn .55s cubic-bezier(.2,.7,.3,1) both}
+@keyframes winIn{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:none}}
+.win-head{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap}
+.win-meta{display:flex; flex-direction:column; gap:1px; flex:1; min-width:0}
+.win-foot{display:flex; align-items:center; gap:20px; margin-top:13px}
+.win-grid{flex:1; min-width:0}
+.win-act{display:flex; gap:10px; flex:none}
+@media (max-width:620px){
+  .win-foot{flex-direction:column; align-items:stretch; gap:12px}
+  .win-act .btn{flex:1}
+}
+
+body.won.in-game{overflow:auto}
+
+@media (max-width:600px){
+  body.won.in-game{justify-content:flex-start; padding-top:var(--won-top,0px)}
+}
+#winGlow{position:fixed; inset:0; pointer-events:none; z-index:6; opacity:0;
+  --wgx:50%; --wgy:-4%; background:var(--halo-win)}
+#winGlow.on{opacity:.62; animation:haloIn 2.9s cubic-bezier(.22,.68,.3,1) forwards}
+@keyframes haloIn{
+  0%{opacity:0; transform:scale(.84) translateY(-5%)}
+  20%{opacity:.88; transform:scale(1.04) translateY(0)}
+  58%{opacity:.7; transform:scale(1)}
+  100%{opacity:.6; transform:scale(1)}
+}
+
+body.won #board{box-shadow:0 -26px 80px -14px var(--glow-edge), 0 -10px 40px -14px var(--glow-edge), var(--shadow)}
+#board{transition:box-shadow .9s ease-out}
+#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:6px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
+#pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
+
+#picker{position:absolute; z-index:8; background:var(--pop); border:1px solid var(--frame);
+  border-radius:5px; padding:8px; display:grid; grid-template-columns:repeat(3,46px); gap:5px;
+  box-shadow:var(--pop-shadow); animation:mIn .15s ease-out}
+#picker button{width:100%; aspect-ratio:1; border-radius:4px; border:1px solid var(--key-line);
+  border-bottom-width:2px; background:var(--key-bg); font-family:var(--f-num); font-size:21px; font-weight:500; color:var(--text);
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:border-color .12s, color .12s, background .12s}
+#picker button:hover{border-color:var(--accent); color:var(--accent)}
+#picker button:active{background:var(--accent-soft); transform:translateY(1px); border-bottom-width:1px}
+#picker button.done{opacity:.25; pointer-events:none}
+#picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:12px; font-weight:500; letter-spacing:.01em; border-radius:4px; border-bottom-width:1px}
+#picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; margin-right:6px}
+#picker .pk-mode{grid-column:1/-1; display:flex; gap:4px; margin-bottom:2px}
+#picker .pk-mode button{flex:1; aspect-ratio:auto; height:32px; border-radius:4px; border:1px solid var(--key-line);
+  border-bottom-width:1px; background:var(--key-bg); color:var(--muted); width:auto; padding:0}
+#picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
+#picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+#picker .pk-mode button.on[data-m="hyp"]{background:var(--accent2-soft); border-color:var(--accent2); color:var(--accent2)}
+#picker button[data-v]{position:relative}
+#picker button[data-v] small{position:absolute; right:5px; bottom:3px; font-size:10px; font-weight:500; color:var(--muted); line-height:1}
+#picker.mode-note button[data-v]{color:var(--accent); border-color:var(--accent-soft); background:var(--accent-soft)}
+#picker.mode-hyp button[data-v]{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
+#picker.mode-note button[data-v].done, #picker.mode-hyp button[data-v].done{opacity:.22}
+
+#picker .pk-mode button:not(.on):hover,
+#picker.mode-note button[data-v]:hover{border-color:var(--accent); color:var(--accent)}
+#picker.mode-hyp button[data-v]:hover{border-color:var(--accent2); color:var(--accent2)}
+
+.controls{display:flex; flex-wrap:wrap; margin-top:16px;
+  border:1px solid var(--line); border-radius:3px; overflow:hidden}
+.ctl{flex:1 1 0; min-width:0; background:transparent; border:0;
+  padding:11px 5px 9px; cursor:pointer; color:var(--muted); font-family:inherit;
+  font-size:clamp(8px,2.5cqw,11px); font-weight:500; letter-spacing:.01em;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  transition:color .15s, background .15s}
+.ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2;
+  stroke-linecap:square; stroke-linejoin:miter}
+.ctl + .ctl{border-left:1px solid var(--line)}
+.ctl:hover:not(:disabled){color:var(--text); background:var(--cell-hl)}
+.ctl.on{color:var(--accent); background:var(--accent-soft)}
+.ctl.on2{color:var(--accent2); background:var(--accent2-soft)}
+.ctl:disabled{opacity:.32; cursor:default}
+.numpad{display:grid; gap:6px; margin-top:10px}
+.num{position:relative; touch-action:manipulation; background:var(--key-bg);
+  border:1px solid var(--key-line); border-bottom-width:2px; border-radius:4px; aspect-ratio:.78; cursor:pointer;
+  font-family:var(--f-num); font-size:clamp(18px,4.5vw,26px); font-weight:500; color:var(--text);
+  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  display:flex; align-items:center; justify-content:center;
+  transition:border-color .12s, color .12s, background .12s}
+.num small{position:absolute; right:6px; bottom:4px; font-size:11.5px; color:var(--muted); font-weight:500; line-height:1}
+.num:hover{border-color:var(--accent); color:var(--accent)}
+.num:active{transform:translateY(1px); border-bottom-width:1px}
+.num:active{background:var(--accent-soft)}
+.num.done{opacity:.22; pointer-events:none}
+.num.hl{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+
+.numpad.mode-note .num{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
+.numpad.mode-hyp .num{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
+.numpad.mode-note .num.done, .numpad.mode-hyp .num.done{opacity:.28}
+.num.armed{border-color:var(--accent); color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent)}
+.numpad.mode-hyp .num.armed{border-color:var(--accent2); color:var(--accent2); background:var(--accent2-soft); box-shadow:inset 0 0 0 1px var(--accent2)}
+
+.cell::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:-1;
+  background:var(--tint,transparent); transition:background .12s}
+.cell::after{content:''; position:absolute; inset:0; pointer-events:none; z-index:2;
+  border-top:var(--bt,0); border-left:var(--bl,0); border-right:var(--br,0); border-bottom:var(--bb,0)}
+.cell.zone{background:var(--zone-fill)}
+.cell.even{background:var(--even-fill)}
+.cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
+
+.deco{position:absolute; inset:0; pointer-events:none; z-index:6}
+.deco svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+.deco .cgs{position:absolute; display:flex; align-items:flex-start; justify-content:flex-start;
+  padding:9% 0 0 15%; font-family:var(--f-num); font-size:calc(26cqw / var(--bw)); line-height:1;
+  font-weight:600; color:var(--accent); text-decoration:none;
+  text-shadow:0 0 2px var(--panel), 0 0 2px var(--panel), 0 0 3px var(--panel)}
+
+.blk{background:var(--kk-dark); border-right:1px solid var(--frame); border-bottom:1px solid var(--frame)}
+.clue{position:relative; background:var(--kk);
+  border-right:1px solid var(--frame); border-bottom:1px solid var(--frame)}
+.clue svg{position:absolute; inset:0; width:100%; height:100%; stroke:var(--frame); stroke-width:.6}
+.clue u,.clue s{position:absolute; text-decoration:none; font-family:var(--f-num);
+  font-size:calc(30cqw / var(--bw)); line-height:1; font-weight:600; color:var(--text)}
+.clue u{top:8%; right:9%}
+.clue s{bottom:8%; left:9%}
+
+body.board-wide #game{max-width:clamp(320px, calc(100vh - 300px), 720px)}
+@supports (height:100dvh){
+  body.board-wide #game{max-width:clamp(320px, calc(100dvh - 300px), 720px)}
+}
+body.board-num .numpad{grid-template-columns:repeat(10,1fr)}
+.topbar .t-item em{font-style:normal; color:var(--muted); margin-left:8px; font-size:12px}
+
+#board{background:transparent}
+.cell{background:var(--panel)}
+body.board-wide:not(.won) #board{border-color:transparent; box-shadow:none}
+#picker.pk-wide{grid-template-columns:repeat(4,46px)}
+#picker.pk-num{grid-template-columns:repeat(5,42px)}
+#picker.pk-num button{font-size:19px}
