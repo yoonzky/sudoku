@@ -35,10 +35,10 @@ function lineSets(sp,ids){
   sp.plain=ids.length;
 }
 
-function multi(id,offs,frames){
+function multi(id,offs){
   const sp=newSpec(id);
   for(const o of offs) addGrid(sp,o[0],o[1],9,3,3);
-  if(frames) sp.frames=offs.map(o=>({x:o[0],y:o[1],w:9,h:9}));
+  sp.frames=offs.map(o=>({x:o[0],y:o[1],w:9,h:9}));
   return sp;
 }
 

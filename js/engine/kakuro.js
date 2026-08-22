@@ -94,11 +94,11 @@ function kakPattern(w,h,maxRun,extra){
     const segs=kakSegments(mask,w,h);
     ok = segs.length>0 && segs.every(s=>s.cells.length>=2 && s.cells.length<=maxRun);
     let white=0; for(const m of mask) white+=m;
-    if(ok && white>=Math.round((w-1)*(h-1)*0.5)) return mask;
+    if(ok && white>=Math.round((w-1)*(h-1)*0.68)) return mask;
   }
   return null;
 }
-const KAK_CFG={easy:{n:8,run:4,extra:3},medium:{n:9,run:5,extra:4},hard:{n:10,run:5,extra:5},expert:{n:11,run:6,extra:5}};
+const KAK_CFG={easy:{n:8,run:5,extra:0},medium:{n:9,run:6,extra:1},hard:{n:10,run:7,extra:1},expert:{n:11,run:8,extra:2}};
 function kakMake(diff,deadline){
   const cfg=KAK_CFG[diff], stop=deadline||(Date.now()+9000);
   let best=null;

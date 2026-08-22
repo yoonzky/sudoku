@@ -117,6 +117,7 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 #picker{padding:9px; grid-template-columns:repeat(3,58px); gap:6px}
 #picker button{font-size:22px}
 #picker.pk-wide{grid-template-columns:repeat(4,52px)}
+#picker.pk-ten{grid-template-columns:repeat(5,46px)}
 #picker.pk-num{grid-template-columns:repeat(5,46px)}
 #picker .pk-mode button{height:38px}
 #picker .pk-x{height:38px}

@@ -73,7 +73,7 @@ function openGame(idx){
   show('game'); setPaused(false); renderBoard(); startTimer();
   /* лёжа поле и так узкое по высоте — крупный масштаб включается кнопкой */
   boardZoom = isPhone() && !isLand() && fitCell()>0 && fitCell()<26;
-  snapBoard(); centerBoardPan(); panHint(); updatePickHint();
+  snapBoardTwice(); centerBoardPan(); panHint(); updatePickHint();
   closePicker();
 }
 
@@ -245,6 +245,8 @@ function checkWin(){
     return;
   }
   g.done=true; stopTimer();
+  /* мигание закрытой группы гасим, иначе оно накладывается на волну победы */
+  cells.forEach(d=>d.classList.remove('uflash'));
   if(boardZoom) setZoom(false);
   sel=-1; hlDigit=0; armed=0; renderBoard();
   const st=statsFor(g.mode,g.diff);

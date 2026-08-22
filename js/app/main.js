@@ -161,6 +161,8 @@ $('optDbl').addEventListener('change',e=>{ SES.settings.dblPick=e.target.checked
   if(!e.target.checked) closePicker(); persistCache() });
 $('optSame').addEventListener('change',e=>{ SES.settings.highlightSame=e.target.checked; persistCache();
   if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
+$('optPeers').addEventListener('change',e=>{ SES.settings.highlightPeers=e.target.checked; persistCache();
+  if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
 $('optDigitFirst').addEventListener('change',e=>{ SES.settings.digitFirst=e.target.checked;
   if(!e.target.checked){ armed=0; hlDigit=0 } persistCache();
   if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
@@ -267,7 +269,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('resize',()=>{
   if(!isPhone()) closeSheet();
-  snapBoard(); updatePickHint();
+  snapBoardTwice(); updatePickHint();
   if(document.body.classList.contains('won')) placeWinGlow();
 });
 if(window.visualViewport) window.visualViewport.addEventListener('resize',snapBoard);

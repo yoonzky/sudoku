@@ -45,6 +45,15 @@ function buildBoard(sp){
     d.dataset.i=i;
     b.appendChild(d); cells.push(d);
   }
+  for(const f of sp.frames||[]){
+    const d=document.createElement('div');
+    d.className='frame';
+    d.style.left=(f.x/sp.W*100)+'%'; d.style.top=(f.y/sp.H*100)+'%';
+    d.style.width=(f.w/sp.W*100)+'%'; d.style.height=(f.h/sp.H*100)+'%';
+    b.appendChild(d);
+  }
+  /* суммы занимают верхний угол клетки — опускаем цифры по всему полю разом */
+  b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
   buildGrid(sp);
   buildDeco(sp);
   const sb=document.createElement('div');
@@ -126,7 +135,7 @@ function buildDeco(sp){
   if(!sp.cages.length && !sp.dots.length && !hasZone) return;
   const deco=document.createElement('div');
   deco.className='deco';
-  const d=0.13;
+  const d=0.10;
   const cageSegs=[];
   let sums='';
   const inCage=(cg,x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && cg.cells.indexOf(j)>=0 };
@@ -142,7 +151,7 @@ function buildDeco(sp){
       if(!rt) cageSegs.push([x+1-d,y0,x+1-d,y1]);
     }
     const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
-    sums+=`<text x="${a.x+0.19}" y="${a.y+0.36}">${cg.sum}</text>`;
+    sums+=`<text x="${a.x+0.15}" y="${a.y+0.31}">${cg.sum}</text>`;
   }
   const zoneSegs=[];
   if(hasZone){
@@ -171,8 +180,8 @@ function buildDeco(sp){
   const cagePath=joinSegments(cageSegs), zonePath=joinSegments(zoneSegs);
   deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
     (zonePath? `<path d="${zonePath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
-    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".026" stroke-dasharray=".07 .06" stroke-linejoin="round" stroke-linecap="butt"/>`:'')+
-    (sums? `<g class="sums" font-size=".26">${sums}</g>`:'')+
+    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".03" stroke-dasharray=".055 .045" stroke-linejoin="round" stroke-linecap="butt"/>`:'')+
+    (sums? `<g class="sums" font-size=".23">${sums}</g>`:'')+
     dots+'</svg>';
   b.appendChild(deco);
 }
@@ -215,7 +224,9 @@ function renderBoard(){
   const activeVal=(hlSame && sp.kind!=='num')? (selVal||hlDigit) : 0;
   const counts={};
   for(let i=0;i<n;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1 }
-  const peers=sel>=0? sp.peers[sel] : null;
+  /* в чёт-нечете подсветка мешает читать раскраску клеток — там её нет никогда */
+  const peersOn=SES.settings.highlightPeers!==false && sp.id!=='evenodd';
+  const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
     d.className=d.className.replace(/ (sel|hl|same|err|given|hypv|d2)/g,'');
@@ -240,7 +251,7 @@ function renderBoard(){
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
     if(sel>=0){
       if(i===sel) d.classList.add('sel');
-      else if(peers.indexOf(i)>=0) d.classList.add('hl');
+      else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
     }
     if(activeVal && i!==sel){
       const hasNote=!v&&!hv&&!isNum&&g.notes[i].includes(activeVal);
@@ -284,15 +295,26 @@ function placeSelBox(g,sp){
 }
 
 const ZOOM_CELL=38;
-let boardZoom=false;
+let boardZoom=false, lockFit=0;
 
-/* клетка вписывается и по ширине, и по высоте — высоту задаёт .board-wrap */
+/* сколько высоты экрана занято всем, кроме поля */
+function otherHeight(){
+  let used=0;
+  const parts=[document.querySelector('header'), document.querySelector('.topbar'),
+    $('pickHint'), document.querySelector('.controls'), $('numpad'),
+    $('winPanel'), document.querySelector('.site-foot')];
+  for(const el of parts) if(el && el.offsetParent!==null) used+=el.getBoundingClientRect().height;
+  const m=document.querySelector('main');
+  if(m){ const cs=getComputedStyle(m); used+=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom) }
+  return used+46;
+}
+/* клетка вписывается и по ширине, и по высоте */
 function fitBoth(bw){
   const pan=$('boardPan'), wrap=document.querySelector('.board-wrap');
   const byW=Math.floor(((pan.clientWidth||0)-bw)/SPEC.W);
-  if(!isLand()||!wrap) return byW;
-  const byH=Math.floor((wrap.clientHeight-bw)/SPEC.H);
-  return byH>0? Math.min(byW,byH) : byW;
+  const availH = isLand()? (wrap? wrap.clientHeight : 0) : window.innerHeight-otherHeight();
+  const byH=Math.floor((availH-bw)/SPEC.H);
+  return byH>0? Math.max(1,Math.min(byW,byH)) : byW;
 }
 function freeSpace(){
   let used=0;
@@ -313,10 +335,13 @@ function snapBoard(){
   const bw=(parseFloat(getComputedStyle(b).borderLeftWidth)||0)*2;
   const wantZoom=boardZoom && isPhone();
   document.body.classList.toggle('board-zoom',wantZoom);
-  let fit=fitBoth(bw);
+  const won=document.body.classList.contains('won');
+  /* на победе кнопки уходят, но поле не должно от этого прыгать */
+  let fit=(won&&lockFit)? lockFit : fitBoth(bw);
   const zoom=wantZoom && fit<ZOOM_CELL;
-  if(wantZoom && !zoom){ document.body.classList.remove('board-zoom'); fit=fitBoth(bw) }
+  if(wantZoom && !zoom){ document.body.classList.remove('board-zoom'); fit=(won&&lockFit)? lockFit : fitBoth(bw) }
   if(fit<=0) return;
+  if(!won) lockFit=fit;
   const box=fit*SPEC.W+bw;
   $('game').style.setProperty('--board-px',box+'px');
   if(zoom){
@@ -332,6 +357,13 @@ function snapBoard(){
     b.style.width=box+'px';
   }
   syncZoomBtn();
+  return fit;
+}
+/* высота нумпада зависит от ширины поля, поэтому вписываем в два захода */
+function snapBoardTwice(){
+  const first=snapBoard();
+  const second=snapBoard();
+  if(second!==first) snapBoard();
 }
 function syncZoomBtn(){
   const btn=$('zoomBtn'); if(!btn) return;

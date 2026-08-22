@@ -153,10 +153,14 @@ body.won:not(.board-wide) #board{box-shadow:0 -26px 80px -14px var(--glow-edge),
 .cell::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:-1;
   background:var(--tint,transparent); mix-blend-mode:var(--blend); transition:background .12s}
 
+#board.cages .cell{padding-top:10%}
 .cell.zone{background:var(--zone-fill)}
 .cell.even{background:var(--even-fill)}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
 
+.frame{position:absolute; pointer-events:none; z-index:2; border:1px solid var(--frame); border-radius:5px;
+  transition:box-shadow .9s ease-out}
+body.won .frame{box-shadow:0 -26px 80px -14px var(--glow-edge), 0 -10px 40px -14px var(--glow-edge)}
 .grid{position:absolute; inset:0; pointer-events:none; z-index:3}
 .grid svg{position:absolute; inset:0; width:100%; height:100%}
 #selBox{position:absolute; z-index:7; pointer-events:none; border:2px solid var(--accent);
@@ -164,7 +168,7 @@ body.won:not(.board-wide) #board{box-shadow:0 -26px 80px -14px var(--glow-edge),
 #selBox.hyp{border-color:var(--accent2)}
 #selBox.err{border-color:var(--error)}
 #selBox.hidden{display:none}
-.deco{position:absolute; inset:0; pointer-events:none; z-index:6}
+.deco{position:absolute; inset:0; pointer-events:none; z-index:8}
 .deco svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
 .deco .sums text{font-family:var(--f-num); font-weight:700; fill:var(--cage-num)}
 
@@ -177,12 +181,8 @@ body.won:not(.board-wide) #board{box-shadow:0 -26px 80px -14px var(--glow-edge),
 .clue u{top:8%; right:9%}
 .clue s{bottom:8%; left:9%}
 
-body.pad-two #game{max-width:clamp(300px, calc(100vh - 405px), 540px)}
-body.board-wide #game{max-width:clamp(320px, calc(100vh - 300px), 720px)}
-@supports (height:100dvh){
-  body.pad-two #game{max-width:clamp(300px, calc(100dvh - 405px), 540px)}
-  body.board-wide #game{max-width:clamp(320px, calc(100dvh - 300px), 720px)}
-}
+body.pad-two #game{max-width:min(640px,100%)}
+body.board-wide #game{max-width:min(900px,100%)}
 .numpad.two-row .num{aspect-ratio:1.25}
 body.board-num .numpad{grid-template-columns:repeat(5,1fr)}
 body.board-num .num{aspect-ratio:1.45; font-size:clamp(16px,3.4vw,22px)}
@@ -199,5 +199,7 @@ body.board-num .cell.d2{font-size:calc(40cqw / var(--bw))}
 .cell{background:var(--panel)}
 body.board-wide #board{border-color:transparent; box-shadow:none}
 #picker.pk-wide{grid-template-columns:repeat(4,46px)}
+#picker.pk-ten{grid-template-columns:repeat(5,44px)}
+#picker.pk-ten button{font-size:19px}
 #picker.pk-num{grid-template-columns:repeat(5,42px)}
 #picker.pk-num button{font-size:19px}

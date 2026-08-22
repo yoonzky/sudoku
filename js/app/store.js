@@ -7,7 +7,7 @@ const SYS_LANG=(()=>{ try{
 }catch(e){} return 'en' })();
 
 const DEF_SETTINGS={theme:'light', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true,
-  showHint:false, showAuto:false, highlightSame:true, showCounts:true, digitFirst:false,
+  showHint:false, showAuto:false, highlightSame:true, highlightPeers:true, showCounts:true, digitFirst:false,
   mode:'classic', pool:null};
 
 let LOG={games:[], updated:0};
