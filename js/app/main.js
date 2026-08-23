@@ -1,9 +1,9 @@
 'use strict';
 
 let tapX=0, tapY=0, tapIdx=-1;
-let sweepOn=false, sweepSeen=null;
+let sweepOn=false, sweepSeen=null, sweepFrom=-1;
 function tapCancel(){ tapIdx=-1 }
-function sweepStop(){ sweepOn=false; sweepSeen=null }
+function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
 
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
@@ -28,7 +28,7 @@ $('board').addEventListener('pointerdown',e=>{
   const i=+el.dataset.i;
   if(SPEC.kind==='meow'){
     if(e.button===2) return;
-    sweepOn=true; sweepSeen=new Set([i]);
+    sweepOn=true; sweepSeen=new Set(); sweepFrom=i;
     tapIdx=i; tapX=e.clientX; tapY=e.clientY;
     if(e.pointerType!=='touch') tapCell(i);
     return;
@@ -39,6 +39,10 @@ $('board').addEventListener('pointerdown',e=>{
 $('board').addEventListener('pointermove',e=>{
   if(sweepOn){
     if(Math.abs(e.clientX-tapX)<8 && Math.abs(e.clientY-tapY)<8) return;
+    if(sweepFrom>=0 && !sweepSeen.size){
+      sweepSeen.add(sweepFrom);
+      meowSweep(sweepFrom);
+    }
     const el=document.elementFromPoint(e.clientX,e.clientY);
     const cell=el&&el.closest&&el.closest('.cell');
     if(!cell) return;
@@ -53,7 +57,7 @@ $('board').addEventListener('pointermove',e=>{
 });
 $('board').addEventListener('pointerup',e=>{
   const i=tapIdx; tapCancel();
-  const swept=sweepOn && sweepSeen && sweepSeen.size>1;
+  const swept=sweepOn && sweepSeen && sweepSeen.size>0;
   sweepStop();
   if(i<0 || swept || e.pointerType!=='touch') return;
   if(Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10) return;

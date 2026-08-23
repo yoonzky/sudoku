@@ -65,9 +65,9 @@ async function contDelete(){
 function renderModeList(){
   let h=`<button class="mrand${pickedMode==='random'?' on':''}" data-mode="random">${DICE}
     <b>${t('m_random')}</b><small>${t('poolCount').replace('{n}',poolList().length)}</small></button>`;
-  h+='<div class="mode-grid">';
+  h+='<div class="mgroups">';
   for(const grp of MODE_GROUPS){
-    h+=`<div class="mgroup">${t('g_'+grp.key)}</div>`;
+    h+=`<section class="mgrp" style="--span:${grp.ids.length}"><div class="mgroup">${t('g_'+grp.key)}</div><div class="mode-grid">`;
     for(const id of grp.ids){
       const st=statsFor(id,null);
       const note=st.solved? fmtTime(st.best) : '';
@@ -75,6 +75,7 @@ function renderModeList(){
         <span class="mcard-prev">${previewSVG(id)}</span>
         <b>${t('m_'+id)}</b><small>${note}</small></button>`;
     }
+    h+='</div></section>';
   }
   $('modeList').innerHTML=h+'</div>';
   const on=$('modeList').querySelector('.mcard.on');

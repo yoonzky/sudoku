@@ -213,8 +213,21 @@ body.board-wide #board{border-color:transparent; box-shadow:none}
 
 body.win-side #game{position:relative}
 body.win-side #winPanel{position:absolute; top:50%; transform:translateY(-50%);
-  width:294px; margin:0; border-top:0; padding-top:0}
-body.win-side .win-foot{flex-direction:column; align-items:stretch; gap:14px}
-body.win-side .win-act{flex:none}
-body.win-side .win-act .btn{flex:1}
+  width:300px; margin:0; border-top:0; padding:24px 24px 22px;
+  background:var(--panel); border:1px solid var(--line); border-radius:6px; box-shadow:var(--shadow)}
+body.win-side .win-lead{margin-bottom:4px}
+body.win-side .win-head{flex-direction:column; align-items:flex-start; gap:6px}
+body.win-side .win-big{font-size:46px; letter-spacing:-.01em}
+body.win-side .win-meta{gap:4px}
+body.win-side .win-sub{font-size:12.5px; line-height:1.45}
+body.win-side .record{font-size:11.5px}
+body.win-side .win-foot{flex-direction:column; align-items:stretch; gap:0; margin-top:16px}
+body.win-side .win-grid{display:flex; flex-direction:column; border:0}
+body.win-side .win-grid div{display:flex; align-items:baseline; justify-content:space-between;
+  border:0; border-top:1px solid var(--line); padding:9px 0}
+body.win-side .win-grid b{margin:0; font-size:15.5px; order:2}
+body.win-side .win-grid span{font-size:10px; letter-spacing:.13em}
+body.win-side .win-act{flex-direction:column; gap:9px; margin-top:18px}
+body.win-side .win-act .btn{width:100%; padding:13px 20px}
+body.win-side .win-act .btn.ghost{order:2}
 body.win-side.in-game{overflow:hidden}
