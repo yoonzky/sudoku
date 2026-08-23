@@ -1,13 +1,13 @@
 {
   "name": "Sudoku",
   "short_name": "Sudoku",
-  "description": "Судоку в браузере: четыре уровня, заметки, черновик, светлая и тёмная тема, статистика. Работает офлайн.",
+  "description": "Судоку в браузере: восемнадцать режимов, четыре уровня, заметки, черновик, светлая и тёмная тема, статистика. Работает офлайн.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0d1119",
-  "theme_color": "#0d1119",
+  "orientation": "any",
+  "background_color": "#ebeef6",
+  "theme_color": "#ebeef6",
   "icons": [
     {
       "src": "icons/icon-192.png",

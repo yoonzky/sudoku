@@ -1,4 +1,4 @@
-const CACHE='sudoku-v25';
+const CACHE='sudoku-v26';
 const FILES=[
   './','./index.html','./manifest.webmanifest',
   './css/base.css','./css/home.css','./css/game.css','./css/modals.css','./css/mobile.css',
@@ -6,7 +6,10 @@ const FILES=[
   './js/engine/numerator.js','./js/engine/kakuro.js','./js/engine/meow.js','./js/engine/worker.js',
   './js/app/i18n.js','./js/app/store.js','./js/app/ui.js','./js/app/preview.js',
   './js/app/board.js','./js/app/game.js','./js/app/home.js','./js/app/main.js',
-  './icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png'
+  './icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png',
+  './fonts/tenor-sans-latin.woff2','./fonts/tenor-sans-cyrillic.woff2',
+  './fonts/onest-latin.woff2','./fonts/onest-cyrillic.woff2',
+  './fonts/lora-latin.woff2','./fonts/lora-cyrillic.woff2'
 ];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()));

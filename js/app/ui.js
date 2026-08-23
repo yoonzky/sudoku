@@ -1,10 +1,9 @@
 'use strict';
 
 const $=id=>document.getElementById(id);
-const THEMES=[
-  {id:'light', accent:'#3a5aa0', meta:'#ebeef6'},
-  {id:'dark',  accent:'#9ec1f5', meta:'#0d1119'},
-];
+/* two themes; their colours live in css/base.css and are read from there */
+const THEMES=[{id:'light'},{id:'dark'}];
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 let lastPointerType='mouse';
 const PHONE_Q=matchMedia('(max-width:700px)');
 const LAND_Q=matchMedia('(orientation:landscape) and (max-height:560px) and (min-width:560px)');
@@ -40,17 +39,19 @@ function sheetOpen(){ return document.body.classList.contains('sheet') }
 function applyTheme(){
   if(!THEMES.find(x=>x.id===SES.settings.theme)) SES.settings.theme=THEMES[0].id;
   document.documentElement.dataset.theme=SES.settings.theme;
-  const th=THEMES.find(x=>x.id===SES.settings.theme)||THEMES[0];
-  $('metaTheme').setAttribute('content',th.meta);
+  const bg=cssVar('--bg'), accent=cssVar('--accent');
+  if(bg) $('metaTheme').setAttribute('content',bg);
   document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('selq',b.dataset.t===SES.settings.theme));
-  setFavicon(th);
+  setFavicon(bg||'#0d1119', accent||'#9ec1f5');
 }
-function setFavicon(th){
+function setFavicon(bg,accent){
   let cellsSvg='';
   for(let r=0;r<3;r++) for(let c=0;c<3;c++)
-    cellsSvg+=`<rect x="${10+c*16}" y="${10+r*16}" width="12" height="12" rx="3.5" fill="${th.accent}" opacity="${r===c?'1':'.18'}"/>`;
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="${th.meta}"/>${cellsSvg}</svg>`;
-  document.querySelector('link[rel="icon"]').href='data:image/svg+xml,'+encodeURIComponent(svg);
+    cellsSvg+=`<rect x="${10+c*16}" y="${10+r*16}" width="12" height="12" rx="3.5" fill="${accent}" opacity="${r===c?'1':'.18'}"/>`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="${bg}"/>${cellsSvg}</svg>`;
+  let link=document.querySelector('link[rel="icon"]');
+  if(!link){ link=document.createElement('link'); link.rel='icon'; document.head.appendChild(link) }
+  link.href='data:image/svg+xml,'+encodeURIComponent(svg);
 }
 function applyLayout(){
   const p=SES.settings.pos||'center';
@@ -96,8 +97,9 @@ function addEraseRow(pk){
   x.innerHTML=`<svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span class="pk-x-t">${t('eraseP')}</span>`;
   x.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); eraseCell(); closePicker() });
   pk.appendChild(x);
-  pk.addEventListener('pointerdown',e=>e.stopPropagation());
 }
+/* bound once: inside addEraseRow it piled up another listener per game */
+$('picker').addEventListener('pointerdown',e=>e.stopPropagation());
 
 function buildNumPicker(pk){
   for(let v=1;v<=9;v++) pk.appendChild(numKey(v));
