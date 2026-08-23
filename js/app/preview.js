@@ -26,7 +26,8 @@ function previewSVG(mode){
   const sp=previewSpec(mode);
   const W=sp.W, H=sp.H, u=10, pad=2;
   const px=c=>pad+c.x*u, py=c=>pad+c.y*u;
-  let out=`<svg viewBox="0 0 ${W*u+pad*2} ${H*u+pad*2}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">`;
+  const vw=W*u+pad*2, vh=H*u+pad*2;
+  let out=`<svg viewBox="0 0 ${vw} ${vh}" width="${vw}" height="${vh}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">`;
 
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i];

@@ -12,7 +12,7 @@ const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
 const isLand=()=>LAND_Q.matches;
 const COARSE=(()=>{ try{ return matchMedia('(pointer:coarse)').matches }catch(e){} return false })();
 function pickerAllowed(){
-  if(lastPointerType==='touch'||COARSE) return true;
+  if(lastPointerType==='touch'||COARSE) return false;
   try{ if(!matchMedia('(pointer:fine)').matches) return false }catch(e){}
   return true;
 }
@@ -194,8 +194,7 @@ function updatePickHint(){
   const el=$('pickHint'); if(!el||!SPEC) return;
   let seen=false; try{ seen=!!localStorage.getItem(hintKey()) }catch(e){}
   const num=SPEC.kind==='num';
-  el.textContent = num? (COARSE? t('numHintTouch') : t('numHint'))
-    : COARSE? t('pickHintTouch') : t('pickHint');
+  el.textContent = num? (COARSE? t('numHintTouch') : t('numHint')) : t('pickHint');
   el.classList.toggle('hidden', seen || (!num && (!SES.settings.dblPick || !pickerAllowed())));
   placePickHint();
 }

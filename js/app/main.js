@@ -1,7 +1,7 @@
 'use strict';
 
-let lpTimer=null, lpX=0, lpY=0, lpIdx=-1;
-function lpCancel(){ clearTimeout(lpTimer); lpTimer=null; lpIdx=-1 }
+let tapX=0, tapY=0, tapIdx=-1;
+function tapCancel(){ tapIdx=-1 }
 
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
@@ -20,28 +20,19 @@ $('board').addEventListener('pointerdown',e=>{
   const i=+el.dataset.i;
   if(e.pointerType!=='touch'){ tapCell(i); return }
   /* палец: клетка выбирается на отпускании — так листание поля не сбивает выбор */
-  lpIdx=i; lpX=e.clientX; lpY=e.clientY;
-  clearTimeout(lpTimer);
-  lpTimer=setTimeout(()=>{
-    lpTimer=null;
-    if(lpIdx!==i) return;
-    lpIdx=-1;
-    tapCell(i);
-    openPicker(i);
-    if(!$('picker').classList.contains('hidden') && navigator.vibrate) navigator.vibrate(8);
-  },460);
+  tapIdx=i; tapX=e.clientX; tapY=e.clientY;
 });
 $('board').addEventListener('pointermove',e=>{
-  if(lpIdx>=0 && (Math.abs(e.clientX-lpX)>10 || Math.abs(e.clientY-lpY)>10)) lpCancel();
+  if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10)) tapCancel();
 });
 $('board').addEventListener('pointerup',e=>{
-  const i=lpIdx; lpCancel();
+  const i=tapIdx; tapCancel();
   if(i<0 || e.pointerType!=='touch') return;
-  if(Math.abs(e.clientX-lpX)>10 || Math.abs(e.clientY-lpY)>10) return;
+  if(Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10) return;
   tapCell(i);
 });
-for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,lpCancel);
-$('boardPan').addEventListener('scroll',lpCancel);
+for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,tapCancel);
+$('boardPan').addEventListener('scroll',tapCancel);
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
 $('board').addEventListener('dblclick',e=>{
@@ -278,15 +269,6 @@ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);
 loadCache();
 pickedMode=SES.settings.mode||'classic';
 buildSwatches();
-if(COARSE){
-  const row=$('optDblRow');
-  if(row){
-    row.classList.remove('only-fine');
-    const b=row.querySelector('b'), sp=row.querySelector('span');
-    if(b) b.dataset.i18n='pickerTouchT';
-    if(sp) sp.dataset.i18n='pickerTouchD';
-  }
-}
 applyTheme(); applyLayout(); applyLang();
 renderHome(); show('home');
 if(pending.length) saveLog();

@@ -129,7 +129,9 @@ function inputNumber(d){
   g.values[sel]=nv; g.hyp[sel]=0; g.notes[sel]=[]; lastPlaced=sel; lastNumTs=Date.now();
   dismissPickHint();
   if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
-  numArm(nv*10<=SPEC.maxD);
+  const more=nv*10<=SPEC.maxD;
+  numArm(more);
+  if(!more && nv===g.solution[sel]){ sel=-1; hlDigit=0 }
   afterMove(true);
 }
 function inputDigit(v,forceNote,forceHyp){
@@ -157,8 +159,11 @@ function inputDigit(v,forceNote,forceHyp){
           g.mistakes++;
           if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
         }
+        /* без мгновенной проверки выбор снимается всегда, иначе он выдавал бы ошибку */
+        else { sel=-1; hlDigit=0 }
       } else {
         for(const p of SPEC.peers[sel]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
+        sel=-1; hlDigit=0;
       }
     }
   }
@@ -305,7 +310,9 @@ function placeWinGlow(){
   const b=(pan&&pan.classList.contains('pan')? pan : $('board')).getBoundingClientRect();
   if(!el||!b.width) return;
   el.style.setProperty('--wgx',Math.round(b.left+b.width/2)+'px');
-  el.style.setProperty('--wgy',Math.round(b.top-b.height*0.30)+'px');
+  el.style.setProperty('--wgy',Math.round(b.top+b.height*0.40)+'px');
+  el.style.setProperty('--wgw',Math.round(b.width*0.82)+'px');
+  el.style.setProperty('--wgh',Math.round(b.height*0.66)+'px');
 }
 function clearWin(){
   clearTimeout(winTimer); winTimer=null;

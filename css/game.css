@@ -80,7 +80,7 @@ html[data-theme="dark"] #winGlow{
   100%{opacity:.6; transform:scale(1)}
 }
 
-body.won:not(.board-wide) #board{box-shadow:0 -26px 80px -14px var(--glow-edge), 0 -10px 40px -14px var(--glow-edge), var(--shadow)}
+body.won:not(.board-wide) #board{box-shadow:0 0 44px -6px var(--glow-edge), var(--shadow)}
 #board{transition:box-shadow .9s ease-out}
 #pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:6px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
@@ -158,9 +158,10 @@ body.won:not(.board-wide) #board{box-shadow:0 -26px 80px -14px var(--glow-edge),
 .cell.even{background:var(--even-fill)}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
 
-.frame{position:absolute; pointer-events:none; z-index:2; border:1px solid var(--frame); border-radius:5px;
+.frame{position:absolute; pointer-events:none; z-index:2; border-radius:4px;
   transition:box-shadow .9s ease-out}
-body.won .frame{box-shadow:0 -26px 80px -14px var(--glow-edge), 0 -10px 40px -14px var(--glow-edge)}
+/* свет идёт внутрь блока: наружная тень заливала бы пустоты между блоками */
+body.won .frame{box-shadow:inset 0 0 38px -10px var(--glow-edge)}
 .grid{position:absolute; inset:0; pointer-events:none; z-index:3}
 .grid svg{position:absolute; inset:0; width:100%; height:100%}
 #selBox{position:absolute; z-index:7; pointer-events:none; border:2px solid var(--accent);

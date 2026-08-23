@@ -47,7 +47,6 @@ body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom));
 .mgroup{font-size:10px; margin:8px 0 -2px}
 .mcard{padding:11px 4px 10px; gap:7px; border-radius:6px}
 .mcard-prev{height:52px}
-.mcard-prev svg{max-width:52px; max-height:52px}
 .mcard b{font-size:11.5px}
 .mcard small{font-size:10px; min-height:12px}
 .mcard:hover{transform:none}
@@ -123,7 +122,6 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 #picker .pk-x{height:38px}
 
 /* — итог партии — */
-#winGlow{--wgw:64%; --wgh:40%}
 .win-lead{font-size:10.5px}
 .win-big{font-size:36px}
 #winPanel{margin-top:13px; padding-top:12px}
@@ -142,6 +140,7 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 }
 
 @media (pointer:coarse){
+  .only-fine{display:none !important}
   #tabKeysBtn{display:none}
   .mcard:hover,.cont-card:hover,.mrand:hover{border-color:var(--line); color:var(--text); background:var(--panel)}
   .mcard.on:hover{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}

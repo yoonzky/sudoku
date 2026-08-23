@@ -24,8 +24,10 @@ and starts it at the level you choose.
   hidden pairs, triples and X-wing
 - every puzzle is generated with exactly one solution, whatever the mode
 - draft mode: pencil a trial digit in dashes, notes underneath survive, mistakes are not counted
-- digit pad right at the cell (double or right click); in Numerator it waits for the second
-  digit, since the numbers run to 81
+- with a mouse, a digit pad opens right at the cell (double or right click); on a phone the
+  keypad below the board does the same job
+- in Numerator the entry waits for a second digit, since the numbers run to 81
+- a correct digit clears the selection, so the next cell is one tap away
 - up to ten unfinished games at once, each with its own timer; several can be picked and dropped together
 - notes, auto-candidates, hint, undo/redo, mistake limit — all optional
 - full keyboard control (1–9, A/B/C for 10–12, Shift for notes, Alt for draft, arrows to move)
