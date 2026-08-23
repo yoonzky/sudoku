@@ -26,6 +26,7 @@
 .cell.same{--tint:var(--tint-same)}
 
 .cell.hypv{--tint:var(--tint-hyp)}
+.cell.msel{--tint:var(--tint-sel)}
 .cell.sel{--tint:var(--tint-sel); z-index:4}
 .cell.hypv.sel{--tint:var(--tint-hyp-sel)}
 .cell.err{color:var(--error); --tint:var(--tint-err); font-weight:700}
@@ -34,6 +35,21 @@
   grid-template-columns:repeat(var(--nc),1fr); grid-template-rows:repeat(var(--nr),1fr); pointer-events:none}
 .cell .notes span{font-family:var(--f-num); font-size:calc(23cqw / var(--bw)); line-height:1; color:var(--note); opacity:1; display:flex; align-items:center; justify-content:center; font-weight:600}
 
+/* centre marks take the middle of the cell, so corner marks move to the edges */
+.cell .notes.split{grid-template-columns:repeat(5,1fr); grid-template-rows:1fr 1.15fr 1fr}
+.cell .notes.split span{font-size:calc(19cqw / var(--bw))}
+.cell .notes.split span:nth-child(-n+5){grid-row:1}
+.cell .notes.split span:nth-child(n+6){grid-row:3}
+.cell .notes.split.split12{grid-template-columns:repeat(6,1fr)}
+.cell .notes.split.split12 span:nth-child(-n+6){grid-row:1}
+.cell .notes.split.split12 span:nth-child(n+7){grid-row:3}
+.cell .mid{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  font-family:var(--f-num); font-weight:600; font-size:calc(26cqw / var(--bw)); line-height:1;
+  color:var(--note); letter-spacing:.02em; white-space:nowrap; pointer-events:none; font-style:normal}
+.cell .mid.tight{font-size:calc(20cqw / var(--bw))}
+.cell .mid.tiny{font-size:calc(16cqw / var(--bw))}
+.cell .mid.nhl{color:var(--accent); font-weight:700}
+.cell.sel .mid{color:var(--note-sel)}
 .cell.sel .notes span{color:var(--note-sel)}
 .cell .notes span.nhl{color:var(--accent); font-weight:700; opacity:1}
 .cell.pop .v{animation:pop .24s cubic-bezier(.22,.8,.3,1)}
@@ -151,11 +167,16 @@ body.board-meow .cell::before{display:none}
 .cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}
 .cell.z7{background:var(--z7)} .cell.z8{background:var(--z8)} .cell.z9{background:var(--z9)}
 .cell.z10{background:var(--z10)}
-.cell .cat, .cell .mark{position:absolute; inset:16%; pointer-events:none}
+/* size and centre are set outright: an svg is a replaced element, and webkit
+   keeps its own size instead of stretching it between inset edges */
+.cell .cat, .cell .mark{position:absolute; left:50%; top:50%; width:68%; height:68%;
+  transform:translate(-50%,-50%); pointer-events:none}
 .cell .cat{stroke:var(--cat); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round}
 .cell.err .cat{stroke:var(--error)}
-.cell .mark{inset:34%; stroke:var(--mark); stroke-width:1.9; stroke-linecap:round}
-.cell.pop .cat{animation:pop .24s cubic-bezier(.22,.8,.3,1)}
+.cell .mark{width:32%; height:32%; stroke:var(--mark); stroke-width:1.9; stroke-linecap:round}
+.cell.pop .cat{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}
+@keyframes popMid{from{transform:translate(-50%,-50%) scale(.8); opacity:.25}
+  to{transform:translate(-50%,-50%); opacity:1}}
 .cell.zone{background:var(--zone-fill)}
 .cell.even{background:var(--even-fill)}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
