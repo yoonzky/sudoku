@@ -32,6 +32,16 @@ function generateAsync(mode,diff,done){
   genWaiting={seq, ok:done, fail:sync};
   w.postMessage({mode,diff,seq});
 }
+/* samurai and killer take seconds to deal, so the wait needs a way out */
+let genBusy=false;
+function cancelGen(){
+  if(!genBusy) return false;
+  genBusy=false; genWaiting=null;
+  if(genWorker&&genWorker.terminate){ try{ genWorker.terminate() }catch(e){} }
+  genWorker=null;
+  $('genOverlay').classList.add('hidden');
+  return true;
+}
 
 function newGame(mode,diff){
   lastRequest={mode,diff};
@@ -40,14 +50,24 @@ function newGame(mode,diff){
     mode=pool[Math.floor(Math.random()*pool.length)];
   }
   clearWin();
+  genBusy=true;
+  $('genOverlay').innerHTML='';
+  $('genOverlay').append(t('gen')+' · '+t('m_'+mode));
+  const hint=document.createElement('small');
+  hint.textContent=t('genCancel');
+  $('genOverlay').appendChild(hint);
   $('genOverlay').classList.remove('hidden');
-  $('genOverlay').textContent=t('gen')+' · '+t('m_'+mode);
   generateAsync(mode,diff,res=>{
+    if(!genBusy) return;
+    genBusy=false;
     $('genOverlay').classList.add('hidden');
     if(!res){ toast(t('genFail')); return }
     const sp=buildSpec(res.mode,res.ex);
     const n=sp.cells.length;
-    if(SES.games.length>=10) SES.games.shift();
+    if(SES.games.length>=10){
+      const drop=SES.games.shift();
+      toast(t('gameDropped').replace('{m}',t('m_'+drop.mode)));
+    }
     SES.games.push({
       id:uid(), mode:res.mode, diff, ex:res.ex,
       solution:res.sol, given:res.puz.map(v=>!!v),
@@ -171,12 +191,14 @@ function inputNumber(d){
   if(inputMode==='note'){
     const nn=g.notes[sel];
     const prev=chain? nn[nn.length-1] : 0;
+    const grow = chain && prev>0 && prev*10+d<=SPEC.maxD;
+    if(!grow && d<=0) return;
     pushUndo();
-    if(chain && prev>0 && prev*10+d<=SPEC.maxD){ nn[nn.length-1]=prev*10+d }
-    else if(d>0){
+    if(grow){ nn[nn.length-1]=prev*10+d }
+    else {
       const k=nn.indexOf(d);
       if(k>=0) nn.splice(k,1); else nn.push(d);
-    } else { undoStack.pop(); return }
+    }
     lastPlaced=sel; lastNumTs=Date.now();
     dismissPickHint();
     afterMove(true);
@@ -200,13 +222,13 @@ function inputDigit(v,forceNote,forceHyp){
   if(SPEC.kind==='num') return inputNumber(v);
   const mode = forceNote? 'note' : forceHyp? 'hyp' : inputMode;
   if(v<1||v>SPEC.maxD) return;
+  if(mode==='note' && (g.values[sel]||g.hyp[sel])) return;
+  if(mode==='hyp' && g.values[sel]) return;
   pushUndo();
   if(mode==='note'){
-    if(g.values[sel]||g.hyp[sel]){ undoStack.pop(); return }
     const nn=g.notes[sel], k=nn.indexOf(v);
     if(k>=0) nn.splice(k,1); else { nn.push(v); nn.sort((a,b)=>a-b) }
   } else if(mode==='hyp'){
-    if(g.values[sel]){ undoStack.pop(); return }
     g.hyp[sel]=g.hyp[sel]===v? 0 : v;
     lastPlaced=sel;
     if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
@@ -319,7 +341,7 @@ function checkWin(){
   if(!assisted) pending.push({id:g.id, d:new Date().toISOString().slice(0,10), mode:g.mode, diff:g.diff,
     time:g.time, mistakes:g.mistakes, hints:g.hints});
   SES.games.splice(SES.cur,1); SES.cur=-1;
-  persistCache(); if(!assisted) saveLog();
+  persistNow(); if(!assisted) saveLog();
   lastWin={mode:g.mode, diff:g.diff, time:g.time, best:st.best, mistakes:g.mistakes, hints:g.hints,
     isRecord, assisted, perfect, instant:g.instant};
   renderWinPanel();
@@ -425,4 +447,6 @@ function applyControls(){
   $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || meow);
   $('hypBtn').classList.toggle('hidden', num || meow);
   $('notesBtn').classList.toggle('hidden', meow);
+  /* a third tap clears the cell, so the erase key has nothing left to do */
+  $('eraseBtn').classList.toggle('hidden', meow);
 }

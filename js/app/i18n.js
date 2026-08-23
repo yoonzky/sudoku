@@ -3,6 +3,8 @@
 const I18N = {
 ru:{
   genFail:'Поле не собралось — попробуй ещё раз',
+  genCancel:'Esc или касание — отмена', genStopped:'Генерация отменена',
+  gameDropped:'Партий больше десяти: самая старая ({m}) удалена',
   k_big:'числа 10–12', k_rules:'правила режима',
   pickMany:'Выбрать', pickCancel:'Отмена', pickAll:'Все', pickNone:'Снять',
   delSel:'Удалить', selCount:'выбрано: {n}',
@@ -53,7 +55,6 @@ ru:{
   r_meow:'Не судоку, а расстановка: в каждой строке, столбце и цветной области — ровно один кот. Коты не садятся рядом, даже по диагонали. Область внутри одной строки забирает её себе.',
   m_kakuro:'Какуро',
   r_kakuro:'Математический кроссворд. Серая клетка разделена диагональю: число над ней — сумма ряда справа, число под ней — сумма столбца вниз. В таком ряду или столбце стоят цифры от 1 до 9, они не повторяются и вместе дают эту сумму.',
-  catKey:'Кот', markKey:'Метка',
   meowHint:'Клик ставит метку, правая кнопка сажает кота. Протяжка метит клетки подряд',
   meowHintTouch:'Нажми клетку: метка, потом кот. Проведи пальцем — пометит подряд',
   numHint:'Число вводится цифрами, Backspace стирает. Протяни от заполненной клетки — соседние встанут по порядку',
@@ -152,7 +153,6 @@ en:{
   r_meow:'Not a sudoku but a seating plan: one cat per row, per column and per coloured region. Cats never sit side by side, diagonals included. A region inside one row takes it.',
   m_kakuro:'Kakuro',
   r_kakuro:'A crossword with numbers. A grey cell is split by a diagonal: the figure above it is the sum of the run to its right, the one below is the sum of the run going down. A run holds digits 1 to 9, none repeating, adding up to that sum.',
-  catKey:'Cat', markKey:'Mark',
   meowHint:'A click leaves a mark, right click seats a cat. Drag to mark a run of cells',
   meowHintTouch:'Tap a cell: a mark, then a cat. Drag a finger to mark a run',
   numHint:'Type the number, Backspace clears it. Drag from a filled cell and the run counts up',
@@ -195,6 +195,8 @@ en:{
   k_hypm:'draft mode', k_erase:'clear the cell', k_undo:'undo a move', k_redo:'redo a move', k_hint:'hint',
   k_auto:'auto-notes', k_pause:'pause', k_nav:'move around the board', k_menu:'back to menu', k_pick:'pad at the cell',
   gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
+  genCancel:'Esc or a tap cancels', genStopped:'Generation cancelled',
+  gameDropped:'More than ten games: the oldest one ({m}) was dropped',
   hasErrors:'Wrong digits: {n}', autoDone:'Candidates filled in', assistNote:'assisted, not recorded',
   delGame:'Delete this game?', restartConfirm:'Start this puzzle over? Everything you have entered will be cleared.',
   mist:'mistakes', hintsSm:'hints',
@@ -210,6 +212,6 @@ function applyLang(){
   const lbl=(id,k)=>{ const el=$(id); if(!el) return; el.title=t(k); el.setAttribute('aria-label',t(k)) };
   lbl('statsBtn','stats'); lbl('setBtn','settings'); lbl('backBtn','backT'); lbl('rulesBtn','rulesT');
   const g=cur(); lbl('pauseBtn', g&&g.paused? 'resume':'pauseT');
-  if(typeof renderHome==='function') renderHome();
+  if(typeof renderHome==='function' && !$('home').classList.contains('hidden')) renderHome();
   if(document.body.classList.contains('won')) renderWinPanel();
 }

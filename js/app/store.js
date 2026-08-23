@@ -18,13 +18,27 @@ const cur=()=>SES.games[SES.cur]||null;
 const allGames=()=>[...LOG.games,...pending];
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
+/* a move only touches the current game, so one key is written and after a pause:
+   every digit used to serialize the whole record of wins as well */
+let saveTimer=null, sesDirty=false;
+function writeSes(){
+  sesDirty=false;
+  try{ localStorage.setItem(LS_SES,JSON.stringify(SES)) }catch(e){}
+}
 function persistCache(){
   SES.updated=Date.now();
-  try{
-    localStorage.setItem(LS_LOG,JSON.stringify(LOG));
-    localStorage.setItem(LS_SES,JSON.stringify(SES));
-    localStorage.setItem(LS_PEND,JSON.stringify(pending));
-  }catch(e){}
+  sesDirty=true;
+  if(saveTimer) return;
+  saveTimer=setTimeout(()=>{ saveTimer=null; if(sesDirty) writeSes() },600);
+}
+function savePending(){
+  try{ localStorage.setItem(LS_PEND,JSON.stringify(pending)) }catch(e){}
+}
+/* written at once: leaving the page, a win, dropped games */
+function persistNow(){
+  if(saveTimer){ clearTimeout(saveTimer); saveTimer=null }
+  if(sesDirty) writeSes();
+  savePending();
 }
 function loadCache(){
   try{ const l=JSON.parse(localStorage.getItem(LS_LOG)); if(l&&Array.isArray(l.games)) LOG=l }catch(e){}

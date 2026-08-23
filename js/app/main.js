@@ -1,5 +1,7 @@
 'use strict';
 
+/* how far a finger may travel before a tap turns into a drag */
+const TAP_SLOP=14;
 let tapX=0, tapY=0, tapIdx=-1;
 let sweepOn=false, sweepSeen=null, sweepFrom=-1;
 let chainOn=false, chainPrev=-1, chainLast=0;
@@ -30,7 +32,10 @@ $('board').addEventListener('pointerdown',e=>{
   const i=+el.dataset.i;
   if(SPEC.kind==='meow'){
     if(e.button===2) return;
-    sweepOn=true; sweepSeen=new Set(); sweepFrom=i;
+    /* a zoomed board scrolls under the finger, so dragging must not leave marks */
+    if(!$('boardPan').classList.contains('pan')){
+      sweepOn=true; sweepSeen=new Set(); sweepFrom=i;
+    }
     tapIdx=i; tapX=e.clientX; tapY=e.clientY;
     if(e.pointerType!=='touch') tapCell(i);
     return;
@@ -44,7 +49,7 @@ $('board').addEventListener('pointerdown',e=>{
 });
 $('board').addEventListener('pointermove',e=>{
   if(sweepOn){
-    if(Math.abs(e.clientX-tapX)<8 && Math.abs(e.clientY-tapY)<8) return;
+    if(Math.abs(e.clientX-tapX)<TAP_SLOP && Math.abs(e.clientY-tapY)<TAP_SLOP) return;
     if(sweepFrom>=0 && !sweepSeen.size){
       sweepSeen.add(sweepFrom);
       meowSweep(sweepFrom);
@@ -68,7 +73,7 @@ $('board').addEventListener('pointermove',e=>{
     if(numChain(j,chainLast+1)){ chainLast++; chainPrev=j }
     return;
   }
-  if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10)) tapCancel();
+  if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>TAP_SLOP || Math.abs(e.clientY-tapY)>TAP_SLOP)) tapCancel();
 });
 $('board').addEventListener('pointerup',e=>{
   const i=tapIdx; tapCancel();
@@ -76,11 +81,11 @@ $('board').addEventListener('pointerup',e=>{
   sweepStop(); chainStop();
   if(swept){ sel=-1; renderBoard() }
   if(i<0 || swept || e.pointerType!=='touch') return;
-  if(Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10) return;
+  if(Math.abs(e.clientX-tapX)>TAP_SLOP || Math.abs(e.clientY-tapY)>TAP_SLOP) return;
   tapCell(i);
 });
 for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{ tapCancel(); sweepStop(); chainStop() });
-$('boardPan').addEventListener('scroll',tapCancel);
+$('boardPan').addEventListener('scroll',()=>{ tapCancel(); sweepStop(); chainStop() });
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
 $('board').addEventListener('dblclick',e=>{
@@ -141,7 +146,7 @@ $('contList').addEventListener('click',async e=>{
     if(await askConfirm(t('delGame'))){
       SES.games.splice(+del.dataset.del,1);
       if(SES.cur>=SES.games.length) SES.cur=SES.games.length-1;
-      persistCache(); renderHome();
+      persistNow(); renderHome();
     }
     return;
   }
@@ -182,7 +187,7 @@ $('hypBtn').addEventListener('click',()=>setMode('hyp'));
 $('winHome').addEventListener('click',goHome);
 $('winAgain').addEventListener('click',()=>newGame(lastRequest.mode,lastRequest.diff));
 $('loseNew').addEventListener('click',()=>{ $('loseModal').classList.add('hidden');
-  SES.games.splice(SES.cur,1); SES.cur=-1; persistCache(); newGame(lastLost.mode,lastLost.diff) });
+  SES.games.splice(SES.cur,1); SES.cur=-1; persistNow(); newGame(lastLost.mode,lastLost.diff) });
 $('loseContinue').addEventListener('click',()=>{ $('loseModal').classList.add('hidden');
   const g=cur(); if(g){ g.noLimit=true; setPaused(false); renderBoard(); persistCache() } });
 
@@ -231,7 +236,9 @@ document.addEventListener('pointerdown',e=>{
 });
 
 const LETTER_DIGIT={KeyA:10,KeyB:11,KeyC:12};
+$('genOverlay').addEventListener('click',()=>{ if(cancelGen()) toast(t('genStopped')) });
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && cancelGen()){ toast(t('genStopped')); return }
   const modalOpen=['loseModal','statsModal','setModal','poolModal','rulesModal']
     .some(id=>!$(id).classList.contains('hidden'));
   if(modalOpen){
@@ -304,13 +311,10 @@ function moveSel(code){
   }
 }
 
-window.addEventListener('beforeunload',()=>{ try{
-  localStorage.setItem(LS_LOG,JSON.stringify(LOG));
-  localStorage.setItem(LS_SES,JSON.stringify(SES));
-  localStorage.setItem(LS_PEND,JSON.stringify(pending));
-}catch(e){} });
+window.addEventListener('beforeunload',persistNow);
+window.addEventListener('pagehide',persistNow);
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){ persistCache(); if(pending.length) saveLog() }
+  if(document.hidden){ persistNow(); if(pending.length) saveLog() }
 });
 window.addEventListener('resize',()=>{
   if(!isPhone()) closeSheet();

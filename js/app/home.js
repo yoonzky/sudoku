@@ -59,7 +59,7 @@ async function contDelete(){
   SES.games=SES.games.filter(g=>!contSel.has(g.id));
   SES.cur = curId? SES.games.findIndex(g=>g.id===curId) : -1;
   contSel=null;
-  persistCache(); renderHome(); toast(t('delDone'));
+  persistNow(); renderHome(); toast(t('delDone'));
 }
 function renderModeList(){
   let h=`<button class="mrand${pickedMode==='random'?' on':''}" data-mode="random">${DICE}

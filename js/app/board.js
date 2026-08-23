@@ -236,26 +236,13 @@ function buildDeco(sp){
 function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
+  /* meowdoku needs no keypad: a tap walks the cell through mark, cat and empty */
   if(sp.kind==='meow'){
     document.body.classList.remove('pad-two');
-    np.classList.add('meow-pad');
-    np.style.gridTemplateColumns='repeat(2,1fr)';
-    if(!COARSE) return;
-    for(const kind of ['cat','mark']){
-      const btn=document.createElement('button');
-      btn.className='num meow-key';
-      btn.dataset.meow=kind;
-      btn.innerHTML=(kind==='cat'? CAT_SVG : MARK_SVG)+'<span>'+t(kind==='cat'?'catKey':'markKey')+'</span>';
-      btn.addEventListener('pointerdown',e=>{
-        e.preventDefault();
-        if(sel<0) return;
-        if(kind==='cat') meowSetCat(sel); else meowMark(sel);
-      });
-      np.appendChild(btn);
-    }
+    np.classList.add('hidden');
     return;
   }
-  np.classList.remove('meow-pad');
+  np.classList.remove('hidden');
   const max=sp.kind==='num'? 9 : sp.maxD;
   const cols = sp.kind==='num'? 5 : max>9? Math.ceil(max/2) : max;
   np.style.gridTemplateColumns=`repeat(${cols},1fr)`;
