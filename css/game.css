@@ -147,12 +147,8 @@ body.won #board{overflow:visible}
 
 #board.cages .cell{font-size:calc(50cqw / var(--bw))}
 body.board-meow .cell::before{display:none}
-body.board-meow .cell.hl{filter:brightness(1.24)}
-body.board-meow .cell.same{filter:brightness(1.38)}
-body.board-meow .cell.sel{filter:brightness(1.55)}
-html[data-theme="light"] body.board-meow .cell.hl{filter:brightness(.955)}
-html[data-theme="light"] body.board-meow .cell.same{filter:brightness(.92)}
-html[data-theme="light"] body.board-meow .cell.sel{filter:brightness(.87)}
+body.board-meow .cell.sel{filter:brightness(1.45)}
+html[data-theme="light"] body.board-meow .cell.sel{filter:brightness(.9)}
 
 .cell.z1{background:var(--z1)} .cell.z2{background:var(--z2)} .cell.z3{background:var(--z3)}
 .cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}

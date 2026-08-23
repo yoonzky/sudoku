@@ -96,6 +96,17 @@ function meowSetCat(i){
   if(g.values[i]===MEOW_CAT && g.solution[i]===MEOW_CAT) sel=-1;
   afterMove();
 }
+/* numerator: drag from a filled cell and the run keeps counting up */
+function numChain(j,v){
+  const g=cur();
+  if(!g||g.done||g.paused||g.given[j]||v>SPEC.maxD) return false;
+  pushUndo();
+  g.values[j]=v; g.notes[j]=[]; g.hyp[j]=0;
+  lastPlaced=j; sel=j;
+  afterMove(true);
+  return true;
+}
+
 function meowMark(i){
   const g=cur(); if(!g||g.done||g.paused) return;
   dismissPickHint();

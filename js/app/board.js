@@ -240,6 +240,7 @@ function buildNumpad(sp){
     document.body.classList.remove('pad-two');
     np.classList.add('meow-pad');
     np.style.gridTemplateColumns='repeat(2,1fr)';
+    if(!COARSE) return;
     for(const kind of ['cat','mark']){
       const btn=document.createElement('button');
       btn.className='num meow-key';
@@ -285,12 +286,13 @@ function renderBoard(){
   const g=cur(); if(!g||!SPEC) return;
   const sp=SPEC, n=sp.cells.length;
   const isNum=sp.kind==='num', isMeow=sp.kind==='meow';
+  /* meowdoku reads by its own colours, extra tinting only gets in the way */
   const hlSame=SES.settings.highlightSame!==false;
   const selVal=sel>=0? merged(g,sel) : 0;
-  const activeVal=(hlSame && sp.kind!=='num')? (selVal||hlDigit) : 0;
+  const activeVal=(hlSame && !isNum && !isMeow)? (selVal||hlDigit) : 0;
   const counts={};
   for(let i=0;i<n;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1 }
-  const peersOn=SES.settings.highlightPeers!==false && sp.id!=='evenodd';
+  const peersOn=SES.settings.highlightPeers!==false && sp.id!=='evenodd' && !isMeow;
   const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];

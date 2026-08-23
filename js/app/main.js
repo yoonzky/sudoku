@@ -2,16 +2,18 @@
 
 let tapX=0, tapY=0, tapIdx=-1;
 let sweepOn=false, sweepSeen=null, sweepFrom=-1;
+let chainOn=false, chainPrev=-1, chainLast=0;
+function chainStop(){ chainOn=false; chainPrev=-1; chainLast=0 }
 function tapCancel(){ tapIdx=-1 }
 function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
+
 
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
   closePicker();
   if(SPEC.kind==='meow'){
-    if(lastPointerType==='touch'){ sel=i; meowTap(i); return }
-    if(sel===i){ meowMark(i); return }
-    sel=i; renderBoard();
+    sel=i;
+    if(lastPointerType==='touch') meowTap(i); else meowMark(i);
     return;
   }
   if(i!==sel) numFlush();
@@ -33,6 +35,10 @@ $('board').addEventListener('pointerdown',e=>{
     if(e.pointerType!=='touch') tapCell(i);
     return;
   }
+  if(SPEC.kind==='num' && e.pointerType!=='touch' && e.button!==2 && g.values[i]){
+    chainOn=true; chainPrev=i; chainLast=g.values[i];
+    tapX=e.clientX; tapY=e.clientY;
+  }
   if(e.pointerType!=='touch'){ tapCell(i); return }
   tapIdx=i; tapX=e.clientX; tapY=e.clientY;
 });
@@ -53,18 +59,27 @@ $('board').addEventListener('pointermove',e=>{
     meowSweep(j);
     return;
   }
+  if(chainOn){
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const cell=el&&el.closest&&el.closest('.cell');
+    if(!cell) return;
+    const j=+cell.dataset.i;
+    if(j===chainPrev || !SPEC.nbr[chainPrev] || SPEC.nbr[chainPrev].indexOf(j)<0) return;
+    if(numChain(j,chainLast+1)){ chainLast++; chainPrev=j }
+    return;
+  }
   if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10)) tapCancel();
 });
 $('board').addEventListener('pointerup',e=>{
   const i=tapIdx; tapCancel();
   const swept=sweepOn && sweepSeen && sweepSeen.size>0;
-  sweepStop();
+  sweepStop(); chainStop();
   if(swept){ sel=-1; renderBoard() }
   if(i<0 || swept || e.pointerType!=='touch') return;
   if(Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10) return;
   tapCell(i);
 });
-for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{ tapCancel(); sweepStop() });
+for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{ tapCancel(); sweepStop(); chainStop() });
 $('boardPan').addEventListener('scroll',tapCancel);
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
