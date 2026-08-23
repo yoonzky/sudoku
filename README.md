@@ -20,9 +20,12 @@ and starts it at the level you choose.
 ## Features
 
 - difficulty set by two things: how many clues stay on the board, and which techniques the
-  puzzle needs — a solver grades every deal, so Easy yields to singles and Expert asks for
-  hidden pairs, triples and X-wing
-- every puzzle is generated with exactly one solution, whatever the mode
+  puzzle needs — a solver grades every deal, so Easy yields to singles, Hard wants locked
+  candidates and naked pairs, and Expert aims at hidden pairs, triples and X-wing. Modes with no
+  room for those techniques (Suguru, 12×12, Numerator) top out lower and lean on the clue count
+- every puzzle is generated with exactly one solution, whatever the mode, and every deal the
+  grader cannot crack by reasoning gets extra clues until it can
+- a slow deal (Killer at Expert, 10×10, Samurai) can be dropped with Esc or a tap on the overlay
 - Killer at Expert opens no digit at all — the cage sums alone pin the answer down
 - Suguru grows with the level: 9×9 with regions up to seven, 12×12 with regions up to nine
 - draft mode: pencil a trial digit in dashes, notes underneath survive, mistakes are not counted
@@ -33,7 +36,8 @@ and starts it at the level you choose.
 - up to ten unfinished games at once, each with its own timer; several can be picked and dropped together
 - notes, auto-candidates, hint, undo/redo, mistake limit — all optional
 - full keyboard control (1–9, A/B/C for 10–12, Shift for notes, Alt for draft, arrows to move)
-- light and dark theme, Russian and English
+- light and dark theme, Russian and English; the two palettes are written once, in `css/base.css`
+- the three typefaces ship with the site, so an installed copy reads the same with no network
 - on a phone: picking a mode opens a sheet with its rules and the four levels; boards wider than
   the screen (Samurai, Wing, Double) open in a window you drag around, with a button to fit them
   back; a long press on a cell brings up the pad — digit, note, draft, erase
@@ -43,7 +47,7 @@ and starts it at the level you choose.
 
 ```
 index.html            markup and the load order
-Sudoku.html           the same file, kept for opening straight from disk
+fonts/                Tenor Sans, Onest and Lora, latin and cyrillic subsets
 css/base.css          palette, type, page frame, buttons, toast
 css/home.css          home screen: continue, mode grid, mode card
 css/game.css          board, rule marks, controls, keypad, result panel
