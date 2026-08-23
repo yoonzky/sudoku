@@ -28,6 +28,11 @@ and starts it at the level you choose.
 - a slow deal (Killer at Expert, 10×10, Samurai) can be dropped with Esc or a tap on the overlay
 - Killer at Expert opens no digit at all — the cage sums alone pin the answer down
 - Suguru grows with the level: 9×9 with regions up to seven, 12×12 with regions up to nine
+- two kinds of pencil mark: corner notes, and centre marks that read as one figure — 28 or 135 in
+  the middle of the cell, the way a hidden pair or triple is usually written down. Ctrl and a digit
+  leaves a centre mark, C switches the mode, and corner notes step aside to the edges of the cell
+- with a mouse, drag across the board to pick a run of cells; a digit then pencils into all of them
+  at once, and pressing it again takes it back out
 - draft mode: pencil a trial digit in dashes, notes underneath survive, mistakes are not counted
 - with a mouse, a digit pad opens right at the cell (double or right click); on a phone the
   keypad below the board does the same job
@@ -35,7 +40,8 @@ and starts it at the level you choose.
 - a correct digit clears the selection, so the next cell is one tap away
 - up to ten unfinished games at once, each with its own timer; several can be picked and dropped together
 - notes, auto-candidates, hint, undo/redo, mistake limit — all optional
-- full keyboard control (1–9, A/B/C for 10–12, Shift for notes, Alt for draft, arrows to move)
+- full keyboard control (1–9, A/B/C for 10–12, Shift for notes, Ctrl for centre marks, Alt for
+  draft, arrows to move)
 - light and dark theme, Russian and English; the two palettes are written once, in `css/base.css`
 - the three typefaces ship with the site, so an installed copy reads the same with no network
 - on a phone: picking a mode opens a sheet with its rules and the four levels; boards wider than
