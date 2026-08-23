@@ -4,8 +4,7 @@ const MODE_GROUPS=[
   {key:'clean', ids:['classic','x','evenodd','windoku','asterisk','mosaic']},
   {key:'size',  ids:['r10','r12']},
   {key:'multi', ids:['double','wing','butterfly','samurai']},
-  {key:'extra', ids:['killer','dots','suguru','numerator','kakuro']},
-  {key:'other', ids:['meow']},
+  {key:'extra', ids:['killer','dots','suguru','numerator','kakuro','meow']},
 ];
 const DICE='<svg class="dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>';
 const LEVEL_N={easy:1,medium:2,hard:3,expert:4};

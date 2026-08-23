@@ -11,8 +11,7 @@ Plain HTML, CSS and JavaScript — no build step, no dependencies. Games, settin
 | Plain board | Classic · X-Sudoku · Even-Odd · Windoku · Asterisk · Mosaic |
 | Other sizes | 10×10 (5×2 regions) · 12×12 (4×3 regions) |
 | Linked boards | Double · Wing · Butterfly · Samurai |
-| Extra rules | Killer · Dots (Kropki) · Suguru · Numerator · Kakuro |
-| A different game | Meowdoku — one cat per row, column and colour, and no two of them touching |
+| Extra rules | Killer · Dots (Kropki) · Suguru · Numerator · Kakuro · Meowdoku |
 
 Every mode has four levels and its own statistics. The home screen shows a thumbnail of each
 board, so a mode can be picked by its shape. **Random mode** draws one of the modes you ticked
