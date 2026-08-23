@@ -68,7 +68,6 @@ const PK_ICONS={
 function buildPicker(sp){
   const pk=$('picker');
   pk.innerHTML='';
-  /* десять цифр ложатся в два ряда по пять, одиннадцать и двенадцать — в три по четыре */
   pk.classList.toggle('pk-ten', sp.maxD===10 && sp.kind!=='num');
   pk.classList.toggle('pk-wide', sp.maxD>10 && sp.kind!=='num');
   pk.classList.toggle('pk-num', sp.kind==='num');

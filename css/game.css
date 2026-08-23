@@ -38,7 +38,6 @@
 .cell .notes span.nhl{color:var(--accent); font-weight:700; opacity:1}
 .cell.pop .v{animation:pop .24s cubic-bezier(.22,.8,.3,1)}
 @keyframes pop{from{transform:scale(.8); opacity:.25}to{transform:none; opacity:1}}
-/* волна победы: мягкий свет проходит по полю, плитки не прыгают */
 .cell.wave::after{content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
   background:var(--accent-soft); mix-blend-mode:var(--blend);
   animation:wave .7s ease-out both}
@@ -144,9 +143,7 @@ body.won #board{overflow:visible}
 .cell::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:-1;
   background:var(--tint,transparent); mix-blend-mode:var(--blend); transition:background .12s}
 
-/* в режимах с суммами цифра чуть мельче, чтобы не задевать число в углу клетки */
 #board.cages .cell{font-size:calc(50cqw / var(--bw))}
-/* мяудоку: тинт поверх цветной области мутит её, поэтому светлотой */
 body.board-meow .cell::before{display:none}
 body.board-meow .cell.hl{filter:brightness(1.5)}
 body.board-meow .cell.same{filter:brightness(1.75)}
@@ -155,7 +152,6 @@ html[data-theme="light"] body.board-meow .cell.hl{filter:brightness(.965)}
 html[data-theme="light"] body.board-meow .cell.same{filter:brightness(.94)}
 html[data-theme="light"] body.board-meow .cell.sel{filter:brightness(.9)}
 
-/* мяудоку: цветные области, кот и метка «здесь пусто» */
 .cell.z1{background:var(--z1)} .cell.z2{background:var(--z2)} .cell.z3{background:var(--z3)}
 .cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}
 .cell.z7{background:var(--z7)} .cell.z8{background:var(--z8)} .cell.z9{background:var(--z9)}
@@ -215,7 +211,6 @@ body.board-wide #board{border-color:transparent; box-shadow:none}
 #picker.pk-num{grid-template-columns:repeat(5,42px)}
 #picker.pk-num button{font-size:19px}
 
-/* широкий экран: итог встаёт сбоку от поля, иначе он уходит под нижний край */
 @media (min-width:1100px) and (min-height:600px){
   body.won.in-game #game{position:relative; max-width:min(1160px,100%); padding-right:322px}
   body.won.in-game #winPanel{position:absolute; right:0; top:50%; transform:translateY(-50%);

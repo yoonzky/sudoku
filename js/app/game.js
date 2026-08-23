@@ -71,7 +71,6 @@ function openGame(idx){
   undoStack=[]; redoStack=[]; sel=-1; hlDigit=0; armed=0; inputMode='digit';
   syncModeButtons(); applyControls();
   show('game'); setPaused(false); renderBoard(); startTimer();
-  /* лёжа поле и так узкое по высоте — крупный масштаб включается кнопкой */
   boardZoom = isPhone() && !isLand() && fitCell()>0 && fitCell()<26;
   snapBoardTwice(); centerBoardPan(); panHint(); updatePickHint();
   closePicker();
@@ -83,8 +82,6 @@ function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>300) undoSt
 function restore(s){ const g=cur();
   g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice()); g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice() }
 
-/* мяудоку: кот мешает другому коту в строке, столбце, области и вплотную */
-/* правая кнопка и Enter сажают кота сразу, без промежуточной метки */
 function meowSetCat(i){
   const g=cur(); if(!g||g.done||g.paused) return;
   dismissPickHint();
@@ -99,7 +96,6 @@ function meowSetCat(i){
   if(g.values[i]===MEOW_CAT && g.solution[i]===MEOW_CAT) sel=-1;
   afterMove();
 }
-/* протяжка по пустым клеткам расставляет метки разом */
 function meowSweep(i){
   const g=cur(); if(!g||g.done||g.paused||g.values[i]!==0) return;
   dismissPickHint();
@@ -113,7 +109,6 @@ function meowClash(g,sp,i){
   for(const j of sp.peers[i]) if(g.values[j]===MEOW_CAT) return true;
   return false;
 }
-/* нажатие по клетке: пусто, метка, кот и снова пусто */
 function meowTap(i){
   const g=cur(); if(!g||g.done||g.paused) return;
   dismissPickHint();
@@ -206,7 +201,6 @@ function inputDigit(v,forceNote,forceHyp){
           g.mistakes++;
           if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
         }
-        /* без мгновенной проверки выбор снимается всегда, иначе он выдавал бы ошибку */
         else { sel=-1; hlDigit=0 }
       } else {
         for(const p of SPEC.peers[sel]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
@@ -317,7 +311,6 @@ function checkWin(){
     $('winPanel').classList.remove('hidden');
   };
   if(reducedMotion){ showWin(); return }
-  /* свет по краю поля разгорается сам, по клеткам проходит волна, следом панель итога */
   document.body.classList.add('won');
   for(let i=0;i<n;i++){
     const c=SPEC.cells[i];
@@ -334,7 +327,6 @@ function renderWinPanel(){
   $('winRecord').classList.toggle('hidden',!w.isRecord);
   $('winSub').innerHTML=t('m_'+w.mode)+' · '+t('d_'+w.diff)+
     (w.assisted? ' · '+t('assistNote') : (w.perfect? ' · '+t('clean') : ''));
-  /* при новом рекорде время уже стоит крупно — в сетке показываем, что было до него */
   const lbl=$('winBestLbl');
   lbl.dataset.i18n = w.isRecord? 'wasL' : 'recordL';
   lbl.textContent=t(lbl.dataset.i18n);
@@ -342,7 +334,6 @@ function renderWinPanel(){
   $('winBestCell').classList.toggle('hidden', w.isRecord && w.best==null);
   $('winMist').textContent=w.mistakes;
   $('winHints').textContent=w.hints;
-  /* без мгновенной проверки ошибки не считаются — колонку не показываем */
   $('winMistCell').classList.toggle('hidden', !w.instant);
 }
 let lastLost={mode:'classic',diff:'medium'};

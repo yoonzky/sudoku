@@ -1,7 +1,6 @@
 'use strict';
 
 let tapX=0, tapY=0, tapIdx=-1;
-/* мяудоку: протяжка по полю метит клетки, которые кот уже держит */
 let sweepOn=false, sweepSeen=null;
 function tapCancel(){ tapIdx=-1 }
 function sweepStop(){ sweepOn=false; sweepSeen=null }
@@ -30,7 +29,6 @@ $('board').addEventListener('pointerdown',e=>{
     return;
   }
   if(e.pointerType!=='touch'){ tapCell(i); return }
-  /* палец: клетка выбирается на отпускании — так листание поля не сбивает выбор */
   tapIdx=i; tapX=e.clientX; tapY=e.clientY;
 });
 $('board').addEventListener('pointermove',e=>{
@@ -68,7 +66,6 @@ $('board').addEventListener('contextmenu',e=>{
   const el=e.target.closest('.cell'); if(!el) return;
   e.preventDefault();
   if(SPEC && SPEC.kind==='meow'){ sel=+el.dataset.i; meowSetCat(sel); return }
-  /* на пальце панель открывает долгое нажатие — системное меню только гасим */
   if(lastPointerType!=='touch') openPicker(+el.dataset.i);
 });
 $('board').addEventListener('animationend',e=>{
@@ -319,7 +316,6 @@ if(pending.length) saveLog();
 const DEV_HOST=location.hostname==='localhost'||location.hostname==='127.0.0.1';
 if('serviceWorker' in navigator && location.protocol.startsWith('http') && !DEV_HOST){
   window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}) });
-  /* новая версия встала — забираем её сразу, а не через раз */
   let swReloaded=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{
     if(swReloaded) return;

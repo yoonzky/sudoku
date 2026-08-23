@@ -2,13 +2,12 @@
 
 let SPEC=null;
 const cells=[];
-/* что уже нарисовано в клетке — чтобы не трогать DOM на каждый ход */
+/* what the cell already shows, so a move touches one cell */
 const cellKey=[];
 const merged=(g,i)=>g.values[i]||g.hyp[i];
 
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
-/* кот и метка рисуются линиями — в одном ключе с иконками сайта */
 const CAT_SVG='<svg class="cat" viewBox="0 0 24 24" aria-hidden="true">'+
   '<path d="M4.6 9.2 4 4.4l4 2.6a9 9 0 0 1 8 0l4-2.6-.6 4.8"/>'+
   '<path d="M20 12.4c0 4.3-3.6 7.2-8 7.2s-8-2.9-8-7.2"/>'+
@@ -59,7 +58,6 @@ function buildBoard(sp){
     d.dataset.i=i;
     b.appendChild(d); cells.push(d);
   }
-  /* суммы занимают верхний угол клетки — опускаем цифры по всему полю разом */
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
   buildGlow(sp);
   buildGrid(sp);
@@ -69,7 +67,7 @@ function buildBoard(sp){
   b.appendChild(sb);
 }
 
-/* свет победы: гало по внешнему краю фигуры — размытие минус сама фигура */
+/* halo: blur of the shape minus the shape itself */
 let glowSeq=0;
 function buildGlow(sp){
   const b=$('board');
@@ -106,7 +104,6 @@ function buildGrid(sp){
   }
   const g=document.createElement('div');
   g.className='grid';
-  /* толстые линии — со скруглением стыков, иначе на углах блоков остаются зазубрины */
   g.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
     `<path d="${thin}" fill="none" stroke="var(--line)" stroke-width=".022" shape-rendering="crispEdges"/>`+
     `<path d="${thick}" fill="none" stroke="var(--rule)" stroke-width=".05" stroke-linecap="square"/></svg>`;
@@ -157,7 +154,7 @@ function joinSegments(segs){
   return d;
 }
 
-/* штрихи по отрезкам: шаг подгоняется под длину ребра, поэтому углы всегда закрыты */
+/* dash step fitted to each edge so corners always meet */
 function dashLine(segs,dash,gap){
   let d='';
   for(const s of segs){
@@ -275,7 +272,6 @@ function renderBoard(){
   const activeVal=(hlSame && sp.kind!=='num')? (selVal||hlDigit) : 0;
   const counts={};
   for(let i=0;i<n;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1 }
-  /* в чёт-нечете подсветка мешает читать раскраску клеток — там её нет никогда */
   const peersOn=SES.settings.highlightPeers!==false && sp.id!=='evenodd';
   const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
@@ -358,7 +354,6 @@ function placeSelBox(g,sp){
 const ZOOM_CELL=38;
 let boardZoom=false, lockFit=0;
 
-/* сколько высоты экрана занято всем, кроме поля */
 function otherHeight(){
   let used=0;
   const parts=[document.querySelector('header'), document.querySelector('.topbar'),
@@ -369,7 +364,6 @@ function otherHeight(){
   if(m){ const cs=getComputedStyle(m); used+=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom) }
   return used+46;
 }
-/* клетка вписывается и по ширине, и по высоте */
 function fitBoth(bw){
   const pan=$('boardPan'), wrap=document.querySelector('.board-wrap');
   const byW=Math.floor(((pan.clientWidth||0)-bw)/SPEC.W);
@@ -397,7 +391,6 @@ function snapBoard(){
   const wantZoom=boardZoom && isPhone();
   document.body.classList.toggle('board-zoom',wantZoom);
   const won=document.body.classList.contains('won');
-  /* на победе кнопки уходят, но поле не должно от этого прыгать */
   let fit=(won&&lockFit)? lockFit : fitBoth(bw);
   const zoom=wantZoom && fit<ZOOM_CELL;
   if(wantZoom && !zoom){ document.body.classList.remove('board-zoom'); fit=(won&&lockFit)? lockFit : fitBoth(bw) }
@@ -410,7 +403,6 @@ function snapBoard(){
     const fitH=fit*SPEC.H+bw;
     pan.style.maxHeight=fitH+'px';
     b.style.width=(ZOOM_CELL*SPEC.W+bw)+'px';
-    /* окно поля забирает всю свободную ширину и высоту экрана */
     $('game').style.setProperty('--board-px',(pan.clientWidth||box)+'px');
     const grow=Math.max(0,freeSpace()-16);
     pan.style.maxHeight=Math.round(Math.min(ZOOM_CELL*SPEC.H+bw, fitH+grow))+'px';
@@ -420,7 +412,7 @@ function snapBoard(){
   syncZoomBtn();
   return fit;
 }
-/* высота нумпада зависит от ширины поля, поэтому вписываем в два захода */
+/* keypad height follows board width, so fit twice */
 function snapBoardTwice(){
   const first=snapBoard();
   const second=snapBoard();

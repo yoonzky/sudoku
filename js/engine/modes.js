@@ -161,7 +161,6 @@ function makeDots(sp,sol){
   return out;
 }
 
-/* сугуру: поле и самая большая область растут от уровня к уровню */
 const SUG_MAX=9;
 const SUG_CFG={
   easy:  {w:9, h:9, lo:5, hi:7},
@@ -279,7 +278,7 @@ function buildSpec(id,ex){
   return prep(sp);
 }
 
-/* киллер на «Эксперте»: ни одной открытой цифры — единственность держат сами суммы */
+/* expert killer opens no digit: the cage sums pin it down */
 function killerBlank(diff,deadline){
   let blankFallback=null;
   const stop=deadline||(Date.now()+12000);
@@ -289,14 +288,12 @@ function killerBlank(diff,deadline){
     let sp=buildSpec('killer',ex);
     const sol=fillSpec(sp,14,600000);
     if(!sol) continue;
-    /* мелкие области дают больше сумм, а с ними поле сходится и без единой цифры */
     ex.cages=makeCages(sp,sol, Date.now()<half? 4 : 3);
     sp=buildSpec('killer',ex);
     const puz=new Array(sp.cells.length).fill(0);
     if(countSol(sp,puz,2,900000)!==1) continue;
     const g=gradeSolve(sp,puz);
     const res={mode:'killer',diff,ex,sp,sol,puz,grade:g.solved?g.grade:5,clues:0};
-    /* берём ту раздачу, что берётся приёмами; единственную, но глухую держим про запас */
     if(g.solved) return res;
     if(!blankFallback) blankFallback=res;
   }

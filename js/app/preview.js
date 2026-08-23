@@ -4,7 +4,6 @@ const PREV_CACHE={};
 
 function previewSpec(mode){
   if(mode==='meow'){
-    /* для картинки хватает правдоподобной раскладки — единственность тут не нужна */
     const n=8, cols=meowCats(n);
     const reg=cols&&meowRegions(n,cols);
     if(!reg) return buildSpec('classic',{});

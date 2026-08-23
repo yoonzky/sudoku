@@ -154,7 +154,6 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   .tot{margin-top:10px}
 }
 
-/* просторный экран: карточки крупнее, иначе вокруг них много воздуха */
 @media (min-width:1180px) and (min-height:830px){
   .mode-grid{gap:7px}
   .mcard{padding:8px 5px 7px; gap:6px}

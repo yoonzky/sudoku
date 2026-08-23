@@ -1,4 +1,4 @@
-const CACHE='sudoku-v18';
+const CACHE='sudoku-v19';
 const FILES=[
   './','./index.html','./manifest.webmanifest',
   './css/base.css','./css/home.css','./css/game.css','./css/modals.css','./css/mobile.css',
@@ -23,7 +23,7 @@ self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET') return;
   const url=new URL(e.request.url);
   if(url.origin!==location.origin) return;
-  /* разметка, стили и скрипты берём из сети: иначе правки доходят через раз */
+  /* html, css and js come from the network so a release lands at once */
   const live = e.request.mode==='navigate' || /\.(?:html|css|js|webmanifest)$/.test(url.pathname);
   if(live){
     e.respondWith(
