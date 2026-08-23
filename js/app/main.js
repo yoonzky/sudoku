@@ -1,7 +1,10 @@
 'use strict';
 
 let tapX=0, tapY=0, tapIdx=-1;
+/* мяудоку: протяжка по полю метит клетки, которые кот уже держит */
+let sweepOn=false, sweepSeen=null;
 function tapCancel(){ tapIdx=-1 }
+function sweepStop(){ sweepOn=false; sweepSeen=null }
 
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
@@ -19,20 +22,41 @@ $('board').addEventListener('pointerdown',e=>{
   lastPointerType=e.pointerType||'mouse';
   const g=cur(); if(!g||g.paused) return;
   const i=+el.dataset.i;
+  if(SPEC.kind==='meow'){
+    if(e.button===2) return;
+    sweepOn=true; sweepSeen=new Set([i]);
+    tapIdx=i; tapX=e.clientX; tapY=e.clientY;
+    if(e.pointerType!=='touch') tapCell(i);
+    return;
+  }
   if(e.pointerType!=='touch'){ tapCell(i); return }
   /* палец: клетка выбирается на отпускании — так листание поля не сбивает выбор */
   tapIdx=i; tapX=e.clientX; tapY=e.clientY;
 });
 $('board').addEventListener('pointermove',e=>{
+  if(sweepOn){
+    if(Math.abs(e.clientX-tapX)<8 && Math.abs(e.clientY-tapY)<8) return;
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const cell=el&&el.closest&&el.closest('.cell');
+    if(!cell) return;
+    const j=+cell.dataset.i;
+    if(sweepSeen.has(j)) return;
+    sweepSeen.add(j);
+    tapIdx=-1;
+    meowSweep(j);
+    return;
+  }
   if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10)) tapCancel();
 });
 $('board').addEventListener('pointerup',e=>{
   const i=tapIdx; tapCancel();
-  if(i<0 || e.pointerType!=='touch') return;
+  const swept=sweepOn && sweepSeen && sweepSeen.size>1;
+  sweepStop();
+  if(i<0 || swept || e.pointerType!=='touch') return;
   if(Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10) return;
   tapCell(i);
 });
-for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,tapCancel);
+for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{ tapCancel(); sweepStop() });
 $('boardPan').addEventListener('scroll',tapCancel);
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
@@ -43,6 +67,7 @@ $('board').addEventListener('dblclick',e=>{
 $('board').addEventListener('contextmenu',e=>{
   const el=e.target.closest('.cell'); if(!el) return;
   e.preventDefault();
+  if(SPEC && SPEC.kind==='meow'){ sel=+el.dataset.i; meowSetCat(sel); return }
   /* на пальце панель открывает долгое нажатие — системное меню только гасим */
   if(lastPointerType!=='touch') openPicker(+el.dataset.i);
 });
@@ -201,6 +226,10 @@ document.addEventListener('keydown',e=>{
   }
   const g=cur(); if(!g) return;
   const code=e.code;
+  if(SPEC && SPEC.kind==='meow' && !e.ctrlKey && !e.metaKey){
+    if(code==='Space'){ e.preventDefault(); if(sel>=0) meowTap(sel); return }
+    if(code==='Enter'||code==='NumpadEnter'){ e.preventDefault(); if(sel>=0) meowSetCat(sel); return }
+  }
   if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
   if((e.ctrlKey||e.metaKey)&&code==='KeyY'){ e.preventDefault(); redo(); return }
   if(e.ctrlKey||e.metaKey) return;

@@ -194,7 +194,7 @@ function updatePickHint(){
   const el=$('pickHint'); if(!el||!SPEC) return;
   let seen=false; try{ seen=!!localStorage.getItem(hintKey()) }catch(e){}
   const num=SPEC.kind==='num', meow=SPEC.kind==='meow';
-  el.textContent = meow? t('meowHint')
+  el.textContent = meow? (COARSE? t('meowHintTouch') : t('meowHint'))
     : num? (COARSE? t('numHintTouch') : t('numHint')) : t('pickHint');
   el.classList.toggle('hidden', seen || (!num && !meow && (!SES.settings.dblPick || !pickerAllowed())));
   placePickHint();

@@ -15,8 +15,10 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 @media (max-width:900px){ .home-main{grid-template-columns:1fr; gap:24px} }
 .modes-col{display:flex; flex-direction:column; min-height:0}
 #modeList{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
-  scrollbar-width:none; -ms-overflow-style:none}
-#modeList::-webkit-scrollbar{width:0; height:0}
+  scrollbar-width:thin; scrollbar-color:var(--line) transparent; padding-right:6px}
+#modeList::-webkit-scrollbar{width:7px}
+#modeList::-webkit-scrollbar-track{background:transparent}
+#modeList::-webkit-scrollbar-thumb{background:var(--line); border-radius:5px}
 
 .mrand{display:flex; align-items:center; gap:10px; width:100%; margin:0 0 14px;
   background:transparent; border:1px solid var(--line); border-radius:5px; padding:11px 13px;
@@ -132,7 +134,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 .pool-item input:checked::before{content:''; position:absolute; inset:3px; border-radius:1px; background:var(--accent)}
 .pool-note{margin:14px 0 0; font-size:12px; color:var(--muted)}
 
-@media (max-height:920px){
+@media (max-height:820px){
   header{padding:16px 18px 4px}
   #home{gap:14px}
   .mcard-prev{height:38px}
@@ -150,4 +152,23 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   .diff-btn{padding:9px 4px 8px}
   .cont-card{padding:8px 11px 7px}
   .tot{margin-top:10px}
+}
+
+/* просторный экран: карточки крупнее, иначе вокруг них много воздуха */
+@media (min-width:1180px) and (min-height:830px){
+  .mode-grid{gap:7px}
+  .mcard{padding:8px 5px 7px; gap:6px}
+  .mcard-prev{height:44px}
+  .mgroup{margin:2px 0 -5px}
+  .mcard b{font-size:12px}
+  .mcard small{font-size:10.5px}
+  .mrand{padding:10px 15px; margin-bottom:9px}
+  .mrand b{font-size:15px}
+  .mgroup{font-size:10.5px}
+  .mp-prev{max-width:210px}
+  .mp h3{font-size:25px}
+  .mp p{font-size:13.5px}
+  .diff-btn{padding:14px 4px 13px}
+  .diff-btn span{font-size:18px}
+  .cont-card{width:180px}
 }

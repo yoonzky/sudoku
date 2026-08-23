@@ -64,6 +64,7 @@ body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
 
 body.won.in-game{overflow:auto}
 
+
 @media (max-width:700px){
   body.won.in-game{justify-content:flex-start; padding-top:var(--won-top,0px)}
 }
@@ -145,6 +146,15 @@ body.won #board{overflow:visible}
 
 /* в режимах с суммами цифра чуть мельче, чтобы не задевать число в углу клетки */
 #board.cages .cell{font-size:calc(50cqw / var(--bw))}
+/* мяудоку: тинт поверх цветной области мутит её, поэтому светлотой */
+body.board-meow .cell::before{display:none}
+body.board-meow .cell.hl{filter:brightness(1.5)}
+body.board-meow .cell.same{filter:brightness(1.75)}
+body.board-meow .cell.sel{filter:brightness(2)}
+html[data-theme="light"] body.board-meow .cell.hl{filter:brightness(.965)}
+html[data-theme="light"] body.board-meow .cell.same{filter:brightness(.94)}
+html[data-theme="light"] body.board-meow .cell.sel{filter:brightness(.9)}
+
 /* мяудоку: цветные области, кот и метка «здесь пусто» */
 .cell.z1{background:var(--z1)} .cell.z2{background:var(--z2)} .cell.z3{background:var(--z3)}
 .cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}
@@ -181,6 +191,7 @@ body.board-meow .numpad{display:none}
 .clue u{top:8%; right:9%}
 .clue s{bottom:8%; left:9%}
 
+body.board-meow #game{max-width:min(760px,100%)}
 body.pad-two #game{max-width:min(640px,100%)}
 body.board-wide #game{max-width:min(900px,100%)}
 .numpad.two-row .num{aspect-ratio:1.25}
@@ -204,3 +215,13 @@ body.board-wide #board{border-color:transparent; box-shadow:none}
 #picker.pk-num{grid-template-columns:repeat(5,42px)}
 #picker.pk-num button{font-size:19px}
 
+/* широкий экран: итог встаёт сбоку от поля, иначе он уходит под нижний край */
+@media (min-width:1100px) and (min-height:600px){
+  body.won.in-game #game{position:relative; max-width:min(1160px,100%); padding-right:322px}
+  body.won.in-game #winPanel{position:absolute; right:0; top:50%; transform:translateY(-50%);
+    width:294px; margin:0; border-top:0; padding-top:0}
+  body.won.in-game .win-foot{flex-direction:column; align-items:stretch; gap:14px}
+  body.won.in-game .win-act{flex:none}
+  body.won.in-game .win-act .btn{flex:1}
+  body.won.in-game{overflow:hidden; justify-content:center}
+}

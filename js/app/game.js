@@ -84,6 +84,30 @@ function restore(s){ const g=cur();
   g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice()); g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice() }
 
 /* мяудоку: кот мешает другому коту в строке, столбце, области и вплотную */
+/* правая кнопка и Enter сажают кота сразу, без промежуточной метки */
+function meowSetCat(i){
+  const g=cur(); if(!g||g.done||g.paused) return;
+  dismissPickHint();
+  pushUndo();
+  const was=g.values[i];
+  g.values[i] = was===MEOW_CAT? 0 : MEOW_CAT;
+  if(g.values[i]===MEOW_CAT && g.instant && g.solution[i]!==MEOW_CAT){
+    g.mistakes++;
+    if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
+  }
+  lastPlaced = g.values[i]===MEOW_CAT? i : -1;
+  if(g.values[i]===MEOW_CAT && g.solution[i]===MEOW_CAT) sel=-1;
+  afterMove();
+}
+/* протяжка по пустым клеткам расставляет метки разом */
+function meowSweep(i){
+  const g=cur(); if(!g||g.done||g.paused||g.values[i]!==0) return;
+  dismissPickHint();
+  pushUndo();
+  g.values[i]=MEOW_MARK;
+  lastPlaced=-1;
+  afterMove();
+}
 function meowClash(g,sp,i){
   if(g.values[i]!==MEOW_CAT) return false;
   for(const j of sp.peers[i]) if(g.values[j]===MEOW_CAT) return true;
@@ -92,6 +116,7 @@ function meowClash(g,sp,i){
 /* нажатие по клетке: пусто, метка, кот и снова пусто */
 function meowTap(i){
   const g=cur(); if(!g||g.done||g.paused) return;
+  dismissPickHint();
   pushUndo();
   const was=g.values[i];
   g.values[i] = was===0? MEOW_MARK : was===MEOW_MARK? MEOW_CAT : 0;
