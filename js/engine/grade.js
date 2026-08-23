@@ -42,6 +42,30 @@ function gradeSolve(sp,puz){
     }
     if(prog){ grade=Math.max(grade,3); continue }
 
+    /* suguru: a value pinned to cells that all touch one neighbour cannot sit
+       in that neighbour. Without this the solver stalled on most hard deals
+       and declared them unsolvable */
+    if(sp.neq.length){
+      for(const g of sp.groups){
+        for(let v=1;v<=g.length;v++){
+          let have=false; const pos=[];
+          for(const i of g){
+            if(b[i]===v){ have=true; break }
+            if(!b[i]&&(cand[i]&(1<<v))) pos.push(i);
+          }
+          if(have||pos.length<2||pos.length>4) continue;
+          let common=sp.nOf[pos[0]].slice();
+          for(let k=1;k<pos.length&&common.length;k++){
+            const nb=sp.nOf[pos[k]];
+            common=common.filter(x=>nb.indexOf(x)>=0);
+          }
+          for(const j of common)
+            if(!b[j]&&pos.indexOf(j)<0&&(cand[j]&(1<<v))){ cand[j]&=~(1<<v); prog=true }
+        }
+      }
+      if(prog){ grade=Math.max(grade,3); continue }
+    }
+
     if(sp.cages.length){
       for(let ci=0;ci<sp.cages.length;ci++){
         const masks=cageCombo(sp,b,cand,ci);
@@ -144,7 +168,9 @@ function easeTo(sp,puz,sol,removed,hi){
     for(let k=0;k<step&&back.length;k++){ const i=back.pop(); b[i]=sol[i]; added.push(i) }
     g=gradeSolve(sp,b);
   }
-  if(g.solved && added.length<=48) for(const i of SHUF(added.slice())){
+  /* the limit follows board size: on 12x12 and linked boards more than fifty cells
+     come back, and with no tightening expert came out easier than medium */
+  if(g.solved && added.length<=Math.max(48,Math.round(sp.cells.length*0.5))) for(const i of SHUF(added.slice())){
     const t=b[i]; b[i]=0;
     const g2=gradeSolve(sp,b);
     if(g2.solved && g2.grade<=hi) g=g2; else b[i]=t;

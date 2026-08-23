@@ -215,23 +215,23 @@ const MODES={
     keep:{easy:45,medium:38,hard:33,expert:29} },
 
   r12:{
-    time:6500, tries:3,
+    time:6500, tries:3, top:3,
     build(){ const sp=newSpec('r12'); lineSets(sp,addGrid(sp,0,0,12,4,3)); return sp },
     keep:{easy:70,medium:60,hard:52,expert:46} },
 
-  double:{ time:7000, tries:3, tight:1,
+  double:{ time:7000, tries:3, tight:1, top:3,
     build(){ return multi('double',[[0,0],[6,6]]) },
     keep:{easy:68,medium:58,hard:50,expert:43} },
 
-  wing:{ time:11000, tries:2, tight:1,
+  wing:{ time:11000, tries:2, tight:1, top:3,
     build(){ return multi('wing',[[0,0],[12,0],[6,6]]) },
     keep:{easy:92,medium:80,hard:70,expert:62} },
 
-  butterfly:{ time:7000, tries:3, tight:1,
+  butterfly:{ time:7000, tries:3, tight:1, top:3,
     build(){ return multi('butterfly',[[0,0],[3,0],[0,3],[3,3]]) },
     keep:{easy:58,medium:48,hard:41,expert:36} },
 
-  samurai:{ time:20000, tries:2, tight:1,
+  samurai:{ time:20000, tries:2, tight:1, top:3,
     build(){ return multi('samurai',[[0,0],[12,0],[6,6],[0,12],[12,12]]) },
     keep:{easy:150,medium:132,hard:118,expert:106} },
 
@@ -246,8 +246,8 @@ const MODES={
     keep:{easy:22,medium:14,hard:8,expert:4} },
 
   suguru:{
-    time:9000, tries:4, budget:200000,
-    band:{easy:[1,2],medium:[2,3],hard:[2,4],expert:[2,5]},
+    time:9000, tries:4, budget:200000, top:3,
+    band:{easy:[1,2],medium:[2,3],hard:[2,4],expert:[3,4]},
     pre(diff){
       const c=SUG_CFG[diff]||SUG_CFG.easy;
       return {regions:suguruRegions(c.w,c.h,c.lo,c.hi), w:c.w, h:c.h};
@@ -269,6 +269,9 @@ const MODE_IDS=['classic','x','evenodd','windoku','asterisk','mosaic','r10','r12
   'double','wing','butterfly','samurai','killer','dots','suguru','numerator','kakuro','meow'];
 const DIFFS=['easy','medium','hard','expert'];
 const BAND={easy:[1,2],medium:[2,3],hard:[3,4],expert:[3,4]};
+/* the band says what passes, the target says what to aim for. With no target
+   hard and expert matched: same band, and both kept landing on 3 */
+const TARGET={easy:1,medium:2,hard:3,expert:4};
 
 function buildSpec(id,ex){
   if(id==='numerator') return numBuild(ex);
@@ -276,6 +279,26 @@ function buildSpec(id,ex){
   if(id==='meow') return meowBuild(ex);
   const sp=MODES[id].build(ex||{});
   return prep(sp);
+}
+
+/* last resort: a deal the solver cannot reason through takes clues back
+   until it can */
+function fillToSolvable(res){
+  const sp=res.sp, b=Array.from(res.puz);
+  let g=gradeSolve(sp,b);
+  if(g.solved){ res.grade=g.grade; return res }
+  const holes=[];
+  for(let i=0;i<b.length;i++) if(!b[i]) holes.push(i);
+  SHUF(holes);
+  const step=Math.max(1,Math.round(holes.length*0.05));
+  for(let k=0;k<holes.length;k+=step){
+    for(let t=k;t<k+step&&t<holes.length;t++) b[holes[t]]=res.sol[holes[t]];
+    g=gradeSolve(sp,b);
+    if(g.solved) break;
+  }
+  res.puz=b; res.grade=g.grade;
+  res.clues=b.reduce((s,v)=>s+(v?1:0),0);
+  return res;
 }
 
 /* expert killer opens no digit: the cage sums pin it down */
@@ -301,15 +324,24 @@ function killerBlank(diff,deadline){
 }
 
 function makePuzzle(id,diff,deadline){
-  if(id==='numerator') return numMake(diff);
+  if(id==='numerator') return numMake(diff,deadline);
   if(id==='kakuro') return kakMake(diff,deadline);
   if(id==='meow') return meowMake(diff,deadline);
   if(id==='killer'&&diff==='expert'){
-    const blank=killerBlank(diff,deadline);
+    /* a blank deal takes a while to find; uncapped it ate the whole budget */
+    const blank=killerBlank(diff, deadline||(Date.now()+8000));
     if(blank) return blank;
   }
   const M=MODES[id], band=(M.band&&M.band[diff])||BAND[diff];
-  const stop=deadline||(Date.now()+(M.time||3500));
+  /* M.top is the ceiling of a mode: suguru has no fourth-level techniques,
+     and chasing them burns the budget for nothing */
+  const target=Math.min(band[1], TARGET[diff]||2, M.top||9);
+  /* the spare time only helps where the fourth level is reachable at all */
+  const chase = diff==='expert' && (M.top||9)>=4;
+  const stop=deadline||(Date.now()+(M.time||3500)+(chase? Math.min(M.time||3500,4000) : 0));
+  /* the target is chased for part of the budget, then anything sound will do,
+     or expert keeps the player waiting. Where a try is cheap, the hunt runs longer */
+  const half=Date.now()+(stop-Date.now())*((M.time||3500)<=4000? .6 : .34);
   let best=null, bestScore=Infinity;
   for(let att=0; att<(M.tries||30) && (att===0||Date.now()<stop); att++){
     const ex=M.pre? M.pre(diff) : {};
@@ -321,19 +353,24 @@ function makePuzzle(id,diff,deadline){
     let eased=easeTo(sp,dug.puz,sol,dug.removed,band[1]);
     let clues=eased.puz.reduce((s,v)=>s+(v?1:0),0);
 
+    /* fall back to the barer deal only while it still yields to reasoning:
+       six clues more beat a board that only search can crack */
     const cap=M.keep[diff]+((diff==='hard'||diff==='expert')?6:999);
     if(clues>cap){
       const g0=gradeSolve(sp,dug.puz);
-      eased={puz:dug.puz, grade:g0.grade, solved:g0.solved};
-      clues=dug.puz.reduce((s,v)=>s+(v?1:0),0);
+      if(g0.solved){
+        eased={puz:dug.puz, grade:g0.grade, solved:true};
+        clues=dug.puz.reduce((s,v)=>s+(v?1:0),0);
+      }
     }
     const inBand=eased.solved && eased.grade>=band[0] && eased.grade<=band[1];
-    const score=(inBand?0:1000)+clues;
+    const off=eased.solved? Math.abs(eased.grade-target) : 9;
+    const score=(inBand?0:1000)+off*60+clues;
     if(score<bestScore){ bestScore=score; best={mode:id,diff,ex,sp,sol,puz:eased.puz,grade:eased.grade,clues} }
     const tight = clues<=M.keep[diff]+(diff==='expert'?2:4);
-    if(inBand && (diff!=='expert'||tight)) break;
+    if(inBand && (eased.grade>=target || Date.now()>half) && (diff!=='expert'||tight)) break;
   }
-  if(best) return best;
+  if(best) return best.grade>=5? fillToSolvable(best) : best;
 
   for(let att=0;att<12;att++){
     const ex=M.pre? M.pre(diff) : {};
@@ -343,7 +380,8 @@ function makePuzzle(id,diff,deadline){
     if(M.post){ M.post(sp,sol,ex,diff); sp=buildSpec(id,ex) }
     const dug=digPuzzle(sp,sol,Math.round(sp.cells.length*0.55),80000,1);
     const g=gradeSolve(sp,dug.puz);
-    return {mode:id,diff,ex,sp,sol,puz:dug.puz,grade:g.grade,clues:dug.puz.reduce((s,v)=>s+(v?1:0),0)};
+    const res={mode:id,diff,ex,sp,sol,puz:dug.puz,grade:g.grade,clues:dug.puz.reduce((s,v)=>s+(v?1:0),0)};
+    return g.solved? res : fillToSolvable(res);
   }
   return null;
 }

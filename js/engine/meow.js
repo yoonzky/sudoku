@@ -265,14 +265,15 @@ function meowMake(diff,deadline){
     for(const r of reg) sizes[r]++;
     if(Math.min(...sizes)<2) continue;
     if(!meowLogic(n,reg)){ if(!loose) loose={cols,reg}; continue }
-    return meowDeal(diff,n,cols,reg);
+    return meowDeal(diff,n,cols,reg,2);
   }
-  return loose? meowDeal(diff,n,loose.cols,loose.reg) : null;
+  /* the spare deal only yields to search, and the grade says so */
+  return loose? meowDeal(diff,n,loose.cols,loose.reg,5) : null;
 }
-function meowDeal(diff,n,cols,reg){
+function meowDeal(diff,n,cols,reg,grade){
   const sol=new Array(n*n).fill(0);
   cols.forEach((c,r)=>{ sol[r*n+c]=MEOW_CAT });
   const ex={n,reg};
   return {mode:'meow', diff, ex, sp:meowBuild(ex), sol,
-    puz:new Array(n*n).fill(0), grade:2};
+    puz:new Array(n*n).fill(0), grade:grade||2};
 }

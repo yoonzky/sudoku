@@ -70,8 +70,53 @@ function randomPath(w,h){
   }
   return p;
 }
-const NUM_KEEP={easy:30,medium:24,hard:19,expert:15};
-function numMake(diff){
+/* solving by the chain: from a known number to its neighbour when only one fits.
+   The mode used to report grade 0, so its levels meant nothing */
+function numLogic(sp,puz){
+  const n=sp.cells.length;
+  const pos=new Array(n+2).fill(-1), used=new Array(n).fill(false);
+  let placed=0;
+  for(let i=0;i<n;i++) if(puz[i]){ pos[puz[i]]=i; used[i]=true; placed++ }
+  const reach=(from,v,dir)=>{
+    for(let u=v+dir; u>=1&&u<=n; u+=dir) if(pos[u]>=0){
+      const gap=Math.abs(u-v), d=numDist(sp,from,pos[u]);
+      return d<=gap && ((gap-d)%2===0);
+    }
+    return true;
+  };
+  let guard=0;
+  while(placed<n && ++guard<n*3){
+    let moved=false;
+    for(let v=1;v<=n;v++){
+      if(pos[v]<0) continue;
+      for(const dir of [1,-1]){
+        const w=v+dir;
+        if(w<1||w>n||pos[w]>=0) continue;
+        const ok=sp.nbr[pos[v]].filter(j=>!used[j]&&reach(j,w,dir));
+        if(ok.length!==1) continue;
+        pos[w]=ok[0]; used[ok[0]]=true; placed++; moved=true;
+      }
+    }
+    if(!moved) break;
+  }
+  return placed===n;
+}
+
+/* at 30 clues the chain almost always breaks; at 34 an easy deal falls to plain
+   steps four times out of ten, and sixteen tries cover the rest */
+const NUM_KEEP={easy:34,medium:24,hard:19,expert:15};
+const NUM_WANT={easy:2,medium:4,hard:4,expert:4};
+function numMake(diff,deadline){
+  const stop=deadline||(Date.now()+6000);
+  let best=null;
+  for(let att=0; att<16 && (att===0||Date.now()<stop); att++){
+    const r=numDeal(diff);
+    if(!best) best=r;
+    if(r.grade===NUM_WANT[diff]) return r;
+  }
+  return best;
+}
+function numDeal(diff){
   const w=9,h=9,n=w*h;
   const sp=numBuild({w,h});
   const path=randomPath(w,h);
@@ -87,5 +132,5 @@ function numMake(diff){
     const t=b[i]; b[i]=0;
     if(numCount(sp,b,2,300000)!==1) b[i]=t; else filled--;
   }
-  return {mode:'numerator',diff,ex:{w,h},sp,sol,puz:b,grade:0};
+  return {mode:'numerator',diff,ex:{w,h},sp,sol,puz:b,grade: numLogic(sp,b)? 2 : 4};
 }
