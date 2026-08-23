@@ -96,6 +96,14 @@ function meowSetCat(i){
   if(g.values[i]===MEOW_CAT && g.solution[i]===MEOW_CAT) sel=-1;
   afterMove();
 }
+function meowMark(i){
+  const g=cur(); if(!g||g.done||g.paused) return;
+  dismissPickHint();
+  pushUndo();
+  g.values[i] = g.values[i]===MEOW_MARK? 0 : MEOW_MARK;
+  lastPlaced=-1;
+  afterMove();
+}
 function meowSweep(i){
   const g=cur(); if(!g||g.done||g.paused||g.values[i]!==0) return;
   dismissPickHint();
@@ -309,6 +317,7 @@ function checkWin(){
     document.body.style.setProperty('--won-top',Math.max(0,Math.round(top))+'px');
     document.body.classList.add('won');
     $('winPanel').classList.remove('hidden');
+    placeWinPanel();
   };
   if(reducedMotion){ showWin(); return }
   document.body.classList.add('won');
@@ -343,10 +352,23 @@ function gameLost(){
   persistCache(); setPaused(true);
   $('loseModal').classList.remove('hidden');
 }
+function placeWinPanel(){
+  const panel=$('winPanel');
+  if(!panel||!document.body.classList.contains('won')||!SPEC){
+    document.body.classList.remove('win-side');
+    return;
+  }
+  const b=$('board').getBoundingClientRect(), game=$('game').getBoundingClientRect();
+  const side=(window.innerWidth-b.right)>=330 && window.innerHeight>=600 && !isPhone();
+  document.body.classList.toggle('win-side',side);
+  panel.style.left = side? Math.round(b.right-game.left+28)+'px' : '';
+}
 function clearWin(){
   clearTimeout(winTimer); winTimer=null;
   document.body.classList.remove('won');
+  document.body.classList.remove('win-side');
   document.body.style.removeProperty('--won-top');
+  $('winPanel').style.left='';
   $('winPanel').classList.add('hidden');
 }
 

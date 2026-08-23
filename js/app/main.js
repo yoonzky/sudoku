@@ -8,7 +8,12 @@ function sweepStop(){ sweepOn=false; sweepSeen=null }
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
   closePicker();
-  if(SPEC.kind==='meow'){ sel=i; meowTap(i); return }
+  if(SPEC.kind==='meow'){
+    if(lastPointerType==='touch'){ sel=i; meowTap(i); return }
+    if(sel===i){ meowSetCat(i); return }
+    sel=i; renderBoard();
+    return;
+  }
   if(i!==sel) numFlush();
   if(SES.settings.digitFirst && armed && !g.done && !g.given[i] && SPEC.kind!=='num'){
     sel=i; inputDigit(armed); hlDigit=armed; renderBoard(); return;
@@ -65,7 +70,7 @@ $('board').addEventListener('dblclick',e=>{
 $('board').addEventListener('contextmenu',e=>{
   const el=e.target.closest('.cell'); if(!el) return;
   e.preventDefault();
-  if(SPEC && SPEC.kind==='meow'){ sel=+el.dataset.i; meowSetCat(sel); return }
+  if(SPEC && SPEC.kind==='meow'){ sel=+el.dataset.i; meowMark(sel); return }
   if(lastPointerType!=='touch') openPicker(+el.dataset.i);
 });
 $('board').addEventListener('animationend',e=>{
@@ -224,8 +229,10 @@ document.addEventListener('keydown',e=>{
   const g=cur(); if(!g) return;
   const code=e.code;
   if(SPEC && SPEC.kind==='meow' && !e.ctrlKey && !e.metaKey){
-    if(code==='Space'){ e.preventDefault(); if(sel>=0) meowTap(sel); return }
-    if(code==='Enter'||code==='NumpadEnter'){ e.preventDefault(); if(sel>=0) meowSetCat(sel); return }
+    if(code==='Space'||code==='Enter'||code==='NumpadEnter'){
+      e.preventDefault(); if(sel>=0) meowSetCat(sel); return;
+    }
+    if(code==='KeyX'||code==='KeyM'){ e.preventDefault(); if(sel>=0) meowMark(sel); return }
   }
   if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
   if((e.ctrlKey||e.metaKey)&&code==='KeyY'){ e.preventDefault(); redo(); return }
@@ -287,7 +294,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('resize',()=>{
   if(!isPhone()) closeSheet();
-  snapBoardTwice(); updatePickHint();
+  snapBoardTwice(); updatePickHint(); placeWinPanel();
 });
 if(window.visualViewport) window.visualViewport.addEventListener('resize',snapBoard);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);

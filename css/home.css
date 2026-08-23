@@ -49,13 +49,16 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 .mcard:hover{border-color:var(--accent); color:var(--accent); transform:translateY(-1px)}
 .mcard.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
 
-.mp{border-left:1px solid var(--line); padding:0 0 0 28px; display:flex; flex-direction:column; min-height:0}
+.mp{border-left:1px solid var(--line); padding:0 0 0 28px; display:flex; flex-direction:column;
+  min-height:0; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent}
 @media (max-width:900px){ .mp{border-left:0; border-top:1px solid var(--line); padding:20px 0 0} }
 .sheet-grab{display:none}
 .mp-prev{width:100%; max-width:210px; margin:0 0 20px}
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
-.mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted); min-height:6.4em}
+.mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted); min-height:6.4em; flex:none;
+  max-height:11.2em; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent}
+.mp-prev, .mp h3, .mp h4, .diff-grid{flex:none}
 .mp-pool{margin:13px 0 0; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted)}
 .mp-pool button{background:transparent; border:0; border-bottom:1px solid var(--line); padding:2px 0;
   color:var(--accent); font-family:inherit; font-size:12px; cursor:pointer; transition:border-color .15s}
@@ -149,6 +152,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   .mp-prev{max-width:168px; margin-bottom:14px}
   .mp h3{font-size:20px}
   .mp h4{margin-top:18px}
+  .mp p{max-height:8.5em}
   .diff-btn{padding:9px 4px 8px}
   .cont-card{padding:8px 11px 7px}
   .tot{margin-top:10px}

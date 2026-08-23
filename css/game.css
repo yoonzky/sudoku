@@ -145,12 +145,12 @@ body.won #board{overflow:visible}
 
 #board.cages .cell{font-size:calc(50cqw / var(--bw))}
 body.board-meow .cell::before{display:none}
-body.board-meow .cell.hl{filter:brightness(1.5)}
-body.board-meow .cell.same{filter:brightness(1.75)}
-body.board-meow .cell.sel{filter:brightness(2)}
-html[data-theme="light"] body.board-meow .cell.hl{filter:brightness(.965)}
-html[data-theme="light"] body.board-meow .cell.same{filter:brightness(.94)}
-html[data-theme="light"] body.board-meow .cell.sel{filter:brightness(.9)}
+body.board-meow .cell.hl{filter:brightness(1.24)}
+body.board-meow .cell.same{filter:brightness(1.38)}
+body.board-meow .cell.sel{filter:brightness(1.55)}
+html[data-theme="light"] body.board-meow .cell.hl{filter:brightness(.955)}
+html[data-theme="light"] body.board-meow .cell.same{filter:brightness(.92)}
+html[data-theme="light"] body.board-meow .cell.sel{filter:brightness(.87)}
 
 .cell.z1{background:var(--z1)} .cell.z2{background:var(--z2)} .cell.z3{background:var(--z3)}
 .cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}
@@ -211,12 +211,10 @@ body.board-wide #board{border-color:transparent; box-shadow:none}
 #picker.pk-num{grid-template-columns:repeat(5,42px)}
 #picker.pk-num button{font-size:19px}
 
-@media (min-width:1100px) and (min-height:600px){
-  body.won.in-game #game{position:relative; max-width:min(1160px,100%); padding-right:322px}
-  body.won.in-game #winPanel{position:absolute; right:0; top:50%; transform:translateY(-50%);
-    width:294px; margin:0; border-top:0; padding-top:0}
-  body.won.in-game .win-foot{flex-direction:column; align-items:stretch; gap:14px}
-  body.won.in-game .win-act{flex:none}
-  body.won.in-game .win-act .btn{flex:1}
-  body.won.in-game{overflow:hidden; justify-content:center}
-}
+body.win-side #game{position:relative}
+body.win-side #winPanel{position:absolute; top:50%; transform:translateY(-50%);
+  width:294px; margin:0; border-top:0; padding-top:0}
+body.win-side .win-foot{flex-direction:column; align-items:stretch; gap:14px}
+body.win-side .win-act{flex:none}
+body.win-side .win-act .btn{flex:1}
+body.win-side.in-game{overflow:hidden}
