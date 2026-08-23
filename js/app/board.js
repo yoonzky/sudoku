@@ -315,7 +315,8 @@ function renderBoard(){
       cellKey[i]=key;
     }
     if(isMeow){
-      if(v===MEOW_CAT && g.instant && meowClash(g,sp,i)) d.classList.add('err');
+      if(v===MEOW_CAT && g.instant && (g.solution[i]!==MEOW_CAT || meowClash(g,sp,i)))
+        d.classList.add('err');
     } else if(v){
       if(v>9) d.classList.add('d2');
       if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');

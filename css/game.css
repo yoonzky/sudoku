@@ -221,7 +221,10 @@ body.board-wide #board{border-color:transparent; box-shadow:none}
 #picker.pk-num button{font-size:19px}
 
 body.win-side #game{position:relative}
-body.win-side #winPanel{position:absolute; top:50%; transform:translateY(-50%);
+@keyframes winSideIn{from{opacity:0; transform:translate(0,calc(-50% + 12px))}
+  to{opacity:1; transform:translateY(-50%)}}
+body.win-side #winPanel{position:absolute; transform:translateY(-50%);
+  animation:winSideIn .5s cubic-bezier(.2,.7,.3,1) both;
   width:300px; margin:0; border-top:0; padding:24px 24px 22px;
   background:var(--panel); border:1px solid var(--line); border-radius:6px; box-shadow:var(--shadow)}
 body.win-side .win-lead{margin-bottom:4px}

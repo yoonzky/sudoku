@@ -362,13 +362,14 @@ function placeWinPanel(){
   const side=(window.innerWidth-b.right)>=330 && window.innerHeight>=600 && !isPhone();
   document.body.classList.toggle('win-side',side);
   panel.style.left = side? Math.round(b.right-game.left+28)+'px' : '';
+  panel.style.top = side? Math.round(b.top-game.top+b.height/2)+'px' : '';
 }
 function clearWin(){
   clearTimeout(winTimer); winTimer=null;
   document.body.classList.remove('won');
   document.body.classList.remove('win-side');
   document.body.style.removeProperty('--won-top');
-  $('winPanel').style.left='';
+  $('winPanel').style.left=''; $('winPanel').style.top='';
   $('winPanel').classList.add('hidden');
 }
 
