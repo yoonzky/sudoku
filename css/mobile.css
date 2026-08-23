@@ -150,7 +150,10 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 @media (max-width:700px){ #posRow, #posseg{display:none} }
 
 @media (max-width:620px){
-  .modal{padding:18px 16px 0; max-height:94vh}
+  /* окно вписывается в экран целиком, иначе нижняя кнопка уезжает за край */
+  .modal-bg{align-items:flex-start; padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
+  #setModal{padding-top:10px}
+  .modal{padding:18px 16px 0; max-height:100%}
   #welcomeModal .modal{padding-bottom:18px}
   .modal h2{margin-bottom:11px}
   .modal .row:last-child{position:sticky; bottom:0; z-index:2;

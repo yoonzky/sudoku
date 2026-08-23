@@ -1,4 +1,4 @@
-const CACHE='sudoku-v15';
+const CACHE='sudoku-v16';
 const FILES=[
   './','./index.html','./manifest.webmanifest',
   './css/base.css','./css/home.css','./css/game.css','./css/modals.css','./css/mobile.css',
