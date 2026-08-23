@@ -5,6 +5,30 @@ const TAP_SLOP=14;
 let tapX=0, tapY=0, tapIdx=-1;
 let sweepOn=false, sweepSeen=null, sweepFrom=-1;
 let chainOn=false, chainPrev=-1, chainLast=0;
+/* a quick finger reports one move per two or three cells, so the gap between
+   two points is walked over and every cell along the way is visited */
+const dragAt={x:0,y:0}; let dragStep=12;
+function dragCells(e,fn){
+  const raw=e.getCoalescedEvents? e.getCoalescedEvents() : null;
+  const evs=(raw&&raw.length)? raw : [e];
+  let px=dragAt.x, py=dragAt.y;
+  for(const ev of evs){
+    const dx=ev.clientX-px, dy=ev.clientY-py;
+    const steps=Math.max(1,Math.ceil(Math.hypot(dx,dy)/dragStep));
+    for(let k=1;k<=steps;k++){
+      const el=document.elementFromPoint(px+dx*k/steps, py+dy*k/steps);
+      const cell=el&&el.closest&&el.closest('.cell');
+      if(cell) fn(+cell.dataset.i);
+    }
+    px=ev.clientX; py=ev.clientY;
+  }
+  dragAt.x=px; dragAt.y=py;
+}
+function dragStart(i,e){
+  dragAt.x=e.clientX; dragAt.y=e.clientY;
+  const w=cells[i]? cells[i].getBoundingClientRect().width : 0;
+  dragStep=Math.max(6, w*0.4 || 12);
+}
 function chainStop(){ chainOn=false; chainPrev=-1; chainLast=0 }
 function tapCancel(){ tapIdx=-1 }
 function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
@@ -37,12 +61,14 @@ $('board').addEventListener('pointerdown',e=>{
       sweepOn=true; sweepSeen=new Set(); sweepFrom=i;
     }
     tapIdx=i; tapX=e.clientX; tapY=e.clientY;
+    dragStart(i,e);
     if(e.pointerType!=='touch') tapCell(i);
     return;
   }
   if(SPEC.kind==='num' && e.pointerType!=='touch' && e.button!==2 && g.values[i]){
     chainOn=true; chainPrev=i; chainLast=g.values[i];
     tapX=e.clientX; tapY=e.clientY;
+    dragStart(i,e);
   }
   if(e.pointerType!=='touch'){ tapCell(i); return }
   tapIdx=i; tapX=e.clientX; tapY=e.clientY;
@@ -54,23 +80,19 @@ $('board').addEventListener('pointermove',e=>{
       sweepSeen.add(sweepFrom);
       meowSweep(sweepFrom);
     }
-    const el=document.elementFromPoint(e.clientX,e.clientY);
-    const cell=el&&el.closest&&el.closest('.cell');
-    if(!cell) return;
-    const j=+cell.dataset.i;
-    if(sweepSeen.has(j)) return;
-    sweepSeen.add(j);
-    tapIdx=-1;
-    meowSweep(j);
+    dragCells(e,j=>{
+      if(sweepSeen.has(j)) return;
+      sweepSeen.add(j);
+      tapIdx=-1;
+      meowSweep(j);
+    });
     return;
   }
   if(chainOn){
-    const el=document.elementFromPoint(e.clientX,e.clientY);
-    const cell=el&&el.closest&&el.closest('.cell');
-    if(!cell) return;
-    const j=+cell.dataset.i;
-    if(j===chainPrev || !SPEC.nbr[chainPrev] || SPEC.nbr[chainPrev].indexOf(j)<0) return;
-    if(numChain(j,chainLast+1)){ chainLast++; chainPrev=j }
+    dragCells(e,j=>{
+      if(j===chainPrev || !SPEC.nbr[chainPrev] || SPEC.nbr[chainPrev].indexOf(j)<0) return;
+      if(numChain(j,chainLast+1)){ chainLast++; chainPrev=j }
+    });
     return;
   }
   if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>TAP_SLOP || Math.abs(e.clientY-tapY)>TAP_SLOP)) tapCancel();
@@ -320,7 +342,11 @@ window.addEventListener('resize',()=>{
   if(!isPhone()) closeSheet();
   snapBoardTwice(); updatePickHint(); placeWinPanel();
 });
-if(window.visualViewport) window.visualViewport.addEventListener('resize',snapBoard);
+/* resizing the board mid-drag would move the cells out from under the finger */
+if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{
+  if(sweepOn||chainOn) return;
+  snapBoard();
+});
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);
 
 loadCache();
