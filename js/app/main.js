@@ -10,7 +10,7 @@ function tapCell(i){
   closePicker();
   if(SPEC.kind==='meow'){
     if(lastPointerType==='touch'){ sel=i; meowTap(i); return }
-    if(sel===i){ meowSetCat(i); return }
+    if(sel===i){ meowMark(i); return }
     sel=i; renderBoard();
     return;
   }
@@ -59,6 +59,7 @@ $('board').addEventListener('pointerup',e=>{
   const i=tapIdx; tapCancel();
   const swept=sweepOn && sweepSeen && sweepSeen.size>0;
   sweepStop();
+  if(swept){ sel=-1; renderBoard() }
   if(i<0 || swept || e.pointerType!=='touch') return;
   if(Math.abs(e.clientX-tapX)>10 || Math.abs(e.clientY-tapY)>10) return;
   tapCell(i);
@@ -74,7 +75,7 @@ $('board').addEventListener('dblclick',e=>{
 $('board').addEventListener('contextmenu',e=>{
   const el=e.target.closest('.cell'); if(!el) return;
   e.preventDefault();
-  if(SPEC && SPEC.kind==='meow'){ sel=+el.dataset.i; meowMark(sel); return }
+  if(SPEC && SPEC.kind==='meow'){ sel=+el.dataset.i; meowSetCat(sel); return }
   if(lastPointerType!=='touch') openPicker(+el.dataset.i);
 });
 $('board').addEventListener('animationend',e=>{

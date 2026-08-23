@@ -149,7 +149,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   .mcard{gap:4px; padding:6px 3px 5px}
   .mcard b{font-size:10.5px}
   .mode-grid{gap:6px}
-  .mgroup{margin:2px 0 -5px}
+  .mgroup{margin:0 0 6px}
   .home-foot{padding-top:11px}
   .cont-card{width:150px; padding:7px 10px 6px}
   .cont-card b{font-size:12.5px}

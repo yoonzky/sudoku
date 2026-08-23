@@ -44,6 +44,8 @@
 @keyframes wave{0%,100%{opacity:0}45%{opacity:.9}}
 
 body.won .controls, body.won .numpad, body.won #pickHint{display:none}
+body.win-side .controls, body.win-side .numpad{display:flex; opacity:.4; pointer-events:none}
+body.win-side .numpad{display:grid}
 
 body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
 .win-lead{font-family:var(--f-disp); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
@@ -161,7 +163,14 @@ html[data-theme="light"] body.board-meow .cell.sel{filter:brightness(.87)}
 .cell.err .cat{stroke:var(--error)}
 .cell .mark{inset:34%; stroke:var(--mark); stroke-width:1.9; stroke-linecap:round}
 .cell.pop .cat{animation:pop .24s cubic-bezier(.22,.8,.3,1)}
-body.board-meow .numpad{display:none}
+.numpad.meow-pad{max-width:420px; margin-left:auto; margin-right:auto}
+.meow-key{aspect-ratio:auto; height:60px; display:flex; align-items:center; justify-content:center; gap:12px;
+  font-family:var(--f-body); font-size:13.5px; font-weight:500; letter-spacing:.02em; color:var(--text)}
+.meow-key span{line-height:1}
+.meow-key .cat, .meow-key .mark{position:static; inset:auto; width:28px; height:28px; flex:none}
+.meow-key .cat{stroke:var(--cat); stroke-width:1.6}
+.meow-key .mark{width:22px; height:22px; stroke:var(--text); stroke-width:2}
+.meow-key:hover{border-color:var(--accent); color:var(--text)}
 .cell.zone{background:var(--zone-fill)}
 .cell.even{background:var(--even-fill)}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
