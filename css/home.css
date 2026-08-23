@@ -1,11 +1,12 @@
 #home{display:flex; flex-direction:column; gap:18px; width:100%; max-width:1120px; margin:0 auto; flex:1; min-height:0}
 body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px; min-height:0}
-@media (min-width:901px) and (min-height:620px){
+/* below 660px the screen must not be locked: the side column stops fitting four levels */
+@media (min-width:901px) and (min-height:660px){
   body:not(.in-game){height:100vh; overflow:hidden}
   body:not(.in-game) main{overflow:hidden}
 }
 @supports (height:100dvh){
-  @media (min-width:901px) and (min-height:620px){ body:not(.in-game){height:100dvh} }
+  @media (min-width:901px) and (min-height:660px){ body:not(.in-game){height:100dvh} }
 }
 
 .hcap{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
@@ -58,11 +59,14 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   min-height:0; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent}
 @media (max-width:900px){ .mp{border-left:0; border-top:1px solid var(--line); padding:20px 0 0} }
 .sheet-grab{display:none}
-.mp-prev{width:100%; max-width:210px; margin:0 0 20px}
+/* the preview is measured against window height, or on a short screen it eats the levels */
+.mp-prev{width:min(210px,20vh); max-width:100%; margin:0 0 20px}
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
-.mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted); min-height:6.4em; flex:none;
+/* the rules text shrinks and scrolls on its own, so the level list always shows in full */
+.mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted); min-height:0; flex:0 1 auto;
   max-height:11.2em; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent}
+@media (min-height:900px){ .mp p{min-height:6.4em} }
 .mp-prev, .mp h3, .mp h4, .diff-grid{flex:none}
 .mp-pool{margin:13px 0 0; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted)}
 .mp-pool button{background:transparent; border:0; border-bottom:1px solid var(--line); padding:2px 0;
@@ -154,9 +158,9 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   .cont-card{width:150px; padding:7px 10px 6px}
   .cont-card b{font-size:12.5px}
   .mrand{padding:9px 13px; margin-bottom:11px}
-  .mp-prev{max-width:168px; margin-bottom:14px}
+  .mp-prev{margin-bottom:10px}
   .mp h3{font-size:20px}
-  .mp h4{margin-top:18px}
+  .mp h4{margin-top:14px}
   .mp p{max-height:8.5em}
   .diff-btn{padding:9px 4px 8px}
   .cont-card{padding:8px 11px 7px}
@@ -168,14 +172,12 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   .mode-grid{gap:8px}
   .mcard{padding:11px 6px 10px; gap:8px}
   .mcard-prev{height:60px}
-  .mcard b{font-size:12.5px}
   .mgroup{margin:0 0 9px}
   .mcard b{font-size:12px}
   .mcard small{font-size:10.5px}
   .mrand{padding:10px 15px; margin-bottom:9px}
   .mrand b{font-size:15px}
   .mgroup{font-size:10.5px}
-  .mp-prev{max-width:210px}
   .mp h3{font-size:25px}
   .mp p{font-size:13.5px}
   .diff-btn{padding:14px 4px 13px}
