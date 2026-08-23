@@ -367,7 +367,10 @@ function placeSelBox(g,sp){
   sb.style.width=(100/sp.W)+'%';
   sb.style.height=(100/sp.H)+'%';
   sb.className='';
-  if(g.instant && g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel]) sb.classList.add('err');
+  const wrong = sp.kind==='meow'
+    ? g.values[sel]===MEOW_CAT && g.solution[sel]!==MEOW_CAT
+    : g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
+  if(g.instant && wrong) sb.classList.add('err');
   else if(inputMode==='hyp' || g.hyp[sel]) sb.classList.add('hyp');
 }
 
