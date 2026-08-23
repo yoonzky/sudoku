@@ -40,6 +40,8 @@ function cancelGen(){
   if(genWorker&&genWorker.terminate){ try{ genWorker.terminate() }catch(e){} }
   genWorker=null;
   $('genOverlay').classList.add('hidden');
+  /* the game the deal was meant to replace is already gone, so fall back to the menu */
+  if(!cur()) goHome();
   return true;
 }
 
@@ -49,7 +51,6 @@ function newGame(mode,diff){
     const pool=poolList();
     mode=pool[Math.floor(Math.random()*pool.length)];
   }
-  clearWin();
   genBusy=true;
   $('genOverlay').innerHTML='';
   $('genOverlay').append(t('gen')+' · '+t('m_'+mode));
