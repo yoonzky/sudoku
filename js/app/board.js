@@ -2,6 +2,8 @@
 
 let SPEC=null;
 const cells=[];
+/* что уже нарисовано в клетке — чтобы не трогать DOM на каждый ход */
+const cellKey=[];
 const merged=(g,i)=>g.values[i]||g.hyp[i];
 
 function cellNum(v){ return v==null||v===0? '' : String(v) }
@@ -9,7 +11,7 @@ function cellNum(v){ return v==null||v===0? '' : String(v) }
 function buildBoard(sp){
   SPEC=sp;
   const b=$('board');
-  b.innerHTML=''; cells.length=0;
+  b.innerHTML=''; cells.length=0; cellKey.length=0;
   b.style.gridTemplateColumns=`repeat(${sp.W},1fr)`;
   b.style.gridTemplateRows=`repeat(${sp.H},1fr)`;
   b.style.aspectRatio=`${sp.W} / ${sp.H}`;
@@ -143,6 +145,26 @@ function joinSegments(segs){
   return d;
 }
 
+/* точки по отрезкам: шаг подгоняется под длину, поэтому углы никогда не пустые */
+function dotLine(segs,step){
+  const seen=new Set();
+  let out='';
+  for(const s of segs){
+    const dx=s[2]-s[0], dy=s[3]-s[1];
+    const len=Math.hypot(dx,dy);
+    const n=Math.max(1,Math.round(len/step));
+    for(let k=0;k<=n;k++){
+      const t=k/n;
+      const x=(s[0]+dx*t).toFixed(3), y=(s[1]+dy*t).toFixed(3);
+      const id=x+','+y;
+      if(seen.has(id)) continue;
+      seen.add(id);
+      out+=`<circle cx="${x}" cy="${y}" r=".021"/>`;
+    }
+  }
+  return out;
+}
+
 function buildDeco(sp){
   const b=$('board');
   const old=b.querySelector('.deco'); if(old) old.remove();
@@ -193,10 +215,11 @@ function buildDeco(sp){
     const line=dt.k===2? 'var(--dot-b-line)' : 'var(--dot-w-line)';
     dots+=`<circle cx="${cx}" cy="${cy}" r=".095" fill="${fill}" stroke="${line}" stroke-width=".026"/>`;
   }
-  const cagePath=joinSegments(cageSegs), zonePath=joinSegments(zoneSegs);
+  const zonePath=joinSegments(zoneSegs);
+  const cageDots=dotLine(cageSegs,0.085);
   deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
     (zonePath? `<path d="${zonePath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
-    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".038" stroke-dasharray=".001 .075" stroke-linejoin="round" stroke-linecap="round"/>`:'')+
+    (cageDots? `<g fill="var(--cage)">${cageDots}</g>`:'')+
     (sums? `<g class="sums" font-size=".21">${sums}</g>`:'')+
     dots+'</svg>';
   b.appendChild(deco);
@@ -247,23 +270,30 @@ function renderBoard(){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
     d.className=d.className.replace(/ (sel|hl|same|err|given|hypv|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
+    const key = v? 'v'+v : hv? 'h'+hv
+      : g.notes[i].length? 'n'+g.notes[i].join(',')+'|'+(activeVal||0) : '';
+    if(cellKey[i]!==key){
+      if(v) d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
+      else if(hv) d.innerHTML='<i class="v">'+cellNum(hv)+'</i>';
+      else if(g.notes[i].length){
+        if(isNum){
+          d.innerHTML='<div class="notes wide">'+g.notes[i].slice(0,6).map(v=>`<span>${v}</span>`).join('')+'</div>';
+        } else {
+          let h='<div class="notes">';
+          for(let k=1;k<=sp.maxD;k++)
+            h+=`<span${activeVal&&k===activeVal?' class="nhl"':''}>${g.notes[i].includes(k)?k:''}</span>`;
+          d.innerHTML=h+'</div>';
+        }
+      } else d.textContent='';
+      cellKey[i]=key;
+    }
     if(v){
-      d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
       if(v>9) d.classList.add('d2');
       if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');
     } else if(hv){
-      d.innerHTML='<i class="v">'+cellNum(hv)+'</i>'; d.classList.add('hypv');
+      d.classList.add('hypv');
       if(hv>9) d.classList.add('d2');
-    } else if(g.notes[i].length){
-      if(isNum){
-        d.innerHTML='<div class="notes wide">'+g.notes[i].slice(0,6).map(v=>`<span>${v}</span>`).join('')+'</div>';
-      } else {
-        let h='<div class="notes">';
-        for(let k=1;k<=sp.maxD;k++)
-          h+=`<span${activeVal&&k===activeVal?' class="nhl"':''}>${g.notes[i].includes(k)?k:''}</span>`;
-        d.innerHTML=h+'</div>';
-      }
-    } else d.textContent='';
+    }
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
     if(sel>=0){
       if(i===sel) d.classList.add('sel');

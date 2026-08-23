@@ -1,4 +1,4 @@
-const CACHE='sudoku-v12';
+const CACHE='sudoku-v13';
 const FILES=[
   './','./index.html','./manifest.webmanifest',
   './css/base.css','./css/home.css','./css/game.css','./css/modals.css','./css/mobile.css',
@@ -14,13 +14,25 @@ self.addEventListener('install',e=>{
 self.addEventListener('activate',e=>{
   e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
+const keep=(req,res)=>{
+  const copy=res.clone();
+  caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{});
+  return res;
+};
 self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET') return;
+  const url=new URL(e.request.url);
+  if(url.origin!==location.origin) return;
+  /* разметка, стили и скрипты берём из сети: иначе правки доходят через раз */
+  const live = e.request.mode==='navigate' || /\.(?:html|css|js|webmanifest)$/.test(url.pathname);
+  if(live){
+    e.respondWith(
+      fetch(e.request).then(res=>keep(e.request,res))
+        .catch(()=>caches.match(e.request).then(hit=> hit || caches.match('./index.html')))
+    );
+    return;
+  }
   e.respondWith(
-    caches.match(e.request).then(hit=> hit || fetch(e.request).then(res=>{
-      const copy=res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,copy)).catch(()=>{});
-      return res;
-    }).catch(()=>caches.match('./index.html')))
+    caches.match(e.request).then(hit=> hit || fetch(e.request).then(res=>keep(e.request,res)))
   );
 });
