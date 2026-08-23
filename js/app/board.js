@@ -47,11 +47,33 @@ function buildBoard(sp){
   }
   /* суммы занимают верхний угол клетки — опускаем цифры по всему полю разом */
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
+  buildGlow(sp);
   buildGrid(sp);
   buildDeco(sp);
   const sb=document.createElement('div');
   sb.id='selBox'; sb.className='hidden';
   b.appendChild(sb);
+}
+
+/* свет победы: гало по внешнему краю фигуры — размытие минус сама фигура */
+let glowSeq=0;
+function buildGlow(sp){
+  const b=$('board');
+  const old=b.querySelector('.glow'); if(old) old.remove();
+  const boxes=(sp.frames&&sp.frames.length)? sp.frames : [{x:0,y:0,w:sp.W,h:sp.H}];
+  const rects=boxes.map(f=>`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx=".1"/>`).join('');
+  const id='g'+(++glowSeq);
+  const halo=(dev,dy)=>`<filter id="${id}${dy?'u':'e'}" x="-40%" y="-40%" width="180%" height="180%">`+
+    `<feGaussianBlur in="SourceGraphic" stdDeviation="${dev}" result="b"/>`+
+    (dy? `<feOffset in="b" dy="${dy}" result="b"/>` : '')+
+    `<feComposite in="b" in2="SourceGraphic" operator="out"/></filter>`;
+  const d=document.createElement('div');
+  d.className='glow';
+  d.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}" preserveAspectRatio="none">`+
+    `<defs>${halo(.18,0)}${halo(.5,-.34)}</defs>`+
+    `<g fill="var(--glow-edge)" filter="url(#${id}u)" opacity=".9">${rects}</g>`+
+    `<g fill="var(--glow-edge)" filter="url(#${id}e)">${rects}</g></svg>`;
+  b.insertBefore(d,b.firstChild);
 }
 
 function buildGrid(sp){
@@ -129,7 +151,7 @@ function buildDeco(sp){
   if(!sp.cages.length && !sp.dots.length && !hasZone) return;
   const deco=document.createElement('div');
   deco.className='deco';
-  const d=0.10;
+  const d=0.055;
   const cageSegs=[];
   let sums='';
   const inCage=(cg,x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && cg.cells.indexOf(j)>=0 };
@@ -145,7 +167,7 @@ function buildDeco(sp){
       if(!rt) cageSegs.push([x+1-d,y0,x+1-d,y1]);
     }
     const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
-    sums+=`<text x="${a.x+0.10}" y="${a.y+0.27}">${cg.sum}</text>`;
+    sums+=`<text x="${a.x+0.15}" y="${a.y+0.31}">${cg.sum}</text>`;
   }
   const zoneSegs=[];
   if(hasZone){
@@ -174,7 +196,7 @@ function buildDeco(sp){
   const cagePath=joinSegments(cageSegs), zonePath=joinSegments(zoneSegs);
   deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
     (zonePath? `<path d="${zonePath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
-    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".028" stroke-dasharray=".05 .034" stroke-linejoin="round" stroke-linecap="square"/>`:'')+
+    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".038" stroke-dasharray=".001 .075" stroke-linejoin="round" stroke-linecap="round"/>`:'')+
     (sums? `<g class="sums" font-size=".21">${sums}</g>`:'')+
     dots+'</svg>';
   b.appendChild(deco);
@@ -226,11 +248,11 @@ function renderBoard(){
     d.className=d.className.replace(/ (sel|hl|same|err|given|hypv|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
     if(v){
-      d.textContent=cellNum(v);
+      d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
       if(v>9) d.classList.add('d2');
       if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');
     } else if(hv){
-      d.textContent=cellNum(hv); d.classList.add('hypv');
+      d.innerHTML='<i class="v">'+cellNum(hv)+'</i>'; d.classList.add('hypv');
       if(hv>9) d.classList.add('d2');
     } else if(g.notes[i].length){
       if(isNum){

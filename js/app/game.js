@@ -254,9 +254,16 @@ function checkWin(){
     $('winPanel').classList.remove('hidden');
   };
   if(reducedMotion){ showWin(); return }
-  /* свет по краю поля разгорается сам, панель итога приходит следом */
+  /* свет по краю поля разгорается сам, по клеткам проходит волна, следом панель итога */
   document.body.classList.add('won');
-  winTimer=setTimeout(()=>{ winTimer=null; showWin() },620);
+  for(let i=0;i<n;i++){
+    const c=SPEC.cells[i];
+    cells[i].style.animationDelay=((c.x+c.y)*22)+'ms';
+    cells[i].classList.add('wave');
+  }
+  winTimer=setTimeout(()=>{ winTimer=null;
+    cells.forEach(d=>{ d.classList.remove('wave'); d.style.animationDelay='' });
+    showWin() },900);
 }
 function renderWinPanel(){
   const w=lastWin; if(!w) return;

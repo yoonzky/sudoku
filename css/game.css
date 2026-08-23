@@ -18,7 +18,9 @@
   font-family:var(--f-num); font-size:calc(58cqw / var(--bw)); line-height:1; font-weight:600; cursor:pointer; background:transparent;
   color:var(--user)}
 .cell.given{color:var(--given); font-weight:600}
-.cell.hypv{color:var(--accent2); font-weight:600; text-decoration:underline dashed; text-decoration-thickness:2px; text-underline-offset:4px}
+.cell .v{font-style:normal; display:block; line-height:1}
+.cell.hypv{color:var(--accent2); font-weight:600}
+.cell.hypv .v{text-decoration:underline dashed; text-decoration-thickness:2px; text-underline-offset:4px}
 #board{margin:0 auto}
 .cell.hl{--tint:var(--tint-hl)}
 .cell.same{--tint:var(--tint-same)}
@@ -34,8 +36,13 @@
 
 .cell.sel .notes span{color:var(--note-sel)}
 .cell .notes span.nhl{color:var(--accent); font-weight:700; opacity:1}
-.cell.pop{animation:pop .16s ease-out}
-@keyframes pop{from{transform:scale(.9); opacity:.6}to{transform:none; opacity:1}}
+.cell.pop .v{animation:pop .24s cubic-bezier(.22,.8,.3,1)}
+@keyframes pop{from{transform:scale(.8); opacity:.25}to{transform:none; opacity:1}}
+/* волна победы: мягкий свет проходит по полю, плитки не прыгают */
+.cell.wave::after{content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:var(--accent-soft); mix-blend-mode:var(--blend);
+  animation:wave .7s ease-out both}
+@keyframes wave{0%,100%{opacity:0}45%{opacity:.9}}
 
 body.won .controls, body.won .numpad, body.won #pickHint{display:none}
 
@@ -60,7 +67,11 @@ body.won.in-game{overflow:auto}
 @media (max-width:700px){
   body.won.in-game{justify-content:flex-start; padding-top:var(--won-top,0px)}
 }
-#board{transition:box-shadow .9s ease-out}
+.glow{position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:0;
+  transition:opacity 1.2s ease-out}
+.glow svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+body.won .glow{opacity:1}
+body.won #board{overflow:visible}
 #pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:6px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
 #pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
@@ -182,7 +193,3 @@ body.board-wide #board{border-color:transparent; box-shadow:none}
 #picker.pk-num{grid-template-columns:repeat(5,42px)}
 #picker.pk-num button{font-size:19px}
 
-/* победа: свет ложится вокруг поля и сильнее сверху — одинаково во всех режимах */
-body.won #board{box-shadow:0 -26px 80px -14px var(--glow-edge), 0 -10px 40px -14px var(--glow-edge)}
-body.won:not(.board-wide) #board{box-shadow:0 -26px 80px -14px var(--glow-edge),
-  0 -10px 40px -14px var(--glow-edge), var(--shadow)}
