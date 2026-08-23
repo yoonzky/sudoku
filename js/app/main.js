@@ -5,6 +5,7 @@ const TAP_SLOP=14;
 let tapX=0, tapY=0, tapIdx=-1;
 let sweepOn=false, sweepSeen=null, sweepFrom=-1;
 let chainOn=false, chainPrev=-1, chainLast=0;
+let runOn=false, runFrom=-1;
 /* a quick finger reports one move per two or three cells, so the gap between
    two points is walked over and every cell along the way is visited */
 const dragAt={x:0,y:0}; let dragStep=12;
@@ -37,6 +38,7 @@ function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
   closePicker();
+  if(msel.size){ msel.clear() }
   if(SPEC.kind==='meow'){
     sel=i;
     if(lastPointerType==='touch') meowTap(i); else meowMark(i);
@@ -70,6 +72,10 @@ $('board').addEventListener('pointerdown',e=>{
     tapX=e.clientX; tapY=e.clientY;
     dragStart(i,e);
   }
+  /* a drag with the mouse picks a run of cells, so a digit can be pencilled into all of them */
+  if(e.pointerType!=='touch' && e.button===0 && SPEC.kind!=='num'){
+    runOn=true; runFrom=i; tapX=e.clientX; tapY=e.clientY; dragStart(i,e);
+  }
   if(e.pointerType!=='touch'){ tapCell(i); return }
   tapIdx=i; tapX=e.clientX; tapY=e.clientY;
 });
@@ -95,9 +101,21 @@ $('board').addEventListener('pointermove',e=>{
     });
     return;
   }
+  if(runOn){
+    if(Math.abs(e.clientX-tapX)<TAP_SLOP && Math.abs(e.clientY-tapY)<TAP_SLOP) return;
+    if(!msel.size && runFrom>=0) msel.add(runFrom);
+    let grew=false;
+    dragCells(e,j=>{ if(!msel.has(j)){ msel.add(j); grew=true } });
+    if(grew){ renderBoard(); showMultiHint() }
+    return;
+  }
   if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>TAP_SLOP || Math.abs(e.clientY-tapY)>TAP_SLOP)) tapCancel();
 });
 $('board').addEventListener('pointerup',e=>{
+  if(runOn){
+    runOn=false;
+    if(msel.size<=1){ msel.clear(); renderBoard() }
+  }
   const i=tapIdx; tapCancel();
   const swept=sweepOn && sweepSeen && sweepSeen.size>0;
   sweepStop(); chainStop();
@@ -106,7 +124,17 @@ $('board').addEventListener('pointerup',e=>{
   if(Math.abs(e.clientX-tapX)>TAP_SLOP || Math.abs(e.clientY-tapY)>TAP_SLOP) return;
   tapCell(i);
 });
-for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{ tapCancel(); sweepStop(); chainStop() });
+for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{
+  tapCancel(); sweepStop(); chainStop();
+  if(runOn){ runOn=false; if(msel.size<=1){ msel.clear(); renderBoard() } }
+});
+function showMultiHint(){
+  try{
+    if(localStorage.getItem('sudoku-multiHint')) return;
+    localStorage.setItem('sudoku-multiHint','1');
+  }catch(e){}
+  toast(t('multiHint'));
+}
 $('boardPan').addEventListener('scroll',()=>{ tapCancel(); sweepStop(); chainStop() });
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
@@ -194,9 +222,10 @@ $('restartBtn').addEventListener('click',async()=>{
   const n=g.solution.length;
   g.values=g.solution.map((v,i)=>g.given[i]? v : 0);
   g.notes=Array.from({length:n},()=>[]);
+  g.mid=Array.from({length:n},()=>[]);
   g.hyp=new Array(n).fill(0); g.endErr=[]; g.wasFull=false;
   g.time=0; g.mistakes=0; g.hints=0; g.done=false; g.noLimit=false; g.usedAssist=false;
-  undoStack=[]; redoStack=[]; sel=-1; hlDigit=0;
+  undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0;
   setPaused(false); renderBoard(); startTimer(); persistCache();
 });
 $('undoBtn').addEventListener('click',undo);
@@ -205,6 +234,7 @@ $('eraseBtn').addEventListener('click',eraseCell);
 $('hintBtn').addEventListener('click',hint);
 $('autoNotesBtn').addEventListener('click',autoNotes);
 $('notesBtn').addEventListener('click',()=>setMode('note'));
+$('midBtn').addEventListener('click',()=>setMode('mid'));
 $('hypBtn').addEventListener('click',()=>setMode('hyp'));
 $('winHome').addEventListener('click',goHome);
 $('winAgain').addEventListener('click',()=>newGame(lastRequest.mode,lastRequest.diff));
@@ -254,7 +284,7 @@ document.addEventListener('pointerdown',e=>{
   if(!pk.classList.contains('hidden')&&!pk.contains(e.target)) closePicker();
   if($('game').classList.contains('hidden')||sel<0) return;
   if(e.target.closest('#board,#numpad,.controls,#picker,.topbar,header,.modal-bg')) return;
-  numFlush(); sel=-1; hlDigit=0; armed=0; renderBoard();
+  numFlush(); sel=-1; msel.clear(); hlDigit=0; armed=0; renderBoard();
 });
 
 const LETTER_DIGIT={KeyA:10,KeyB:11,KeyC:12};
@@ -285,6 +315,12 @@ document.addEventListener('keydown',e=>{
   }
   if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
   if((e.ctrlKey||e.metaKey)&&code==='KeyY'){ e.preventDefault(); redo(); return }
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey){
+    const cm=code.match(/^(Digit|Numpad)([1-9])$/);
+    if(cm && SPEC.kind!=='num' && SPEC.kind!=='meow'){
+      e.preventDefault(); inputDigit(+cm[2],false,false,true); return;
+    }
+  }
   if(e.ctrlKey||e.metaKey) return;
   const dm=code.match(/^(Digit|Numpad)([0-9])$/);
   if(dm){
@@ -300,6 +336,7 @@ document.addEventListener('keydown',e=>{
     case 'Backspace': case 'Delete': case 'Digit0': case 'Numpad0': eraseCell(); break;
     case 'KeyN': setMode('note'); break;
     case 'Space': e.preventDefault(); setMode('note'); break;
+    case 'KeyC': setMode('mid'); break;
     case 'KeyD': setMode('hyp'); break;
     case 'KeyZ': undo(); break;
     case 'KeyY': redo(); break;
@@ -309,6 +346,7 @@ document.addEventListener('keydown',e=>{
     case 'KeyP': setPaused(!g.paused); break;
     case 'Escape':
       if(!$('picker').classList.contains('hidden')) closePicker();
+      else if(msel.size){ msel.clear(); renderBoard() }
       else goHome();
       break;
     case 'ArrowUp': case 'ArrowDown': case 'ArrowLeft': case 'ArrowRight': {
@@ -322,6 +360,7 @@ document.addEventListener('keydown',e=>{
 
 function moveSel(code){
   if(!SPEC) return;
+  if(msel.size) msel.clear();
   if(sel<0){ sel=0; renderBoard(); return }
   const step={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[code];
   let {x,y}=SPEC.cells[sel];

@@ -64,6 +64,7 @@ function applyLayout(){
 const PK_ICONS={
   digit:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>',
   note:'<svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg>',
+  mid:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><circle cx="8.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.4" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg>',
   hyp:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg>',
 };
 function buildPicker(sp){
@@ -75,8 +76,9 @@ function buildPicker(sp){
   if(sp.kind==='num'){ buildNumPicker(pk); return }
   const hdr=document.createElement('div');
   hdr.className='pk-mode';
-  hdr.innerHTML=['digit','note','hyp'].map(m=>
-    `<button data-m="${m}" title="${t(m==='digit'?'digitTab':m==='note'?'noteTab':'hypTab')}">${PK_ICONS[m]}</button>`).join('');
+  const tabName={digit:'digitTab', note:'noteTab', mid:'midTab', hyp:'hypTab'};
+  hdr.innerHTML=['digit','note','mid','hyp'].map(m=>
+    `<button data-m="${m}" title="${t(tabName[m])}">${PK_ICONS[m]}</button>`).join('');
   hdr.querySelectorAll('button').forEach(b=>b.addEventListener('pointerdown',e=>{
     e.preventDefault(); e.stopPropagation();
     inputMode=b.dataset.m; syncModeButtons(); renderBoard();
@@ -121,7 +123,7 @@ function numKey(v){
 function syncPickerMode(){
   const pk=$('picker');
   pk.querySelectorAll('.pk-mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===inputMode));
-  pk.classList.toggle('mode-note',inputMode==='note');
+  pk.classList.toggle('mode-note',inputMode==='note'||inputMode==='mid');
   pk.classList.toggle('mode-hyp',inputMode==='hyp');
 }
 function refreshPickerCounts(){
@@ -166,7 +168,8 @@ function closePicker(){ $('picker').classList.add('hidden') }
 function refreshPickerLang(){
   const pk=$('picker');
   const tabs=pk.querySelectorAll('.pk-mode button');
-  if(tabs.length===3){ tabs[0].title=t('digitTab'); tabs[1].title=t('noteTab'); tabs[2].title=t('hypTab') }
+  if(tabs.length===4){ tabs[0].title=t('digitTab'); tabs[1].title=t('noteTab');
+    tabs[2].title=t('midTab'); tabs[3].title=t('hypTab') }
   const xt=pk.querySelector('.pk-x-t'); if(xt) xt.textContent=t('eraseP');
 }
 function placePickHint(){

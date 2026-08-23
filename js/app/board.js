@@ -2,6 +2,7 @@
 
 let SPEC=null;
 const cells=[];
+const EMPTY=[];
 /* what the cell already shows, so a move touches one cell */
 const cellKey=[];
 const merged=(g,i)=>g.values[i]||g.hyp[i];
@@ -283,22 +284,34 @@ function renderBoard(){
   const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
-    d.className=d.className.replace(/ (sel|hl|same|err|given|hypv|d2)/g,'');
+    const mid=g.mid? g.mid[i] : EMPTY;
+    d.className=d.className.replace(/ (msel|sel|hl|same|err|given|hypv|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
     const key = isMeow? 'm'+v : v? 'v'+v : hv? 'h'+hv
-      : g.notes[i].length? 'n'+g.notes[i].join(',')+'|'+(activeVal||0) : '';
+      : (g.notes[i].length||mid.length)? 'n'+g.notes[i].join(',')+'/'+mid.join(',')+'|'+(activeVal||0) : '';
     if(cellKey[i]!==key){
       if(isMeow) d.innerHTML = v===MEOW_CAT? CAT_SVG : v===MEOW_MARK? MARK_SVG : '';
       else if(v) d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
       else if(hv) d.innerHTML='<i class="v">'+cellNum(hv)+'</i>';
-      else if(g.notes[i].length){
+      else if(g.notes[i].length||mid.length){
         if(isNum){
           d.innerHTML='<div class="notes wide">'+g.notes[i].slice(0,6).map(v=>`<span>${v}</span>`).join('')+'</div>';
         } else {
-          let h='<div class="notes">';
-          for(let k=1;k<=sp.maxD;k++)
-            h+=`<span${activeVal&&k===activeVal?' class="nhl"':''}>${g.notes[i].includes(k)?k:''}</span>`;
-          d.innerHTML=h+'</div>';
+          let h='';
+          if(g.notes[i].length){
+            const split = mid.length? (sp.maxD>9? ' split split12' : ' split') : '';
+            h+='<div class="notes'+split+'">';
+            for(let k=1;k<=sp.maxD;k++)
+              h+=`<span${activeVal&&k===activeVal?' class="nhl"':''}>${g.notes[i].includes(k)?k:''}</span>`;
+            h+='</div>';
+          }
+          if(mid.length){
+            const txt=mid.join(sp.maxD>9? ' ' : '');
+            const size = txt.length>5? ' tiny' : txt.length>3? ' tight' : '';
+            const hl = activeVal&&mid.includes(activeVal)? ' nhl' : '';
+            h+=`<i class="mid${size}${hl}">${txt}</i>`;
+          }
+          d.innerHTML=h;
         }
       } else d.textContent='';
       cellKey[i]=key;
@@ -314,12 +327,13 @@ function renderBoard(){
       if(hv>9) d.classList.add('d2');
     }
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
+    if(msel.size>1 && msel.has(i)) d.classList.add('msel');
     if(sel>=0){
       if(i===sel) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
     }
     if(activeVal && i!==sel){
-      const hasNote=!v&&!hv&&!isNum&&g.notes[i].includes(activeVal);
+      const hasNote=!v&&!hv&&!isNum&&(g.notes[i].includes(activeVal)||mid.includes(activeVal));
       if(merged(g,i)===activeVal||hasNote) d.classList.add('same');
     }
   }

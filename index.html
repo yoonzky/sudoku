@@ -126,7 +126,8 @@
       <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="M20 9H9a5 5 0 0 0 0 10h4"/><path d="m16 5 4 4-4 4"/></svg><span data-i18n="redo">Вернуть</span></button>
       <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span data-i18n="erase">Стереть</span></button>
       <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg><span data-i18n="notes">Заметки</span></button>
-      <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg><span data-i18n="hyp">Черновик</span></button>
+      <button class="ctl" id="midBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><circle cx="8.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.4" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg><span data-i18n="mid">Центр</span></button>
+  <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg><span data-i18n="hyp">Черновик</span></button>
       <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg><span data-i18n="auto">Авто</span></button>
       <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 19h6M10 22h4"/><path d="M12 3a6 6 0 0 1 4 10.5V16H8v-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint">Подсказка</span></button>
     </div>
@@ -307,14 +308,17 @@
           <div class="krow"><span data-i18n="k_digit">цифра в клетку</span><span class="kk"><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
           <div class="krow"><span data-i18n="k_big">числа 10–12</span><span class="kk"><kbd>A</kbd><kbd>B</kbd><kbd>C</kbd></span></div>
           <div class="krow"><span data-i18n="k_note">заметка в клетку</span><span class="kk"><kbd>Shift</kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
+          <div class="krow"><span data-i18n="k_mid">заметка в центр</span><span class="kk"><kbd>Ctrl</kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
           <div class="krow"><span data-i18n="k_hyp1">черновик в клетку</span><span class="kk"><kbd>Alt</kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
           <div class="krow"><span data-i18n="k_erase">стереть клетку</span><span class="kk"><kbd>Backspace</kbd><i class="sep" data-i18n="kOr">или</i><kbd>0</kbd></span></div>
         </section>
         <section class="kgrp">
           <h3 data-i18n="grpKmode">Режимы</h3>
           <div class="krow"><span data-i18n="k_notes">режим заметок</span><span class="kk"><kbd>N</kbd><i class="sep" data-i18n="kOr">или</i><kbd data-i18n="k_spaceK">Пробел</kbd></span></div>
+          <div class="krow"><span data-i18n="k_midm">режим центральных заметок</span><span class="kk"><kbd>C</kbd></span></div>
           <div class="krow"><span data-i18n="k_hypm">режим черновика</span><span class="kk"><kbd>D</kbd></span></div>
           <div class="krow"><span data-i18n="k_pick">панель у клетки</span><span class="kk gest" data-i18n="k_gest">двойной или правый клик мышью</span></div>
+          <div class="krow"><span data-i18n="k_multi">выделить несколько клеток</span><span class="kk gest" data-i18n="k_multiG">протянуть мышью по полю</span></div>
         </section>
         <section class="kgrp">
           <h3 data-i18n="grpKmove">Ход</h3>

@@ -1,6 +1,6 @@
 'use strict';
 
-let sel=-1, inputMode='digit', undoStack=[], redoStack=[], timerId=null,
+let sel=-1, msel=new Set(), inputMode='digit', undoStack=[], redoStack=[], timerId=null,
     lastPlaced=-1, hlDigit=0, armed=0, lastNumTs=0, numPending=false, numTimer=null;
 let lastRequest={mode:'classic',diff:'medium'};
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -73,7 +73,7 @@ function newGame(mode,diff){
       id:uid(), mode:res.mode, diff, ex:res.ex,
       solution:res.sol, given:res.puz.map(v=>!!v),
       values:res.puz.slice(), hyp:new Array(n).fill(0),
-      notes:Array.from({length:n},()=>[]),
+      notes:Array.from({length:n},()=>[]), mid:Array.from({length:n},()=>[]),
       time:0, mistakes:0, hints:0, done:false, paused:false, noLimit:false,
       instant: sp.kind==='num'? false : SES.settings.instant,
       endErr:[], wasFull:false,
@@ -89,7 +89,7 @@ function openGame(idx){
   const g=cur(); if(!g) return;
   const sp=buildSpec(g.mode,g.ex);
   buildBoard(sp); buildNumpad(sp); buildPicker(sp);
-  undoStack=[]; redoStack=[]; sel=-1; hlDigit=0; armed=0; inputMode='digit';
+  undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0; armed=0; inputMode='digit';
   syncModeButtons(); applyControls();
   show('game'); setPaused(false); renderBoard(); startTimer();
   boardZoom = isPhone() && !isLand() && fitCell()>0 && fitCell()<26;
@@ -98,10 +98,13 @@ function openGame(idx){
 }
 
 function snapshot(){ const g=cur();
-  return {values:g.values.slice(), notes:g.notes.map(n=>n.slice()), hyp:g.hyp.slice(), endErr:(g.endErr||[]).slice()} }
+  return {values:g.values.slice(), notes:g.notes.map(n=>n.slice()), mid:g.mid.map(n=>n.slice()),
+          hyp:g.hyp.slice(), endErr:(g.endErr||[]).slice()} }
 function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>300) undoStack.shift(); redoStack.length=0 }
 function restore(s){ const g=cur();
-  g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice()); g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice() }
+  g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice());
+  g.mid=(s.mid||g.mid).map(n=>n.slice());
+  g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice() }
 
 function meowSetCat(i){
   const g=cur(); if(!g||g.done||g.paused) return;
@@ -167,6 +170,7 @@ function meowTap(i){
 function numpadPress(v){
   const g=cur(); if(!g||g.paused) return;
   if(SPEC.kind==='num'){ inputDigit(v); return }
+  if(msel.size>1){ inputDigit(v); return }
   if(SES.settings.digitFirst){
     armed = armed===v? 0 : v;
     hlDigit=armed; sel=-1; renderBoard(); return;
@@ -217,17 +221,36 @@ function inputNumber(d){
   if(!more && nv===g.solution[sel]){ sel=-1; hlDigit=0 }
   afterMove(true);
 }
-function inputDigit(v,forceNote,forceHyp){
-  const g=cur(); if(!g||g.done||g.paused||sel<0||g.given[sel]) return;
+/* a digit typed over a run of picked cells always lands as a pencil mark */
+function inputMulti(v,mode){
+  const g=cur(); if(!g||g.done||g.paused) return;
+  if(v<1||v>SPEC.maxD) return;
+  const bank = mode==='mid'? 'mid' : 'notes';
+  const list=[...msel].filter(i=>!g.given[i]&&!g.values[i]&&!g.hyp[i]);
+  if(!list.length) return;
+  const drop=list.every(i=>g[bank][i].includes(v));
+  pushUndo();
+  for(const i of list){
+    const arr=g[bank][i], k=arr.indexOf(v);
+    if(drop){ if(k>=0) arr.splice(k,1) }
+    else if(k<0){ arr.push(v); arr.sort((a,b)=>a-b) }
+  }
+  dismissPickHint();
+  afterMove(true);
+}
+function inputDigit(v,forceNote,forceHyp,forceMid){
+  const g=cur(); if(!g||g.done||g.paused) return;
   if(SPEC.kind==='meow') return;
   if(SPEC.kind==='num') return inputNumber(v);
-  const mode = forceNote? 'note' : forceHyp? 'hyp' : inputMode;
+  const mode = forceNote? 'note' : forceHyp? 'hyp' : forceMid? 'mid' : inputMode;
+  if(msel.size>1) return inputMulti(v, mode==='digit'? 'note' : mode);
+  if(sel<0||g.given[sel]) return;
   if(v<1||v>SPEC.maxD) return;
-  if(mode==='note' && (g.values[sel]||g.hyp[sel])) return;
+  if((mode==='note'||mode==='mid') && (g.values[sel]||g.hyp[sel])) return;
   if(mode==='hyp' && g.values[sel]) return;
   pushUndo();
-  if(mode==='note'){
-    const nn=g.notes[sel], k=nn.indexOf(v);
+  if(mode==='note'||mode==='mid'){
+    const nn = mode==='mid'? g.mid[sel] : g.notes[sel], k=nn.indexOf(v);
     if(k>=0) nn.splice(k,1); else { nn.push(v); nn.sort((a,b)=>a-b) }
   } else if(mode==='hyp'){
     g.hyp[sel]=g.hyp[sel]===v? 0 : v;
@@ -236,7 +259,7 @@ function inputDigit(v,forceNote,forceHyp){
   } else {
     if(g.values[sel]===v){ g.values[sel]=0 }
     else{
-      g.values[sel]=v; g.notes[sel]=[]; g.hyp[sel]=0; lastPlaced=sel;
+      g.values[sel]=v; g.notes[sel]=[]; g.mid[sel]=[]; g.hyp[sel]=0; lastPlaced=sel;
       if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
       if(v!==g.solution[sel]){
         if(g.instant){
@@ -253,11 +276,23 @@ function inputDigit(v,forceNote,forceHyp){
   afterMove();
 }
 function eraseCell(){
-  const g=cur(); if(!g||g.done||g.paused||sel<0||g.given[sel]) return;
-  if(!g.values[sel]&&!g.hyp[sel]&&!g.notes[sel].length) return;
+  const g=cur(); if(!g||g.done||g.paused) return;
+  if(msel.size>1){
+    const list=[...msel].filter(i=>!g.given[i]);
+    if(!list.some(i=>g.values[i]||g.hyp[i]||g.notes[i].length||g.mid[i].length)) return;
+    pushUndo();
+    for(const i of list){
+      g.values[i]=0; g.hyp[i]=0; g.notes[i]=[]; g.mid[i]=[];
+      if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
+    }
+    afterMove();
+    return;
+  }
+  if(sel<0||g.given[sel]) return;
+  if(!g.values[sel]&&!g.hyp[sel]&&!g.notes[sel].length&&!g.mid[sel].length) return;
   pushUndo();
   if(g.hyp[sel]&&!g.values[sel]) g.hyp[sel]=0;
-  else { g.values[sel]=0; g.hyp[sel]=0; g.notes[sel]=[] }
+  else { g.values[sel]=0; g.hyp[sel]=0; g.notes[sel]=[]; g.mid[sel]=[] }
   if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
   afterMove();
 }
@@ -282,7 +317,7 @@ function hint(){
     i=empt[Math.floor(Math.random()*empt.length)];
   }
   pushUndo();
-  g.values[i]=g.solution[i]; g.notes[i]=[]; g.hyp[i]=0; g.hints++; g.usedAssist=true; sel=i; lastPlaced=i;
+  g.values[i]=g.solution[i]; g.notes[i]=[]; g.mid[i]=[]; g.hyp[i]=0; g.hints++; g.usedAssist=true; sel=i; lastPlaced=i;
   scrollSelIntoView();
   if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
   for(const p of SPEC.peers[i]){ const k=g.notes[p].indexOf(g.solution[i]); if(k>=0) g.notes[p].splice(k,1) }
@@ -334,7 +369,7 @@ function checkWin(){
   }
   g.done=true; stopTimer();
   if(boardZoom) setZoom(false);
-  sel=-1; hlDigit=0; armed=0; renderBoard();
+  sel=-1; msel.clear(); hlDigit=0; armed=0; renderBoard();
   const st=statsFor(g.mode,g.diff);
   const assisted=!!g.usedAssist;
   const isRecord=!assisted && (st.best==null||g.time<st.best);
@@ -432,12 +467,14 @@ function setPaused(p){
 }
 function syncModeButtons(){
   $('notesBtn').classList.toggle('on', inputMode==='note');
+  $('midBtn').classList.toggle('on', inputMode==='mid');
   $('hypBtn').classList.toggle('on2', inputMode==='hyp');
   syncPickerMode();
 }
 function setMode(m){
   if(SPEC && SPEC.kind==='meow') return;
   if(SPEC && SPEC.kind==='num' && m!=='note') return;
+  if(m==='mid' && SPEC && SPEC.kind==='num') return;
   inputMode = inputMode===m? 'digit' : m;
   syncModeButtons();
   if(cur() && !$('game').classList.contains('hidden')) renderBoard();
@@ -448,6 +485,7 @@ function applyControls(){
   $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || meow);
   $('hypBtn').classList.toggle('hidden', num || meow);
   $('notesBtn').classList.toggle('hidden', meow);
+  $('midBtn').classList.toggle('hidden', num || meow);
   /* a third tap clears the cell, so the erase key has nothing left to do */
   $('eraseBtn').classList.toggle('hidden', meow);
 }

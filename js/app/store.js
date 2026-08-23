@@ -48,6 +48,8 @@ function loadCache(){
   try{ const p=JSON.parse(localStorage.getItem(LS_PEND)); if(Array.isArray(p)) pending=p }catch(e){}
 
   for(const g of SES.games) if(!g.mode){ g.mode='classic'; g.ex={} }
+  /* centre pencil marks came later than the first saved games */
+  for(const g of SES.games) if(!Array.isArray(g.mid)) g.mid=Array.from({length:g.solution.length},()=>[]);
   for(const g of LOG.games) if(!g.mode) g.mode='classic';
   for(const g of pending) if(!g.mode) g.mode='classic';
   if(SES.settings.pool && !Array.isArray(SES.settings.pool)) SES.settings.pool=null;
