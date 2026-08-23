@@ -145,24 +145,23 @@ function joinSegments(segs){
   return d;
 }
 
-/* точки по отрезкам: шаг подгоняется под длину, поэтому углы никогда не пустые */
-function dotLine(segs,step){
-  const seen=new Set();
-  let out='';
+/* штрихи по отрезкам: шаг подгоняется под длину ребра, поэтому углы всегда закрыты */
+function dashLine(segs,dash,gap){
+  let d='';
   for(const s of segs){
     const dx=s[2]-s[0], dy=s[3]-s[1];
     const len=Math.hypot(dx,dy);
-    const n=Math.max(1,Math.round(len/step));
-    for(let k=0;k<=n;k++){
-      const t=k/n;
-      const x=(s[0]+dx*t).toFixed(3), y=(s[1]+dy*t).toFixed(3);
-      const id=x+','+y;
-      if(seen.has(id)) continue;
-      seen.add(id);
-      out+=`<circle cx="${x}" cy="${y}" r=".021"/>`;
+    if(!len) continue;
+    const n=Math.max(1,Math.round((len+gap)/(dash+gap)));
+    const step=(len+gap)/n, run=step-gap;
+    const ux=dx/len, uy=dy/len;
+    for(let k=0;k<n;k++){
+      const a=k*step, b=a+run;
+      d+=`M${(s[0]+ux*a).toFixed(3)} ${(s[1]+uy*a).toFixed(3)}`+
+         `L${(s[0]+ux*b).toFixed(3)} ${(s[1]+uy*b).toFixed(3)}`;
     }
   }
-  return out;
+  return d;
 }
 
 function buildDeco(sp){
@@ -216,10 +215,10 @@ function buildDeco(sp){
     dots+=`<circle cx="${cx}" cy="${cy}" r=".095" fill="${fill}" stroke="${line}" stroke-width=".026"/>`;
   }
   const zonePath=joinSegments(zoneSegs);
-  const cageDots=dotLine(cageSegs,0.085);
+  const cageDash=dashLine(cageSegs,0.075,0.055);
   deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
     (zonePath? `<path d="${zonePath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
-    (cageDots? `<g fill="var(--cage)">${cageDots}</g>`:'')+
+    (cageDash? `<path d="${cageDash}" fill="none" stroke="var(--cage)" stroke-width=".042" stroke-linecap="butt"/>`:'')+
     (sums? `<g class="sums" font-size=".21">${sums}</g>`:'')+
     dots+'</svg>';
   b.appendChild(deco);
