@@ -1,6 +1,6 @@
 # Sudoku
 
-Browser sudoku in seventeen shapes, no accounts and no ads. Play it here: https://yoonzky.github.io/sudoku/
+Browser sudoku in eighteen shapes, no accounts and no ads. Play it here: https://yoonzky.github.io/sudoku/
 
 Plain HTML, CSS and JavaScript — no build step, no dependencies. Games, settings and statistics live in localStorage.
 
@@ -12,6 +12,7 @@ Plain HTML, CSS and JavaScript — no build step, no dependencies. Games, settin
 | Other sizes | 10×10 (5×2 regions) · 12×12 (4×3 regions) |
 | Linked boards | Double · Wing · Butterfly · Samurai |
 | Extra rules | Killer · Dots (Kropki) · Suguru · Numerator · Kakuro |
+| A different game | Meowdoku — one cat per row, column and colour, and no two of them touching |
 
 Every mode has four levels and its own statistics. The home screen shows a thumbnail of each
 board, so a mode can be picked by its shape. **Random mode** draws one of the modes you ticked
@@ -54,6 +55,7 @@ js/engine/grade.js    grading by technique, level tuning
 js/engine/modes.js    the mode table and puzzle generation
 js/engine/numerator.js  the 1..81 chain and its own solver
 js/engine/kakuro.js   pattern, sums, single solution
+js/engine/meow.js     meowdoku: cats, regions, single solution
 js/engine/worker.js   generation off the main thread
 js/app/i18n.js        dictionaries, mode names and rules
 js/app/store.js       localStorage: settings, games, record of wins

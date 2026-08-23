@@ -8,6 +8,16 @@ const merged=(g,i)=>g.values[i]||g.hyp[i];
 
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
+/* кот и метка рисуются линиями — в одном ключе с иконками сайта */
+const CAT_SVG='<svg class="cat" viewBox="0 0 24 24" aria-hidden="true">'+
+  '<path d="M4.6 9.2 4 4.4l4 2.6a9 9 0 0 1 8 0l4-2.6-.6 4.8"/>'+
+  '<path d="M20 12.4c0 4.3-3.6 7.2-8 7.2s-8-2.9-8-7.2"/>'+
+  '<path d="M9.4 12.2v.9M14.6 12.2v.9"/>'+
+  '<path d="M12 15.4v.9M10.6 17.1c.5.5 1.9.5 2.4 0"/>'+
+  '<path d="M2.6 14.6h3.2M2.6 16.8h3.2M18.2 14.6h3.2M18.2 16.8h3.2"/></svg>';
+const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
+  '<path d="M6 6l12 12M18 6 6 18"/></svg>';
+
 function buildBoard(sp){
   SPEC=sp;
   const b=$('board');
@@ -22,6 +32,7 @@ function buildBoard(sp){
   b.style.setProperty('--nr',Math.ceil(sp.maxD/nc));
   document.body.classList.toggle('board-wide', sp.W>12);
   document.body.classList.toggle('board-num', sp.kind==='num');
+  document.body.classList.toggle('board-meow', sp.kind==='meow');
 
   for(const bl of sp.blocks||[]){
     const d=document.createElement('div');
@@ -44,6 +55,7 @@ function buildBoard(sp){
     d.style.gridColumn=c.x+1; d.style.gridRow=c.y+1;
     if(sp.zone[i]===1) d.classList.add('zone');
     if(sp.zone[i]===2) d.classList.add('even');
+    if(sp.kind==='meow') d.classList.add('z'+((sp.region[i]%10)+1));
     d.dataset.i=i;
     b.appendChild(d); cells.push(d);
   }
@@ -227,6 +239,7 @@ function buildDeco(sp){
 function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
+  if(sp.kind==='meow'){ document.body.classList.remove('pad-two'); return }
   const max=sp.kind==='num'? 9 : sp.maxD;
   const cols = sp.kind==='num'? 5 : max>9? Math.ceil(max/2) : max;
   np.style.gridTemplateColumns=`repeat(${cols},1fr)`;
@@ -256,7 +269,7 @@ function digitTotals(g){
 function renderBoard(){
   const g=cur(); if(!g||!SPEC) return;
   const sp=SPEC, n=sp.cells.length;
-  const isNum=sp.kind==='num';
+  const isNum=sp.kind==='num', isMeow=sp.kind==='meow';
   const hlSame=SES.settings.highlightSame!==false;
   const selVal=sel>=0? merged(g,sel) : 0;
   const activeVal=(hlSame && sp.kind!=='num')? (selVal||hlDigit) : 0;
@@ -269,10 +282,11 @@ function renderBoard(){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
     d.className=d.className.replace(/ (sel|hl|same|err|given|hypv|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
-    const key = v? 'v'+v : hv? 'h'+hv
+    const key = isMeow? 'm'+v : v? 'v'+v : hv? 'h'+hv
       : g.notes[i].length? 'n'+g.notes[i].join(',')+'|'+(activeVal||0) : '';
     if(cellKey[i]!==key){
-      if(v) d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
+      if(isMeow) d.innerHTML = v===MEOW_CAT? CAT_SVG : v===MEOW_MARK? MARK_SVG : '';
+      else if(v) d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
       else if(hv) d.innerHTML='<i class="v">'+cellNum(hv)+'</i>';
       else if(g.notes[i].length){
         if(isNum){
@@ -286,7 +300,9 @@ function renderBoard(){
       } else d.textContent='';
       cellKey[i]=key;
     }
-    if(v){
+    if(isMeow){
+      if(v===MEOW_CAT && g.instant && meowClash(g,sp,i)) d.classList.add('err');
+    } else if(v){
       if(v>9) d.classList.add('d2');
       if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');
     } else if(hv){
@@ -303,7 +319,7 @@ function renderBoard(){
       if(merged(g,i)===activeVal||hasNote) d.classList.add('same');
     }
   }
-  const showCounts=SES.settings.showCounts!==false && !isNum;
+  const showCounts=SES.settings.showCounts!==false && !isNum && !isMeow;
   const tot=digitTotals(g);
   document.querySelectorAll('.num').forEach(btn=>{
     const v=+btn.dataset.v;

@@ -267,13 +267,14 @@ const MODES={
     keep:{easy:34,medium:38,hard:42,expert:46} },
 };
 const MODE_IDS=['classic','x','evenodd','windoku','asterisk','mosaic','r10','r12',
-  'double','wing','butterfly','samurai','killer','dots','suguru','numerator','kakuro'];
+  'double','wing','butterfly','samurai','killer','dots','suguru','numerator','kakuro','meow'];
 const DIFFS=['easy','medium','hard','expert'];
 const BAND={easy:[1,2],medium:[2,3],hard:[3,4],expert:[3,4]};
 
 function buildSpec(id,ex){
   if(id==='numerator') return numBuild(ex);
   if(id==='kakuro') return kakBuild(ex);
+  if(id==='meow') return meowBuild(ex);
   const sp=MODES[id].build(ex||{});
   return prep(sp);
 }
@@ -305,6 +306,7 @@ function killerBlank(diff,deadline){
 function makePuzzle(id,diff,deadline){
   if(id==='numerator') return numMake(diff);
   if(id==='kakuro') return kakMake(diff,deadline);
+  if(id==='meow') return meowMake(diff,deadline);
   if(id==='killer'&&diff==='expert'){
     const blank=killerBlank(diff,deadline);
     if(blank) return blank;

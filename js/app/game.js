@@ -83,6 +83,27 @@ function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>300) undoSt
 function restore(s){ const g=cur();
   g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice()); g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice() }
 
+/* мяудоку: кот мешает другому коту в строке, столбце, области и вплотную */
+function meowClash(g,sp,i){
+  if(g.values[i]!==MEOW_CAT) return false;
+  for(const j of sp.peers[i]) if(g.values[j]===MEOW_CAT) return true;
+  return false;
+}
+/* нажатие по клетке: пусто, метка, кот и снова пусто */
+function meowTap(i){
+  const g=cur(); if(!g||g.done||g.paused) return;
+  pushUndo();
+  const was=g.values[i];
+  g.values[i] = was===0? MEOW_MARK : was===MEOW_MARK? MEOW_CAT : 0;
+  if(g.values[i]===MEOW_CAT && g.instant && g.solution[i]!==MEOW_CAT){
+    g.mistakes++;
+    if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
+  }
+  lastPlaced = g.values[i]===MEOW_CAT? i : -1;
+  if(g.values[i]===MEOW_CAT && g.solution[i]===MEOW_CAT){ sel=-1 }
+  afterMove();
+}
+
 function numpadPress(v){
   const g=cur(); if(!g||g.paused) return;
   if(SPEC.kind==='num'){ inputDigit(v); return }
@@ -136,6 +157,7 @@ function inputNumber(d){
 }
 function inputDigit(v,forceNote,forceHyp){
   const g=cur(); if(!g||g.done||g.paused||sel<0||g.given[sel]) return;
+  if(SPEC.kind==='meow') return;
   if(SPEC.kind==='num') return inputNumber(v);
   const mode = forceNote? 'note' : forceHyp? 'hyp' : inputMode;
   if(v<1||v>SPEC.maxD) return;
@@ -180,6 +202,17 @@ function eraseCell(){
 }
 function hint(){
   const g=cur(); if(!g||g.done||g.paused) return;
+  if(SPEC.kind==='meow'){
+    const left=[];
+    for(let k=0;k<g.solution.length;k++)
+      if(g.solution[k]===MEOW_CAT && g.values[k]!==MEOW_CAT) left.push(k);
+    if(!left.length) return;
+    const spot=left[Math.floor(Math.random()*left.length)];
+    pushUndo();
+    g.values[spot]=MEOW_CAT; g.hints++; g.usedAssist=true; sel=-1; lastPlaced=spot;
+    afterMove();
+    return;
+  }
   let i=sel;
   if(i<0||g.values[i]===g.solution[i]){
     const empt=[];
@@ -195,7 +228,7 @@ function hint(){
   afterMove();
 }
 function autoNotes(){
-  const g=cur(); if(!g||g.done||g.paused||SPEC.kind==='num') return;
+  const g=cur(); if(!g||g.done||g.paused||SPEC.kind==='num'||SPEC.kind==='meow') return;
   pushUndo();
   for(let i=0;i<SPEC.cells.length;i++) if(!g.values[i]&&!g.hyp[i]){
     const m=candMask(SPEC,g.values,i), nn=[];
@@ -221,17 +254,22 @@ let lastWin=null, winTimer=null;
 function checkWin(){
   const g=cur(); if(!g) return;
   const n=g.solution.length;
-  let full=true;
-  for(let i=0;i<n;i++) if(!merged(g,i)){ full=false; break }
-  if(!full){ g.wasFull=false; return }
-  const wrong=[];
-  for(let i=0;i<n;i++) if(merged(g,i)!==g.solution[i]) wrong.push(i);
-  if(wrong.length){
-    if(numPending) return;
-    if(!g.instant){ g.endErr=wrong; renderBoard() }
-    if(!g.wasFull) toast(t('hasErrors').replace('{n}',wrong.length));
-    g.wasFull=true;
-    return;
+  if(SPEC && SPEC.kind==='meow'){
+    for(let i=0;i<n;i++)
+      if((g.values[i]===MEOW_CAT)!==(g.solution[i]===MEOW_CAT)) return;
+  } else {
+    let full=true;
+    for(let i=0;i<n;i++) if(!merged(g,i)){ full=false; break }
+    if(!full){ g.wasFull=false; return }
+    const wrong=[];
+    for(let i=0;i<n;i++) if(merged(g,i)!==g.solution[i]) wrong.push(i);
+    if(wrong.length){
+      if(numPending) return;
+      if(!g.instant){ g.endErr=wrong; renderBoard() }
+      if(!g.wasFull) toast(t('hasErrors').replace('{n}',wrong.length));
+      g.wasFull=true;
+      return;
+    }
   }
   g.done=true; stopTimer();
   if(boardZoom) setZoom(false);
@@ -325,14 +363,16 @@ function syncModeButtons(){
   syncPickerMode();
 }
 function setMode(m){
+  if(SPEC && SPEC.kind==='meow') return;
   if(SPEC && SPEC.kind==='num' && m!=='note') return;
   inputMode = inputMode===m? 'digit' : m;
   syncModeButtons();
   if(cur() && !$('game').classList.contains('hidden')) renderBoard();
 }
 function applyControls(){
-  const num=SPEC && SPEC.kind==='num';
+  const num=SPEC && SPEC.kind==='num', meow=SPEC && SPEC.kind==='meow';
   $('hintBtn').classList.toggle('hidden', !SES.settings.showHint);
-  $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num);
-  $('hypBtn').classList.toggle('hidden', num);
+  $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || meow);
+  $('hypBtn').classList.toggle('hidden', num || meow);
+  $('notesBtn').classList.toggle('hidden', meow);
 }

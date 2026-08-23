@@ -3,6 +3,15 @@
 const PREV_CACHE={};
 
 function previewSpec(mode){
+  if(mode==='meow'){
+    /* для картинки хватает правдоподобной раскладки — единственность тут не нужна */
+    const n=8, cols=meowCats(n);
+    const reg=cols&&meowRegions(n,cols);
+    if(!reg) return buildSpec('classic',{});
+    const sp=meowBuild({n,reg});
+    sp.demoCats=cols.map((c,r)=>r*n+c);
+    return sp;
+  }
   if(mode==='numerator') return numBuild({w:9,h:9});
   if(mode==='suguru') return MODES.suguru.build({regions:suguruRegions(9,9,4,6),w:9,h:9});
   if(mode==='kakuro'){
@@ -31,8 +40,13 @@ function previewSVG(mode){
 
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i];
-    const fill = sp.zone[i]===2? 'var(--accent2-soft)' : sp.zone[i]===1? 'var(--accent-soft)' : 'var(--panel2)';
+    const fill = sp.kind==='meow'? `var(--z${(sp.region[i]%10)+1})`
+      : sp.zone[i]===2? 'var(--accent2-soft)' : sp.zone[i]===1? 'var(--accent-soft)' : 'var(--panel2)';
     out+=`<rect x="${px(c)}" y="${py(c)}" width="${u}" height="${u}" fill="${fill}"/>`;
+  }
+  if(mode==='meow') for(const i of (sp.demoCats||[]).filter((_,k)=>k%3===0)){
+    const c=sp.cells[i];
+    out+=`<circle cx="${px(c)+u/2}" cy="${py(c)+u/2}" r="${u*0.26}" fill="var(--cat)"/>`;
   }
   if(mode==='evenodd') for(const i of DEC.evenodd){
     const c=sp.cells[i]; if(!c) continue;

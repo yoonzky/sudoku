@@ -145,6 +145,17 @@ body.won #board{overflow:visible}
 
 /* в режимах с суммами цифра чуть мельче, чтобы не задевать число в углу клетки */
 #board.cages .cell{font-size:calc(50cqw / var(--bw))}
+/* мяудоку: цветные области, кот и метка «здесь пусто» */
+.cell.z1{background:var(--z1)} .cell.z2{background:var(--z2)} .cell.z3{background:var(--z3)}
+.cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}
+.cell.z7{background:var(--z7)} .cell.z8{background:var(--z8)} .cell.z9{background:var(--z9)}
+.cell.z10{background:var(--z10)}
+.cell .cat, .cell .mark{position:absolute; inset:16%; pointer-events:none}
+.cell .cat{stroke:var(--cat); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round}
+.cell.err .cat{stroke:var(--error)}
+.cell .mark{inset:34%; stroke:var(--mark); stroke-width:1.9; stroke-linecap:round}
+.cell.pop .cat{animation:pop .24s cubic-bezier(.22,.8,.3,1)}
+body.board-meow .numpad{display:none}
 .cell.zone{background:var(--zone-fill)}
 .cell.even{background:var(--even-fill)}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}

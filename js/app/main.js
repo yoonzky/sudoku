@@ -6,6 +6,7 @@ function tapCancel(){ tapIdx=-1 }
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
   closePicker();
+  if(SPEC.kind==='meow'){ sel=i; meowTap(i); return }
   if(i!==sel) numFlush();
   if(SES.settings.digitFirst && armed && !g.done && !g.given[i] && SPEC.kind!=='num'){
     sel=i; inputDigit(armed); hlDigit=armed; renderBoard(); return;
