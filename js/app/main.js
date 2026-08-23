@@ -261,7 +261,6 @@ document.addEventListener('visibilitychange',()=>{
 window.addEventListener('resize',()=>{
   if(!isPhone()) closeSheet();
   snapBoardTwice(); updatePickHint();
-  if(document.body.classList.contains('won')) placeWinGlow();
 });
 if(window.visualViewport) window.visualViewport.addEventListener('resize',snapBoard);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);

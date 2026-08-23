@@ -212,25 +212,9 @@ function redo(){ const g=cur(); if(!g||g.done||g.paused||!redoStack.length) retu
 
 function afterMove(quiet){
   renderBoard();
-  if(lastPlaced>=0 && !reducedMotion && !quiet){
-    cells[lastPlaced].classList.add('pop');
-    flashUnits(lastPlaced);
-  }
+  if(lastPlaced>=0 && !reducedMotion && !quiet) cells[lastPlaced].classList.add('pop');
   if(!quiet) lastPlaced=-1;
   checkWin(); persistCache();
-}
-
-function flashUnits(i){
-  const g=cur(); if(!g) return;
-  const done=new Set();
-  for(const gi of SPEC.gOf[i]){
-    const unit=SPEC.groups[gi];
-    if(unit.every(j=>merged(g,j)===g.solution[j])) unit.forEach(j=>done.add(j));
-  }
-  if(done.size){
-    done.forEach(j=>cells[j].classList.add('uflash'));
-    setTimeout(()=>done.forEach(j=>cells[j] && cells[j].classList.remove('uflash')),600);
-  }
 }
 
 let lastWin=null, winTimer=null;
@@ -250,8 +234,6 @@ function checkWin(){
     return;
   }
   g.done=true; stopTimer();
-  /* мигание закрытой группы гасим, иначе оно накладывается на волну победы */
-  cells.forEach(d=>d.classList.remove('uflash'));
   if(boardZoom) setZoom(false);
   sel=-1; hlDigit=0; armed=0; renderBoard();
   const st=statsFor(g.mode,g.diff);
@@ -271,15 +253,10 @@ function checkWin(){
     document.body.classList.add('won');
     $('winPanel').classList.remove('hidden');
   };
-  placeWinGlow(); $('winGlow').classList.add('on');
   if(reducedMotion){ showWin(); return }
-  for(let i=0;i<n;i++){
-    const c=SPEC.cells[i];
-    cells[i].style.animationDelay=((c.x+c.y)*26)+'ms';
-    cells[i].classList.add('wave');
-  }
-  winTimer=setTimeout(()=>{ winTimer=null;
-    cells.forEach(d=>{ d.classList.remove('wave'); d.style.animationDelay='' }); showWin() },1050);
+  /* свет по краю поля разгорается сам, панель итога приходит следом */
+  document.body.classList.add('won');
+  winTimer=setTimeout(()=>{ winTimer=null; showWin() },620);
 }
 function renderWinPanel(){
   const w=lastWin; if(!w) return;
@@ -305,21 +282,11 @@ function gameLost(){
   persistCache(); setPaused(true);
   $('loseModal').classList.remove('hidden');
 }
-function placeWinGlow(){
-  const el=$('winGlow'), pan=$('boardPan');
-  const b=(pan&&pan.classList.contains('pan')? pan : $('board')).getBoundingClientRect();
-  if(!el||!b.width) return;
-  el.style.setProperty('--wgx',Math.round(b.left+b.width/2)+'px');
-  el.style.setProperty('--wgy',Math.round(b.top+b.height*0.40)+'px');
-  el.style.setProperty('--wgw',Math.round(b.width*0.82)+'px');
-  el.style.setProperty('--wgh',Math.round(b.height*0.66)+'px');
-}
 function clearWin(){
   clearTimeout(winTimer); winTimer=null;
   document.body.classList.remove('won');
   document.body.style.removeProperty('--won-top');
   $('winPanel').classList.add('hidden');
-  $('winGlow').classList.remove('on');
 }
 
 function startTimer(){

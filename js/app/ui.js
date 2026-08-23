@@ -58,7 +58,6 @@ function applyLayout(){
   document.body.classList.toggle('pos-right',p==='right');
   document.querySelectorAll('#posseg button').forEach(b=>b.classList.toggle('on',p===b.dataset.p));
   placePickHint();
-  if(document.body.classList.contains('won')) placeWinGlow();
 }
 
 const PK_ICONS={

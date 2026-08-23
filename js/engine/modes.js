@@ -161,6 +161,15 @@ function makeDots(sp,sol){
   return out;
 }
 
+/* сугуру: поле и самая большая область растут от уровня к уровню */
+const SUG_MAX=9;
+const SUG_CFG={
+  easy:  {w:9, h:9, lo:5, hi:7},
+  medium:{w:10,h:10,lo:5, hi:8},
+  hard:  {w:11,h:11,lo:5, hi:9},
+  expert:{w:12,h:12,lo:6, hi:9},
+};
+
 const MODES={
   classic:{ build(){ const sp=newSpec('classic'); lineSets(sp,addGrid(sp,0,0,9,3,3)); return sp },
     keep:{easy:36,medium:30,hard:25,expert:22} },
@@ -238,21 +247,24 @@ const MODES={
     keep:{easy:22,medium:14,hard:8,expert:4} },
 
   suguru:{
-    time:6000, tries:4, budget:200000,
+    time:9000, tries:4, budget:200000,
     band:{easy:[1,2],medium:[2,3],hard:[2,4],expert:[2,5]},
-    pre(){ return {regions:suguruRegions(9,9,4,6), w:9, h:9} },
+    pre(diff){
+      const c=SUG_CFG[diff]||SUG_CFG.easy;
+      return {regions:suguruRegions(c.w,c.h,c.lo,c.hi), w:c.w, h:c.h};
+    },
     build(ex){
       const sp=newSpec('suguru');
       const w=ex.w||9, h=ex.h||9, reg=ex.regions;
       const byReg={};
       for(let y=0;y<h;y++) for(let x=0;x<w;x++){
-        const i=addCell(sp,x,y,9), r=reg[y*w+x];
+        const i=addCell(sp,x,y,SUG_MAX), r=reg[y*w+x];
         sp.region[i]=r; (byReg[r]=byReg[r]||[]).push(i);
       }
       for(const r in byReg) sp.groups.push(byReg[r]);
       for(let i=0;i<sp.cells.length;i++) for(const j of allN(sp,i)) if(j>i) sp.neq.push([i,j]);
       return sp },
-    keep:{easy:34,medium:27,hard:22,expert:18} },
+    keep:{easy:34,medium:38,hard:42,expert:46} },
 };
 const MODE_IDS=['classic','x','evenodd','windoku','asterisk','mosaic','r10','r12',
   'double','wing','butterfly','samurai','killer','dots','suguru','numerator','kakuro'];
@@ -266,9 +278,37 @@ function buildSpec(id,ex){
   return prep(sp);
 }
 
+/* киллер на «Эксперте»: ни одной открытой цифры — единственность держат сами суммы */
+function killerBlank(diff,deadline){
+  let blankFallback=null;
+  const stop=deadline||(Date.now()+12000);
+  const half=Date.now()+(stop-Date.now())/2;
+  while(Date.now()<stop){
+    const ex={};
+    let sp=buildSpec('killer',ex);
+    const sol=fillSpec(sp,14,600000);
+    if(!sol) continue;
+    /* мелкие области дают больше сумм, а с ними поле сходится и без единой цифры */
+    ex.cages=makeCages(sp,sol, Date.now()<half? 4 : 3);
+    sp=buildSpec('killer',ex);
+    const puz=new Array(sp.cells.length).fill(0);
+    if(countSol(sp,puz,2,900000)!==1) continue;
+    const g=gradeSolve(sp,puz);
+    const res={mode:'killer',diff,ex,sp,sol,puz,grade:g.solved?g.grade:5,clues:0};
+    /* берём ту раздачу, что берётся приёмами; единственную, но глухую держим про запас */
+    if(g.solved) return res;
+    if(!blankFallback) blankFallback=res;
+  }
+  return blankFallback;
+}
+
 function makePuzzle(id,diff,deadline){
   if(id==='numerator') return numMake(diff);
   if(id==='kakuro') return kakMake(diff,deadline);
+  if(id==='killer'&&diff==='expert'){
+    const blank=killerBlank(diff,deadline);
+    if(blank) return blank;
+  }
   const M=MODES[id], band=(M.band&&M.band[diff])||BAND[diff];
   const stop=deadline||(Date.now()+(M.time||3500));
   let best=null, bestScore=Infinity;

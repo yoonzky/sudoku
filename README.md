@@ -23,6 +23,8 @@ and starts it at the level you choose.
   puzzle needs — a solver grades every deal, so Easy yields to singles and Expert asks for
   hidden pairs, triples and X-wing
 - every puzzle is generated with exactly one solution, whatever the mode
+- Killer at Expert opens no digit at all — the cage sums alone pin the answer down
+- Suguru grows with the level: 9×9 with regions up to seven, 12×12 with regions up to nine
 - draft mode: pencil a trial digit in dashes, notes underneath survive, mistakes are not counted
 - with a mouse, a digit pad opens right at the cell (double or right click); on a phone the
   keypad below the board does the same job

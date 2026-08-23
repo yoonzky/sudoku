@@ -45,13 +45,6 @@ function buildBoard(sp){
     d.dataset.i=i;
     b.appendChild(d); cells.push(d);
   }
-  for(const f of sp.frames||[]){
-    const d=document.createElement('div');
-    d.className='frame';
-    d.style.left=(f.x/sp.W*100)+'%'; d.style.top=(f.y/sp.H*100)+'%';
-    d.style.width=(f.w/sp.W*100)+'%'; d.style.height=(f.h/sp.H*100)+'%';
-    b.appendChild(d);
-  }
   /* суммы занимают верхний угол клетки — опускаем цифры по всему полю разом */
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
   buildGrid(sp);
@@ -152,7 +145,7 @@ function buildDeco(sp){
       if(!rt) cageSegs.push([x+1-d,y0,x+1-d,y1]);
     }
     const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
-    sums+=`<text x="${a.x+0.15}" y="${a.y+0.31}">${cg.sum}</text>`;
+    sums+=`<text x="${a.x+0.10}" y="${a.y+0.27}">${cg.sum}</text>`;
   }
   const zoneSegs=[];
   if(hasZone){
@@ -181,8 +174,8 @@ function buildDeco(sp){
   const cagePath=joinSegments(cageSegs), zonePath=joinSegments(zoneSegs);
   deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
     (zonePath? `<path d="${zonePath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
-    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".03" stroke-dasharray=".055 .045" stroke-linejoin="round" stroke-linecap="butt"/>`:'')+
-    (sums? `<g class="sums" font-size=".23">${sums}</g>`:'')+
+    (cagePath? `<path d="${cagePath}" fill="none" stroke="var(--cage)" stroke-width=".028" stroke-dasharray=".05 .034" stroke-linejoin="round" stroke-linecap="square"/>`:'')+
+    (sums? `<g class="sums" font-size=".21">${sums}</g>`:'')+
     dots+'</svg>';
   b.appendChild(deco);
 }
