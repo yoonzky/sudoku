@@ -37,27 +37,6 @@ function meowBuild(ex){
   return sp;
 }
 
-function meowCount(n,reg,limit){
-  const col=new Array(n).fill(false), zone=new Array(n).fill(false), at=new Array(n).fill(-1);
-  let cnt=0;
-  const rec=r=>{
-    if(cnt>=limit) return;
-    if(r===n){ cnt++; return }
-    for(let c=0;c<n;c++){
-      if(col[c]) continue;
-      const g=reg[r*n+c];
-      if(zone[g]) continue;
-      if(r>0 && Math.abs(at[r-1]-c)<=1) continue;
-      col[c]=true; zone[g]=true; at[r]=c;
-      rec(r+1);
-      col[c]=false; zone[g]=false; at[r]=-1;
-      if(cnt>=limit) return;
-    }
-  };
-  rec(0);
-  return cnt;
-}
-
 /* plays the deal the way a person would: singles, then lines locked to a region */
 function meowLogic(n,reg){
   const N=n*n;
@@ -185,24 +164,43 @@ function meowRegions(n,cols){
   return left? null : reg;
 }
 
+/* rows as bitmasks: take the row with the fewest spots left, and drop the
+   branch the moment a row or a region has nowhere to sit */
 function meowSolutions(n,reg,limit){
-  const col=new Array(n).fill(false), zone=new Array(n).fill(false), at=new Array(n).fill(-1);
-  const out=[];
-  const rec=r=>{
+  const full=(1<<n)-1, at=new Array(n).fill(-1), out=[];
+  const rec=(colMask,zoneMask,rowMask)=>{
     if(out.length>=limit) return;
-    if(r===n){ out.push(at.slice()); return }
-    for(let c=0;c<n;c++){
-      if(col[c]) continue;
-      const g=reg[r*n+c];
-      if(zone[g]) continue;
-      if(r>0 && Math.abs(at[r-1]-c)<=1) continue;
-      col[c]=true; zone[g]=true; at[r]=c;
-      rec(r+1);
-      col[c]=false; zone[g]=false; at[r]=-1;
+    if(rowMask===full){ out.push(at.slice()); return }
+    let bestR=-1, bestM=0, bestC=n+1, reach=0;
+    for(let r=0;r<n;r++){
+      if(rowMask>>r&1) continue;
+      const base=r*n;
+      const up=(r>0 && (rowMask>>(r-1)&1))? at[r-1] : -9;
+      const dn=(r<n-1 && (rowMask>>(r+1)&1))? at[r+1] : -9;
+      let m=0, cnt=0;
+      for(let c=0;c<n;c++){
+        if(colMask>>c&1) continue;
+        if(up>=0 && c-up<=1 && up-c<=1) continue;
+        if(dn>=0 && c-dn<=1 && dn-c<=1) continue;
+        const g=reg[base+c];
+        if(zoneMask>>g&1) continue;
+        m|=1<<c; cnt++; reach|=1<<g;
+      }
+      if(!cnt) return;
+      if(cnt<bestC){ bestC=cnt; bestM=m; bestR=r }
+    }
+    if(full&~zoneMask&~reach) return;
+    const base=bestR*n;
+    for(let m=bestM;m;){
+      const bit=m&-m, c=31-Math.clz32(bit);
+      m^=bit;
+      at[bestR]=c;
+      rec(colMask|bit, zoneMask|(1<<reg[base+c]), rowMask|(1<<bestR));
+      at[bestR]=-1;
       if(out.length>=limit) return;
     }
   };
-  rec(0);
+  rec(0,0,0);
   return out;
 }
 function meowLinked(cells,n){
