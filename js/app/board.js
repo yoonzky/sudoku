@@ -10,11 +10,10 @@ const merged=(g,i)=>g.values[i]||g.hyp[i];
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
 const CAT_SVG='<svg class="cat" viewBox="0 0 24 24" aria-hidden="true">'+
-  '<path d="M10.2 9.1C8.9 6.3 8.4 2.6 10 2.2c1.6-.4 2.4 3.4 2.1 6.4"/>'+
-  '<path d="M15.8 9.1c1.3-2.8 1.8-6.5.2-6.9-1.6-.4-2.4 3.4-2.1 6.4"/>'+
-  '<path d="M12 8.5c4 0 7 2.8 7 6.1 0 3.3-3 5.6-7 5.6s-7-2.3-7-5.6c0-3.3 3-6.1 7-6.1Z"/>'+
-  '<circle cx="9.7" cy="14.1" r=".85"/><circle cx="14.3" cy="14.1" r=".85"/>'+
-  '<path d="M12 16.6l-.85-.85M12 16.6l.85-.85"/></svg>';
+  '<path d="M10.6 8.9C9.2 6.2 8.6 2.3 10.3 2c1.7-.3 2.3 3.5 1.9 6.6"/>'+
+  '<path d="M15.4 8.9c1.4-2.7 2-6.6.3-6.9-1.7-.3-2.3 3.5-1.9 6.6"/>'+
+  '<path d="M12 8.4c4.3 0 7.5 2.6 7.5 5.9S16.3 20.4 12 20.4 4.5 17.6 4.5 14.3 7.7 8.4 12 8.4Z"/>'+
+  '<circle cx="9.5" cy="14.2" r=".95"/><circle cx="14.5" cy="14.2" r=".95"/></svg>';
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
   '<circle cx="12" cy="12" r="6"/></svg>';
 

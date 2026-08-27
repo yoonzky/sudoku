@@ -57,7 +57,7 @@
   --cat:#565ead; --mark:#98a2bd;
   /* свет падает сверху: верх поля светлее, низ чуть глубже */
   --board-light:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,0) 22%, rgba(22,26,44,.095));
-  --tick:rgba(122,136,170,.75);
+  --tick:rgba(86,94,173,.58);
 }
 html[data-theme="dark"]{
   --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#1b1f30; --line:var(--d-line); --line-strong:#e6e9f5;
