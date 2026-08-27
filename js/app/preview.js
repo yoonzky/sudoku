@@ -2,8 +2,8 @@
 
 const PREV_CACHE={};
 
-/* превью строится на постоянном зерне: иначе картинка у сугуру, какуро и
-   баннидоку менялась при каждой загрузке */
+/* previews run off a fixed seed, or suguru, kakuro and bunnydoku draw a new
+   thumbnail on every load */
 function seeded(seed){
   let a=seed>>>0;
   return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=Math.imul(a^(a>>>15),1|a);

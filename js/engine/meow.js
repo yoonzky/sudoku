@@ -18,7 +18,7 @@ function meowBuild(ex){
     sp.gOf.push([]); sp.nOf.push([]); sp.cOf.push([]); sp.dOf.push([]);
     (byReg[sp.region[i]]=byReg[sp.region[i]]||[]).push(i);
   }
-  /* a cat holds its row, column, region and the eight cells around */
+  /* a bunny holds its row, column, region and the eight cells around */
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i], s=new Set();
     for(let k=0;k<n;k++){

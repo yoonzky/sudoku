@@ -90,8 +90,13 @@ body.won.in-game{overflow:auto}
 .glow svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
 body.won .glow{opacity:1}
 body.won #board{overflow:visible}
-#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:4px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
+/* the plate stands exactly where the board stands: the wrap is wider than the
+   board on a roomy screen, and the corner ticks sit above the frame layer */
+#pauseOverlay{position:absolute; top:0; bottom:0; left:50%; transform:translateX(-50%);
+  width:var(--board-px,100%); background:var(--panel); border-radius:0;
+  box-shadow:inset 0 0 0 1px var(--frame);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:7}
+body.board-zoom #pauseOverlay{border-radius:4px}
 #pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
 
 #picker{position:absolute; z-index:8; background:var(--pop); border:1px solid var(--frame);
@@ -123,8 +128,8 @@ body.won #board{overflow:visible}
 #picker.mode-note button[data-v]:hover{border-color:var(--accent); color:var(--accent)}
 #picker.mode-hyp button[data-v]:hover{border-color:var(--accent2); color:var(--accent2)}
 
-/* пульт — два ряда: режимы ввода и действия. Каждый ряд делит ширину поровну
-   между видимыми кнопками, поэтому включённая подсказка ничего не ломает */
+/* the pad runs in two rows, input modes and actions. Each row splits its width
+   between the buttons that are on screen, so turning one on breaks nothing */
 .controls{display:grid; gap:6px; margin:16px auto 0; width:var(--board-px,100%)}
 .ctl-row{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:6px}
 .ctl{min-width:0; background:transparent; border:1px solid var(--line); border-radius:4px;
@@ -219,6 +224,9 @@ body.board-num .cell.d2{font-size:calc(40cqw / var(--bw))}
 .cell .notes.wide span{font-family:var(--f-num); font-size:calc(26cqw / var(--bw)); line-height:1.15;
   color:var(--note); font-weight:600; display:inline}
 .topbar .t-item em{font-style:normal; color:var(--muted); margin-left:8px; font-size:12px}
+/* the numeral face for the level mark: serifs hold III together */
+.topbar .t-item em .rn{font-style:normal; font-family:var(--f-num); color:var(--accent);
+  letter-spacing:0; margin-right:7px}
 
 #board{background:transparent}
 .cell{background:var(--panel)}
@@ -253,16 +261,16 @@ body.win-side .win-act .btn{width:100%; padding:13px 20px}
 body.win-side .win-act .btn.ghost{order:2}
 body.win-side.in-game{overflow:hidden}
 
-/* ── свет и засечки на поле ─────────────────────────────────────── */
-/* поле ловит свет сверху; уголки отмечены короткой засечкой, поэтому
-   рамка может быть тоньше и не обводить поле сплошной линией */
-/* свет лежит под клетками, иначе он моет цифры: клетки становятся прозрачными,
-   а фон держит само поле. Составные режимы этого не делают — там между сетками
-   пустое место, и сплошная заливка его бы залила */
+/* ── light and corner ticks ─────────────────────────────────────── */
+/* the board catches light from above and the corners carry a short tick, which
+   lets the frame stay thin instead of ringing the board with a solid line */
+/* the light sits under the cells or it washes the digits out: the cells go
+   transparent and the board itself holds the background. Linked boards skip it,
+   they have empty space between the grids that a solid fill would flood */
 body:not(.board-wide) #board{background-color:var(--panel); background-image:var(--board-light)}
 .cell{background:transparent}
 body.board-wide .cell{background:var(--panel)}
-/* рамка поля — отдельным слоем, чтобы угловые засечки легли поверх неё, а не под */
+/* the frame gets a layer of its own so the corner ticks land on top of it */
 #board{border:0}
 #board::before{content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
   box-shadow:inset 0 0 0 1px var(--frame)}
@@ -279,10 +287,10 @@ body.board-wide #board::before{display:none}
     linear-gradient(var(--tick),var(--tick)) right bottom/2px 13px no-repeat}
 body.board-wide #board::after, body.board-num #board::after{display:none}
 
-/* ── компьютер: поле слева, пульт справа ────────────────────────── */
-/* та же раскладка, что уже работает в альбомной ориентации на телефоне:
-   поле сохраняет свой размер, а клавиатура собирается в блок 3 на 3 —
-   мышью по нему попадать ближе и точнее, чем по полосе в девять клавиш */
+/* ── desktop: board on the left, pad on the right ───────────────── */
+/* the layout the phone already uses in landscape: the board keeps its size and
+   the keys gather into a three by three block, which a mouse reaches faster and
+   hits more surely than a strip of nine narrow keys */
 body.rail.in-game #game{max-width:none;
   width:min(calc(var(--boardmax,560px) + 258px), 100%);
   display:grid; grid-template-columns:minmax(0,1fr) 232px; gap:0 26px;
@@ -298,7 +306,7 @@ body.rail .topbar{grid-area:1/2/2/3; width:auto; margin:0 0 10px;
 body.rail .topbar .t-item{width:100%; display:block}
 body.rail .topbar .t-item:last-of-type{margin-left:0}
 body.rail .topbar .t-item:first-child b{display:block; font-family:var(--f-disp); font-size:17px; font-weight:400; letter-spacing:.01em}
-body.rail .topbar .t-item em{display:block; margin:1px 0 0; font-family:var(--f-disp); letter-spacing:.14em; color:var(--accent)}
+body.rail .topbar .t-item em{display:block; margin:3px 0 0; font-size:12.5px; color:var(--muted)}
 body.rail .topbar #gMistWrap{margin-top:9px}
 body.rail .topbar .t-item:nth-of-type(3){margin-top:1px}
 body.rail .topbar .t-item:nth-of-type(3) b{font-size:27px; line-height:1.15}
@@ -307,7 +315,7 @@ body.rail .topbar .tbtn{margin:9px 0 0; padding:6px 9px; min-height:0; min-width
   border:1px solid var(--line); border-radius:4px; width:100%}
 .tbtn-lbl{display:none}
 body.rail .topbar .tbtn .tbtn-lbl{display:inline}
-/* подсказка про двойной клик остаётся на виду — она про мышь и на компьютере нужна */
+/* the double click hint stays in sight, it is about the mouse and belongs here */
 body.rail #pickHint{position:static; grid-area:5/2/6/3; width:auto;
   margin:12px 0 0; padding:0 0 0 11px; text-align:left; font-size:12px; line-height:1.5;
   border-left:1px solid var(--line); border-right:0}
@@ -315,7 +323,7 @@ body.rail #pickHint{position:static; grid-area:5/2/6/3; width:auto;
 body.rail #gameTag{grid-area:2/2/3/3; width:auto; margin:0 0 10px}
 body.rail .controls{grid-area:3/2/4/3; width:auto; margin:0}
 body.rail .ctl{padding:9px 3px 8px; font-size:10.5px}
-/* колонка узкая: действия идут по три в ряд, иначе подписи режутся */
+/* the column is narrow, so actions wrap three to a row or the labels get clipped */
 body.rail #ctlActs{grid-auto-flow:row; grid-template-columns:repeat(3,1fr)}
 
 body.rail .numpad{grid-area:4/2/5/3; width:auto; margin:10px 0 0;
@@ -324,11 +332,11 @@ body.rail .num{aspect-ratio:1.08; font-size:25px}
 body.rail.board-num .num{aspect-ratio:1.3; font-size:21px}
 body.rail .numpad.two-row .num{aspect-ratio:1.08}
 
-/* победа занимает место пульта, поле остаётся на месте */
+/* the win panel takes the pad's place and the board stays where it is */
 body.rail.won #winPanel{grid-area:1/2/6/3; position:static; transform:none;
   width:auto; margin:0; border-top:0; padding:20px 20px 18px;
   background:var(--panel); border:1px solid var(--line); border-radius:4px; box-shadow:var(--shadow);
   animation:winIn .5s cubic-bezier(.2,.7,.3,1) both}
 body.rail.won .topbar{display:none}
-/* правила пульта идут ниже общего «на победе скрыть», поэтому повторяем явно */
+/* the pad rules come after the general hide on a win, so they are repeated here */
 body.rail.won .controls, body.rail.won .numpad, body.rail.won #gameTag{display:none}

@@ -9,11 +9,11 @@ const MODE_GROUPS=[
 const DICE='<svg class="dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>';
 const LEVEL_N={easy:1,medium:2,hard:3,expert:4};
 const LEVEL_RN={easy:'I',medium:'II',hard:'III',expert:'IV'};
-let pickedMode='classic';
+let pickedMode='meow';
 let contSel=null;
 
 function renderHome(){
-  if(!MODE_IDS.includes(pickedMode)&&pickedMode!=='random') pickedMode='classic';
+  if(!MODE_IDS.includes(pickedMode)&&pickedMode!=='random') pickedMode='meow';
   renderContinue(); renderModeList(); renderModePanel(); renderTotals();
 }
 function renderContinue(){
@@ -63,9 +63,7 @@ async function contDelete(){
   persistNow(); renderHome(); toast(t('delDone'));
 }
 function renderModeList(){
-  let h=`<button class="mrand${pickedMode==='random'?' on':''}" data-mode="random">${DICE}
-    <b>${t('m_random')}</b><small>${t('poolCount').replace('{n}',poolList().length)}</small></button>`;
-  h+='<div class="mgroups">';
+  let h='<div class="mgroups">';
   for(const grp of MODE_GROUPS){
     h+=`<section class="mgrp" style="--span:${grp.ids.length}"><div class="mgroup">${t('g_'+grp.key)}</div><div class="mode-grid">`;
     for(const id of grp.ids){
@@ -77,6 +75,12 @@ function renderModeList(){
     }
     h+='</div></section>';
   }
+  /* the draw sits in the same grid as the modes, one tile wide */
+  h+=`<section class="mgrp" style="--span:1"><div class="mgroup">${t('g_rand')}</div><div class="mode-grid">
+    <button class="mcard${pickedMode==='random'?' on':''}" data-mode="random">
+      <span class="mcard-prev">${DICE}</span>
+      <b>${t('m_random')}</b><small>${poolList().length}</small></button>
+    </div></section>`;
   $('modeList').innerHTML=h+'</div>';
   const on=$('modeList').querySelector('.mcard.on');
   if(on && on.scrollIntoView && !isPhone()) on.scrollIntoView({block:'nearest'});

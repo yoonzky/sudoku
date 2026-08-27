@@ -16,7 +16,7 @@ ru:{
   delDone:'Партии удалены',
 
   modesT:'Режимы', lvlT:'Уровень', poolBtn:'Настроить набор',
-  g_clean:'Чистое поле', g_size:'Другой размер', g_multi:'Составные', g_extra:'С условиями',
+  g_clean:'Чистое поле', g_size:'Другой размер', g_multi:'Составные', g_extra:'С условиями', g_rand:'Жребий',
   m_random:'Случайный режим',
   r_random:'Режим выпадает случайно из отмеченного набора. Уровень выбираешь сам.',
   poolT:'Что входит в набор', poolAll:'Отметить все', poolNone:'Снять все',
@@ -115,7 +115,7 @@ en:{
   delDone:'Games deleted',
 
   modesT:'Modes', lvlT:'Level', poolBtn:'Edit the pool',
-  g_clean:'Plain board', g_size:'Other sizes', g_multi:'Linked boards', g_extra:'Extra rules',
+  g_clean:'Plain board', g_size:'Other sizes', g_multi:'Linked boards', g_extra:'Extra rules', g_rand:'Luck',
   m_random:'Random mode',
   r_random:'The mode comes up at random from the pool you picked. You still choose the level.',
   poolT:'What goes into the pool', poolAll:'Select all', poolNone:'Clear all',

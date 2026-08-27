@@ -9,7 +9,7 @@ const PHONE_Q=matchMedia('(max-width:700px)');
 const LAND_Q=matchMedia('(orientation:landscape) and (max-height:560px) and (min-width:560px)');
 const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
 const isLand=()=>LAND_Q.matches;
-/* на большом экране с мышью пульт встаёт справа от поля, а не под ним */
+/* on a wide screen with a mouse the pad stands beside the board, not under it */
 const RAIL_Q=matchMedia('(min-width:1040px) and (min-height:660px) and (pointer:fine)');
 const isRail=()=>RAIL_Q.matches;
 function syncRail(){ document.body.classList.toggle('rail', isRail()) }
@@ -20,8 +20,8 @@ function pickerAllowed(){
   return true;
 }
 let toastTimer=null;
-/* время показа считается от длины: две с небольшим секунды не хватало,
-   чтобы дочитать длинное сообщение вроде вытесненной партии */
+/* the time on screen follows the length: two and a bit seconds was not enough
+   for a long one like a game pushed out of the list */
 function toast(msg){
   const el=$('toast'); el.textContent=msg; el.classList.add('show');
   const ms=Math.min(7000, Math.max(2600, 1600+msg.length*65));
@@ -299,9 +299,9 @@ function openRules(){
   $('rulesModal').classList.remove('hidden');
 }
 
-/* ── диалоги для клавиатуры и скринридера ───────────────────────── */
-/* окна открываются и закрываются в разных местах кода, поэтому роли и
-   ловушка фокуса навешиваются один раз и следят за классом hidden */
+/* ── dialogs for the keyboard and the screen reader ─────────────── */
+/* windows open and close in several places, so the roles and the focus trap are
+   wired once and follow the hidden class */
 const FOCUSABLE='button:not([disabled]),[href],input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
 let dlgReturn=null;
 function dialogFrame(bg){
@@ -318,8 +318,8 @@ function dialogFrame(bg){
 function openDialog(bg){
   const box=dialogFrame(bg); if(!box) return;
   dlgReturn=document.activeElement;
-  /* фокус на само окно, а не на первую кнопку: иначе Enter сразу жмёт
-     «Сбросить статистику» и подобное */
+  /* focus lands on the window, not on the first button: otherwise Enter goes
+     straight into reset statistics and the like */
   box.focus({preventScroll:true});
 }
 function closeDialog(){

@@ -44,18 +44,18 @@
   --kk:#a9b3ca; --kk-dark:#6e788f;
   --zone-fill:#dde2f3; --even-fill:#d7dcf0; --zone-edge:rgba(86,94,173,.34);
   --blend:multiply;
-  /* подсветка соседей — без цвета, цвет остаётся у выбранной клетки и у совпадений */
+  /* the peer tint carries no colour: that stays with the picked cell and the matches */
   --tint-hl:rgba(20,22,31,.09); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
   --tint-hyp:rgba(44,107,118,.20); --tint-hyp-sel:rgba(44,107,118,.36); --tint-err:rgba(158,53,80,.28);
   --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
   --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
-  /* области баннидоку: пять мягких пастельных тонов, каждый в двух светлотах.
-     Это единственное место, где палитра отходит от холодной — режим свой,
-     и цвета у него свои. Соседние номера — всегда разные тона, ΔE не ниже 12 */
+  /* bunnydoku regions: five soft pastel tones, each in two lightnesses. The one
+     place the palette leaves the cold range, since the mode has a look of its
+     own. Neighbouring numbers never share a tone and ΔE stays above 12 */
   --z1:#c7e0ff; --z2:#ffd1e2; --z3:#e5d8fe; --z4:#b9e9d4; --z5:#edddb8;
   --z6:#b5c6e1; --z7:#e0bcc8; --z8:#cac1dc; --z9:#aacdbd; --z10:#d0c4a9;
   --cat:#565ead; --mark:#98a2bd;
-  /* свет падает сверху: верх поля светлее, низ чуть глубже */
+  /* light falls from above: the top of the board is lighter, the bottom deeper */
   --board-light:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,0) 22%, rgba(22,26,44,.095));
   --tick:rgba(86,94,173,.58);
 }
@@ -158,8 +158,8 @@ header, main, .site-foot{position:relative; z-index:1}
   body.in-game main{padding:4px 4px calc(6px + env(safe-area-inset-bottom)); flex:0 1 auto}
   body.in-game #game{width:100%}
 
-  /* шапка стоит наверху, а поле с клавиатурой ловит свободное место под ней:
-     иначе на высоком экране над заголовком висит необъяснимая пустота */
+  /* the header stays at the top and the board with the keys takes what is left
+     under it, or a tall screen hangs an unexplained gap above the title */
   body.in-game{justify-content:flex-start}
   body.in-game header{padding:calc(6px + env(safe-area-inset-top)) 12px 2px}
   body.in-game header h1{font-size:20px}

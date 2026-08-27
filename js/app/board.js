@@ -200,8 +200,8 @@ function buildDeco(sp){
     const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
     sums+=`<text x="${a.x+0.15}" y="${a.y+0.31}">${cg.sum}</text>`;
   }
-  /* обводка области идёт только по внешнему краю: там, где соседняя клетка
-     принадлежит той же области, грань не рисуется */
+  /* a region is outlined along its outer rim only: where the neighbour belongs
+     to the same region the side is left undrawn */
   const outline=(mark,z)=>{
     const segs=[];
     const inSame=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && sp.zone[j]===mark };
@@ -215,8 +215,8 @@ function buildDeco(sp){
       if(!dn) segs.push([x0,y+1-z,x1,y+1-z]);
       if(!lf) segs.push([x+z,y0,x+z,y1]);
       if(!rt) segs.push([x+1-z,y0,x+1-z,y1]);
-      /* вогнутый угол: обе соседние клетки в области, а диагональная нет.
-         Без этих двух коротких отрезков контур в углу буквой «Г» не смыкается */
+      /* a concave corner: both neighbours are in the region, the diagonal one is
+         not. Without these two short strokes an L shaped turn stays open */
       const dia=(dx,dy)=>{ const j=cellAt(sp,x+dx,y+dy); return j>=0 && sp.zone[j]===mark };
       if(lf&&up&&!dia(-1,-1)){ segs.push([x+z,y,x+z,y+z]); segs.push([x,y+z,x+z,y+z]) }
       if(rt&&up&&!dia(1,-1)){ segs.push([x+1-z,y,x+1-z,y+z]); segs.push([x+1-z,y+z,x+1,y+z]) }
@@ -250,7 +250,7 @@ function buildDeco(sp){
 function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
-  /* meowdoku needs no keypad: a tap walks the cell through mark, cat and empty */
+  /* bunnydoku needs no keypad: a tap walks the cell through mark, bunny and empty */
   if(sp.kind==='meow'){
     document.body.classList.remove('pad-two');
     np.classList.add('hidden');
@@ -287,7 +287,7 @@ function renderBoard(){
   const g=cur(); if(!g||!SPEC) return;
   const sp=SPEC, n=sp.cells.length;
   const isNum=sp.kind==='num', isMeow=sp.kind==='meow';
-  /* meowdoku reads by its own colours, extra tinting only gets in the way */
+  /* bunnydoku reads by its own colours, extra tinting only gets in the way */
   const hlSame=SES.settings.highlightSame!==false;
   const selVal=sel>=0? merged(g,sel) : 0;
   const activeVal=(hlSame && !isNum && !isMeow)? (selVal||hlDigit) : 0;
@@ -344,8 +344,8 @@ function renderBoard(){
        read as one box with a grid inside, not as a set of chosen cells */
     const run=msel.size>1;
     if(run && msel.has(i)) d.classList.add('msel');
-    /* пока набран ряд клеток, строка и столбец первой из них не подсвечиваются:
-       иначе часть выбранных клеток красится иначе, чем остальные */
+    /* while a run of cells is picked the row and column of the first are left
+       alone, or half the run ends up tinted differently from the rest */
     if(sel>=0 && !run){
       if(i===sel) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
@@ -373,7 +373,8 @@ function renderBoard(){
   $('gMistWrap').style.display=g.instant? '' : 'none';
   $('gMist').textContent=(SES.settings.limit&&g.instant&&!g.noLimit)? `${g.mistakes}/3` : g.mistakes;
   $('gMode').textContent=t('m_'+g.mode);
-  $('gDiff').textContent=(LEVEL_RN[g.diff]? LEVEL_RN[g.diff]+' · ' : '')+t('d_'+g.diff);
+  const rn=LEVEL_RN[g.diff];
+  $('gDiff').innerHTML=(rn? `<i class="rn">${rn}</i>` : '')+t('d_'+g.diff);
   const gtag=(I18N[SES.settings.lang]||{})['tag_'+g.mode] || I18N.en['tag_'+g.mode] || '';
   $('gameTag').textContent=gtag;
   $('gameTag').classList.toggle('hidden', !gtag);
@@ -403,7 +404,7 @@ let boardZoom=false, lockFit=0;
 
 function otherHeight(){
   let used=0;
-  /* в раскладке с пультом эти три стоят сбоку и высоту у поля не отнимают */
+  /* with the pad beside the board these three stand aside and take no height */
   const side=isRail();
   const parts=[document.querySelector('header'), document.querySelector('.site-foot'), $('pickHint'),
     side? null : $('gameTag'),

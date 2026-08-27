@@ -427,8 +427,8 @@ function placeWinPanel(){
     document.body.classList.remove('win-side');
     return;
   }
-  /* в раскладке с пультом панель встаёт в его колонку: разметку берём ту же,
-     что у боковой победы, а позиционирование задаёт сетка */
+  /* with the pad beside the board the panel goes into its column: same markup
+     as the side win, the grid does the placing */
   if(isRail()){ document.body.classList.add('win-side'); panel.style.left=''; panel.style.top=''; return }
   const b=$('board').getBoundingClientRect(), game=$('game').getBoundingClientRect();
   const side=(window.innerWidth-b.right)>=330 && window.innerHeight>=600 && !isPhone();
@@ -491,7 +491,7 @@ function applyControls(){
   $('notesBtn').classList.toggle('hidden', meow);
   /* a third tap clears the cell, so the erase key has nothing left to do */
   $('eraseBtn').classList.toggle('hidden', meow);
-  /* ряд без единой видимой кнопки убираем, иначе он оставляет пустой отступ */
+  /* a row with no visible button goes away, or it leaves a gap behind */
   for(const id of ['ctlModes','ctlActs']){
     const row=$(id); if(!row) continue;
     row.classList.toggle('hidden', !row.querySelector('.ctl:not(.hidden)'));

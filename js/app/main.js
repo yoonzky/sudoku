@@ -379,8 +379,8 @@ window.addEventListener('resize',()=>{
   snapBoardTwice(); updatePickHint(); placeWinPanel();
 });
 syncRail();
-/* событие resize приходит не всегда (снап окна, смена монитора), поэтому
-   раскладку слушаем у самого медиазапроса */
+/* resize does not always fire (window snapping, a monitor swap), so the layout
+   listens to the media query itself */
 if(RAIL_Q.addEventListener) RAIL_Q.addEventListener('change',()=>{
   syncRail(); snapBoardTwice(); placeWinPanel();
 });
@@ -393,7 +393,7 @@ if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);
 
 loadCache();
-pickedMode=SES.settings.mode||'classic';
+pickedMode=SES.settings.mode||'meow';
 buildSwatches();
 applyTheme(); applyLayout(); applyLang();
 renderHome(); show('home');
