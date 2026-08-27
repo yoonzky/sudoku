@@ -1,7 +1,8 @@
 const BITS=(()=>{const a=new Uint8Array(8192);for(let i=1;i<8192;i++)a[i]=a[i>>1]+(i&1);return a})();
 const popc=m=>BITS[m];
 const lowV=m=>{for(let v=1;v<=12;v++) if(m&(1<<v)) return v; return 0};
-const RND=n=>Math.floor(Math.random()*n);
+let RNG=Math.random;
+const RND=n=>Math.floor(RNG()*n);
 const SHUF=a=>{for(let i=a.length-1;i>0;i--){const j=RND(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
 const FULL=d=>((1<<(d+1))-1)&~1;
 const ALLM=0x1FFE;

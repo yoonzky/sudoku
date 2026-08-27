@@ -49,13 +49,14 @@
   --tint-hyp:rgba(44,107,118,.20); --tint-hyp-sel:rgba(44,107,118,.36); --tint-err:rgba(158,53,80,.28);
   --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
   --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
-  /* десять холодных тонов областей: соседние номера разведены на пол-круга,
-     чтобы смежные области не сливались (ΔE соседних не меньше 16) */
-  --z1:#d0e2cd; --z2:#cfebfd; --z3:#d0eddf; --z4:#cedef5; --z5:#c1e4dd;
-  --z6:#e3e5fe; --z7:#c8eeef; --z8:#e4d8f0; --z9:#bfe3ed; --z10:#f7e0f3;
+  /* области баннидоку: пять мягких пастельных тонов, каждый в двух светлотах.
+     Это единственное место, где палитра отходит от холодной — режим свой,
+     и цвета у него свои. Соседние номера — всегда разные тона, ΔE не ниже 12 */
+  --z1:#c7e0ff; --z2:#ffd1e2; --z3:#e5d8fe; --z4:#b9e9d4; --z5:#edddb8;
+  --z6:#b5c6e1; --z7:#e0bcc8; --z8:#cac1dc; --z9:#aacdbd; --z10:#d0c4a9;
   --cat:#565ead; --mark:#98a2bd;
   /* свет падает сверху: верх поля светлее, низ чуть глубже */
-  --board-light:linear-gradient(to bottom, rgba(255,255,255,.85), rgba(255,255,255,0) 34%, rgba(20,22,31,.045));
+  --board-light:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,0) 22%, rgba(22,26,44,.095));
   --tick:rgba(122,136,170,.75);
 }
 html[data-theme="dark"]{
@@ -76,10 +77,10 @@ html[data-theme="dark"]{
   --tint-hyp:rgba(110,180,195,.34); --tint-hyp-sel:rgba(127,200,212,.50); --tint-err:rgba(190,80,105,.48);
   --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
   --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;
-  --z1:#253723; --z2:#1d4052; --z3:#244235; --z4:#1f344a; --z5:#0f3933;
-  --z6:#373b53; --z7:#134345; --z8:#392e45; --z9:#053842; --z10:#4c3549;
+  --z1:#264361; --z2:#5e3444; --z3:#453c5c; --z4:#1c4938; --z5:#4b4020;
+  --z6:#1e3247; --z7:#452833; --z8:#342d43; --z9:#17362a; --z10:#383019;
   --cat:#a6b4f0; --mark:#5d6987;
-  --board-light:linear-gradient(to bottom, rgba(166,180,240,.11), rgba(166,180,240,0) 42%, rgba(0,0,0,.18));
+  --board-light:linear-gradient(to bottom, rgba(166,180,240,.13), rgba(166,180,240,0) 40%, rgba(0,0,0,.20));
   --tick:rgba(201,212,234,.62);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}

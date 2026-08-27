@@ -10,12 +10,11 @@ const merged=(g,i)=>g.values[i]||g.hyp[i];
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
 const CAT_SVG='<svg class="cat" viewBox="0 0 24 24" aria-hidden="true">'+
-  '<path d="M10.5 8.6C9.6 5.9 9.5 2.9 10.8 2.9s1.6 3 1.1 5.8"/>'+
-  '<path d="M15.6 8.9c1.3-2.5 1.9-5.4.7-5.8-1.2-.4-2.3 2.4-2.6 5.2"/>'+
-  '<path d="M12 8.4c4.2 0 7.2 2.9 7.2 6.3 0 3.4-3.1 5.7-7.2 5.7s-7.2-2.3-7.2-5.7c0-3.4 3-6.3 7.2-6.3Z"/>'+
-  '<path d="M9.7 13.9v.9M14.3 13.9v.9"/>'+
-  '<path d="M12 16.5l-.9-.9M12 16.5l.9-.9"/>'+
-  '<path d="M10.8 17.9c.5.5 1.9.5 2.4 0"/></svg>';
+  '<path d="M10.2 9.1C8.9 6.3 8.4 2.6 10 2.2c1.6-.4 2.4 3.4 2.1 6.4"/>'+
+  '<path d="M15.8 9.1c1.3-2.8 1.8-6.5.2-6.9-1.6-.4-2.4 3.4-2.1 6.4"/>'+
+  '<path d="M12 8.5c4 0 7 2.8 7 6.1 0 3.3-3 5.6-7 5.6s-7-2.3-7-5.6c0-3.3 3-6.1 7-6.1Z"/>'+
+  '<circle cx="9.7" cy="14.1" r=".85"/><circle cx="14.3" cy="14.1" r=".85"/>'+
+  '<path d="M12 16.6l-.85-.85M12 16.6l.85-.85"/></svg>';
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
   '<circle cx="12" cy="12" r="6"/></svg>';
 
@@ -217,6 +216,13 @@ function buildDeco(sp){
       if(!dn) segs.push([x0,y+1-z,x1,y+1-z]);
       if(!lf) segs.push([x+z,y0,x+z,y1]);
       if(!rt) segs.push([x+1-z,y0,x+1-z,y1]);
+      /* вогнутый угол: обе соседние клетки в области, а диагональная нет.
+         Без этих двух коротких отрезков контур в углу буквой «Г» не смыкается */
+      const dia=(dx,dy)=>{ const j=cellAt(sp,x+dx,y+dy); return j>=0 && sp.zone[j]===mark };
+      if(lf&&up&&!dia(-1,-1)){ segs.push([x+z,y,x+z,y+z]); segs.push([x,y+z,x+z,y+z]) }
+      if(rt&&up&&!dia(1,-1)){ segs.push([x+1-z,y,x+1-z,y+z]); segs.push([x+1-z,y+z,x+1,y+z]) }
+      if(lf&&dn&&!dia(-1,1)){ segs.push([x+z,y+1-z,x+z,y+1]); segs.push([x,y+1-z,x+z,y+1-z]) }
+      if(rt&&dn&&!dia(1,1)){ segs.push([x+1-z,y+1-z,x+1-z,y+1]); segs.push([x+1-z,y+1-z,x+1,y+1-z]) }
     }
     return segs;
   };

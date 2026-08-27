@@ -2,7 +2,21 @@
 
 const PREV_CACHE={};
 
+/* превью строится на постоянном зерне: иначе картинка у сугуру, какуро и
+   баннидоку менялась при каждой загрузке */
+function seeded(seed){
+  let a=seed>>>0;
+  return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=Math.imul(a^(a>>>15),1|a);
+    t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296 };
+}
 function previewSpec(mode){
+  const prev=RNG;
+  let h=2166136261;
+  for(let i=0;i<mode.length;i++){ h^=mode.charCodeAt(i); h=Math.imul(h,16777619) }
+  RNG=seeded(h);
+  try{ return previewSpecRaw(mode) } finally { RNG=prev }
+}
+function previewSpecRaw(mode){
   if(mode==='meow'){
     const n=8, cols=meowCats(n);
     const reg=cols&&meowRegions(n,cols);

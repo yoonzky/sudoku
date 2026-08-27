@@ -10,7 +10,7 @@
 .board-wrap{position:relative}
 #board{position:relative; container-type:inline-size;
   display:grid; width:100%; --bw:9; --bh:9; --nc:3; --nr:3;
-  border:1px solid var(--frame); border-radius:4px; overflow:hidden; background:var(--panel);
+  border:1px solid var(--frame); border-radius:0; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
 #board.hyp-on .cell.sel{--tint:var(--tint-hyp-sel); z-index:4}
 .cell{position:relative; z-index:0; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
@@ -173,6 +173,8 @@ body.board-meow .cell::before{display:none}
 .cell .cat, .cell .mark{position:absolute; left:50%; top:50%; width:68%; height:68%;
   transform:translate(-50%,-50%); pointer-events:none}
 .cell .cat{stroke:var(--cat); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round}
+.cell .cat circle{fill:var(--cat); stroke:none}
+.cell.err .cat circle{fill:var(--error)}
 .cell.err .cat{stroke:var(--error)}
 .cell .mark{width:26%; height:26%; fill:var(--mark); stroke:none}
 .cell.pop .cat{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}
@@ -263,7 +265,7 @@ body.board-wide .cell{background:var(--panel)}
 /* рамка поля — отдельным слоем, чтобы угловые засечки легли поверх неё, а не под */
 #board{border:0}
 #board::before{content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
-  border-radius:4px; box-shadow:inset 0 0 0 1px var(--frame)}
+  box-shadow:inset 0 0 0 1px var(--frame)}
 body.board-wide #board::before{display:none}
 #board::after{content:''; position:absolute; inset:0; z-index:6; pointer-events:none;
   background:

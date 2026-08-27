@@ -62,20 +62,21 @@ body.sheet #sheetBg{opacity:1; pointer-events:auto}
   background:var(--panel); box-shadow:var(--shadow-up);
   padding:0 16px calc(12px + env(safe-area-inset-bottom));
   max-height:86vh; overflow-y:auto; overscroll-behavior:contain;
-  display:grid; grid-template-columns:64px 1fr; gap:0 15px; align-content:start;
+  display:flex; flex-direction:column; align-items:stretch;
   transform:translateY(103%); transition:transform .26s cubic-bezier(.2,.7,.3,1)}
+.mp-head{display:flex; align-items:center; gap:15px}
 @supports (height:100dvh){ .mp{max-height:86dvh} }
 body.sheet .mp{transform:none}
-.sheet-grab{display:block; grid-column:1/-1; width:100%; padding:10px 0 12px; margin:0;
+.sheet-grab{display:block; width:100%; padding:10px 0 12px; margin:0;
   background:none; border:0; cursor:pointer; touch-action:none}
 .sheet-grab i{display:block; width:38px; height:4px; margin:0 auto; border-radius:2px; background:var(--line)}
-.mp-prev{grid-column:1; grid-row:2; width:64px; max-width:64px; margin:0; align-self:center}
-.mp h3{grid-column:2; grid-row:2; align-self:center; font-size:21px; margin:0}
-.mp p{grid-column:1/-1; margin:13px 0 0; font-size:13.5px; line-height:1.55; min-height:0}
-.mp-pool{grid-column:1/-1; margin:14px 0 0; font-size:12.5px}
+.mp-prev{width:64px; max-width:64px; flex:none; margin:0}
+.mp h3{font-size:21px; margin:0}
+.mp p{margin:13px 0 0; font-size:13.5px; line-height:1.55}
+.mp-pool{margin:14px 0 0; font-size:12.5px}
 .mp-pool button{font-size:12.5px; padding:6px 0}
-.mp h4{grid-column:1/-1; margin:18px 0 2px; padding-top:0; font-size:11px}
-.diff-grid{grid-column:1/-1}
+.mp h4{margin:18px 0 2px; padding-top:0; font-size:11px}
+.diff-grid{flex:none}
 
 body.in-game main{padding:2px 8px calc(4px + env(safe-area-inset-bottom)); flex:1 1 auto;
   display:flex; flex-direction:column; justify-content:center; min-height:0}
@@ -85,7 +86,7 @@ body.in-game .site-foot{display:none}
 .topbar .t-item em{margin-left:6px; font-size:12px}
 .topbar .tbtn{padding:8px 6px; margin:-8px -6px -8px 0; min-width:38px}
 .topbar .tbtn svg{width:18px; height:18px}
-#board{border-radius:4px}
+#board{border-radius:0}
 
 .board-pan{width:100%; margin:0 auto}
 body.board-zoom .board-wrap{max-width:100%}
