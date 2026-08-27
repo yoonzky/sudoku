@@ -86,6 +86,9 @@ function renderModePanel(){
   $('mpPrev').innerHTML = m==='random'? previewSVG(poolList()[0]||'classic') : previewSVG(m);
   $('mpName').textContent=t('m_'+m);
   $('mpRules').textContent=t('r_'+m);
+  const tag=I18N[SES.settings.lang]&&I18N[SES.settings.lang]['tag_'+m] || I18N.en['tag_'+m] || '';
+  $('mpTag').textContent=tag;
+  $('mpTag').classList.toggle('hidden', !tag);
   $('mpPool').classList.toggle('hidden', m!=='random');
   $('poolCount').textContent=t('poolCount').replace('{n}',poolList().length);
   let h='';

@@ -289,6 +289,9 @@ function openRules(){
   const g=cur(); if(!g) return;
   $('rulesName').textContent=t('m_'+g.mode);
   $('rulesText').textContent=t('r_'+g.mode);
+  const rtag=I18N[SES.settings.lang]&&I18N[SES.settings.lang]['tag_'+g.mode] || I18N.en['tag_'+g.mode] || '';
+  $('rulesTag').textContent=rtag;
+  $('rulesTag').classList.toggle('hidden', !rtag);
   $('rulesPrev').innerHTML=previewSVG(g.mode);
   $('rulesModal').classList.remove('hidden');
 }

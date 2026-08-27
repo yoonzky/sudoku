@@ -52,6 +52,11 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
 .mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted)}
+/* подпись режима: строчными, отдельной строкой над правилами.
+   Вес селектора выше, чем у общего правила абзацев в листе */
+.mp p.mode-tag, .modal p.mode-tag{font-family:var(--f-disp); font-size:11px;
+  letter-spacing:.22em; line-height:1.4; color:var(--accent);
+  margin:0 0 9px; text-transform:lowercase}
 .mp-prev, .mp h3, .mp h4, .diff-grid{flex:none}
 .mp-pool{margin:13px 0 0; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted)}
 .mp-pool button{background:transparent; border:0; border-bottom:1px solid var(--line); padding:2px 0;
