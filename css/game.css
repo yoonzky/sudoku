@@ -10,7 +10,7 @@
 .board-wrap{position:relative}
 #board{position:relative; container-type:inline-size;
   display:grid; width:100%; --bw:9; --bh:9; --nc:3; --nr:3;
-  border:1px solid var(--frame); border-radius:6px; overflow:hidden; background:var(--panel);
+  border:1px solid var(--frame); border-radius:4px; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
 #board.hyp-on .cell.sel{--tint:var(--tint-hyp-sel); z-index:4}
 .cell{position:relative; z-index:0; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
@@ -26,12 +26,7 @@
 .cell.same{--tint:var(--tint-same)}
 
 .cell.hypv{--tint:var(--tint-hyp)}
-.cell.msel{--tint:var(--tint-same); z-index:5;
-  --et:0px; --er:0px; --eb:0px; --el:0px;
-  box-shadow:inset 0 var(--et) 0 var(--accent), inset calc(-1 * var(--er)) 0 0 var(--accent),
-    inset 0 calc(-1 * var(--eb)) 0 var(--accent), inset var(--el) 0 0 var(--accent)}
-.cell.msel.mt{--et:2px} .cell.msel.mr{--er:2px}
-.cell.msel.mb{--eb:2px} .cell.msel.ml{--el:2px}
+.cell.msel{--tint:var(--tint-same); z-index:5; box-shadow:inset 0 0 0 1.5px var(--accent)}
 .cell.sel{--tint:var(--tint-sel); z-index:4}
 .cell.hypv.sel{--tint:var(--tint-hyp-sel)}
 .cell.err{color:var(--error); --tint:var(--tint-err); font-weight:700}
@@ -95,12 +90,12 @@ body.won.in-game{overflow:auto}
 .glow svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
 body.won .glow{opacity:1}
 body.won #board{overflow:visible}
-#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:6px;
+#pauseOverlay{position:absolute; inset:0; background:var(--panel); border-radius:4px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:5}
 #pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
 
 #picker{position:absolute; z-index:8; background:var(--pop); border:1px solid var(--frame);
-  border-radius:5px; padding:8px; display:grid; grid-template-columns:repeat(3,46px); gap:5px;
+  border-radius:4px; padding:8px; display:grid; grid-template-columns:repeat(3,46px); gap:5px;
   box-shadow:var(--pop-shadow); animation:mIn .15s ease-out}
 #picker button{width:100%; aspect-ratio:1; border-radius:4px; border:1px solid var(--key-line);
   border-bottom-width:2px; background:var(--key-bg); font-family:var(--f-num); font-size:21px; font-weight:500; color:var(--text);
@@ -129,7 +124,7 @@ body.won #board{overflow:visible}
 #picker.mode-hyp button[data-v]:hover{border-color:var(--accent2); color:var(--accent2)}
 
 .controls{display:flex; flex-wrap:wrap; margin:16px auto 0; width:var(--board-px,100%);
-  border:1px solid var(--line); border-radius:3px; overflow:hidden}
+  border:1px solid var(--line); border-radius:4px; overflow:hidden}
 .ctl{flex:1 1 0; min-width:0; background:transparent; border:0;
   padding:11px 5px 9px; cursor:pointer; color:var(--muted); font-family:inherit;
   font-size:clamp(8px,2.5cqw,11px); font-weight:500; letter-spacing:.01em;
@@ -178,7 +173,7 @@ body.board-meow .cell::before{display:none}
   transform:translate(-50%,-50%); pointer-events:none}
 .cell .cat{stroke:var(--cat); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round}
 .cell.err .cat{stroke:var(--error)}
-.cell .mark{width:32%; height:32%; stroke:var(--mark); stroke-width:1.9; stroke-linecap:round}
+.cell .mark{width:26%; height:26%; fill:var(--mark); stroke:none}
 .cell.pop .cat{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}
 @keyframes popMid{from{transform:translate(-50%,-50%) scale(.8); opacity:.25}
   to{transform:translate(-50%,-50%); opacity:1}}
@@ -237,7 +232,7 @@ body.win-side #game{position:relative}
 body.win-side #winPanel{position:absolute; transform:translateY(-50%);
   animation:winSideIn .5s cubic-bezier(.2,.7,.3,1) both;
   width:300px; margin:0; border-top:0; padding:24px 24px 22px;
-  background:var(--panel); border:1px solid var(--line); border-radius:6px; box-shadow:var(--shadow)}
+  background:var(--panel); border:1px solid var(--line); border-radius:4px; box-shadow:var(--shadow)}
 body.win-side .win-lead{margin-bottom:4px}
 body.win-side .win-head{flex-direction:column; align-items:flex-start; gap:6px}
 body.win-side .win-big{font-size:46px; letter-spacing:-.01em}
@@ -254,3 +249,83 @@ body.win-side .win-act{flex-direction:column; gap:9px; margin-top:18px}
 body.win-side .win-act .btn{width:100%; padding:13px 20px}
 body.win-side .win-act .btn.ghost{order:2}
 body.win-side.in-game{overflow:hidden}
+
+/* ── свет и засечки на поле ─────────────────────────────────────── */
+/* поле ловит свет сверху; уголки отмечены короткой засечкой, поэтому
+   рамка может быть тоньше и не обводить поле сплошной линией */
+/* свет лежит под клетками, иначе он моет цифры: клетки становятся прозрачными,
+   а фон держит само поле. Составные режимы этого не делают — там между сетками
+   пустое место, и сплошная заливка его бы залила */
+body:not(.board-wide) #board{background:var(--panel)}
+.cell{background:transparent}
+body.board-wide .cell{background:var(--panel)}
+body:not(.board-wide) #board::before{content:''; position:absolute; inset:0; z-index:0;
+  pointer-events:none; background:var(--board-light)}
+#board::after{content:''; position:absolute; inset:0; z-index:6; pointer-events:none;
+  background:
+    linear-gradient(var(--tick),var(--tick)) left top/11px 1px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left top/1px 11px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right top/11px 1px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right top/1px 11px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left bottom/11px 1px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left bottom/1px 11px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right bottom/11px 1px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right bottom/1px 11px no-repeat}
+body.board-wide #board::after, body.board-num #board::after{display:none}
+
+/* ── компьютер: поле слева, пульт справа ────────────────────────── */
+/* та же раскладка, что уже работает в альбомной ориентации на телефоне:
+   поле сохраняет свой размер, а клавиатура собирается в блок 3 на 3 —
+   мышью по нему попадать ближе и точнее, чем по полосе в девять клавиш */
+body.rail.in-game #game{max-width:none;
+  width:min(calc(var(--boardmax,560px) + 258px), 100%);
+  display:grid; grid-template-columns:minmax(0,1fr) 232px; gap:0 26px;
+  align-items:start}
+body.rail.in-game.board-meow #game{--boardmax:620px}
+body.rail.in-game.board-wide #game{--boardmax:820px}
+body.rail.in-game.pad-two #game{--boardmax:600px}
+
+body.rail .board-wrap{grid-area:1/1/5/2}
+body.rail .topbar{grid-area:1/2/2/3; width:auto; margin:0 0 10px;
+  flex-direction:column; align-items:flex-start; gap:3px;
+  background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:12px 14px}
+body.rail .topbar .t-item{width:100%; display:block}
+body.rail .topbar .t-item:last-of-type{margin-left:0}
+body.rail .topbar .t-item:first-child b{display:block; font-family:var(--f-disp); font-size:17px; font-weight:400; letter-spacing:.01em}
+body.rail .topbar .t-item em{display:block; margin:1px 0 0; font-family:var(--f-disp); letter-spacing:.14em; color:var(--accent)}
+body.rail .topbar #gMistWrap{margin-top:9px}
+body.rail .topbar .t-item:nth-of-type(3){margin-top:1px}
+body.rail .topbar .t-item:nth-of-type(3) b{font-size:27px; line-height:1.15}
+body.rail .topbar .tbtn{margin:9px 0 0; padding:6px 9px; min-height:0; min-width:0;
+  justify-content:flex-start; gap:7px; font-weight:400; font-size:12px;
+  border:1px solid var(--line); border-radius:4px; width:100%}
+.tbtn-lbl{display:none}
+body.rail .topbar .tbtn .tbtn-lbl{display:inline}
+/* подсказка про двойной клик остаётся на виду — она про мышь и на компьютере нужна */
+body.rail #pickHint{position:static; grid-area:4/2/5/3; width:auto;
+  margin:12px 0 0; padding:0 0 0 11px; text-align:left; font-size:12px; line-height:1.5;
+  border-left:1px solid var(--line); border-right:0}
+
+body.rail .controls{grid-area:2/2/3/3; width:auto; margin:0;
+  display:grid; grid-template-columns:repeat(6,1fr); gap:6px; border:0; overflow:visible}
+body.rail .ctl{border:1px solid var(--line); border-radius:4px; padding:9px 3px 8px; font-size:10.5px}
+body.rail .ctl + .ctl{border-left:1px solid var(--line)}
+body.rail #notesBtn{order:1; grid-column:span 3} body.rail #hypBtn{order:2; grid-column:span 3}
+body.rail #undoBtn{order:3} body.rail #redoBtn{order:4} body.rail #eraseBtn{order:5}
+body.rail #autoNotesBtn{order:6} body.rail #hintBtn{order:7}
+body.rail .ctl{grid-column:span 2}
+
+body.rail .numpad{grid-area:3/2/4/3; width:auto; margin:10px 0 0;
+  grid-template-columns:repeat(3,1fr) !important; gap:6px; align-content:start}
+body.rail .num{aspect-ratio:1.08; font-size:25px}
+body.rail.board-num .num{aspect-ratio:1.3; font-size:21px}
+body.rail .numpad.two-row .num{aspect-ratio:1.08}
+
+/* победа занимает место пульта, поле остаётся на месте */
+body.rail.won #winPanel{grid-area:1/2/5/3; position:static; transform:none;
+  width:auto; margin:0; border-top:0; padding:20px 20px 18px;
+  background:var(--panel); border:1px solid var(--line); border-radius:4px; box-shadow:var(--shadow);
+  animation:winIn .5s cubic-bezier(.2,.7,.3,1) both}
+body.rail.won .topbar{display:none}
+/* правила пульта идут ниже общего «на победе скрыть», поэтому повторяем явно */
+body.rail.won .controls, body.rail.won .numpad{display:none}

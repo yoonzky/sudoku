@@ -1,13 +1,6 @@
 #home{display:flex; flex-direction:column; gap:18px; width:100%; max-width:1120px; margin:0 auto; flex:1; min-height:0}
 body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px; min-height:0}
-/* below 660px the screen must not be locked: the side column stops fitting four levels */
-@media (min-width:901px) and (min-height:660px){
-  body:not(.in-game){height:100vh; overflow:hidden}
-  body:not(.in-game) main{overflow:hidden}
-}
-@supports (height:100dvh){
-  @media (min-width:901px) and (min-height:660px){ body:not(.in-game){height:100dvh} }
-}
+/* страница прокручивается целиком: ни экран, ни колонки своих прокруток не держат */
 
 .hcap{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
   color:var(--muted); font-weight:400; margin:0 0 10px}
@@ -15,14 +8,9 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 .home-main{flex:1; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:0 30px}
 @media (max-width:900px){ .home-main{grid-template-columns:1fr; gap:24px} }
 .modes-col{display:flex; flex-direction:column; min-height:0}
-#modeList{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
-  scrollbar-width:thin; scrollbar-color:var(--line) transparent; padding-right:6px}
-#modeList::-webkit-scrollbar{width:7px}
-#modeList::-webkit-scrollbar-track{background:transparent}
-#modeList::-webkit-scrollbar-thumb{background:var(--line); border-radius:5px}
 
 .mrand{display:flex; align-items:center; gap:10px; width:100%; margin:0 0 14px;
-  background:transparent; border:1px solid var(--line); border-radius:5px; padding:11px 13px;
+  background:transparent; border:1px solid var(--line); border-radius:4px; padding:11px 13px;
   cursor:pointer; color:var(--text); font-family:inherit; text-align:left;
   transition:border-color .16s, color .16s, background .16s}
 .mrand b{flex:1; font-size:13.5px; font-weight:400; letter-spacing:.02em}
@@ -42,11 +30,11 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 @media (max-width:820px){ .mode-grid{grid-template-columns:repeat(4,1fr)} }
 @media (max-width:620px){ .mode-grid{grid-template-columns:repeat(3,1fr)} }
 .mgroup{display:flex; align-items:center; gap:10px;
-  font-family:var(--f-disp); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
-  color:var(--muted); opacity:.75; margin:0 0 7px}
+  font-family:var(--f-disp); font-size:12px; letter-spacing:.01em;
+  color:var(--muted); opacity:.9; margin:0 0 7px}
 .mgroup::after{content:''; flex:1; height:1px; background:var(--line)}
 .mcard{display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px 4px 7px;
-  background:var(--panel); border:1px solid var(--line); border-radius:6px; cursor:pointer;
+  background:var(--panel); border:1px solid var(--line); border-radius:4px; cursor:pointer;
   color:var(--text); font-family:inherit; transition:border-color .16s, background .16s, color .16s, transform .16s}
 .mcard b{font-size:11px; font-weight:400; letter-spacing:.01em; text-align:center; line-height:1.2}
 .mcard small{font-size:9.5px; color:var(--muted); font-family:var(--f-num); min-height:11px}
@@ -56,17 +44,14 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 .mcard.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
 
 .mp{border-left:1px solid var(--line); padding:0 0 0 28px; display:flex; flex-direction:column;
-  min-height:0; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent}
+  position:sticky; top:16px; align-self:start}
 @media (max-width:900px){ .mp{border-left:0; border-top:1px solid var(--line); padding:20px 0 0} }
 .sheet-grab{display:none}
 /* the preview is measured against window height, or on a short screen it eats the levels */
 .mp-prev{width:min(210px,20vh); max-width:100%; margin:0 0 20px}
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
-/* the rules text shrinks and scrolls on its own, so the level list always shows in full */
-.mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted); min-height:0; flex:0 1 auto;
-  max-height:11.2em; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent}
-@media (min-height:900px){ .mp p{min-height:6.4em} }
+.mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted)}
 .mp-prev, .mp h3, .mp h4, .diff-grid{flex:none}
 .mp-pool{margin:13px 0 0; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted)}
 .mp-pool button{background:transparent; border:0; border-bottom:1px solid var(--line); padding:2px 0;
@@ -81,19 +66,15 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   padding:12px 4px 11px; cursor:pointer; text-align:left; color:var(--text);
   font-family:inherit; transition:color .18s, padding-left .18s}
 .diff-btn:last-child{border-bottom:1px solid var(--line)}
-.diff-btn .lvl{flex:none; display:flex; align-items:flex-end; gap:2px; width:22px; height:13px}
-.diff-btn .lvl b{width:3px; border-radius:1px; background:var(--line); transition:background .18s}
-.diff-btn .lvl b:nth-child(1){height:5px}
-.diff-btn .lvl b:nth-child(2){height:8px}
-.diff-btn .lvl b:nth-child(3){height:11px}
-.diff-btn .lvl b:nth-child(4){height:14px}
-.diff-btn .lvl b.on{background:var(--accent)}
+/* уровень — номер главы, а не шкала: римская цифра дисплейным шрифтом */
+.diff-btn .lvl{flex:none; width:26px; font-style:normal; font-family:var(--f-disp);
+  font-size:13px; letter-spacing:.06em; color:var(--muted); transition:color .18s}
+.diff-btn .lvl.on{color:var(--accent)}
 .diff-btn span{flex:1; font-size:16.5px; font-weight:400; letter-spacing:.01em}
 .diff-btn em{flex:none; font-style:normal; font-size:11px; color:var(--muted);
   font-family:var(--f-num); font-weight:500}
 .diff-btn:hover,.diff-btn:focus-visible{color:var(--accent); padding-left:11px; outline:none}
-.diff-btn:hover .lvl b,.diff-btn:focus-visible .lvl b{background:var(--accent-soft)}
-.diff-btn:hover .lvl b.on,.diff-btn:focus-visible .lvl b.on{background:var(--accent)}
+.diff-btn:hover .lvl,.diff-btn:focus-visible .lvl{color:var(--accent)}
 
 .home-foot{flex:none; border-top:1px solid var(--line); padding-top:14px}
 .hsec-head{display:flex; align-items:center; gap:14px; margin-bottom:9px}
@@ -111,9 +92,9 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 #contList{display:flex; gap:9px; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin}
 #contList::-webkit-scrollbar{height:7px}
 #contList::-webkit-scrollbar-track{background:transparent}
-#contList::-webkit-scrollbar-thumb{background:var(--line); border-radius:5px}
+#contList::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px}
 .cont-card{position:relative; flex:none; width:164px; display:flex; flex-direction:column; gap:3px;
-  background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:10px 12px 9px;
+  background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:10px 12px 9px;
   cursor:pointer; color:var(--text); font-family:inherit; text-align:left;
   transition:border-color .16s, background .16s, color .16s}
 .cont-card b{font-size:13.5px; font-weight:400; letter-spacing:.01em}
@@ -128,9 +109,9 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 .cont-card:hover .cont-x{opacity:1}
 .cont-x:hover{color:var(--error)}
 .cbox{position:absolute; right:9px; bottom:8px; width:14px; height:14px; border:1px solid var(--line);
-  border-radius:3px; transition:background .15s, border-color .15s}
+  border-radius:4px; transition:background .15s, border-color .15s}
 .cbox.on{background:var(--accent); border-color:var(--accent)}
-.cbox.on::after{content:''; position:absolute; inset:3px; border-radius:1px; background:var(--panel2)}
+.cbox.on::after{content:''; position:absolute; inset:3px; border-radius:2px; background:var(--panel2)}
 
 .tot{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 20px; margin:14px 0 0;
   color:var(--muted); font-size:12.5px; font-weight:400}
@@ -140,10 +121,10 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
 .pool-item{display:flex; align-items:center; gap:11px; padding:9px 0; border-bottom:1px solid var(--line);
   cursor:pointer; font-size:13.5px}
 .pool-item input{appearance:none; -webkit-appearance:none; width:17px; height:17px; flex:none;
-  border:1px solid var(--line); border-radius:3px; background:transparent; cursor:pointer; position:relative;
+  border:1px solid var(--line); border-radius:4px; background:transparent; cursor:pointer; position:relative;
   transition:background .15s, border-color .15s}
 .pool-item input:checked{background:var(--accent-soft); border-color:var(--accent)}
-.pool-item input:checked::before{content:''; position:absolute; inset:3px; border-radius:1px; background:var(--accent)}
+.pool-item input:checked::before{content:''; position:absolute; inset:3px; border-radius:2px; background:var(--accent)}
 .pool-note{margin:14px 0 0; font-size:12px; color:var(--muted)}
 
 @media (max-height:820px){
@@ -161,8 +142,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px
   .mp-prev{margin-bottom:10px}
   .mp h3{font-size:20px}
   .mp h4{margin-top:14px}
-  .mp p{max-height:8.5em}
-  .diff-btn{padding:9px 4px 8px}
+    .diff-btn{padding:9px 4px 8px}
   .cont-card{padding:8px 11px 7px}
   .tot{margin-top:10px}
 }

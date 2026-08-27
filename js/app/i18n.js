@@ -55,12 +55,12 @@ ru:{
   r_suguru:'Большой квадрат состоит из областей, содержащих разное количество клеток. Цель головоломки — заполнить области цифрами от 1 и далее по возрастанию. Соприкасающиеся клетки не должны содержать одних и тех же цифр даже по диагонали.',
   m_numerator:'Нумератор',
   r_numerator:'Заполни пустые клетки числами от 1 до 81 так, чтобы числа шли последовательно по возрастанию. От известного числа последовательность продолжается по вертикали или горизонтали в любую сторону, исключая направление по диагонали.',
-  m_meow:'Мяудоку',
-  r_meow:'Не судоку, а расстановка: в каждой строке, столбце и цветной области — ровно один кот. Коты не садятся рядом, даже по диагонали. Область внутри одной строки забирает её себе.',
+  m_meow:'Кролики',
+  r_meow:'Не судоку, а расстановка: в каждой строке, столбце и цветной области сидит ровно один кролик. Кролики не садятся рядом, даже по диагонали. Область внутри одной строки забирает её себе. Точка означает, что в клетке кролика нет.',
   m_kakuro:'Какуро',
   r_kakuro:'Математический кроссворд. Серая клетка разделена диагональю: число над ней — сумма ряда справа, число под ней — сумма столбца вниз. В таком ряду или столбце стоят цифры от 1 до 9, они не повторяются и вместе дают эту сумму.',
-  meowHint:'Клик ставит метку, правая кнопка сажает кота. Протяжка метит клетки подряд',
-  meowHintTouch:'Нажми клетку: метка, потом кот. Проведи пальцем — пометит подряд',
+  meowHint:'Клик ставит точку — здесь кролика нет. Правая кнопка сажает кролика. Протяжка метит клетки подряд',
+  meowHintTouch:'Нажми клетку: точка — кролика нет, ещё раз — кролик. Проведи пальцем, чтобы пометить подряд',
   numHint:'Число вводится цифрами, Backspace стирает. Протяни от заполненной клетки — соседние встанут по порядку',
   numHintTouch:'Число из двух цифр набирается подряд: 1, потом 6 — это 16',
   th_light:'Светлая', th_dark:'Тёмная',
@@ -82,7 +82,7 @@ ru:{
   hSolved:'Решено', hBest:'Рекорд', hClean:'Чисто', cleanNote:'Чисто — партия без ошибок и подсказок',
   dataAt:'Обновлено', close:'Закрыть',
   settings:'Настройки', tabView:'Вид', tabGame:'Игра', tabKeys:'Клавиши',
-  themeT:'Тема', posT:'Позиция поля', posLeft:'Слева', posCenter:'Центр', posRight:'Справа', langT:'Язык',
+  themeT:'Тема', langT:'Язык',
   grpMist:'Ошибки', grpInput:'Ввод', grpBoard:'Подсказки на поле', grpBtns:'Кнопки под полем',
   instantT:'Мгновенная проверка', instantD:'Неверная цифра краснеет сразу. Если выключить, поле проверится, когда заполнишь его целиком. Действует на новые партии',
   limitT:'Лимит: три ошибки', limitD:'На третьей ошибке партия встаёт на паузу: продолжить без лимита или начать раздачу заново. Нужна мгновенная проверка',
@@ -153,12 +153,12 @@ en:{
   r_suguru:'The large square is made of regions holding different numbers of cells. The goal is to fill each region with 1 and upwards. Touching cells must not hold the same digit, diagonals included.',
   m_numerator:'Numerator',
   r_numerator:'Fill the empty cells with the numbers 1 to 81 so that they run in order. From a known number the run carries on up, down, left or right — never diagonally.',
-  m_meow:'Meowdoku',
-  r_meow:'Not a sudoku but a seating plan: one cat per row, per column and per coloured region. Cats never sit side by side, diagonals included. A region inside one row takes it.',
+  m_meow:'Bunnies',
+  r_meow:'Not a sudoku but a seating plan: one bunny per row, per column and per coloured region. Bunnies never sit side by side, diagonals included. A region inside one row takes it. A dot means the cell holds no bunny.',
   m_kakuro:'Kakuro',
   r_kakuro:'A crossword with numbers. A grey cell is split by a diagonal: the figure above it is the sum of the run to its right, the one below is the sum of the run going down. A run holds digits 1 to 9, none repeating, adding up to that sum.',
-  meowHint:'A click leaves a mark, right click seats a cat. Drag to mark a run of cells',
-  meowHintTouch:'Tap a cell: a mark, then a cat. Drag a finger to mark a run',
+  meowHint:'A click leaves a dot: no bunny here. Right click seats a bunny. Drag to mark a run of cells',
+  meowHintTouch:'Tap a cell: a dot for no bunny, tap again for a bunny. Drag a finger to mark a run',
   numHint:'Type the number, Backspace clears it. Drag from a filled cell and the run counts up',
   numHintTouch:'A two-digit number is typed digit by digit: 1 then 6 makes 16',
   th_light:'Light', th_dark:'Dark',
@@ -180,7 +180,7 @@ en:{
   hSolved:'Solved', hBest:'Best', hClean:'Flawless', cleanNote:'Flawless — solved with no mistakes and no hints',
   dataAt:'Updated', close:'Close',
   settings:'Settings', tabView:'Look', tabGame:'Game', tabKeys:'Keys',
-  themeT:'Theme', posT:'Board position', posLeft:'Left', posCenter:'Center', posRight:'Right', langT:'Language',
+  themeT:'Theme', langT:'Language',
   grpMist:'Mistakes', grpInput:'Input', grpBoard:'On-board help', grpBtns:'Buttons under the board',
   instantT:'Instant check', instantD:'A wrong digit turns red the moment you place it. With it off, the board is checked once every cell is filled. Applies to new games',
   limitT:'Limit: three mistakes', limitD:'On the third mistake the game pauses: carry on without a limit, or start the puzzle over. Needs instant check',
@@ -220,6 +220,8 @@ function applyLang(){
   const lbl=(id,k)=>{ const el=$(id); if(!el) return; el.title=t(k); el.setAttribute('aria-label',t(k)) };
   lbl('statsBtn','stats'); lbl('setBtn','settings'); lbl('backBtn','backT'); lbl('rulesBtn','rulesT');
   const g=cur(); lbl('pauseBtn', g&&g.paused? 'resume':'pauseT');
+  const pl=$('pauseBtn')&&$('pauseBtn').querySelector('.tbtn-lbl');
+  if(pl) pl.textContent=t(g&&g.paused? 'resume':'pauseT');
   if(typeof renderHome==='function' && !$('home').classList.contains('hidden')) renderHome();
   if(document.body.classList.contains('won')) renderWinPanel();
 }

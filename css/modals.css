@@ -1,4 +1,4 @@
-.btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:3px;
+.btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:4px;
   padding:11px 24px; font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.14em;
   text-transform:uppercase; cursor:pointer; transition:background .15s, color .15s}
 .btn:hover{background:transparent; color:var(--accent)}
@@ -9,7 +9,7 @@
 .modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center;
   justify-content:center; z-index:20; padding:20px; backdrop-filter:blur(3px)}
 .modal .row:last-child{position:sticky; bottom:-24px; background:var(--panel); padding:12px 0 14px; margin-bottom:-14px}
-.modal{background:var(--panel); border:1px solid var(--line); border-radius:5px;
+.modal{background:var(--panel); border:1px solid var(--line); border-radius:4px;
   padding:26px 28px; width:100%; max-width:640px; max-height:88vh; overflow-y:auto; box-shadow:var(--shadow);
   animation:mIn .22s ease-out}
 @keyframes mIn{from{transform:translateY(8px); opacity:0}to{transform:none; opacity:1}}
@@ -56,27 +56,27 @@
   .set-body{grid-template-columns:1fr; gap:0}
 }
 .stabs button{padding:10px 12px; border:0; background:transparent; color:var(--muted); text-align:left;
-  font-family:inherit; font-size:13px; font-weight:500; letter-spacing:.01em; border-radius:3px;
+  font-family:inherit; font-size:13px; font-weight:500; letter-spacing:.01em; border-radius:4px;
   cursor:pointer; transition:color .15s, background .15s}
 .stabs button:hover{color:var(--text); background:var(--cell-hl)}
-.stabs button.on{color:var(--accent); background:var(--accent-soft); font-weight:600}
-.swatches{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:3px; overflow:hidden}
+.stabs button.on{color:var(--accent); background:transparent; font-weight:600; box-shadow:inset 2px 0 0 var(--accent)}
+.swatches{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); border-radius:4px; overflow:hidden}
 .sw{width:100%; border:0; border-right:1px solid var(--line); border-radius:0; padding:12px 0; cursor:pointer;
   background:transparent; display:flex; align-items:center; justify-content:center; font-family:inherit; transition:background .15s}
 .sw:last-child{border-right:0}
-.sw.selq{background:var(--accent-soft)} .sw.selq span{color:var(--accent)}
+.sw.selq{box-shadow:inset 0 -2px 0 var(--accent)} .sw.selq span{color:var(--accent); font-weight:600}
 .sw span{font-size:12.5px; font-weight:500; color:var(--muted); letter-spacing:.04em}
-.posseg,.langseg{display:flex; border:1px solid var(--line); border-radius:3px; overflow:hidden}
-.posseg button,.langseg button{flex:1; padding:11px 0; border:0; border-right:1px solid var(--line);
+.langseg{display:flex; border:1px solid var(--line); border-radius:4px; overflow:hidden}
+.langseg button{flex:1; padding:11px 0; border:0; border-right:1px solid var(--line);
   background:transparent; color:var(--muted); font-family:inherit; font-size:12.5px; font-weight:500;
   letter-spacing:.04em; cursor:pointer; transition:color .15s, background .15s}
-.posseg button:last-child,.langseg button:last-child{border-right:0}
-.posseg button:hover,.langseg button:hover{color:var(--text)}
-.posseg button.on,.langseg button.on{color:var(--accent); background:var(--accent-soft)}
+.langseg button:last-child{border-right:0}
+.langseg button:hover{color:var(--text)}
+.langseg button.on{color:var(--accent); font-weight:600; box-shadow:inset 0 -2px 0 var(--accent)}
 .toggle{display:flex; gap:14px; align-items:flex-start; padding:15px 0; cursor:pointer; border-bottom:1px solid var(--line)}
 .toggle:last-of-type{border-bottom:0}
 .toggle input{appearance:none; -webkit-appearance:none; width:34px; height:19px; margin-top:4px; flex:none;
-  border-radius:3px; background:transparent; border:1px solid var(--line); cursor:pointer;
+  border-radius:4px; background:transparent; border:1px solid var(--line); cursor:pointer;
   position:relative; transition:background .18s, border-color .18s}
 .toggle input::before{content:''; position:absolute; top:2px; left:2px; width:13px; height:13px;
   border-radius:2px; background:var(--muted); transition:transform .18s, background .18s}

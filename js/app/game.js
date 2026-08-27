@@ -427,6 +427,9 @@ function placeWinPanel(){
     document.body.classList.remove('win-side');
     return;
   }
+  /* в раскладке с пультом панель встаёт в его колонку: разметку берём ту же,
+     что у боковой победы, а позиционирование задаёт сетка */
+  if(isRail()){ document.body.classList.add('win-side'); panel.style.left=''; panel.style.top=''; return }
   const b=$('board').getBoundingClientRect(), game=$('game').getBoundingClientRect();
   const side=(window.innerWidth-b.right)>=330 && window.innerHeight>=600 && !isPhone();
   document.body.classList.toggle('win-side',side);
@@ -459,15 +462,16 @@ function setPaused(p){
   const g=cur(); if(!g) return;
   g.paused=p; closePicker();
   $('pauseOverlay').classList.toggle('hidden',!p);
-  $('pauseBtn').innerHTML=p
-    ? '<svg viewBox="0 0 24 24"><path d="M9 5.6 19 12 9 18.4Z"/></svg>'
-    : '<svg viewBox="0 0 24 24"><path d="M9.5 5.5v13M14.5 5.5v13"/></svg>';
   const pl=t(p?'resume':'pauseT');
+  $('pauseBtn').innerHTML=(p
+    ? '<svg viewBox="0 0 24 24"><path d="M9 5.6 19 12 9 18.4Z"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M9.5 5.5v13M14.5 5.5v13"/></svg>')
+    + '<span class="tbtn-lbl"></span>';
+  $('pauseBtn').querySelector('.tbtn-lbl').textContent=pl;
   $('pauseBtn').title=pl; $('pauseBtn').setAttribute('aria-label',pl);
 }
 function syncModeButtons(){
   $('notesBtn').classList.toggle('on', inputMode==='note');
-  $('midBtn').classList.toggle('on', inputMode==='mid');
   $('hypBtn').classList.toggle('on2', inputMode==='hyp');
   syncPickerMode();
 }
@@ -485,7 +489,6 @@ function applyControls(){
   $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || meow);
   $('hypBtn').classList.toggle('hidden', num || meow);
   $('notesBtn').classList.toggle('hidden', meow);
-  $('midBtn').classList.toggle('hidden', num || meow);
   /* a third tap clears the cell, so the erase key has nothing left to do */
   $('eraseBtn').classList.toggle('hidden', meow);
 }

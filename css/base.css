@@ -27,52 +27,60 @@
 /* the anchor colours of both themes. The only place they are written down:
    markup, scripts and the theme previews read them from here */
 :root{
-  --l-bg:#ebeef6; --l-panel:#f7f9fd; --l-line:#d7dced; --l-text:#1b2130; --l-accent:#3a5aa0;
-  --d-bg:#0d1119; --d-panel:#151c2b; --d-line:#252c3d; --d-text:#e4e9f4; --d-accent:#9ec1f5;
+  --l-bg:#eaedf4; --l-panel:#fbfcfe; --l-line:#d2d7e4; --l-text:#14161f; --l-accent:#565ead;
+  --d-bg:#0b0d14; --d-panel:#151824; --d-line:#252a3b; --d-text:#e6e9f5; --d-accent:#a6b4f0;
 }
 :root, html[data-theme="light"]{
-  --bg:var(--l-bg); --panel:var(--l-panel); --panel2:#ffffff; --line:var(--l-line); --line-strong:#1b2130;
-  --text:var(--l-text); --muted:#57617a; --accent:var(--l-accent); --accent-text:#ffffff; --accent-soft:#dbe3f5;
-  --accent2:#6f5fa8; --accent2-soft:#e5e0f4;
-  --error:#b04a52; --note:#4d5871; --given:#1b2130; --user:#3a5aa0; --cell-hl:#dde4f3; --cell-same:#cbd6ef; --note-sel:#3c4761;
-  --shadow:0 18px 44px rgba(30,45,80,.11); --shadow-up:0 -14px 38px rgba(30,45,80,.14);
-  --rule:rgba(27,33,48,.45); --frame:rgba(58,90,160,.30);
-  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(58,90,160,.13), transparent 68%);
-  --glow-edge:rgba(58,90,160,.62);
-  --pop:#ffffff; --pop-shadow:0 16px 38px rgba(24,37,66,.24), 0 2px 8px rgba(24,37,66,.14);
-  --key-bg:#ffffff; --key-line:#cdd5e8;
-  --kk:#c6cee2; --kk-dark:#8d99b8;
-  --zone-fill:#dde5f5; --even-fill:#d7e0f2; --zone-edge:rgba(58,90,160,.38);
+  --bg:var(--l-bg); --panel:var(--l-panel); --panel2:#ffffff; --line:var(--l-line); --line-strong:#14161f;
+  --text:var(--l-text); --muted:#5a6072; --accent:var(--l-accent); --accent-text:#ffffff; --accent-soft:#e2e5f5;
+  --accent2:#2c6b76; --accent2-soft:#dcebed;
+  --error:#9e3550; --note:#4f566b; --given:#14161f; --user:#565ead; --cell-hl:#e1e4ee; --cell-same:#d3d8ee; --note-sel:#333a4f;
+  --shadow:0 18px 44px rgba(24,32,58,.10); --shadow-up:0 -14px 38px rgba(24,32,58,.13);
+  --rule:rgba(20,22,31,.42); --frame:rgba(86,94,173,.26);
+  --halo:radial-gradient(ellipse 62% 40% at 50% -2%, rgba(255,255,255,.95), transparent 72%);
+  --glow-edge:rgba(86,94,173,.60);
+  --pop:#ffffff; --pop-shadow:0 16px 38px rgba(18,24,48,.22), 0 2px 8px rgba(18,24,48,.13);
+  --key-bg:#ffffff; --key-line:#ccd2e2;
+  --kk:#a9b3ca; --kk-dark:#6e788f;
+  --zone-fill:#dde2f3; --even-fill:#d7dcf0; --zone-edge:rgba(86,94,173,.34);
   --blend:multiply;
-  --tint-hl:rgba(150,172,208,.22); --tint-same:rgba(74,116,205,.34); --tint-sel:rgba(52,92,180,.46);
-  --tint-hyp:rgba(126,105,196,.28); --tint-hyp-sel:rgba(104,80,180,.44); --tint-err:rgba(206,92,102,.35);
-  --cage:rgba(35,62,128,.92); --cage-num:#2b477f;
-  --dot-w-bg:#ffffff; --dot-w-line:#1b2130; --dot-b-bg:#1b2130; --dot-b-line:#1b2130;
-  --z1:#d3e0f6; --z2:#e4dcf2; --z3:#cfe9e6; --z4:#f2dfe4; --z5:#dcebd7;
-  --z6:#f3e6d2; --z7:#dde3ee; --z8:#ecd9ec; --z9:#cfe4f4; --z10:#efe2cb;
-  --cat:#2b477f; --mark:#8d99b8;
+  /* подсветка соседей — без цвета, цвет остаётся у выбранной клетки и у совпадений */
+  --tint-hl:rgba(20,22,31,.055); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
+  --tint-hyp:rgba(44,107,118,.20); --tint-hyp-sel:rgba(44,107,118,.36); --tint-err:rgba(158,53,80,.28);
+  --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
+  --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
+  /* десять холодных тонов областей: соседние номера разведены на пол-круга,
+     чтобы смежные области не сливались (ΔE соседних не меньше 16) */
+  --z1:#d0e2cd; --z2:#cfebfd; --z3:#d0eddf; --z4:#cedef5; --z5:#c1e4dd;
+  --z6:#e3e5fe; --z7:#c8eeef; --z8:#e4d8f0; --z9:#bfe3ed; --z10:#f7e0f3;
+  --cat:#565ead; --mark:#98a2bd;
+  /* свет падает сверху: верх поля светлее, низ чуть глубже */
+  --board-light:linear-gradient(to bottom, rgba(255,255,255,.85), rgba(255,255,255,0) 34%, rgba(20,22,31,.045));
+  --tick:rgba(122,136,170,.75);
 }
 html[data-theme="dark"]{
-  --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#1c2434; --line:var(--d-line); --line-strong:#e4e9f4;
-  --text:var(--d-text); --muted:#8b96af; --accent:var(--d-accent); --accent-text:#0d1119; --accent-soft:rgba(158,193,245,.20);
-  --accent2:#bda9ef; --accent2-soft:rgba(189,169,239,.20);
-  --error:#e2848c; --note:#98a3bb; --given:#e4e9f4; --user:#9ec1f5; --cell-hl:#1d2637; --cell-same:#293857; --note-sel:#c9d3e6;
+  --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#1b1f30; --line:var(--d-line); --line-strong:#e6e9f5;
+  --text:var(--d-text); --muted:#8c93ab; --accent:var(--d-accent); --accent-text:#0b0d14; --accent-soft:rgba(166,180,240,.20);
+  --accent2:#7fc8d4; --accent2-soft:rgba(127,200,212,.20);
+  --error:#e78ca0; --note:#98a0b8; --given:#e6e9f5; --user:#a6b4f0; --cell-hl:#1a1e2d; --cell-same:#252c47; --note-sel:#ccd3e8;
   --shadow:0 18px 44px rgba(0,0,0,.5); --shadow-up:0 -14px 38px rgba(0,0,0,.42);
-  --rule:rgba(228,233,244,.34); --frame:rgba(158,193,245,.24);
-  --halo:radial-gradient(ellipse 58% 34% at 50% 0%, rgba(158,193,245,.14), transparent 68%);
-  --glow-edge:rgba(158,193,245,.62);
-  --pop:#232e44; --pop-shadow:0 16px 38px rgba(0,0,0,.62), 0 2px 8px rgba(0,0,0,.45);
-  --key-bg:#1a2333; --key-line:#3b4963;
-  --kk:#2b3550; --kk-dark:#10151f;
-  --zone-fill:rgba(158,193,245,.16); --even-fill:rgba(158,193,245,.17); --zone-edge:rgba(158,193,245,.45);
+  --rule:rgba(230,233,245,.32); --frame:rgba(166,180,240,.22);
+  --halo:radial-gradient(ellipse 62% 40% at 50% -2%, rgba(166,180,240,.16), transparent 72%);
+  --glow-edge:rgba(166,180,240,.62);
+  --pop:#212637; --pop-shadow:0 16px 38px rgba(0,0,0,.62), 0 2px 8px rgba(0,0,0,.45);
+  --key-bg:#191d2c; --key-line:#39415a;
+  --kk:#333d5c; --kk-dark:#05070c;
+  --zone-fill:rgba(166,180,240,.15); --even-fill:rgba(166,180,240,.16); --zone-edge:rgba(166,180,240,.42);
   --blend:screen;
-  --tint-hl:rgba(96,122,168,.22); --tint-same:rgba(86,132,208,.42); --tint-sel:rgba(110,158,232,.56);
-  --tint-hyp:rgba(126,105,196,.40); --tint-hyp-sel:rgba(150,124,224,.56); --tint-err:rgba(186,74,86,.5);
-  --cage:rgba(178,208,255,.82); --cage-num:#b2d0ff;
-  --dot-w-bg:#e8edf8; --dot-w-line:#0d1119; --dot-b-bg:#0d1119; --dot-b-line:#c3cee4;
-  --z1:#1d3055; --z2:#2e2450; --z3:#123a38; --z4:#43253a; --z5:#1f3a20;
-  --z6:#453520; --z7:#28324a; --z8:#3a2450; --z9:#123452; --z10:#43301f;
-  --cat:#b2d0ff; --mark:#5d6987;
+  --tint-hl:rgba(230,233,245,.06); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
+  --tint-hyp:rgba(110,180,195,.34); --tint-hyp-sel:rgba(127,200,212,.50); --tint-err:rgba(190,80,105,.48);
+  --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
+  --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;
+  --z1:#253723; --z2:#1d4052; --z3:#244235; --z4:#1f344a; --z5:#0f3933;
+  --z6:#373b53; --z7:#134345; --z8:#392e45; --z9:#053842; --z10:#4c3549;
+  --cat:#a6b4f0; --mark:#5d6987;
+  --board-light:linear-gradient(to bottom, rgba(166,180,240,.11), rgba(166,180,240,0) 42%, rgba(0,0,0,.18));
+  --tick:rgba(201,212,234,.62);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -83,10 +91,8 @@ body{margin:0; background:var(--bg); color:var(--text);
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   transition:background .25s,color .25s}
 body.in-game main{max-width:100%}
-body.pos-left #game{margin-left:0}
-body.pos-right #game{margin-left:auto; margin-right:0}
 button{font-family:inherit; color:inherit}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
 header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
 header h1{font-family:var(--f-disp); font-size:35px; font-weight:400; letter-spacing:.2em; margin:0 0 0 .2em}
 .tagline{margin:0; color:var(--muted); font-size:13px}
@@ -97,7 +103,7 @@ body.in-game #backBtn{display:flex; margin-left:-6px; margin-right:4px}
 header #statsBtn{right:calc(50% - 440px)}
 header #setBtn{right:calc(50% - 478px)}
 @media(max-width:990px){header #statsBtn{right:60px} header #setBtn{right:16px}}
-.iconbtn{background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer;
+.iconbtn{background:transparent; border:1px solid transparent; border-radius:4px; cursor:pointer;
   color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
@@ -115,13 +121,13 @@ body::before{content:''; position:fixed; inset:0; background:var(--halo); pointe
 body.in-game::before{opacity:.4}
 header, main, .site-foot{position:relative; z-index:1}
 .wel-grid{display:flex; gap:12px; margin:18px 0 14px}
-.wel-card{flex:1; background:transparent; border:1px solid var(--line); border-radius:3px; padding:11px 11px 13px;
+.wel-card{flex:1; background:transparent; border:1px solid var(--line); border-radius:4px; padding:11px 11px 13px;
   cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:10px; align-items:center;
   transition:border-color .15s, background .15s}
 .wel-card:hover{border-color:var(--accent)}
 .wel-card:active{background:var(--accent-soft)}
 .wel-card b{font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
-.wel-prev{width:100%; aspect-ratio:16/10; border-radius:3px; display:grid; grid-template-columns:1fr 1fr;
+.wel-prev{width:100%; aspect-ratio:16/10; border-radius:4px; display:grid; grid-template-columns:1fr 1fr;
   grid-template-rows:1fr 1fr; gap:5px; padding:9px; border:1px solid rgba(127,127,127,.25)}
 .wel-prev i{display:block; border-radius:2px}
 .wp-light{background:var(--l-bg)}
@@ -151,7 +157,9 @@ header, main, .site-foot{position:relative; z-index:1}
   body.in-game main{padding:4px 4px calc(6px + env(safe-area-inset-bottom)); flex:0 1 auto}
   body.in-game #game{width:100%}
 
-  body.in-game{justify-content:center}
+  /* шапка стоит наверху, а поле с клавиатурой ловит свободное место под ней:
+     иначе на высоком экране над заголовком висит необъяснимая пустота */
+  body.in-game{justify-content:flex-start}
   body.in-game header{padding:calc(6px + env(safe-area-inset-top)) 12px 2px}
   body.in-game header h1{font-size:20px}
 
@@ -166,7 +174,7 @@ header, main, .site-foot{position:relative; z-index:1}
 
 #toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
   background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
-  padding:10px 18px; border-radius:3px; font-size:13px; font-weight:600; z-index:50;
+  padding:10px 18px; border-radius:4px; font-size:13px; font-weight:600; z-index:50;
   transition:opacity .25s, transform .25s; pointer-events:none; box-shadow:var(--shadow)}
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
 #genOverlay{position:fixed; inset:0; background:var(--bg); opacity:.92; z-index:30;

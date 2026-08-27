@@ -234,7 +234,6 @@ $('eraseBtn').addEventListener('click',eraseCell);
 $('hintBtn').addEventListener('click',hint);
 $('autoNotesBtn').addEventListener('click',autoNotes);
 $('notesBtn').addEventListener('click',()=>setMode('note'));
-$('midBtn').addEventListener('click',()=>setMode('mid'));
 $('hypBtn').addEventListener('click',()=>setMode('hyp'));
 $('winHome').addEventListener('click',goHome);
 $('winAgain').addEventListener('click',()=>newGame(lastRequest.mode,lastRequest.diff));
@@ -266,9 +265,6 @@ $('optCounts').addEventListener('change',e=>{ SES.settings.showCounts=e.target.c
   if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
 $('optHintBtn').addEventListener('change',e=>{ SES.settings.showHint=e.target.checked; applyControls(); persistCache() });
 $('optAutoBtn').addEventListener('change',e=>{ SES.settings.showAuto=e.target.checked; applyControls(); persistCache() });
-document.querySelectorAll('#posseg button').forEach(b=>b.addEventListener('click',()=>{
-  SES.settings.pos=b.dataset.p; applyLayout(); persistCache();
-}));
 document.querySelectorAll('#langseg button').forEach(b=>b.addEventListener('click',()=>{
   SES.settings.lang=b.dataset.l; applyLang(); refreshPickerLang(); persistCache();
   if(cur()&&!$('game').classList.contains('hidden')){ renderBoard(); updatePickHint() }
@@ -379,8 +375,16 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('resize',()=>{
   if(!isPhone()) closeSheet();
+  syncRail();
   snapBoardTwice(); updatePickHint(); placeWinPanel();
 });
+syncRail();
+/* событие resize приходит не всегда (снап окна, смена монитора), поэтому
+   раскладку слушаем у самого медиазапроса */
+if(RAIL_Q.addEventListener) RAIL_Q.addEventListener('change',()=>{
+  syncRail(); snapBoardTwice(); placeWinPanel();
+});
+initDialogs();
 /* resizing the board mid-drag would move the cells out from under the finger */
 if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{
   if(sweepOn||chainOn) return;

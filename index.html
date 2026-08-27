@@ -102,13 +102,13 @@
   <section id="game" class="hidden">
     <div class="topbar">
       <span class="t-item"><b id="gMode"></b><em id="gDiff"></em></span>
-      <span class="t-item" id="gMistWrap"><span data-i18n="errorsL">Ошибки</span>: <b id="gMist">0</b></span>
+      <span class="t-item" id="gMistWrap"><span data-i18n="errorsL">Ошибки</span>: <b id="gMist" aria-live="polite">0</b></span>
       <span class="t-item"><b id="gTimer">0:00</b></span>
       <button class="tbtn hidden" id="zoomBtn">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       </button>
       <button class="tbtn" id="pauseBtn">
-        <svg viewBox="0 0 24 24"><path d="M9.5 5.5v13M14.5 5.5v13"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M9.5 5.5v13M14.5 5.5v13"/></svg><span class="tbtn-lbl" data-i18n="pauseT">Пауза</span>
       </button>
     </div>
     <p id="pickHint" class="hidden" data-i18n="pickHint">Двойной или правый клик по клетке — быстрый ввод цифры</p>
@@ -126,7 +126,6 @@
       <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="M20 9H9a5 5 0 0 0 0 10h4"/><path d="m16 5 4 4-4 4"/></svg><span data-i18n="redo">Вернуть</span></button>
       <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span data-i18n="erase">Стереть</span></button>
       <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg><span data-i18n="notes">Заметки</span></button>
-      <button class="ctl" id="midBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><circle cx="8.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.4" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg><span data-i18n="mid">Центр</span></button>
   <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg><span data-i18n="hyp">Черновик</span></button>
       <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg><span data-i18n="auto">Авто</span></button>
       <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 19h6M10 22h4"/><path d="M12 3a6 6 0 0 1 4 10.5V16H8v-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint">Подсказка</span></button>
@@ -254,12 +253,6 @@
       <div class="scols">
       <h3 data-i18n="themeT">Тема</h3>
       <div class="swatches" id="swatches"></div>
-      <h3 data-i18n="posT" id="posRow">Позиция поля</h3>
-      <div class="posseg" id="posseg">
-        <button data-p="left" data-i18n="posLeft">Слева</button>
-        <button data-p="center" data-i18n="posCenter">Центр</button>
-        <button data-p="right" data-i18n="posRight">Справа</button>
-      </div>
       <h3 data-i18n="langT">Язык</h3>
       <div class="langseg" id="langseg">
         <button data-l="en">English</button>

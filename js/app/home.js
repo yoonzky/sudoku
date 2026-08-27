@@ -8,6 +8,7 @@ const MODE_GROUPS=[
 ];
 const DICE='<svg class="dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>';
 const LEVEL_N={easy:1,medium:2,hard:3,expert:4};
+const LEVEL_RN={easy:'I',medium:'II',hard:'III',expert:'IV'};
 let pickedMode='classic';
 let contSel=null;
 
@@ -91,8 +92,7 @@ function renderModePanel(){
   for(const d of DIFFS){
     const st = m==='random'? statsFor(null,d) : statsFor(m,d);
     const note = st.solved? `${st.solved} · ${fmtTime(st.best)}` : t('notPlayed');
-    const bars=[1,2,3,4].map(k=>`<b class="${k<=LEVEL_N[d]?'on':''}"></b>`).join('');
-    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl">${bars}</i><span>${t('d_'+d)}</span><em>${note}</em></button>`;
+    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl${st.solved?' on':''}">${LEVEL_RN[d]}</i><span>${t('d_'+d)}</span><em>${note}</em></button>`;
   }
   $('diffGrid').innerHTML=h;
 }

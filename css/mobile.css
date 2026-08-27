@@ -29,22 +29,26 @@ body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom));
 .cont-bar{margin-left:0; width:100%; justify-content:space-between; gap:6px; font-size:12px}
 .cont-bar #contCount{margin-right:auto}
 #contList{gap:8px; padding-bottom:8px; scrollbar-width:none;
-  margin:0 -10px; padding-left:10px; padding-right:10px}
+  margin:0 -10px; padding-left:10px; padding-right:10px;
+  scroll-snap-type:x proximity;
+  -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 34px), transparent);
+  mask-image:linear-gradient(to right, #000 calc(100% - 34px), transparent)}
+.cont-card{scroll-snap-align:start}
 #contList::-webkit-scrollbar{height:0}
-.cont-card{width:154px; padding:11px 12px 12px; border-radius:6px}
+.cont-card{width:154px; padding:11px 12px 12px; border-radius:4px}
 .cont-card b{font-size:14px}
 .cont-card span{font-size:11.5px}
 .cont-x{width:30px; height:30px; right:2px; bottom:2px; opacity:.75}
 .cbox{width:17px; height:17px; right:11px; bottom:11px}
 
-.mrand{padding:14px 14px; border-radius:6px; margin-bottom:13px}
+.mrand{padding:14px 14px; border-radius:4px; margin-bottom:13px}
 .mrand b{font-size:14.5px}
 .mrand small{font-size:11.5px}
 .mrand .dice{width:18px; height:18px}
 
 .mode-grid{grid-template-columns:repeat(3,1fr); gap:8px}
 .mgroup{font-size:10px; margin:0 0 7px}
-.mcard{padding:11px 4px 10px; gap:7px; border-radius:6px}
+.mcard{padding:11px 4px 10px; gap:7px; border-radius:4px}
 .mcard-prev{height:52px}
 .mcard b{font-size:11.5px}
 .mcard small{font-size:10px; min-height:12px}
@@ -54,7 +58,7 @@ body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom));
 body.sheet{overflow:hidden}
 body.sheet #sheetBg{opacity:1; pointer-events:auto}
 .mp{position:fixed; left:0; right:0; bottom:0; z-index:25;
-  border:0; border-top:1px solid var(--line); border-radius:12px 12px 0 0;
+  border:0; border-top:1px solid var(--line); border-radius:4px 4px 0 0;
   background:var(--panel); box-shadow:var(--shadow-up);
   padding:0 16px calc(12px + env(safe-area-inset-bottom));
   max-height:86vh; overflow-y:auto; overscroll-behavior:contain;
@@ -73,25 +77,34 @@ body.sheet .mp{transform:none}
 .mp h4{grid-column:1/-1; margin:18px 0 2px; padding-top:0; font-size:11px}
 .diff-grid{grid-column:1/-1}
 
-body.in-game main{padding:2px 8px calc(4px + env(safe-area-inset-bottom)); flex:0 1 auto}
+body.in-game main{padding:2px 8px calc(4px + env(safe-area-inset-bottom)); flex:1 1 auto;
+  display:flex; flex-direction:column; justify-content:center; min-height:0}
 body.in-game #game{width:100%; max-width:100%}
 body.in-game .site-foot{display:none}
 .topbar{margin:2px auto 8px; font-size:13px}
 .topbar .t-item em{margin-left:6px; font-size:12px}
 .topbar .tbtn{padding:8px 6px; margin:-8px -6px -8px 0; min-width:38px}
 .topbar .tbtn svg{width:18px; height:18px}
-#board{border-radius:5px}
+#board{border-radius:4px}
 
 .board-pan{width:100%; margin:0 auto}
 body.board-zoom .board-wrap{max-width:100%}
 .board-pan.pan{overflow:auto; overscroll-behavior:contain;
   scrollbar-width:none; -webkit-overflow-scrolling:touch;
-  border-radius:6px; box-shadow:var(--shadow)}
+  border-radius:4px; box-shadow:var(--shadow)}
 .board-pan.pan::-webkit-scrollbar{width:0; height:0}
 .board-pan.pan #board{box-shadow:none; margin:0}
 
-.controls{margin-top:11px; border-radius:3px}
-.ctl{padding:10px 1px 8px; letter-spacing:0; gap:5px; min-height:52px; font-size:10px}
+/* три режима ввода — своим рядом, всё остальное — вторым: подписи перестают
+   резаться, а палец попадает по кнопке вдвое увереннее, чем в ряду из семи */
+.controls{margin-top:11px; border:0; border-radius:0; overflow:visible;
+  display:grid; grid-template-columns:repeat(6,1fr); gap:6px}
+.ctl{border:1px solid var(--line); border-radius:4px;
+  padding:9px 2px 8px; letter-spacing:0; gap:5px; min-height:50px; font-size:10.5px}
+.ctl + .ctl{border-left:1px solid var(--line)}
+.ctl{grid-column:span 2}
+#notesBtn{order:1; grid-column:span 3} #hypBtn{order:2; grid-column:span 3}
+#undoBtn{order:3} #redoBtn{order:4} #eraseBtn{order:5} #autoNotesBtn{order:6} #hintBtn{order:7}
 .ctl svg{width:20px; height:20px}
 .ctl:hover:not(:disabled){color:var(--muted); background:transparent}
 .ctl:active:not(:disabled){background:var(--cell-hl); color:var(--text)}
@@ -135,6 +148,9 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 }
 
 @media (pointer:coarse){
+  /* двойной тап больше не зумит страницу; щипок двумя пальцами остаётся */
+  *{touch-action:manipulation}
+  .sheet-grab{touch-action:none}
   .only-fine{display:none !important}
   #tabKeysBtn{display:none}
   .mcard:hover,.cont-card:hover,.mrand:hover{border-color:var(--line); color:var(--text); background:var(--panel)}
@@ -142,7 +158,6 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
   .mrand.on:hover{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
   .num:active{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
 }
-@media (max-width:700px){ #posRow, #posseg{display:none} }
 
 @media (max-width:620px){
   .modal-bg{align-items:flex-start; padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
@@ -158,7 +173,7 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
     padding:0; margin-bottom:14px; gap:0}
   .stabs button{flex:1; text-align:center; padding:13px 4px; border-radius:0;
     border-bottom:2px solid transparent; margin-bottom:-1px}
-  .stabs button.on{background:transparent; border-bottom-color:var(--accent)}
+  .stabs button.on{background:transparent; border-bottom-color:var(--accent); box-shadow:none}
   .modal h3{margin:14px 0 6px}
   .toggle{padding:9px 0; gap:12px}
   .toggle input{width:40px; height:23px; margin-top:3px}

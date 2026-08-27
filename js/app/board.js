@@ -10,13 +10,14 @@ const merged=(g,i)=>g.values[i]||g.hyp[i];
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
 const CAT_SVG='<svg class="cat" viewBox="0 0 24 24" aria-hidden="true">'+
-  '<path d="M4.6 9.2 4 4.4l4 2.6a9 9 0 0 1 8 0l4-2.6-.6 4.8"/>'+
-  '<path d="M20 12.4c0 4.3-3.6 7.2-8 7.2s-8-2.9-8-7.2"/>'+
-  '<path d="M9.4 12.2v.9M14.6 12.2v.9"/>'+
-  '<path d="M12 15.4v.9M10.6 17.1c.5.5 1.9.5 2.4 0"/>'+
-  '<path d="M2.6 14.6h3.2M2.6 16.8h3.2M18.2 14.6h3.2M18.2 16.8h3.2"/></svg>';
+  '<path d="M10.5 8.6C9.6 5.9 9.5 2.9 10.8 2.9s1.6 3 1.1 5.8"/>'+
+  '<path d="M15.6 8.9c1.3-2.5 1.9-5.4.7-5.8-1.2-.4-2.3 2.4-2.6 5.2"/>'+
+  '<path d="M12 8.4c4.2 0 7.2 2.9 7.2 6.3 0 3.4-3.1 5.7-7.2 5.7s-7.2-2.3-7.2-5.7c0-3.4 3-6.3 7.2-6.3Z"/>'+
+  '<path d="M9.7 13.9v.9M14.3 13.9v.9"/>'+
+  '<path d="M12 16.5l-.9-.9M12 16.5l.9-.9"/>'+
+  '<path d="M10.8 17.9c.5.5 1.9.5 2.4 0"/></svg>';
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
-  '<path d="M6 6l12 12M18 6 6 18"/></svg>';
+  '<circle cx="12" cy="12" r="6"/></svg>';
 
 function buildBoard(sp){
   SPEC=sp;
@@ -327,16 +328,9 @@ function renderBoard(){
       if(hv>9) d.classList.add('d2');
     }
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
-    /* the run is outlined along its rim: an edge is drawn only where the next cell is outside */
-    if(msel.size>1 && msel.has(i)){
-      d.classList.add('msel');
-      const c=sp.cells[i];
-      const kin=(dx,dy)=>{ const j=cellAt(sp,c.x+dx,c.y+dy); return j>=0 && msel.has(j) };
-      if(!kin(0,-1)) d.classList.add('mt');
-      if(!kin(1,0)) d.classList.add('mr');
-      if(!kin(0,1)) d.classList.add('mb');
-      if(!kin(-1,0)) d.classList.add('ml');
-    }
+    /* every picked cell is ringed on all four sides: a rim around the whole run
+       read as one box with a grid inside, not as a set of chosen cells */
+    if(msel.size>1 && msel.has(i)) d.classList.add('msel');
     if(sel>=0){
       if(i===sel) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
@@ -364,7 +358,7 @@ function renderBoard(){
   $('gMistWrap').style.display=g.instant? '' : 'none';
   $('gMist').textContent=(SES.settings.limit&&g.instant&&!g.noLimit)? `${g.mistakes}/3` : g.mistakes;
   $('gMode').textContent=t('m_'+g.mode);
-  $('gDiff').textContent=t('d_'+g.diff);
+  $('gDiff').textContent=(LEVEL_RN[g.diff]? LEVEL_RN[g.diff]+' · ' : '')+t('d_'+g.diff);
   $('board').classList.toggle('hyp-on', inputMode==='hyp');
   $('undoBtn').disabled=!undoStack.length;
   $('redoBtn').disabled=!redoStack.length;
@@ -391,9 +385,13 @@ let boardZoom=false, lockFit=0;
 
 function otherHeight(){
   let used=0;
-  const parts=[document.querySelector('header'), document.querySelector('.topbar'),
-    $('pickHint'), document.querySelector('.controls'), $('numpad'),
-    $('winPanel'), document.querySelector('.site-foot')];
+  /* в раскладке с пультом эти три стоят сбоку и высоту у поля не отнимают */
+  const side=isRail();
+  const parts=[document.querySelector('header'), document.querySelector('.site-foot'), $('pickHint'),
+    side? null : document.querySelector('.topbar'),
+    side? null : document.querySelector('.controls'),
+    side? null : $('numpad'),
+    side? null : $('winPanel')];
   for(const el of parts) if(el && el.offsetParent!==null) used+=el.getBoundingClientRect().height;
   const m=document.querySelector('main');
   if(m){ const cs=getComputedStyle(m); used+=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom) }
@@ -419,6 +417,7 @@ function fitCell(){
 }
 function zoomUseful(){ return isPhone() && SPEC && fitCell()<ZOOM_CELL-2 }
 function snapBoard(){
+  syncRail();
   const b=$('board'), pan=$('boardPan'); if(!b||!SPEC||!pan) return;
   b.style.width=''; pan.style.width=''; pan.style.maxHeight='';
   pan.classList.remove('pan');

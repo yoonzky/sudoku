@@ -9,6 +9,10 @@ const PHONE_Q=matchMedia('(max-width:700px)');
 const LAND_Q=matchMedia('(orientation:landscape) and (max-height:560px) and (min-width:560px)');
 const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
 const isLand=()=>LAND_Q.matches;
+/* на большом экране с мышью пульт встаёт справа от поля, а не под ним */
+const RAIL_Q=matchMedia('(min-width:1040px) and (min-height:660px) and (pointer:fine)');
+const isRail=()=>RAIL_Q.matches;
+function syncRail(){ document.body.classList.toggle('rail', isRail()) }
 const COARSE=(()=>{ try{ return matchMedia('(pointer:coarse)').matches }catch(e){} return false })();
 function pickerAllowed(){
   if(lastPointerType==='touch'||COARSE) return false;
@@ -53,13 +57,7 @@ function setFavicon(bg,accent){
   if(!link){ link=document.createElement('link'); link.rel='icon'; document.head.appendChild(link) }
   link.href='data:image/svg+xml,'+encodeURIComponent(svg);
 }
-function applyLayout(){
-  const p=SES.settings.pos||'center';
-  document.body.classList.toggle('pos-left',p==='left');
-  document.body.classList.toggle('pos-right',p==='right');
-  document.querySelectorAll('#posseg button').forEach(b=>b.classList.toggle('on',p===b.dataset.p));
-  placePickHint();
-}
+function applyLayout(){ placePickHint() }
 
 const PK_ICONS={
   digit:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>',
@@ -76,8 +74,8 @@ function buildPicker(sp){
   if(sp.kind==='num'){ buildNumPicker(pk); return }
   const hdr=document.createElement('div');
   hdr.className='pk-mode';
-  const tabName={digit:'digitTab', note:'noteTab', mid:'midTab', hyp:'hypTab'};
-  hdr.innerHTML=['digit','note','mid','hyp'].map(m=>
+  const tabName={digit:'digitTab', note:'noteTab', hyp:'hypTab'};
+  hdr.innerHTML=['digit','note','hyp'].map(m=>
     `<button data-m="${m}" title="${t(tabName[m])}">${PK_ICONS[m]}</button>`).join('');
   hdr.querySelectorAll('button').forEach(b=>b.addEventListener('pointerdown',e=>{
     e.preventDefault(); e.stopPropagation();
@@ -293,4 +291,58 @@ function openRules(){
   $('rulesText').textContent=t('r_'+g.mode);
   $('rulesPrev').innerHTML=previewSVG(g.mode);
   $('rulesModal').classList.remove('hidden');
+}
+
+/* ── диалоги для клавиатуры и скринридера ───────────────────────── */
+/* окна открываются и закрываются в разных местах кода, поэтому роли и
+   ловушка фокуса навешиваются один раз и следят за классом hidden */
+const FOCUSABLE='button:not([disabled]),[href],input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
+let dlgReturn=null;
+function dialogFrame(bg){
+  const box=bg.querySelector('.modal'); if(!box) return null;
+  if(!box.hasAttribute('role')){
+    box.setAttribute('role','dialog');
+    box.setAttribute('aria-modal','true');
+    box.setAttribute('tabindex','-1');
+    const h=box.querySelector('h2');
+    if(h){ if(!h.id) h.id=bg.id+'Title'; box.setAttribute('aria-labelledby',h.id) }
+  }
+  return box;
+}
+function openDialog(bg){
+  const box=dialogFrame(bg); if(!box) return;
+  dlgReturn=document.activeElement;
+  /* фокус на само окно, а не на первую кнопку: иначе Enter сразу жмёт
+     «Сбросить статистику» и подобное */
+  box.focus({preventScroll:true});
+}
+function closeDialog(){
+  const el=dlgReturn; dlgReturn=null;
+  if(el && document.contains(el)) el.focus({preventScroll:true});
+}
+function openDialogEl(){
+  for(const bg of document.querySelectorAll('.modal-bg'))
+    if(!bg.classList.contains('hidden')) return bg;
+  return null;
+}
+function initDialogs(){
+  const list=[...document.querySelectorAll('.modal-bg')];
+  for(const bg of list){
+    dialogFrame(bg);
+    new MutationObserver(()=>{
+      if(bg.classList.contains('hidden')){ if(!openDialogEl()) closeDialog() }
+      else openDialog(bg);
+    }).observe(bg,{attributes:true, attributeFilter:['class']});
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Tab') return;
+    const bg=openDialogEl(); if(!bg) return;
+    const box=bg.querySelector('.modal'); if(!box) return;
+    const items=[...box.querySelectorAll(FOCUSABLE)].filter(el=>el.offsetParent!==null);
+    if(!items.length) return;
+    const first=items[0], last=items[items.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus() }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus() }
+    else if(!box.contains(document.activeElement)){ e.preventDefault(); first.focus() }
+  },true);
 }
