@@ -26,7 +26,12 @@
 .cell.same{--tint:var(--tint-same)}
 
 .cell.hypv{--tint:var(--tint-hyp)}
-.cell.msel{--tint:var(--tint-sel)}
+.cell.msel{--tint:var(--tint-same); z-index:5;
+  --et:0px; --er:0px; --eb:0px; --el:0px;
+  box-shadow:inset 0 var(--et) 0 var(--accent), inset calc(-1 * var(--er)) 0 0 var(--accent),
+    inset 0 calc(-1 * var(--eb)) 0 var(--accent), inset var(--el) 0 0 var(--accent)}
+.cell.msel.mt{--et:2px} .cell.msel.mr{--er:2px}
+.cell.msel.mb{--eb:2px} .cell.msel.ml{--el:2px}
 .cell.sel{--tint:var(--tint-sel); z-index:4}
 .cell.hypv.sel{--tint:var(--tint-hyp-sel)}
 .cell.err{color:var(--error); --tint:var(--tint-err); font-weight:700}

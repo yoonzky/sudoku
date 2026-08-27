@@ -285,7 +285,7 @@ function renderBoard(){
   for(let i=0;i<n;i++){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
     const mid=g.mid? g.mid[i] : EMPTY;
-    d.className=d.className.replace(/ (msel|sel|hl|same|err|given|hypv|d2)/g,'');
+    d.className=d.className.replace(/ (msel|mt|mr|mb|ml|sel|hl|same|err|given|hypv|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
     const key = isMeow? 'm'+v : v? 'v'+v : hv? 'h'+hv
       : (g.notes[i].length||mid.length)? 'n'+g.notes[i].join(',')+'/'+mid.join(',')+'|'+(activeVal||0) : '';
@@ -327,7 +327,16 @@ function renderBoard(){
       if(hv>9) d.classList.add('d2');
     }
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
-    if(msel.size>1 && msel.has(i)) d.classList.add('msel');
+    /* the run is outlined along its rim: an edge is drawn only where the next cell is outside */
+    if(msel.size>1 && msel.has(i)){
+      d.classList.add('msel');
+      const c=sp.cells[i];
+      const kin=(dx,dy)=>{ const j=cellAt(sp,c.x+dx,c.y+dy); return j>=0 && msel.has(j) };
+      if(!kin(0,-1)) d.classList.add('mt');
+      if(!kin(1,0)) d.classList.add('mr');
+      if(!kin(0,1)) d.classList.add('mb');
+      if(!kin(-1,0)) d.classList.add('ml');
+    }
     if(sel>=0){
       if(i===sel) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
