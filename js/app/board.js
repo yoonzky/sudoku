@@ -374,6 +374,9 @@ function renderBoard(){
   $('gMist').textContent=(SES.settings.limit&&g.instant&&!g.noLimit)? `${g.mistakes}/3` : g.mistakes;
   $('gMode').textContent=t('m_'+g.mode);
   $('gDiff').textContent=(LEVEL_RN[g.diff]? LEVEL_RN[g.diff]+' · ' : '')+t('d_'+g.diff);
+  const gtag=(I18N[SES.settings.lang]||{})['tag_'+g.mode] || I18N.en['tag_'+g.mode] || '';
+  $('gameTag').textContent=gtag;
+  $('gameTag').classList.toggle('hidden', !gtag);
   $('board').classList.toggle('hyp-on', inputMode==='hyp');
   $('undoBtn').disabled=!undoStack.length;
   $('redoBtn').disabled=!redoStack.length;
@@ -403,6 +406,7 @@ function otherHeight(){
   /* в раскладке с пультом эти три стоят сбоку и высоту у поля не отнимают */
   const side=isRail();
   const parts=[document.querySelector('header'), document.querySelector('.site-foot'), $('pickHint'),
+    side? null : $('gameTag'),
     side? null : document.querySelector('.topbar'),
     side? null : document.querySelector('.controls'),
     side? null : $('numpad'),
