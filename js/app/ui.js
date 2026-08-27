@@ -20,9 +20,12 @@ function pickerAllowed(){
   return true;
 }
 let toastTimer=null;
+/* время показа считается от длины: две с небольшим секунды не хватало,
+   чтобы дочитать длинное сообщение вроде вытесненной партии */
 function toast(msg){
   const el=$('toast'); el.textContent=msg; el.classList.add('show');
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+  const ms=Math.min(7000, Math.max(2600, 1600+msg.length*65));
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),ms);
 }
 function show(screen){
   closeSheet();
