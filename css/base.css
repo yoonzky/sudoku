@@ -45,7 +45,7 @@
   --zone-fill:#dde2f3; --even-fill:#d7dcf0; --zone-edge:rgba(86,94,173,.34);
   --blend:multiply;
   /* подсветка соседей — без цвета, цвет остаётся у выбранной клетки и у совпадений */
-  --tint-hl:rgba(20,22,31,.055); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
+  --tint-hl:rgba(20,22,31,.09); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
   --tint-hyp:rgba(44,107,118,.20); --tint-hyp-sel:rgba(44,107,118,.36); --tint-err:rgba(158,53,80,.28);
   --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
   --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
@@ -72,7 +72,7 @@ html[data-theme="dark"]{
   --kk:#333d5c; --kk-dark:#05070c;
   --zone-fill:rgba(166,180,240,.15); --even-fill:rgba(166,180,240,.16); --zone-edge:rgba(166,180,240,.42);
   --blend:screen;
-  --tint-hl:rgba(230,233,245,.06); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
+  --tint-hl:rgba(230,233,245,.10); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
   --tint-hyp:rgba(110,180,195,.34); --tint-hyp-sel:rgba(127,200,212,.50); --tint-err:rgba(190,80,105,.48);
   --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
   --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;

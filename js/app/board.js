@@ -180,7 +180,8 @@ function buildDeco(sp){
   const old=b.querySelector('.deco'); if(old) old.remove();
   if(sp.kind==='kakuro') return;
   const hasZone=sp.zone.some(z=>z===1);
-  if(!sp.cages.length && !sp.dots.length && !hasZone) return;
+  const hasEven=sp.zone.some(z=>z===2);
+  if(!sp.cages.length && !sp.dots.length && !hasZone && !hasEven) return;
   const deco=document.createElement('div');
   deco.className='deco';
   const d=0.055;
@@ -201,22 +202,26 @@ function buildDeco(sp){
     const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
     sums+=`<text x="${a.x+0.15}" y="${a.y+0.31}">${cg.sum}</text>`;
   }
-  const zoneSegs=[];
-  if(hasZone){
-    const inZone=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && sp.zone[j]===1 };
-    const z=0.06;
+  /* обводка области идёт только по внешнему краю: там, где соседняя клетка
+     принадлежит той же области, грань не рисуется */
+  const outline=(mark,z)=>{
+    const segs=[];
+    const inSame=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && sp.zone[j]===mark };
     for(let i=0;i<sp.cells.length;i++){
-      if(sp.zone[i]!==1) continue;
+      if(sp.zone[i]!==mark) continue;
       const c=sp.cells[i], x=c.x, y=c.y;
-      const up=inZone(x,y-1), dn=inZone(x,y+1), lf=inZone(x-1,y), rt=inZone(x+1,y);
+      const up=inSame(x,y-1), dn=inSame(x,y+1), lf=inSame(x-1,y), rt=inSame(x+1,y);
       const x0=lf? x : x+z, x1=rt? x+1 : x+1-z;
       const y0=up? y : y+z, y1=dn? y+1 : y+1-z;
-      if(!up) zoneSegs.push([x0,y+z,x1,y+z]);
-      if(!dn) zoneSegs.push([x0,y+1-z,x1,y+1-z]);
-      if(!lf) zoneSegs.push([x+z,y0,x+z,y1]);
-      if(!rt) zoneSegs.push([x+1-z,y0,x+1-z,y1]);
+      if(!up) segs.push([x0,y+z,x1,y+z]);
+      if(!dn) segs.push([x0,y+1-z,x1,y+1-z]);
+      if(!lf) segs.push([x+z,y0,x+z,y1]);
+      if(!rt) segs.push([x+1-z,y0,x+1-z,y1]);
     }
-  }
+    return segs;
+  };
+  const zoneSegs = hasZone? outline(1,0.06) : [];
+  const evenSegs = hasEven? outline(2,0.06) : [];
   let dots='';
   for(const dt of sp.dots){
     const a=sp.cells[dt.a], c=sp.cells[dt.b];
@@ -226,9 +231,11 @@ function buildDeco(sp){
     dots+=`<circle cx="${cx}" cy="${cy}" r=".095" fill="${fill}" stroke="${line}" stroke-width=".026"/>`;
   }
   const zonePath=joinSegments(zoneSegs);
+  const evenPath=joinSegments(evenSegs);
   const cageDash=dashLine(cageSegs,0.075,0.055);
   deco.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
     (zonePath? `<path d="${zonePath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
+    (evenPath? `<path d="${evenPath}" fill="none" stroke="var(--zone-edge)" stroke-width=".035" stroke-linejoin="round"/>`:'')+
     (cageDash? `<path d="${cageDash}" fill="none" stroke="var(--cage)" stroke-width=".042" stroke-linecap="butt"/>`:'')+
     (sums? `<g class="sums" font-size=".21">${sums}</g>`:'')+
     dots+'</svg>';
@@ -281,7 +288,7 @@ function renderBoard(){
   const activeVal=(hlSame && !isNum && !isMeow)? (selVal||hlDigit) : 0;
   const counts={};
   for(let i=0;i<n;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1 }
-  const peersOn=SES.settings.highlightPeers!==false && sp.id!=='evenodd' && !isMeow;
+  const peersOn=SES.settings.highlightPeers!==false && !isMeow;
   const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
@@ -330,12 +337,15 @@ function renderBoard(){
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
     /* every picked cell is ringed on all four sides: a rim around the whole run
        read as one box with a grid inside, not as a set of chosen cells */
-    if(msel.size>1 && msel.has(i)) d.classList.add('msel');
-    if(sel>=0){
+    const run=msel.size>1;
+    if(run && msel.has(i)) d.classList.add('msel');
+    /* пока набран ряд клеток, строка и столбец первой из них не подсвечиваются:
+       иначе часть выбранных клеток красится иначе, чем остальные */
+    if(sel>=0 && !run){
       if(i===sel) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
     }
-    if(activeVal && i!==sel){
+    if(activeVal && !run && i!==sel){
       const hasNote=!v&&!hv&&!isNum&&(g.notes[i].includes(activeVal)||mid.includes(activeVal));
       if(merged(g,i)===activeVal||hasNote) d.classList.add('same');
     }

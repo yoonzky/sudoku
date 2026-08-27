@@ -97,14 +97,8 @@ body.board-zoom .board-wrap{max-width:100%}
 
 /* три режима ввода — своим рядом, всё остальное — вторым: подписи перестают
    резаться, а палец попадает по кнопке вдвое увереннее, чем в ряду из семи */
-.controls{margin-top:11px; border:0; border-radius:0; overflow:visible;
-  display:grid; grid-template-columns:repeat(6,1fr); gap:6px}
-.ctl{border:1px solid var(--line); border-radius:4px;
-  padding:9px 2px 8px; letter-spacing:0; gap:5px; min-height:50px; font-size:10.5px}
-.ctl + .ctl{border-left:1px solid var(--line)}
-.ctl{grid-column:span 2}
-#notesBtn{order:1; grid-column:span 3} #hypBtn{order:2; grid-column:span 3}
-#undoBtn{order:3} #redoBtn{order:4} #eraseBtn{order:5} #autoNotesBtn{order:6} #hintBtn{order:7}
+.controls{margin-top:11px; gap:6px}
+.ctl{padding:9px 2px 8px; letter-spacing:0; gap:5px; min-height:50px; font-size:10.5px}
 .ctl svg{width:20px; height:20px}
 .ctl:hover:not(:disabled){color:var(--muted); background:transparent}
 .ctl:active:not(:disabled){background:var(--cell-hl); color:var(--text)}
@@ -210,9 +204,8 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
   #pickHint{display:none}
   .board-wrap{grid-area:2/1/4/2; height:calc(100vh - 74px); max-width:none; margin:0}
   .board-pan{display:flex; justify-content:center}
-  .controls{grid-area:2/2/3/3; width:auto; margin:0; flex-wrap:wrap}
-  .ctl{flex:1 1 30%; min-height:44px; padding:7px 1px 6px}
-  .ctl:nth-child(n+4){border-left:0}
+  .controls{grid-area:2/2/3/3; width:auto; margin:0}
+  .ctl{min-height:44px; padding:7px 1px 6px}
   .numpad{grid-area:3/2/4/3; width:auto; margin:6px 0 0; align-content:start;
     grid-template-columns:repeat(3,1fr) !important; gap:5px}
   .num{height:auto; aspect-ratio:1.35; font-size:20px}

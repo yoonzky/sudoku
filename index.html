@@ -122,13 +122,17 @@
       <div id="picker" class="hidden"></div>
     </div>
     <div class="controls">
-      <button class="ctl" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10h-4"/><path d="M8 5 4 9l4 4"/></svg><span data-i18n="undo">Отмена</span></button>
-      <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="M20 9H9a5 5 0 0 0 0 10h4"/><path d="m16 5 4 4-4 4"/></svg><span data-i18n="redo">Вернуть</span></button>
-      <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span data-i18n="erase">Стереть</span></button>
-      <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg><span data-i18n="notes">Заметки</span></button>
-  <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg><span data-i18n="hyp">Черновик</span></button>
-      <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg><span data-i18n="auto">Авто</span></button>
-      <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 19h6M10 22h4"/><path d="M12 3a6 6 0 0 1 4 10.5V16H8v-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint">Подсказка</span></button>
+      <div class="ctl-row" id="ctlModes">
+        <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg><span data-i18n="notes">Заметки</span></button>
+        <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg><span data-i18n="hyp">Черновик</span></button>
+      </div>
+      <div class="ctl-row" id="ctlActs">
+        <button class="ctl" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10h-4"/><path d="M8 5 4 9l4 4"/></svg><span data-i18n="undo">Отмена</span></button>
+        <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="M20 9H9a5 5 0 0 0 0 10h4"/><path d="m16 5 4 4-4 4"/></svg><span data-i18n="redo">Вернуть</span></button>
+        <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span data-i18n="erase">Стереть</span></button>
+        <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg><span data-i18n="auto">Авто</span></button>
+        <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 19h6M10 22h4"/><path d="M12 3a6 6 0 0 1 4 10.5V16H8v-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint">Подсказка</span></button>
+      </div>
     </div>
     <div class="numpad" id="numpad"></div>
     <section id="winPanel" class="hidden">
@@ -286,7 +290,7 @@
           <div><b data-i18n="countsT">Сколько цифр осталось</b><span data-i18n="countsD">Маленькое число в углу кнопки: сколько этой цифры ещё не стоит. Кнопка гаснет, когда цифра закрыта</span></div></label>
       </section>
       <section class="sgrp">
-        <h3 data-i18n="grpBtns">Кнопки под полем</h3>
+        <h3 data-i18n="grpBtns">Кнопки на пульте</h3>
         <label class="toggle"><input type="checkbox" id="optHintBtn">
           <div><b data-i18n="hintBtnT">Кнопка «Подсказка»</b><span data-i18n="hintBtnD">Открывает верную цифру в выбранной клетке. Партия с подсказкой в статистику не идёт</span></div></label>
         <label class="toggle"><input type="checkbox" id="optAutoBtn">

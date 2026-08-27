@@ -491,4 +491,9 @@ function applyControls(){
   $('notesBtn').classList.toggle('hidden', meow);
   /* a third tap clears the cell, so the erase key has nothing left to do */
   $('eraseBtn').classList.toggle('hidden', meow);
+  /* ряд без единой видимой кнопки убираем, иначе он оставляет пустой отступ */
+  for(const id of ['ctlModes','ctlActs']){
+    const row=$(id); if(!row) continue;
+    row.classList.toggle('hidden', !row.querySelector('.ctl:not(.hidden)'));
+  }
 }

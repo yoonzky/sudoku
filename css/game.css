@@ -60,7 +60,7 @@
 @keyframes wave{0%,100%{opacity:0}45%{opacity:.9}}
 
 body.won .controls, body.won .numpad, body.won #pickHint{display:none}
-body.win-side .controls, body.win-side .numpad{display:flex; opacity:.4; pointer-events:none}
+body.win-side .controls, body.win-side .numpad{display:grid; opacity:.4; pointer-events:none}
 body.win-side .numpad{display:grid}
 
 body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
@@ -123,9 +123,11 @@ body.won #board{overflow:visible}
 #picker.mode-note button[data-v]:hover{border-color:var(--accent); color:var(--accent)}
 #picker.mode-hyp button[data-v]:hover{border-color:var(--accent2); color:var(--accent2)}
 
-.controls{display:flex; flex-wrap:wrap; margin:16px auto 0; width:var(--board-px,100%);
-  border:1px solid var(--line); border-radius:4px; overflow:hidden}
-.ctl{flex:1 1 0; min-width:0; background:transparent; border:0;
+/* пульт — два ряда: режимы ввода и действия. Каждый ряд делит ширину поровну
+   между видимыми кнопками, поэтому включённая подсказка ничего не ломает */
+.controls{display:grid; gap:6px; margin:16px auto 0; width:var(--board-px,100%)}
+.ctl-row{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:6px}
+.ctl{min-width:0; background:transparent; border:1px solid var(--line); border-radius:4px;
   padding:11px 5px 9px; cursor:pointer; color:var(--muted); font-family:inherit;
   font-size:clamp(8px,2.5cqw,11px); font-weight:500; letter-spacing:.01em;
   display:flex; flex-direction:column; align-items:center; gap:5px;
@@ -133,7 +135,6 @@ body.won #board{overflow:visible}
 .ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2;
   stroke-linecap:square; stroke-linejoin:miter}
-.ctl + .ctl{border-left:1px solid var(--line)}
 .ctl:hover:not(:disabled){color:var(--text); background:var(--cell-hl)}
 .ctl.on{color:var(--accent); background:var(--accent-soft)}
 .ctl.on2{color:var(--accent2); background:var(--accent2-soft)}
@@ -256,21 +257,24 @@ body.win-side.in-game{overflow:hidden}
 /* свет лежит под клетками, иначе он моет цифры: клетки становятся прозрачными,
    а фон держит само поле. Составные режимы этого не делают — там между сетками
    пустое место, и сплошная заливка его бы залила */
-body:not(.board-wide) #board{background:var(--panel)}
+body:not(.board-wide) #board{background-color:var(--panel); background-image:var(--board-light)}
 .cell{background:transparent}
 body.board-wide .cell{background:var(--panel)}
-body:not(.board-wide) #board::before{content:''; position:absolute; inset:0; z-index:0;
-  pointer-events:none; background:var(--board-light)}
+/* рамка поля — отдельным слоем, чтобы угловые засечки легли поверх неё, а не под */
+#board{border:0}
+#board::before{content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
+  border-radius:4px; box-shadow:inset 0 0 0 1px var(--frame)}
+body.board-wide #board::before{display:none}
 #board::after{content:''; position:absolute; inset:0; z-index:6; pointer-events:none;
   background:
-    linear-gradient(var(--tick),var(--tick)) left top/11px 1px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left top/1px 11px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right top/11px 1px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right top/1px 11px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left bottom/11px 1px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left bottom/1px 11px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right bottom/11px 1px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right bottom/1px 11px no-repeat}
+    linear-gradient(var(--tick),var(--tick)) left top/13px 2px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left top/2px 13px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right top/13px 2px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right top/2px 13px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left bottom/13px 2px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left bottom/2px 13px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right bottom/13px 2px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right bottom/2px 13px no-repeat}
 body.board-wide #board::after, body.board-num #board::after{display:none}
 
 /* ── компьютер: поле слева, пульт справа ────────────────────────── */
@@ -306,14 +310,10 @@ body.rail #pickHint{position:static; grid-area:4/2/5/3; width:auto;
   margin:12px 0 0; padding:0 0 0 11px; text-align:left; font-size:12px; line-height:1.5;
   border-left:1px solid var(--line); border-right:0}
 
-body.rail .controls{grid-area:2/2/3/3; width:auto; margin:0;
-  display:grid; grid-template-columns:repeat(6,1fr); gap:6px; border:0; overflow:visible}
-body.rail .ctl{border:1px solid var(--line); border-radius:4px; padding:9px 3px 8px; font-size:10.5px}
-body.rail .ctl + .ctl{border-left:1px solid var(--line)}
-body.rail #notesBtn{order:1; grid-column:span 3} body.rail #hypBtn{order:2; grid-column:span 3}
-body.rail #undoBtn{order:3} body.rail #redoBtn{order:4} body.rail #eraseBtn{order:5}
-body.rail #autoNotesBtn{order:6} body.rail #hintBtn{order:7}
-body.rail .ctl{grid-column:span 2}
+body.rail .controls{grid-area:2/2/3/3; width:auto; margin:0}
+body.rail .ctl{padding:9px 3px 8px; font-size:10.5px}
+/* колонка узкая: действия идут по три в ряд, иначе подписи режутся */
+body.rail #ctlActs{grid-auto-flow:row; grid-template-columns:repeat(3,1fr)}
 
 body.rail .numpad{grid-area:3/2/4/3; width:auto; margin:10px 0 0;
   grid-template-columns:repeat(3,1fr) !important; gap:6px; align-content:start}
