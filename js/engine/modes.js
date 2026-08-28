@@ -323,22 +323,37 @@ function killerBlank(diff,deadline){
   return blankFallback;
 }
 
+/* the budget of one deal, in milliseconds. The overlay draws its bar against
+   the same figure, so what the player waits for and what the generator is
+   given are one number */
+const KILLER_BLANK_MS=8000;
+function cycleBudget(id,diff){
+  const M=MODES[id];
+  if(!M) return 3500;
+  const base=M.time||3500;
+  return base + (diff==='expert' && (M.top||9)>=4 ? Math.min(base,4000) : 0);
+}
+function dealBudget(id,diff){
+  if(id==='numerator') return 6000;
+  if(id==='kakuro') return 9000;
+  if(id==='tokki') return 14000;
+  return cycleBudget(id,diff) + (id==='killer'&&diff==='expert'? KILLER_BLANK_MS : 0);
+}
+
 function makePuzzle(id,diff,deadline){
   if(id==='numerator') return numMake(diff,deadline);
   if(id==='kakuro') return kakMake(diff,deadline);
   if(id==='tokki') return tokkiMake(diff,deadline);
   if(id==='killer'&&diff==='expert'){
     /* a blank deal takes a while to find; uncapped it ate the whole budget */
-    const blank=killerBlank(diff, deadline||(Date.now()+8000));
+    const blank=killerBlank(diff, deadline||(Date.now()+KILLER_BLANK_MS));
     if(blank) return blank;
   }
   const M=MODES[id], band=(M.band&&M.band[diff])||BAND[diff];
   /* M.top is the ceiling of a mode: suguru has no fourth-level techniques,
      and chasing them burns the budget for nothing */
   const target=Math.min(band[1], TARGET[diff]||2, M.top||9);
-  /* the spare time only helps where the fourth level is reachable at all */
-  const chase = diff==='expert' && (M.top||9)>=4;
-  const stop=deadline||(Date.now()+(M.time||3500)+(chase? Math.min(M.time||3500,4000) : 0));
+  const stop=deadline||(Date.now()+cycleBudget(id,diff));
   /* the target is chased for part of the budget, then anything sound will do,
      or expert keeps the player waiting. Where a try is cheap, the hunt runs longer */
   const half=Date.now()+(stop-Date.now())*((M.time||3500)<=4000? .6 : .34);

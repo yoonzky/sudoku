@@ -4,6 +4,7 @@ const I18N = {
 ru:{
   genFail:'Поле не собралось — попробуй ещё раз',
   genCancel:'Esc или касание — отмена', genStopped:'Генерация отменена',
+  genSpent:'{n} с', dealWait:'до {n} с',
   mid:'Центр', midTab:'В центр',
   k_mid:'заметка в центр клетки', k_midm:'режим центральных заметок',
   k_multi:'выделить несколько клеток', k_multiG:'протянуть мышью по полю',
@@ -206,6 +207,7 @@ en:{
   k_auto:'auto-notes', k_pause:'pause', k_nav:'move around the board', k_menu:'back to menu', k_pick:'pad at the cell',
   gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
   genCancel:'Esc or a tap cancels', genStopped:'Generation cancelled',
+  genSpent:'{n} s', dealWait:'up to {n} s',
   mid:'Centre', midTab:'Centre mark',
   k_mid:'centre mark in a cell', k_midm:'centre mark mode',
   k_multi:'pick a run of cells', k_multiG:'drag across the board',

@@ -39,10 +39,40 @@ function cancelGen(){
   genBusy=false; genWaiting=null;
   if(genWorker&&genWorker.terminate){ try{ genWorker.terminate() }catch(e){} }
   genWorker=null;
-  $('genOverlay').classList.add('hidden');
+  closeGenOverlay();
   /* the game the deal was meant to replace is already gone, so fall back to the menu */
   if(!cur()) goHome();
   return true;
+}
+
+/* a deal of samurai or killer runs for tens of seconds, and a line of text that
+   never changes reads as a hung screen: the bar fills against the budget the
+   generator was given, and the seconds are counted out loud */
+let genTick=null;
+function openGenOverlay(mode,diff){
+  const el=$('genOverlay');
+  el.innerHTML='';
+  const title=document.createElement('b');
+  title.textContent=t('gen')+' · '+t('m_'+mode);
+  const bar=document.createElement('div');
+  bar.className='gen-bar';
+  bar.innerHTML='<i></i>';
+  const foot=document.createElement('small');
+  el.append(title,bar,foot);
+  el.classList.remove('hidden');
+  const fill=bar.firstChild, started=Date.now(), budget=dealBudget(mode,diff);
+  const draw=()=>{
+    const spent=Date.now()-started;
+    fill.style.width=Math.min(97, spent/budget*100)+'%';
+    foot.textContent=t('genSpent').replace('{n}',Math.floor(spent/1000))+' · '+t('genCancel');
+  };
+  draw();
+  clearInterval(genTick);
+  genTick=setInterval(draw,250);
+}
+function closeGenOverlay(){
+  clearInterval(genTick); genTick=null;
+  $('genOverlay').classList.add('hidden');
 }
 
 function newGame(mode,diff){
@@ -53,16 +83,11 @@ function newGame(mode,diff){
     mode=pool[Math.floor(Math.random()*pool.length)];
   }
   genBusy=true;
-  $('genOverlay').innerHTML='';
-  $('genOverlay').append(t('gen')+' · '+t('m_'+mode));
-  const hint=document.createElement('small');
-  hint.textContent=t('genCancel');
-  $('genOverlay').appendChild(hint);
-  $('genOverlay').classList.remove('hidden');
+  openGenOverlay(mode,diff);
   generateAsync(mode,diff,res=>{
     if(!genBusy) return;
     genBusy=false;
-    $('genOverlay').classList.add('hidden');
+    closeGenOverlay();
     if(!res){ toast(t('genFail')); return }
     const sp=buildSpec(res.mode,res.ex);
     const n=sp.cells.length;

@@ -101,7 +101,11 @@ function renderModePanel(){
   for(const d of DIFFS){
     const st = m==='random'? statsFor(null,d) : statsFor(m,d);
     const note = st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : t('notPlayed');
-    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl${st.solved?' on':''}">${LEVEL_RN[d]}</i><span>${t('d_'+d)}</span><em>${note}</em></button>`;
+    /* the deals that run into tens of seconds say so before they are asked for,
+       and only the fourth level ever gets there */
+    const budget = (m==='random'||d!=='expert')? 0 : dealBudget(m,d);
+    const wait = budget>=11000? `<i class="wait">${t('dealWait').replace('{n}',Math.round(budget/1000))}</i>` : '';
+    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl${st.solved?' on':''}">${LEVEL_RN[d]}</i><span>${t('d_'+d)}</span>${wait}<em>${note}</em></button>`;
   }
   $('diffGrid').innerHTML=h;
 }
