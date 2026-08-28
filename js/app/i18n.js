@@ -16,7 +16,6 @@ ru:{
   delDone:'Партии удалены',
 
   modesT:'Режимы', lvlT:'Уровень', poolBtn:'Настроить набор',
-  g_clean:'Чистое поле', g_size:'Другой размер', g_multi:'Составные', g_extra:'С условиями', g_rand:'Жребий',
   m_random:'Случайный режим',
   r_random:'Режим выпадает случайно из отмеченного набора. Уровень выбираешь сам.',
   poolT:'Что входит в набор', poolAll:'Отметить все', poolNone:'Снять все',
@@ -55,7 +54,7 @@ ru:{
   r_suguru:'Большой квадрат состоит из областей, содержащих разное количество клеток. Цель головоломки — заполнить области цифрами от 1 и далее по возрастанию. Соприкасающиеся клетки не должны содержать одних и тех же цифр даже по диагонали.',
   m_numerator:'Нумератор',
   r_numerator:'Заполни пустые клетки числами от 1 до 81 так, чтобы числа шли последовательно по возрастанию. От известного числа последовательность продолжается по вертикали или горизонтали в любую сторону, исключая направление по диагонали.',
-  m_meow:'Баннидоку', tag_meow:'mhdhh never die',
+  m_meow:'Токкидоку', tag_meow:'mhdhh never die',
   r_meow:'Не судоку, а расстановка: в каждой строке, столбце и цветной области сидит ровно один кролик. Кролики не садятся рядом, даже по диагонали. Область внутри одной строки забирает её себе. Точка означает, что в клетке кролика нет.',
   m_kakuro:'Какуро',
   r_kakuro:'Математический кроссворд. Серая клетка разделена диагональю: число над ней — сумма ряда справа, число под ней — сумма столбца вниз. В таком ряду или столбце стоят цифры от 1 до 9, они не повторяются и вместе дают эту сумму.',
@@ -115,7 +114,6 @@ en:{
   delDone:'Games deleted',
 
   modesT:'Modes', lvlT:'Level', poolBtn:'Edit the pool',
-  g_clean:'Plain board', g_size:'Other sizes', g_multi:'Linked boards', g_extra:'Extra rules', g_rand:'Luck',
   m_random:'Random mode',
   r_random:'The mode comes up at random from the pool you picked. You still choose the level.',
   poolT:'What goes into the pool', poolAll:'Select all', poolNone:'Clear all',
@@ -153,7 +151,7 @@ en:{
   r_suguru:'The large square is made of regions holding different numbers of cells. The goal is to fill each region with 1 and upwards. Touching cells must not hold the same digit, diagonals included.',
   m_numerator:'Numerator',
   r_numerator:'Fill the empty cells with the numbers 1 to 81 so that they run in order. From a known number the run carries on up, down, left or right — never diagonally.',
-  m_meow:'Bunnydoku', tag_meow:'mhdhh never die',
+  m_meow:'Tokkidoku', tag_meow:'mhdhh never die',
   r_meow:'Not a sudoku but a seating plan: one bunny per row, per column and per coloured region. Bunnies never sit side by side, diagonals included. A region inside one row takes it. A dot means the cell holds no bunny.',
   m_kakuro:'Kakuro',
   r_kakuro:'A crossword with numbers. A grey cell is split by a diagonal: the figure above it is the sum of the run to its right, the one below is the sum of the run going down. A run holds digits 1 to 9, none repeating, adding up to that sum.',

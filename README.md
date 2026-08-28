@@ -11,7 +11,7 @@ Plain HTML, CSS and JavaScript — no build step, no dependencies. Games, settin
 | Plain board | Classic · X-Sudoku · Even-Odd · Windoku · Asterisk · Mosaic |
 | Other sizes | 10×10 (5×2 regions) · 12×12 (4×3 regions) |
 | Linked boards | Double · Wing · Butterfly · Samurai |
-| Extra rules | Killer · Dots (Kropki) · Suguru · Numerator · Kakuro · Bunnydoku |
+| Extra rules | Killer · Dots (Kropki) · Suguru · Numerator · Kakuro · Tokkidoku |
 
 Every mode has four levels and its own statistics. The home screen shows a thumbnail of each
 board, so a mode can be picked by its shape. **Random mode** draws one of the modes you ticked
@@ -64,7 +64,7 @@ js/engine/grade.js    grading by technique, level tuning
 js/engine/modes.js    the mode table and puzzle generation
 js/engine/numerator.js  the 1..81 chain and its own solver
 js/engine/kakuro.js   pattern, sums, single solution
-js/engine/meow.js     bunnydoku: bunnies, regions, single solution
+js/engine/meow.js     tokkidoku: bunnies, regions, single solution
 js/engine/worker.js   generation off the main thread
 js/app/i18n.js        dictionaries, mode names and rules
 js/app/store.js       localStorage: settings, games, record of wins

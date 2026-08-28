@@ -175,11 +175,15 @@ body.board-meow .cell::before{display:none}
 .cell.z10{background:var(--z10)}
 /* size and centre are set outright: an svg is a replaced element, and webkit
    keeps its own size instead of stretching it between inset edges */
-.cell .cat, .cell .mark{position:absolute; left:50%; top:50%; width:68%; height:68%;
+.cell .cat, .cell .mark{position:absolute; left:50%; top:50%; width:74%; height:74%;
   transform:translate(-50%,-50%); pointer-events:none}
-.cell .cat{stroke:var(--cat); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round}
-.cell .cat circle{fill:var(--cat); stroke:none}
-.cell.err .cat circle{fill:var(--error)}
+.cell .cat{stroke:var(--cat); fill:none; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
+.cell .cat.f-nz{stroke:var(--face-nz)}
+.cell .cat.f-mj{stroke:var(--face-mj)}
+.cell .cat.f-hn{stroke:var(--face-hn)}
+.cell .cat.f-hr{stroke:var(--face-hr)}
+.cell .cat.f-hi{stroke:var(--face-hi)}
+.cell .cat.f-dn{stroke:var(--face-dn)}
 .cell.err .cat{stroke:var(--error)}
 .cell .mark{width:26%; height:26%; fill:var(--mark); stroke:none}
 .cell.pop .cat{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}

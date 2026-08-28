@@ -2,7 +2,7 @@
 
 const PREV_CACHE={};
 
-/* previews run off a fixed seed, or suguru, kakuro and bunnydoku draw a new
+/* previews run off a fixed seed, or suguru, kakuro and tokkidoku draw a new
    thumbnail on every load */
 function seeded(seed){
   let a=seed>>>0;
@@ -16,6 +16,32 @@ function previewSpec(mode){
   RNG=seeded(h);
   try{ return previewSpecRaw(mode) } finally { RNG=prev }
 }
+/* every cell of a killer board sits in a cage, so the preview cuts the whole
+   grid into them instead of scattering a few boxes about */
+function killerCages(sp){
+  const n=sp.cells.length, own=new Array(n).fill(-1);
+  let id=0;
+  for(let i=0;i<n;i++){
+    if(own[i]>=0) continue;
+    own[i]=id;
+    const cage=[i], want=1+Math.floor(RNG()*4);
+    while(cage.length<want){
+      const free=[];
+      for(const j of cage){
+        const c=sp.cells[j];
+        for(const step of [[1,0],[-1,0],[0,1],[0,-1]]){
+          const k=cellAt(sp,c.x+step[0],c.y+step[1]);
+          if(k>=0 && own[k]<0) free.push(k);
+        }
+      }
+      if(!free.length) break;
+      const k=free[Math.floor(RNG()*free.length)];
+      own[k]=id; cage.push(k);
+    }
+    id++;
+  }
+  return own;
+}
 function previewSpecRaw(mode){
   if(mode==='meow'){
     const n=8, cols=meowCats(n);
@@ -23,6 +49,11 @@ function previewSpecRaw(mode){
     if(!reg) return buildSpec('classic',{});
     const sp=meowBuild({n,reg});
     sp.demoCats=cols.map((c,r)=>r*n+c);
+    return sp;
+  }
+  if(mode==='killer'){
+    const sp=MODES.killer.build({});
+    sp.demoOwn=killerCages(sp);
     return sp;
   }
   if(mode==='numerator') return numBuild({w:9,h:9});
@@ -38,7 +69,6 @@ function previewSpecRaw(mode){
   return MODES[mode].build({});
 }
 const DEC={
-  killer:[[0,0,2,1],[2,0,1,2],[3,1,2,1],[5,0,1,2],[6,2,2,1],[0,2,1,2],[4,4,2,2],[7,5,1,2],[2,6,2,1],[5,7,2,1],[0,5,1,2],[3,3,1,2]],
   dots:[[1,0,1,0],[4,1,0,1],[6,2,1,0],[2,3,0,1],[7,4,1,0],[0,5,0,1],[3,6,1,0],[5,7,1,0],[8,1,0,1],[2,2,1,0]],
   evenodd:[0,4,6,10,13,17,20,22,26,30,33,37,40,44,47,51,54,58,60,64,68,71,75,78],
   numerator:[36,37,38,29,20,21,22,13,4,5,6,15,24,33,42,51,60,61,62],
@@ -54,7 +84,7 @@ function previewSVG(mode){
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i];
     const fill = sp.kind==='meow'? `var(--z${(sp.region[i]%10)+1})`
-      : sp.zone[i]===2? 'var(--accent2-soft)' : sp.zone[i]===1? 'var(--accent-soft)' : 'var(--panel2)';
+      : sp.zone[i]===2? 'var(--even-fill)' : sp.zone[i]===1? 'var(--zone-fill)' : 'var(--panel2)';
     out+=`<rect x="${px(c)}" y="${py(c)}" width="${u}" height="${u}" fill="${fill}"/>`;
   }
   if(mode==='meow') for(const i of (sp.demoCats||[]).filter((_,k)=>k%3===0)){
@@ -63,13 +93,14 @@ function previewSVG(mode){
   }
   if(mode==='evenodd') for(const i of DEC.evenodd){
     const c=sp.cells[i]; if(!c) continue;
-    out+=`<rect x="${px(c)}" y="${py(c)}" width="${u}" height="${u}" fill="var(--accent2-soft)"/>`;
+    out+=`<rect x="${px(c)}" y="${py(c)}" width="${u}" height="${u}" fill="var(--even-fill)"/>`;
   }
 
-  for(const b of (sp.blocks||[])) out+=`<rect x="${pad+b.x*u}" y="${pad+b.y*u}" width="${u}" height="${u}" fill="var(--cell-same)"/>`;
+  /* kakuro reads by its blocked cells, so they take the board colours, not a tint */
+  for(const b of (sp.blocks||[])) out+=`<rect x="${pad+b.x*u}" y="${pad+b.y*u}" width="${u}" height="${u}" fill="var(--kk-dark)"/>`;
   for(const c of (sp.clues||[])){
-    out+=`<rect x="${pad+c.x*u}" y="${pad+c.y*u}" width="${u}" height="${u}" fill="var(--cell-same)"/>`;
-    out+=`<line x1="${pad+c.x*u}" y1="${pad+c.y*u}" x2="${pad+(c.x+1)*u}" y2="${pad+(c.y+1)*u}" stroke="var(--frame)" stroke-width=".7"/>`;
+    out+=`<rect x="${pad+c.x*u}" y="${pad+c.y*u}" width="${u}" height="${u}" fill="var(--kk)"/>`;
+    out+=`<line x1="${pad+c.x*u}" y1="${pad+c.y*u}" x2="${pad+(c.x+1)*u}" y2="${pad+(c.y+1)*u}" stroke="var(--panel2)" stroke-width=".9"/>`;
   }
 
   let thin='', thick='';
@@ -88,7 +119,7 @@ function previewSVG(mode){
   }
   const wThin = W<=10? .8 : 1.5, wThick = W<=10? 1.8 : 2.8;
   out+=`<g stroke="var(--line)" stroke-width="${wThin}">${thin}</g>`;
-  out+=`<g stroke="var(--rule)" stroke-width="${wThick}">${thick}</g>`;
+  out+=`<g stroke="var(--prev-rule)" stroke-width="${wThick}">${thick}</g>`;
   let zone='';
   const inZone=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && sp.zone[j]===1 };
   const zi=u*0.1;
@@ -103,14 +134,23 @@ function previewSVG(mode){
     if(!lf) zone+=`<line x1="${X+zi}" y1="${y0}" x2="${X+zi}" y2="${y1}"/>`;
     if(!rt) zone+=`<line x1="${X+u-zi}" y1="${y0}" x2="${X+u-zi}" y2="${y1}"/>`;
   }
-  if(zone) out+=`<g stroke="var(--zone-edge)" stroke-width="${wThin*1.2}">${zone}</g>`;
+  if(zone) out+=`<g stroke="var(--prev-zone)" stroke-width="${wThin*1.2}">${zone}</g>`;
 
-  if(mode==='killer'){
-    for(const r of DEC.killer){
-      const x=pad+r[0]*u+1.6, y=pad+r[1]*u+1.6, w=r[2]*u-3.2, h=r[3]*u-3.2;
-      out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5" fill="none"
-        stroke="var(--accent)" stroke-width=".7" stroke-dasharray="2 1.6" opacity=".85"/>`;
+  if(mode==='killer' && sp.demoOwn){
+    const own=sp.demoOwn, d=1.5;
+    let cg='';
+    for(let i=0;i<sp.cells.length;i++){
+      const c=sp.cells[i], X=px(c), Y=py(c);
+      const same=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && own[j]===own[i] };
+      const up=same(c.x,c.y-1), dn=same(c.x,c.y+1), lf=same(c.x-1,c.y), rt=same(c.x+1,c.y);
+      const x0=lf? X : X+d, x1=rt? X+u : X+u-d;
+      const y0=up? Y : Y+d, y1=dn? Y+u : Y+u-d;
+      if(!up) cg+=`<line x1="${x0}" y1="${Y+d}" x2="${x1}" y2="${Y+d}"/>`;
+      if(!dn) cg+=`<line x1="${x0}" y1="${Y+u-d}" x2="${x1}" y2="${Y+u-d}"/>`;
+      if(!lf) cg+=`<line x1="${X+d}" y1="${y0}" x2="${X+d}" y2="${y1}"/>`;
+      if(!rt) cg+=`<line x1="${X+u-d}" y1="${y0}" x2="${X+u-d}" y2="${y1}"/>`;
     }
+    out+=`<g stroke="var(--prev-cage)" stroke-width=".7" stroke-dasharray="1.8 1.3">${cg}</g>`;
   }
   if(mode==='dots'){
     for(const d of DEC.dots){
@@ -123,7 +163,7 @@ function previewSVG(mode){
   if(mode==='numerator'){
     const pts=DEC.numerator.map(i=>{ const c=sp.cells[i]; return (px(c)+u/2)+' '+(py(c)+u/2) });
     out+=`<polyline points="${pts.join(' ')}" fill="none" stroke="var(--accent)" stroke-width="1.6"
-      stroke-linejoin="round" stroke-linecap="round" opacity=".9"/>`;
+      stroke-linejoin="round" stroke-linecap="round"/>`;
   }
   out+='</svg>';
   PREV_CACHE[mode]=out;

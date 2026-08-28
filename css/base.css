@@ -49,12 +49,19 @@
   --tint-hyp:rgba(44,107,118,.20); --tint-hyp-sel:rgba(44,107,118,.36); --tint-err:rgba(158,53,80,.28);
   --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
   --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
-  /* bunnydoku regions: five soft pastel tones, each in two lightnesses. The one
+  /* tokkidoku regions: five tinted papers, each in two lightnesses. The one
      place the palette leaves the cold range, since the mode has a look of its
-     own. Neighbouring numbers never share a tone and ΔE stays above 12 */
-  --z1:#c7e0ff; --z2:#ffd1e2; --z3:#e5d8fe; --z4:#b9e9d4; --z5:#edddb8;
-  --z6:#b5c6e1; --z7:#e0bcc8; --z8:#cac1dc; --z9:#aacdbd; --z10:#d0c4a9;
+     own. They stay pale so a face of any colour still reads on them, and
+     neighbouring numbers never share a tone */
+  --z1:#e4eefb; --z2:#fbe6ee; --z3:#ece5fa; --z4:#dff2e9; --z5:#f8efd9;
+  --z6:#d3e2f4; --z7:#f4d8e4; --z8:#ded3f0; --z9:#cfe9dc; --z10:#efe3c4;
   --cat:#565ead; --mark:#98a2bd;
+  /* the thumbnails paint their lines solid: half transparent ones darken
+     wherever two of them cross and the board turns into a mesh */
+  --prev-rule:#9c9da1; --prev-zone:#c5c8e3; --prev-cage:#3c4270;
+  /* one colour per member, deep enough to read on any of the region tints */
+  --face-nz:#565ead; --face-mj:#2f74bd; --face-hn:#c2467f;
+  --face-hr:#2f8a5a; --face-hi:#7b4bc4; --face-dn:#d29a00;
   /* light falls from above: the top of the board is lighter, the bottom deeper */
   --board-light:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,0) 22%, rgba(22,26,44,.095));
   --tick:rgba(86,94,173,.58);
@@ -80,11 +87,15 @@ html[data-theme="dark"]{
   --z1:#264361; --z2:#5e3444; --z3:#453c5c; --z4:#1c4938; --z5:#4b4020;
   --z6:#1e3247; --z7:#452833; --z8:#342d43; --z9:#17362a; --z10:#383019;
   --cat:#a6b4f0; --mark:#5d6987;
+  --prev-rule:#585b67; --prev-zone:#52597a; --prev-cage:#9ca9d3;
+  --face-nz:#a6b4f0; --face-mj:#7cb8ef; --face-hn:#f292b6;
+  --face-hr:#6fd0a0; --face-hi:#b79bf2; --face-dn:#ddb659;
   --board-light:linear-gradient(to bottom, rgba(166,180,240,.13), rgba(166,180,240,0) 40%, rgba(0,0,0,.20));
   --tick:rgba(201,212,234,.62);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+/* a double tap zooms nothing; two fingers still pinch */
+html,body{height:100%; touch-action:manipulation}
 body{margin:0; background:var(--bg); color:var(--text);
   font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
   font-family:var(--f-body);

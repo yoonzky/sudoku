@@ -1,12 +1,15 @@
 'use strict';
 
-const MODE_GROUPS=[
-  {key:'clean', ids:['classic','x','evenodd','windoku','asterisk','mosaic']},
-  {key:'size',  ids:['r10','r12']},
-  {key:'multi', ids:['double','wing','butterfly','samurai']},
-  {key:'extra', ids:['killer','dots','suguru','numerator','kakuro','meow']},
-];
-const DICE='<svg class="dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>';
+/* one grid, no headings: the modes stand in the order they get harder to
+   explain, with the draw next to the classic board it falls back on */
+const MODE_ORDER=['classic','random','x','evenodd','windoku','asterisk','mosaic',
+  'r10','r12','double','wing','butterfly','samurai',
+  'killer','dots','suguru','kakuro','numerator','meow'];
+/* the draw shows a board with a question in it, in the same hand as the previews */
+const RANDOM_PREV='<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'+
+  '<rect x=".6" y=".6" width="38.8" height="38.8" fill="var(--panel2)" stroke="var(--prev-rule)" stroke-width="1.1"/>'+
+  '<path d="M13.7.6v38.8M26.3.6v38.8M.6 13.7h38.8M.6 26.3h38.8" stroke="var(--line)" stroke-width=".8" fill="none"/>'+
+  '<text x="20" y="28.6" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="22" font-weight="600" fill="var(--accent)">?</text></svg>';
 const LEVEL_N={easy:1,medium:2,hard:3,expert:4};
 const LEVEL_RN={easy:'I',medium:'II',hard:'III',expert:'IV'};
 let pickedMode='meow';
@@ -27,7 +30,8 @@ function renderContinue(){
   $('contPick').classList.toggle('hidden',picking);
   $('contPick').textContent=t('pickMany');
   if(picking) $('contCount').textContent=t('selCount').replace('{n}',contSel.size);
-  list.innerHTML=SES.games.map((g,idx)=>{
+  /* the newest game sits at the head of the strip */
+  list.innerHTML=SES.games.map((g,idx)=>[g,idx]).reverse().map(([g,idx])=>{
     const n=g.solution.length;
     const filled=g.values.filter(v=>v).length+g.hyp.filter(v=>v).length;
     const on=picking&&contSel.has(g.id);
@@ -63,24 +67,15 @@ async function contDelete(){
   persistNow(); renderHome(); toast(t('delDone'));
 }
 function renderModeList(){
-  let h='<div class="mgroups">';
-  for(const grp of MODE_GROUPS){
-    h+=`<section class="mgrp" style="--span:${grp.ids.length}"><div class="mgroup">${t('g_'+grp.key)}</div><div class="mode-grid">`;
-    for(const id of grp.ids){
-      const st=statsFor(id,null);
-      const note=st.solved? fmtTime(st.best) : '';
-      h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
-        <span class="mcard-prev">${previewSVG(id)}</span>
-        <b>${t('m_'+id)}</b><small>${note}</small></button>`;
-    }
-    h+='</div></section>';
+  let h='<div class="mode-grid" style="--span:6">';
+  for(const id of MODE_ORDER){
+    const rnd=id==='random';
+    const st=rnd? null : statsFor(id,null);
+    const note=rnd? poolList().length : (st.solved? fmtTime(st.best) : '');
+    h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
+      <span class="mcard-prev">${rnd? RANDOM_PREV : previewSVG(id)}</span>
+      <b>${t('m_'+id)}</b><small>${note}</small></button>`;
   }
-  /* the draw sits in the same grid as the modes, one tile wide */
-  h+=`<section class="mgrp" style="--span:1"><div class="mgroup">${t('g_rand')}</div><div class="mode-grid">
-    <button class="mcard${pickedMode==='random'?' on':''}" data-mode="random">
-      <span class="mcard-prev">${DICE}</span>
-      <b>${t('m_random')}</b><small>${poolList().length}</small></button>
-    </div></section>`;
   $('modeList').innerHTML=h+'</div>';
   const on=$('modeList').querySelector('.mcard.on');
   if(on && on.scrollIntoView && !isPhone()) on.scrollIntoView({block:'nearest'});
@@ -123,7 +118,7 @@ function pickMode(id){
 function openPool(){
   const on=new Set(poolList());
   let h='';
-  for(const grp of MODE_GROUPS) for(const id of grp.ids)
+  for(const id of MODE_ORDER) if(id!=='random')
     h+=`<label class="pool-item"><input type="checkbox" data-m="${id}"${on.has(id)?' checked':''}><span>${t('m_'+id)}</span></label>`;
   $('poolGrid').innerHTML=h;
   $('poolModal').classList.remove('hidden');

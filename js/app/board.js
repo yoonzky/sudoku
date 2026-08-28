@@ -9,13 +9,46 @@ const merged=(g,i)=>g.values[i]||g.hyp[i];
 
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
-const CAT_SVG='<svg class="cat" viewBox="0 0 24 24" aria-hidden="true">'+
-  '<path d="M10.6 8.9C9.2 6.2 8.6 2.3 10.3 2c1.7-.3 2.3 3.5 1.9 6.6"/>'+
-  '<path d="M15.4 8.9c1.4-2.7 2-6.6.3-6.9-1.7-.3-2.3 3.5-1.9 6.6"/>'+
-  '<path d="M12 8.4c4.3 0 7.5 2.6 7.5 5.9S16.3 20.4 12 20.4 4.5 17.6 4.5 14.3 7.7 8.4 12 8.4Z"/>'+
-  '<circle cx="9.5" cy="14.2" r=".95"/><circle cx="14.5" cy="14.2" r=".95"/></svg>';
+/* six faces, one per member: a head, two letters and the muzzle hanging under
+   them. Drawn the way the sketches are — one round outline, no straight sides.
+   Every head shares the same lower half, so the whiskers meet the line wherever
+   they are drawn. Whiskers on all but the bear and the dog */
+const FACE_MUZZLE='<path d="M12 10.8v5.8"/>'+
+  '<path d="M8 16.6a2 2 0 0 0 4 0"/><path d="M12 16.6a2 2 0 0 0 4 0"/>';
+const FACE_WHISKERS='<path d="M3.6 15.4H.8M4.4 17.2H1.6M5.8 19H3"/>'+
+  '<path d="M20.4 15.4h2.8M19.6 17.2h2.8M18.2 19h2.8"/>';
+const FACE_LEFT={
+  N:'<path d="M6.4 14.4V11l3 3.4V11"/>',
+  M:'<path d="M6.4 14.4V11l1.5 2 1.5-2v3.4"/>',
+  H:'<path d="M6.4 11v3.4M9.4 11v3.4M6.4 12.7h3"/>',
+  D:'<path d="M6.4 14.4V11h1.2a1.7 1.7 0 0 1 0 3.4H6.4"/>'
+};
+const FACE_RIGHT={
+  Z:'<path d="M14.6 11h3l-3 3.4h3"/>',
+  J:'<path d="M17.6 11v2.2a1.4 1.4 0 0 1-2.8 0"/>',
+  N:'<path d="M14.6 14.4V11l3 3.4V11"/>',
+  R:'<path d="M14.6 14.4V11h1.4a1.1 1.1 0 0 1 0 2.2h-1.4l2.4 1.2"/>',
+  I:'<path d="M14.8 11h2.8M16.2 11v3.4M14.8 14.4h2.8"/>'
+};
+const FACE_HEADS=[
+  ['nz','N','Z',1,'<path d="M3.4 12.6C3.4 9.6 3.4 7.6 3.6 6a3.2 3.2 0 0 1 6.4 0c.2 2.2.8 4.6 2 4.6s1.8-2.4 2-4.6a3.2 3.2 0 0 1 6.4 0c.2 1.6.2 3.6.2 6.6a8.6 9 0 0 1-17.2 0Z"/>'],
+  ['mj','M','J',0,'<path d="M3.4 12.6c0-1.8.3-3.3.9-4.5a2.5 2.5 0 1 1 3.9-2.6 10.4 10.4 0 0 1 7.6 0 2.5 2.5 0 1 1 3.9 2.6c.6 1.2.9 2.7.9 4.5a8.6 9 0 0 1-17.2 0Z"/>'],
+  ['hn','H','N',1,'<path d="M3.2 12.6c0-2 .3-3.6.9-4.8a2 2 0 1 1 2.9-2.4 11.5 11.5 0 0 1 10 0 2 2 0 1 1 2.9 2.4c.6 1.2.9 2.8.9 4.8a8.8 9 0 0 1-17.6 0Z"/>'],
+  ['hr','H','R',1,'<path d="M3.4 12.6C3.4 10 3.6 8 4.2 6.6L4.6 2.9 8.6 5.4a10 10 0 0 1 6.8 0l4-2.5.4 3.7c.6 1.4.8 3.4.8 6a8.6 9 0 0 1-17.2 0Z"/>'],
+  ['hi','H','I',1,'<path d="M3.2 12.6c0-1.2.1-2.3.3-3.2a3.8 3.8 0 1 1 5-5 10 10 0 0 1 7 0 3.8 3.8 0 1 1 5 5c.2.9.3 2 .3 3.2a8.8 9 0 0 1-17.6 0Z"/>'],
+  ['dn','D','N',0,'<path d="M3.6 12.6C3.6 11.4 3.7 10.4 3.9 9.5 2.6 10.2 1.6 11.2 2 11.8c.6.8 2.4-2.8 4.2-6a10 10 0 0 1 11.6 0c1.8 3.2 3.6 6.8 4.2 6 .4-.6-.6-1.6-1.9-2.3.2.9.3 1.9.3 3.1a8.4 9 0 0 1-16.8 0Z"/>']
+];
+const CAT_SVGS=FACE_HEADS.map(f=>'<svg class="cat f-'+f[0]+'" viewBox="0 0 24 24" aria-hidden="true">'+
+  f[4]+FACE_LEFT[f[1]]+FACE_RIGHT[f[2]]+FACE_MUZZLE+(f[3]? FACE_WHISKERS : '')+'</svg>');
+/* the face is dealt when the bunny is seated and stays with the cell; a game
+   saved before the faces existed gets its own on the first draw */
+function catFace(g,i){
+  if(g && (!g.face || g.face[i]==null)) dealFace(g,i);
+  const n=(g&&g.face&&g.face[i]!=null)? g.face[i] : 0;
+  return CAT_SVGS[n%CAT_SVGS.length];
+}
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
-  '<circle cx="12" cy="12" r="6"/></svg>';
+  '<path d="M12 12c0-2.7 1-4.3 2.9-4.3 1.8 0 3 1.2 3 3 0 1.9-1.6 2.9-4.3 2.9 2.7 0 4.3 1 4.3 2.9 0 1.8-1.2 3-3 3-1.9 0-2.9-1.6-2.9-4.3 0 2.7-1 4.3-2.9 4.3-1.8 0-3-1.2-3-3 0-1.9 1.6-2.9 4.3-2.9-2.7 0-4.3-1-4.3-2.9 0-1.8 1.2-3 3-3 1.9 0 2.9 1.6 2.9 4.3Z"/></svg>';
 
 function buildBoard(sp){
   SPEC=sp;
@@ -202,12 +235,16 @@ function buildDeco(sp){
   }
   /* a region is outlined along its outer rim only: where the neighbour belongs
      to the same region the side is left undrawn */
-  const outline=(mark,z)=>{
+  const outline=(mark,z,boxed)=>{
     const segs=[];
-    const inSame=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && sp.zone[j]===mark };
     for(let i=0;i<sp.cells.length;i++){
       if(sp.zone[i]!==mark) continue;
       const c=sp.cells[i], x=c.x, y=c.y;
+      /* even cells join up inside their own box only: across a box wall the
+         marks belong to different threes and are ringed apart */
+      const reg=sp.region[i];
+      const inSame=(px,py)=>{ const j=cellAt(sp,px,py);
+        return j>=0 && sp.zone[j]===mark && (!boxed || sp.region[j]===reg) };
       const up=inSame(x,y-1), dn=inSame(x,y+1), lf=inSame(x-1,y), rt=inSame(x+1,y);
       const x0=lf? x : x+z, x1=rt? x+1 : x+1-z;
       const y0=up? y : y+z, y1=dn? y+1 : y+1-z;
@@ -217,7 +254,8 @@ function buildDeco(sp){
       if(!rt) segs.push([x+1-z,y0,x+1-z,y1]);
       /* a concave corner: both neighbours are in the region, the diagonal one is
          not. Without these two short strokes an L shaped turn stays open */
-      const dia=(dx,dy)=>{ const j=cellAt(sp,x+dx,y+dy); return j>=0 && sp.zone[j]===mark };
+      const dia=(dx,dy)=>{ const j=cellAt(sp,x+dx,y+dy);
+        return j>=0 && sp.zone[j]===mark && (!boxed || sp.region[j]===reg) };
       if(lf&&up&&!dia(-1,-1)){ segs.push([x+z,y,x+z,y+z]); segs.push([x,y+z,x+z,y+z]) }
       if(rt&&up&&!dia(1,-1)){ segs.push([x+1-z,y,x+1-z,y+z]); segs.push([x+1-z,y+z,x+1,y+z]) }
       if(lf&&dn&&!dia(-1,1)){ segs.push([x+z,y+1-z,x+z,y+1]); segs.push([x,y+1-z,x+z,y+1-z]) }
@@ -226,7 +264,7 @@ function buildDeco(sp){
     return segs;
   };
   const zoneSegs = hasZone? outline(1,0.06) : [];
-  const evenSegs = hasEven? outline(2,0.06) : [];
+  const evenSegs = hasEven? outline(2,0.06,true) : [];
   let dots='';
   for(const dt of sp.dots){
     const a=sp.cells[dt.a], c=sp.cells[dt.b];
@@ -250,7 +288,7 @@ function buildDeco(sp){
 function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
-  /* bunnydoku needs no keypad: a tap walks the cell through mark, bunny and empty */
+  /* tokkidoku needs no keypad: a tap walks the cell through mark, bunny and empty */
   if(sp.kind==='meow'){
     document.body.classList.remove('pad-two');
     np.classList.add('hidden');
@@ -287,7 +325,7 @@ function renderBoard(){
   const g=cur(); if(!g||!SPEC) return;
   const sp=SPEC, n=sp.cells.length;
   const isNum=sp.kind==='num', isMeow=sp.kind==='meow';
-  /* bunnydoku reads by its own colours, extra tinting only gets in the way */
+  /* tokkidoku reads by its own colours, extra tinting only gets in the way */
   const hlSame=SES.settings.highlightSame!==false;
   const selVal=sel>=0? merged(g,sel) : 0;
   const activeVal=(hlSame && !isNum && !isMeow)? (selVal||hlDigit) : 0;
@@ -303,7 +341,7 @@ function renderBoard(){
     const key = isMeow? 'm'+v : v? 'v'+v : hv? 'h'+hv
       : (g.notes[i].length||mid.length)? 'n'+g.notes[i].join(',')+'/'+mid.join(',')+'|'+(activeVal||0) : '';
     if(cellKey[i]!==key){
-      if(isMeow) d.innerHTML = v===MEOW_CAT? CAT_SVG : v===MEOW_MARK? MARK_SVG : '';
+      if(isMeow) d.innerHTML = v===MEOW_CAT? catFace(g,i) : v===MEOW_MARK? MARK_SVG : '';
       else if(v) d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
       else if(hv) d.innerHTML='<i class="v">'+cellNum(hv)+'</i>';
       else if(g.notes[i].length||mid.length){
@@ -347,7 +385,7 @@ function renderBoard(){
     /* while a run of cells is picked the row and column of the first are left
        alone, or half the run ends up tinted differently from the rest */
     if(sel>=0 && !run){
-      if(i===sel) d.classList.add('sel');
+      if(i===sel && !isMeow) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
     }
     if(activeVal && !run && i!==sel){
@@ -385,7 +423,8 @@ function renderBoard(){
 
 function placeSelBox(g,sp){
   const sb=$('selBox'); if(!sb) return;
-  if(sel<0){ sb.classList.add('hidden'); return }
+  /* tokkidoku seats a bunny on the tap itself, so a cell needs no ring around it */
+  if(sel<0 || sp.kind==='meow'){ sb.classList.add('hidden'); return }
   const c=sp.cells[sel];
   sb.style.left=(c.x/sp.W*100)+'%';
   sb.style.top=(c.y/sp.H*100)+'%';
@@ -424,12 +463,6 @@ function fitBoth(bw){
   const byH=Math.floor((availH-bw)/SPEC.H);
   return byH>0? Math.max(1,Math.min(byW,byH)) : byW;
 }
-function freeSpace(){
-  let used=0;
-  for(const el of [document.querySelector('header'), document.querySelector('main'), document.querySelector('.site-foot')])
-    if(el && el.offsetParent!==null) used+=el.getBoundingClientRect().height;
-  return window.innerHeight-used;
-}
 function fitCell(){
   const b=$('board');
   if(!b||!SPEC) return 0;
@@ -453,13 +486,12 @@ function snapBoard(){
   const box=fit*SPEC.W+bw;
   $('game').style.setProperty('--board-px',box+'px');
   if(zoom){
+    /* the magnifier works inside the board's own footprint: the window keeps the
+       size the board had, so the pad and the plate around it stay put */
     pan.classList.add('pan');
-    const fitH=fit*SPEC.H+bw;
-    pan.style.maxHeight=fitH+'px';
+    pan.style.width=box+'px';
+    pan.style.maxHeight=(fit*SPEC.H+bw)+'px';
     b.style.width=(ZOOM_CELL*SPEC.W+bw)+'px';
-    $('game').style.setProperty('--board-px',(pan.clientWidth||box)+'px');
-    const grow=Math.max(0,freeSpace()-16);
-    pan.style.maxHeight=Math.round(Math.min(ZOOM_CELL*SPEC.H+bw, fitH+grow))+'px';
   } else {
     b.style.width=box+'px';
   }

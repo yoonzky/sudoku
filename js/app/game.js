@@ -106,12 +106,29 @@ function restore(s){ const g=cur();
   g.mid=(s.mid||g.mid).map(n=>n.slice());
   g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice() }
 
+/* the faces come out of a bag: each one is seated once before any comes round
+   again, and an emptied bag is shuffled anew */
+function dealFace(g,i){
+  if(!g.face) g.face={};
+  if(g.face[i]!=null) return;
+  if(!g.bag||!g.bag.length){
+    g.bag=[0,1,2,3,4,5];
+    for(let k=g.bag.length-1;k>0;k--){
+      const j=Math.floor(Math.random()*(k+1));
+      [g.bag[k],g.bag[j]]=[g.bag[j],g.bag[k]];
+    }
+  }
+  g.face[i]=g.bag.pop();
+  persistCache();
+}
+
 function meowSetCat(i){
   const g=cur(); if(!g||g.done||g.paused) return;
   dismissPickHint();
   pushUndo();
   const was=g.values[i];
   g.values[i] = was===MEOW_CAT? 0 : MEOW_CAT;
+  if(g.values[i]===MEOW_CAT) dealFace(g,i);
   if(g.values[i]===MEOW_CAT && g.instant && g.solution[i]!==MEOW_CAT){
     g.mistakes++;
     if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
