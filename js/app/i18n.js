@@ -229,7 +229,7 @@ function applyLang(){
   lbl('statsBtn','stats'); lbl('setBtn','settings'); lbl('backBtn','backT'); lbl('rulesBtn','rulesT');
   const g=cur(); lbl('pauseBtn', g&&g.paused? 'resume':'pauseT');
   const bd=$('board'); if(bd) bd.setAttribute('aria-label',t('a11yBoard'));
-  if(SPEC && !$('game').classList.contains('hidden')){ buildNumpad(SPEC); renderBoard() }
+  if(SPEC && !$('game').classList.contains('hidden')){ buildNumpad(SPEC); invalidateCells(); renderBoard() }
   const pl=$('pauseBtn')&&$('pauseBtn').querySelector('.tbtn-lbl');
   if(pl) pl.textContent=t(g&&g.paused? 'resume':'pauseT');
   if(typeof renderHome==='function' && !$('home').classList.contains('hidden')) renderHome();

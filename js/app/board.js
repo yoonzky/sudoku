@@ -66,6 +66,10 @@ function cellLabel(g,sp,i){
   return pos+', '+val;
 }
 
+/* the cell keeps what it drew last, so a language switch has to forget it or
+   the spoken labels stay in the old one */
+function invalidateCells(){ cellKey.length=0 }
+
 function buildBoard(sp){
   SPEC=sp;
   const b=$('board');
