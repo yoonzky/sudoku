@@ -110,6 +110,7 @@ ru:{
   k_auto:'авто-заметки', k_pause:'пауза', k_nav:'перейти по клеткам', k_menu:'выход в меню', k_pick:'панель у клетки',
   gen:'Генерация поля…', digitTab:'Цифра', noteTab:'В углы', eraseP:'Стереть',
   k_gest:'двойной или правый клик мышью', kOr:'или',
+  kNeedsBtn:'кнопка выключена', kNot9:'кроме 10×10 и 12×12',
   hasErrors:'Неверных цифр: {n}', autoDone:'Кандидаты расставлены', assistNote:'с помощью — не в статистике',
   delGame:'Удалить эту партию?', restartConfirm:'Начать эту раздачу заново? Прогресс поля будет сброшен.',
   mist:'ошибок', hintsSm:'подсказок',
@@ -225,6 +226,7 @@ en:{
   delGame:'Delete this game?', restartConfirm:'Start this puzzle over? Everything you have entered will be cleared.',
   mist:'mistakes', hintsSm:'hints',
   k_gest:'double-click or right-click', kOr:'or',
+  kNeedsBtn:'button is off', kNot9:'except 10×10 and 12×12',
 },};
 
 function t(k){ const d=I18N[SES.settings.lang]||I18N.en; return d[k] || I18N.en[k] || I18N.ru[k] || k }

@@ -98,6 +98,12 @@
 .krow>span:first-child{color:var(--text); font-weight:400}
 .krow .kk{display:flex; align-items:center; gap:4px; margin-left:auto; white-space:nowrap}
 .krow .kk.gest{color:var(--muted); font-size:12.5px}
+/* a key that needs its button switched on says so and steps back */
+.krow .kwhen{display:none}
+.krow.off{opacity:.5}
+.krow.off .kwhen{display:inline; font-style:normal; font-size:11px; color:var(--muted);
+  border:1px solid var(--line); border-radius:3px; padding:1px 6px; margin-left:10px}
+.krow .knote{font-style:normal; font-size:11px; color:var(--muted); opacity:.8; margin-left:10px}
 
 .keys kbd{display:inline-flex; align-items:center; justify-content:center;
   min-width:23px; height:22px; padding:0 6px; background:var(--key-bg);

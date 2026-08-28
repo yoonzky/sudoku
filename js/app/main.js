@@ -336,12 +336,6 @@ document.addEventListener('keydown',e=>{
   }
   const g=cur(); if(!g) return;
   const code=e.code;
-  if(SPEC && SPEC.kind==='tokki' && !e.ctrlKey && !e.metaKey){
-    if(code==='Space'||code==='Enter'||code==='NumpadEnter'){
-      e.preventDefault(); if(sel>=0) tokkiSeat(sel); return;
-    }
-    if(code==='KeyX'||code==='KeyM'){ e.preventDefault(); if(sel>=0) tokkiMark(sel); return }
-  }
   if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
   if((e.ctrlKey||e.metaKey)&&code==='KeyY'){ e.preventDefault(); redo(); return }
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey){

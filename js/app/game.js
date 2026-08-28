@@ -535,7 +535,9 @@ function stopTimer(){ clearInterval(timerId); timerId=null }
 function setPaused(p){
   const g=cur(); if(!g) return;
   g.paused=p; closePicker();
+  document.body.classList.toggle('paused',p);
   $('pauseOverlay').classList.toggle('hidden',!p);
+  if(!$('game').classList.contains('hidden')) renderBoard();
   const pl=t(p?'resume':'pauseT');
   $('pauseBtn').innerHTML=(p
     ? '<svg viewBox="0 0 24 24"><path d="M9 5.6 19 12 9 18.4Z"/></svg>'

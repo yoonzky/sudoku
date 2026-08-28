@@ -67,6 +67,8 @@ body.win-side .controls, body.win-side .numpad{display:grid; opacity:.4; pointer
 body.win-side .numpad{display:grid}
 
 body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
+/* the pad answers nothing while the game is paused, so it stops looking alive */
+body.paused .controls, body.paused .numpad{opacity:.4; pointer-events:none}
 .win-lead{font-family:var(--f-disp); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
   color:var(--accent); margin-bottom:7px}
 #winPanel{border-top:1px solid var(--line); margin:16px auto 0; width:var(--board-px,100%); padding-top:14px;

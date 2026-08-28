@@ -269,6 +269,8 @@ function openSettings(tab){
   $('optDigitFirst').checked=!!SES.settings.digitFirst;
   $('optHintBtn').checked=SES.settings.showHint;
   $('optAutoBtn').checked=SES.settings.showAuto;
+  $('krowHint').classList.toggle('off', !SES.settings.showHint);
+  $('krowAuto').classList.toggle('off', !SES.settings.showAuto);
   applyLayout(); setTab(tab||'view');
   $('setModal').classList.remove('hidden');
 }

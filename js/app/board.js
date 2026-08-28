@@ -418,7 +418,8 @@ function renderBoard(){
       if(merged(g,i)===activeVal||hasNote) d.classList.add('same');
     }
   }
-  const showCounts=SES.settings.showCounts!==false && !isNum && !isTokki;
+  /* a paused board is hidden, and so is what is known about it */
+  const showCounts=SES.settings.showCounts!==false && !isNum && !isTokki && !g.paused;
   const tot=digitTotals(g);
   document.querySelectorAll('.num').forEach(btn=>{
     if(btn.dataset.v===undefined) return;
