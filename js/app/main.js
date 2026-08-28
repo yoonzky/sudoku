@@ -406,29 +406,30 @@ buildSwatches();
 applyTheme(); applyLayout(); applyLang();
 renderHome(); show('home');
 if(pending.length) saveLog();
-(function(){
-  const seen=localStorage.getItem('sudoku-welcomed');
-  if(seen||localStorage.getItem(LS_SES)) return;
-  const bg=$('welcomeModal');
-  bg.classList.remove('hidden');
-  const pick=id=>{ SES.settings.theme=id; applyTheme(); persistCache();
-    try{ localStorage.setItem('sudoku-welcomed','1') }catch(e){}
-    bg.classList.add('hidden') };
-  $('welLight').onclick=()=>pick('light');
-  $('welDark').onclick=()=>pick('dark');
-  bg.addEventListener('click',e=>{ if(e.target===bg){
-    try{ localStorage.setItem('sudoku-welcomed','1') }catch(err){}
-    bg.classList.add('hidden') } });
-})();
-
-/* a link with a mode picks it, and one with a level deals the game at once */
-(function(){
-  if(!$('welcomeModal').classList.contains('hidden')) return;
+/* a link with a mode picks it, and one with a level deals the game at once.
+   The guest who arrives by such a link is the one who also gets the welcome
+   window, so the address waits for it instead of being thrown away */
+function openFromUrl(){
   const q=new URLSearchParams(location.search);
   const m=q.get('m'), d=q.get('d');
   if(!m || (!MODE_IDS.includes(m) && m!=='random')) return;
   pickMode(m); closeSheet();
   if(d && DIFFS.includes(d)) newGame(m,d);
+}
+(function(){
+  const seen=localStorage.getItem('sudoku-welcomed');
+  if(seen||localStorage.getItem(LS_SES)) return openFromUrl();
+  const bg=$('welcomeModal');
+  bg.classList.remove('hidden');
+  const done=()=>{
+    try{ localStorage.setItem('sudoku-welcomed','1') }catch(e){}
+    bg.classList.add('hidden');
+    openFromUrl();
+  };
+  const pick=id=>{ SES.settings.theme=id; applyTheme(); persistCache(); done() };
+  $('welLight').onclick=()=>pick('light');
+  $('welDark').onclick=()=>pick('dark');
+  bg.addEventListener('click',e=>{ if(e.target===bg) done() });
 })();
 
 const DEV_HOST=location.hostname==='localhost'||location.hostname==='127.0.0.1';
