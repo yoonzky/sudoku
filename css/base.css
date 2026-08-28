@@ -102,7 +102,10 @@ body{margin:0; background:var(--bg); color:var(--text);
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   transition:background .25s,color .25s}
-body.in-game main{max-width:100%}
+/* in a game the board sits in the middle of what is left under the header,
+   not pinned to its top edge; safe centring keeps the top in view when the
+   board and the pad are taller than the screen */
+body.in-game main{max-width:100%; display:flex; flex-direction:column; justify-content:safe center}
 button{font-family:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
 header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}

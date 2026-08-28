@@ -1,5 +1,6 @@
 #home{display:flex; flex-direction:column; gap:18px; width:100%; max-width:1120px; margin:0 auto; flex:1; min-height:0}
-body:not(.in-game) main{display:flex; flex-direction:column; padding-bottom:14px; min-height:0}
+body:not(.in-game) main{display:flex; flex-direction:column; justify-content:safe center;
+  padding-bottom:14px; min-height:0}
 /* the page scrolls as one: neither the screen nor the columns keep a scroll */
 
 .hcap{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
