@@ -75,9 +75,10 @@ function closeGenOverlay(){
   $('genOverlay').classList.add('hidden');
 }
 
-function newGame(mode,diff){
+async function newGame(mode,diff){
   lastRequest={mode,diff};
   if(typeof syncUrl==='function') syncUrl(mode,diff);
+  if(needCheckAsk()) await askCheck();
   if(mode==='random'){
     const pool=poolList();
     mode=pool[Math.floor(Math.random()*pool.length)];

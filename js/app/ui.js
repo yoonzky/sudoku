@@ -277,6 +277,33 @@ function setTab(name){
   document.querySelectorAll('.stabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
   for(const tb of ['view','game','keys']) $('tab-'+tb).classList.toggle('hidden',tb!==name);
 }
+/* asked once, before the very first deal: whether a wrong digit should say so
+   at once or the board should be checked when it is full. The answer is the
+   instant-check setting, and it stays changeable in the settings */
+const CHECK_ASKED='sudoku-checkAsked';
+function needCheckAsk(){
+  if(SES.games.length||LOG.games.length||pending.length) return false;
+  try{ return !localStorage.getItem(CHECK_ASKED) }catch(e){}
+  return false;
+}
+function askCheck(){
+  return new Promise(res=>{
+    const bg=$('checkModal');
+    bg.classList.remove('hidden');
+    const done=on=>{
+      SES.settings.instant=on;
+      if(!on) SES.settings.limit=false;
+      persistCache();
+      try{ localStorage.setItem(CHECK_ASKED,'1') }catch(e){}
+      bg.classList.add('hidden');
+      $('checkOn').onclick=$('checkOff').onclick=bg.onclick=null;
+      res(on);
+    };
+    $('checkOn').onclick=()=>done(true);
+    $('checkOff').onclick=()=>done(false);
+    bg.onclick=e=>{ if(e.target===bg) done(true) };
+  });
+}
 function askConfirm(msg){
   return new Promise(res=>{
     const bg=$('confirmModal');
