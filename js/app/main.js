@@ -30,6 +30,11 @@ function dragStart(i,e){
   const w=cells[i]? cells[i].getBoundingClientRect().width : 0;
   dragStep=Math.max(6, w*0.4 || 12);
 }
+/* on a mac the command key stands where control stands elsewhere, since
+   control-click is the right button there */
+const MOD_MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'');
+const pickMod=e=> MOD_MAC? e.metaKey : e.ctrlKey;
+const modeOfEvent=e=> e.shiftKey? 'note' : pickMod(e)? 'mid' : '';
 function chainStop(){ chainOn=false; chainPrev=-1; chainLast=0 }
 function tapCancel(){ tapIdx=-1 }
 function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
@@ -56,6 +61,16 @@ $('board').addEventListener('pointerdown',e=>{
   lastPointerType=e.pointerType||'mouse';
   const g=cur(); if(!g||g.paused) return;
   const i=+el.dataset.i;
+  /* the modifier picks cells that do not touch: each click adds one to the run */
+  if(e.pointerType!=='touch' && e.button===0 && pickMod(e) && SPEC.kind!=='tokki' && SPEC.kind!=='num'){
+    e.preventDefault();
+    closePicker();
+    if(msel.has(i)) msel.delete(i); else msel.add(i);
+    sel=i; hlDigit=0;
+    renderBoard();
+    if(msel.size>1) showMultiHint();
+    return;
+  }
   if(SPEC.kind==='tokki'){
     if(e.button===2) return;
     /* a zoomed board scrolls under the finger, so dragging must not leave marks */
@@ -294,6 +309,15 @@ document.addEventListener('pointerdown',e=>{
 
 const LETTER_DIGIT={KeyA:10,KeyB:11,KeyC:12};
 $('genOverlay').addEventListener('click',()=>{ if(cancelGen()) toast(t('genStopped')) });
+/* the borrowed mode lights up while the key is down and goes out when it is not */
+const trackMod=e=>{
+  if($('game').classList.contains('hidden')) return setHeldMode('');
+  setHeldMode(modeOfEvent(e));
+};
+window.addEventListener('keydown',trackMod);
+window.addEventListener('keyup',trackMod);
+window.addEventListener('blur',()=>setHeldMode(''));
+
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape' && cancelGen()){ toast(t('genStopped')); return }
   const modalOpen=['loseModal','statsModal','setModal','poolModal','rulesModal']

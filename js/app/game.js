@@ -323,7 +323,7 @@ function inputDigit(v,forceNote,forceMid){
   const g=cur(); if(!g||g.done||g.paused) return;
   if(SPEC.kind==='tokki') return;
   if(SPEC.kind==='num') return inputNumber(v);
-  const mode = forceNote? 'note' : forceMid? 'mid' : inputMode;
+  const mode = forceNote? 'note' : forceMid? 'mid' : activeMode();
   if(msel.size>1) return inputMulti(v, mode);
   if(sel<0||g.given[sel]) return;
   if(v<1||v>SPEC.maxD) return;
@@ -547,6 +547,17 @@ function setPaused(p){
    corners, marks in the middle. Each one is shown on the pad, on the keypad and
    in the pad at the cell, so the mode is never a secret */
 const MODES_IN=['digit','note','mid'];
+/* holding shift or the command key borrows a mode for as long as it is held:
+   the buttons and both keypads follow, so the borrowed mode is as visible as
+   the chosen one */
+let heldMode='';
+const activeMode=()=>heldMode||inputMode;
+function setHeldMode(m){
+  if(heldMode===m) return;
+  heldMode = modeAllowed(m)? m : '';
+  syncModeButtons();
+  if(cur() && !$('game').classList.contains('hidden')) renderBoard();
+}
 function modeAllowed(m){
   if(!SPEC) return m==='digit';
   if(SPEC.kind==='tokki') return false;
@@ -554,9 +565,10 @@ function modeAllowed(m){
   return MODES_IN.indexOf(m)>=0;
 }
 function syncModeButtons(){
-  $('digitBtn').classList.toggle('on', inputMode==='digit');
-  $('notesBtn').classList.toggle('on', inputMode==='note');
-  $('midBtn').classList.toggle('on2', inputMode==='mid');
+  const m=activeMode();
+  $('digitBtn').classList.toggle('on', m==='digit');
+  $('notesBtn').classList.toggle('on', m==='note');
+  $('midBtn').classList.toggle('on2', m==='mid');
   syncPickerMode();
 }
 function setMode(m){

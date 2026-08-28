@@ -433,7 +433,8 @@ function renderBoard(){
     btn.classList.toggle('armed', v>0 && SES.settings.digitFirst && armed===v);
   });
   const np=$('numpad');
-  if(np){ np.classList.toggle('mode-note', inputMode==='note'); np.classList.toggle('mode-mid', inputMode==='mid') }
+  const am=activeMode();
+  if(np){ np.classList.toggle('mode-note', am==='note'); np.classList.toggle('mode-mid', am==='mid') }
   placeSelBox(g,sp);
   $('gMistWrap').style.display=g.instant? '' : 'none';
   /* three marks instead of a fraction: before the first mistake the figure said
@@ -468,7 +469,7 @@ function placeSelBox(g,sp){
     ? g.values[sel]===TOKKI_BUN && g.solution[sel]!==TOKKI_BUN
     : g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
   if(g.instant && wrong) sb.classList.add('err');
-  else if(inputMode==='mid') sb.classList.add('mid');
+  else if(activeMode()==='mid') sb.classList.add('mid');
 }
 
 const ZOOM_CELL=38;

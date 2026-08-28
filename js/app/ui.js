@@ -126,9 +126,10 @@ function numKey(v){
 }
 function syncPickerMode(){
   const pk=$('picker');
-  pk.querySelectorAll('.pk-mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===inputMode));
-  pk.classList.toggle('mode-note',inputMode==='note');
-  pk.classList.toggle('mode-mid',inputMode==='mid');
+  const m=activeMode();
+  pk.querySelectorAll('.pk-mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  pk.classList.toggle('mode-note',m==='note');
+  pk.classList.toggle('mode-mid',m==='mid');
 }
 function refreshPickerCounts(){
   const pk=$('picker'); if(pk.classList.contains('hidden')) return;
