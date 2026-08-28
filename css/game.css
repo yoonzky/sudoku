@@ -151,6 +151,9 @@ body.board-zoom #pauseOverlay{border-radius:4px}
 .ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2;
   stroke-linecap:square; stroke-linejoin:miter}
+/* one language for a press: the keypad and the kbd marks look like keys because
+   they stand for keys, everything else stays flat and answers by moving a pixel */
+.ctl:active:not(:disabled), .iconbtn:active, .topbar .tbtn:active{transform:translateY(1px)}
 .ctl:hover:not(:disabled){color:var(--text); background:var(--cell-hl)}
 .ctl.on{color:var(--accent); background:var(--accent-soft)}
 .ctl.on2{color:var(--accent2); background:var(--accent2-soft)}
