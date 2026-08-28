@@ -112,7 +112,7 @@ ru:{
   k_gest:'двойной или правый клик мышью', kOr:'или',
   kNeedsBtn:'кнопка выключена', kNot9:'кроме 10×10 и 12×12',
   hasErrors:'Неверных цифр: {n}', autoDone:'Кандидаты расставлены', assistNote:'с помощью — не в статистике',
-  delGame:'Удалить эту партию?', restartConfirm:'Начать эту раздачу заново? Прогресс поля будет сброшен.',
+  delGame:'Удалить эту партию?', delGameA:'Удалить партию', restartConfirm:'Начать эту раздачу заново? Прогресс поля будет сброшен.',
   mist:'ошибок', hintsSm:'подсказок',
 },
 en:{
@@ -223,7 +223,7 @@ en:{
   multiHint:'Drag across cells and a digit lands as a mark in every one of them',
   gameDropped:'More than ten games: the oldest one ({m}) was dropped',
   hasErrors:'Wrong digits: {n}', autoDone:'Candidates filled in', assistNote:'assisted, not recorded',
-  delGame:'Delete this game?', restartConfirm:'Start this puzzle over? Everything you have entered will be cleared.',
+  delGame:'Delete this game?', delGameA:'Delete the game', restartConfirm:'Start this puzzle over? Everything you have entered will be cleared.',
   mist:'mistakes', hintsSm:'hints',
   k_gest:'double-click or right-click', kOr:'or',
   kNeedsBtn:'button is off', kNot9:'except 10×10 and 12×12',

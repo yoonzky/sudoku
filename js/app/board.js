@@ -73,7 +73,11 @@ function buildBoard(sp){
   SPEC=sp;
   const b=$('board');
   b.innerHTML=''; cells.length=0; cellKey.length=0;
-  b.setAttribute('role','grid');
+  /* the board is driven by the arrow keys rather than read as a table: the
+     cells sit in a css grid with holes in it, and rows would have to be faked.
+     The picked cell is announced through aria-activedescendant instead */
+  b.setAttribute('role','application');
+  b.setAttribute('tabindex','0');
   b.setAttribute('aria-label',t('a11yBoard'));
   b.style.gridTemplateColumns=`repeat(${sp.W},1fr)`;
   b.style.gridTemplateRows=`repeat(${sp.H},1fr)`;
@@ -110,7 +114,7 @@ function buildBoard(sp){
     if(sp.zone[i]===1) d.classList.add('zone');
     if(sp.zone[i]===2) d.classList.add('even');
     if(sp.kind==='tokki') d.classList.add('z'+((sp.region[i]%10)+1));
-    d.dataset.i=i;
+    d.dataset.i=i; d.id='cell'+i;
     b.appendChild(d); cells.push(d);
   }
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
@@ -436,6 +440,9 @@ function renderBoard(){
   const np=$('numpad');
   const am=activeMode();
   if(np){ np.classList.toggle('mode-note', am==='note'); np.classList.toggle('mode-mid', am==='mid') }
+  const bd=$('board');
+  if(sel>=0) bd.setAttribute('aria-activedescendant','cell'+sel);
+  else bd.removeAttribute('aria-activedescendant');
   placeSelBox(g,sp);
   $('gMistWrap').style.display=g.instant? '' : 'none';
   /* three marks instead of a fraction: before the first mistake the figure said

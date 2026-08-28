@@ -40,12 +40,14 @@ function renderContinue(){
     const n = bun? g.solution.filter(v=>v===TOKKI_BUN).length : g.solution.length;
     const filled = bun? g.values.filter(v=>v===TOKKI_BUN).length : g.values.filter(v=>v).length;
     const on=picking&&contSel.has(g.id);
-    return `<button class="cont-card${on?' on':''}" data-idx="${idx}" data-id="${g.id}">
-      <b>${t('m_'+g.mode)}</b><span>${t('d_'+g.diff)} · ${filled}/${n}</span>
-      <small>${fmtTime(g.time)}</small>
+    return `<div class="cont-card${on?' on':''}" data-id="${g.id}">
+      <button class="cont-open" data-idx="${idx}">
+        <b>${t('m_'+g.mode)}</b><span>${t('d_'+g.diff)} · ${filled}/${n}</span>
+        <small>${fmtTime(g.time)}</small>
+      </button>
       ${picking? `<i class="cbox${on?' on':''}"></i>`
-        : `<i class="cont-x" data-del="${idx}"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></i>`}
-    </button>`;
+        : `<button class="cont-x" data-del="${idx}" aria-label="${t('delGameA')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`}
+    </div>`;
   }).join('');
 }
 function contPickStart(){ contSel=new Set(); renderContinue() }

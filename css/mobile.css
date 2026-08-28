@@ -189,7 +189,10 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
   *{touch-action:manipulation}
   .sheet-grab{touch-action:none}
   .only-fine{display:none !important}
+  /* a tablet reports a coarse pointer even with a keyboard attached, so the
+     tab waits for a key rather than for the pointer */
   #tabKeysBtn{display:none}
+  body.has-kbd #tabKeysBtn{display:block}
   .mcard:hover,.cont-card:hover{border-color:var(--line); color:var(--text); background:var(--panel)}
   .mcard.on:hover{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
   .num:active{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}

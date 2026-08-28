@@ -43,6 +43,7 @@ function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
 function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
   closePicker();
+  try{ $('board').focus({preventScroll:true}) }catch(e){}
   if(msel.size){ msel.clear() }
   if(SPEC.kind==='tokki'){
     sel=i;
@@ -217,8 +218,9 @@ $('contList').addEventListener('click',async e=>{
   }
   const card=e.target.closest('.cont-card');
   if(!card) return;
-  if(contSel) contToggle(card.dataset.id);
-  else openGame(+card.dataset.idx);
+  if(contSel){ contToggle(card.dataset.id); return }
+  const open=e.target.closest('.cont-open');
+  if(open) openGame(+open.dataset.idx);
 });
 $('poolOpen').addEventListener('click',openPool);
 $('poolAll').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=true));
@@ -309,6 +311,15 @@ document.addEventListener('pointerdown',e=>{
 
 const LETTER_DIGIT={KeyA:10,KeyB:11,KeyC:12};
 $('genOverlay').addEventListener('click',()=>{ if(cancelGen()) toast(t('genStopped')) });
+const KBD_SEEN='sudoku-kbd';
+function markKeyboard(){
+  if(document.body.classList.contains('has-kbd')) return;
+  document.body.classList.add('has-kbd');
+  try{ localStorage.setItem(KBD_SEEN,'1') }catch(e){}
+}
+try{ if(localStorage.getItem(KBD_SEEN)) document.body.classList.add('has-kbd') }catch(e){}
+window.addEventListener('keydown',e=>{ if(/^(Key[A-Z]|Digit[0-9]|Arrow)/.test(e.code)) markKeyboard() });
+
 /* the borrowed mode lights up while the key is down and goes out when it is not */
 const trackMod=e=>{
   if($('game').classList.contains('hidden')) return setHeldMode('');
