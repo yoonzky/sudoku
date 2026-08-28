@@ -85,7 +85,7 @@ function renderModeList(){
       <small>${t('poolCount').replace('{n}',poolList().length)}</small></span></button>`;
   $('modeList').innerHTML=h;
   const on=$('modeList').querySelector('.mcard.on');
-  if(on && on.scrollIntoView && !isPhone()) on.scrollIntoView({block:'nearest'});
+  if(on && on.scrollIntoView && !sheetWidth()) on.scrollIntoView({block:'nearest'});
 }
 function renderModePanel(){
   const m=pickedMode;

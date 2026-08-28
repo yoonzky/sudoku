@@ -9,6 +9,50 @@
 #pickHint b{font-weight:500; color:var(--accent)}
 
 
+/* the sheet serves every width that has no room for the side column, phone
+   and tablet alike: between the two the levels used to fall below the fold */
+@media (max-width:900px){
+  body.sheet{overflow:hidden}
+  body.sheet #sheetBg{opacity:1; pointer-events:auto}
+  /* the footer sits in the same stacking context as the page and would show
+     through the sheet, right across the rules */
+  body.sheet .site-foot{visibility:hidden}
+  /* top:auto is a must: the side column on a desktop is sticky and sets top,
+     while here the sheet hangs off the bottom and would not slide away */
+  .mp{position:fixed; left:0; right:0; bottom:0; top:auto; z-index:25;
+    border:0; border-top:1px solid var(--line); border-radius:4px 4px 0 0;
+    background:var(--panel); box-shadow:var(--shadow-up);
+    padding:0 16px calc(12px + env(safe-area-inset-bottom));
+    max-height:86vh; overflow-y:auto; overscroll-behavior:contain;
+    display:flex; flex-direction:column; align-items:stretch;
+    transform:translateY(103%); visibility:hidden;
+    transition:transform .26s cubic-bezier(.2,.7,.3,1), visibility 0s .26s}
+  .mp-head{display:flex; align-items:center; gap:15px}
+  @supports (height:100dvh){ .mp{max-height:86dvh} }
+  body.sheet .mp{transform:none; visibility:visible;
+    transition:transform .26s cubic-bezier(.2,.7,.3,1), visibility 0s}
+  .sheet-grab{display:block; width:100%; padding:10px 0 12px; margin:0;
+    background:none; border:0; cursor:pointer; touch-action:none}
+  .sheet-grab i{display:block; width:38px; height:4px; margin:0 auto; border-radius:2px; background:var(--line)}
+  .mp-prev{width:64px; max-width:64px; flex:none; margin:0}
+  .mp h3{font-size:21px; margin:0}
+  .mp p{margin:13px 0 0; font-size:13.5px; line-height:1.55}
+  .mp-pool{margin:14px 0 0; font-size:12.5px}
+  .mp-pool button{font-size:12.5px; padding:6px 0}
+  .mp h4{margin:18px 0 2px; padding-top:0; font-size:11px}
+  .diff-grid{flex:none}
+  /* the sheet leads with the only action it has: the levels stand right under the
+     name, and the rules go below them, where scrolling for them is fair */
+  .mp .sheet-grab{order:0}
+  .mp .mp-head{order:1}
+  .mp #mpTag{order:2}
+  .mp h4[data-i18n="lvlT"]{order:3; margin-top:16px}
+  .mp .diff-grid{order:4}
+  .mp .mp-rulecap{order:5; display:block; margin-top:22px}
+  .mp #mpRules{order:6; margin-top:6px}
+  .mp .mp-pool{order:7}
+}
+
 @media (max-width:700px){
 
 body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom)); min-height:auto; flex:none}
@@ -53,43 +97,6 @@ body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom));
 .rnd-card small{font-size:11.5px}
 .rnd-card:hover{border-color:var(--line); color:var(--text)}
 .rnd-card:active{background:var(--accent-soft); border-color:var(--accent)}
-
-body.sheet{overflow:hidden}
-body.sheet #sheetBg{opacity:1; pointer-events:auto}
-/* top:auto is a must: the side column on a desktop is sticky and sets top,
-   while here the sheet hangs off the bottom and would not slide away */
-.mp{position:fixed; left:0; right:0; bottom:0; top:auto; z-index:25;
-  border:0; border-top:1px solid var(--line); border-radius:4px 4px 0 0;
-  background:var(--panel); box-shadow:var(--shadow-up);
-  padding:0 16px calc(12px + env(safe-area-inset-bottom));
-  max-height:86vh; overflow-y:auto; overscroll-behavior:contain;
-  display:flex; flex-direction:column; align-items:stretch;
-  transform:translateY(103%); visibility:hidden;
-  transition:transform .26s cubic-bezier(.2,.7,.3,1), visibility 0s .26s}
-.mp-head{display:flex; align-items:center; gap:15px}
-@supports (height:100dvh){ .mp{max-height:86dvh} }
-body.sheet .mp{transform:none; visibility:visible;
-  transition:transform .26s cubic-bezier(.2,.7,.3,1), visibility 0s}
-.sheet-grab{display:block; width:100%; padding:10px 0 12px; margin:0;
-  background:none; border:0; cursor:pointer; touch-action:none}
-.sheet-grab i{display:block; width:38px; height:4px; margin:0 auto; border-radius:2px; background:var(--line)}
-.mp-prev{width:64px; max-width:64px; flex:none; margin:0}
-.mp h3{font-size:21px; margin:0}
-.mp p{margin:13px 0 0; font-size:13.5px; line-height:1.55}
-.mp-pool{margin:14px 0 0; font-size:12.5px}
-.mp-pool button{font-size:12.5px; padding:6px 0}
-.mp h4{margin:18px 0 2px; padding-top:0; font-size:11px}
-.diff-grid{flex:none}
-/* the sheet leads with the only action it has: the levels stand right under the
-   name, and the rules go below them, where scrolling for them is fair */
-.mp .sheet-grab{order:0}
-.mp .mp-head{order:1}
-.mp #mpTag{order:2}
-.mp h4[data-i18n="lvlT"]{order:3; margin-top:16px}
-.mp .diff-grid{order:4}
-.mp .mp-rulecap{order:5; display:block; margin-top:22px}
-.mp #mpRules{order:6; margin-top:6px}
-.mp .mp-pool{order:7}
 
 /* the board starts under the strip and the pad sits at the bottom, by the
    thumb: centring the whole block left a dead band under the header instead */

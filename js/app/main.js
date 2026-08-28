@@ -382,7 +382,7 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){ persistNow(); if(pending.length) saveLog() }
 });
 window.addEventListener('resize',()=>{
-  if(!isPhone()) closeSheet();
+  if(!sheetWidth()) closeSheet();
   syncRail();
   snapBoardTwice(); updatePickHint(); placeWinPanel();
 });

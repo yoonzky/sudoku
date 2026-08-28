@@ -8,6 +8,10 @@ let lastPointerType='mouse';
 const PHONE_Q=matchMedia('(max-width:700px)');
 const LAND_Q=matchMedia('(orientation:landscape) and (max-height:560px) and (min-width:560px)');
 const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
+/* the sheet serves every width with no room for the side column, so it starts
+   where that column ends and not at the phone breakpoint */
+const SHEET_Q=matchMedia('(max-width:900px)');
+const sheetWidth=()=>SHEET_Q.matches;
 const isLand=()=>LAND_Q.matches;
 /* on a wide screen with a mouse the pad stands beside the board, not under it */
 const RAIL_Q=matchMedia('(min-width:1040px) and (min-height:660px) and (pointer:fine)');
@@ -35,7 +39,7 @@ function show(screen){
   if(screen==='game') snapBoard();
 }
 function openSheet(){
-  if(!isPhone()) return;
+  if(!sheetWidth()) return;
   const mp=$('modePanel');
   document.body.classList.add('sheet');
   mp.scrollTop=0;
