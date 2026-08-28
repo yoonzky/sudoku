@@ -25,28 +25,33 @@ and starts it at the level you choose.
   room for those techniques (Suguru, 12×12, Numerator) top out lower and lean on the clue count
 - every puzzle is generated with exactly one solution, whatever the mode, and every deal the
   grader cannot crack by reasoning gets extra clues until it can
-- a slow deal (Killer at Expert, 10×10, Samurai) can be dropped with Esc or a tap on the overlay
+- a slow deal (Killer at Expert, 10×10, Samurai) shows how long it has been running against the
+  budget it was given, and can be dropped with Esc or a tap on the overlay; the fourth level says
+  in the menu when a deal is a long one
 - Killer at Expert opens no digit at all — the cage sums alone pin the answer down
 - Suguru grows with the level: 9×9 with regions up to seven, 12×12 with regions up to nine
-- two kinds of pencil mark: corner notes, and centre marks that read as one figure — 28 or 135 in
-  the middle of the cell, the way a hidden pair or triple is usually written down. Ctrl and a digit
-  leaves a centre mark, C switches the mode, and corner notes step aside to the edges of the cell
-- with a mouse, drag across the board to pick a run of cells; a digit then pencils into all of them
-  at once, and pressing it again takes it back out
-- draft mode: pencil a trial digit in dashes, notes underneath survive, mistakes are not counted
+- three ways to fill a cell: the digit itself, marks in the corners, marks in the centre that read
+  as one figure — 28 or 135 in the middle, the way a hidden pair or triple is written down. Z, X and
+  C pick a mode and space steps through them; holding shift or the command key borrows the corners
+  or the centre for as long as it is held
+- with a mouse, drag across the board to pick a run of cells, or hold the command key and click to
+  pick cells that do not touch; whatever one cell would get, all of them get, and pressing the same
+  digit again takes it back out
 - with a mouse, a digit pad opens right at the cell (double or right click); on a phone the
   keypad below the board does the same job
+- before the first deal the game asks whether a wrong digit should turn red at once or the board
+  should be checked when it is full
 - in Numerator the entry waits for a second digit, since the numbers run to 81
 - a correct digit clears the selection, so the next cell is one tap away
 - up to ten unfinished games at once, each with its own timer; several can be picked and dropped together
 - notes, auto-candidates, hint, undo/redo, mistake limit — all optional
-- full keyboard control (1–9, A/B/C for 10–12, Shift for notes, Ctrl for centre marks, Alt for
-  draft, arrows to move)
+- full keyboard control (1–9, A/B/C for 10–12, shift for corner marks, command or control for
+  centre marks, arrows to move)
 - light and dark theme, Russian and English; the two palettes are written once, in `css/base.css`
 - the three typefaces ship with the site, so an installed copy reads the same with no network
 - on a phone: picking a mode opens a sheet with its rules and the four levels; boards wider than
   the screen (Samurai, Wing, Double) open in a window you drag around, with a button to fit them
-  back; a long press on a cell brings up the pad — digit, note, draft, erase
+  back; the mode buttons and the keypad sit under the board, within reach of a thumb
 - works offline, installable to the home screen on iOS and Android
 
 ## Layout

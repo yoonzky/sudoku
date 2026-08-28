@@ -64,7 +64,7 @@ function openGenOverlay(mode,diff){
   const draw=()=>{
     const spent=Date.now()-started;
     fill.style.width=Math.min(97, spent/budget*100)+'%';
-    foot.textContent=t('genSpent').replace('{n}',Math.floor(spent/1000))+' · '+t('genCancel');
+    foot.textContent=t('genSpent').replace('{n}',Math.floor(spent/1000))+' · '+t(COARSE? 'genCancelTouch' : 'genCancel');
   };
   draw();
   clearInterval(genTick);

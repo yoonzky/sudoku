@@ -3,7 +3,8 @@
 const I18N = {
 ru:{
   genFail:'Поле не собралось — попробуй ещё раз',
-  genCancel:'Esc или касание — отмена', genStopped:'Генерация отменена',
+  genCancel:'Esc — отмена', genCancelTouch:'Касание — отмена', genStopped:'Генерация отменена',
+  siteDesc:'Судоку в браузере: восемнадцать режимов, четыре уровня, пометки и статистика. Без счетов и рекламы, работает офлайн.',
   genSpent:'{n} с', dealWait:'до {n} с',
   mid:'Центр', midTab:'В центр', digitMode:'Цифра', digitTabQ:'Цифра',
   k_mid:'пометка в центр', k_modeDigit:'цифра', k_modeNote:'пометки по углам',
@@ -213,7 +214,8 @@ en:{
   k_digit:'digit into cell', k_note:'mark in the corners', k_spaceK:'Space', k_erase:'clear the cell', k_undo:'undo a move', k_redo:'redo a move', k_hint:'hint',
   k_auto:'auto-notes', k_pause:'pause', k_nav:'move around the board', k_menu:'back to menu', k_pick:'pad at the cell',
   gen:'Generating board…', digitTab:'Digit', noteTab:'Corners', eraseP:'Erase',
-  genCancel:'Esc or a tap cancels', genStopped:'Generation cancelled',
+  genCancel:'Esc cancels', genCancelTouch:'A tap cancels', genStopped:'Generation cancelled',
+  siteDesc:'Sudoku in the browser: eighteen modes, four levels, pencil marks and statistics. No accounts, no ads, works offline.',
   genSpent:'{n} s', dealWait:'up to {n} s',
   mid:'Centre', midTab:'Centre mark', digitMode:'Normal', digitTabQ:'Normal',
   k_mid:'mark in the centre', k_modeDigit:'normal', k_modeNote:'corner marks',
@@ -235,6 +237,8 @@ const MOD_KEY=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||''
 function applyLang(){
   document.documentElement.lang=SES.settings.lang;
   document.querySelectorAll('kbd.kmod').forEach(el=>{ el.textContent=MOD_KEY });
+  const desc=document.querySelector('meta[name="description"]');
+  if(desc) desc.setAttribute('content',t('siteDesc'));
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n) });
   document.querySelectorAll('[data-i18n-label]').forEach(el=>{
     el.setAttribute('aria-label',t(el.dataset.i18nLabel)) });

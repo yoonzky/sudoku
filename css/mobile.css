@@ -124,7 +124,10 @@ body.in-game .site-foot{display:none}
 .topbar #gMistWrap{grid-column:2; grid-row:2; justify-self:start; font-size:12px}
 .topbar #zoomBtn{grid-column:3; grid-row:1/3}
 .topbar #pauseBtn{grid-column:4; grid-row:1/3}
+/* one line holds the mode and the level, so the level needs a stop of its own:
+   "12 by 12 I Easy" read as one long name */
 .topbar .t-item em{margin-left:6px; font-size:12px}
+.topbar .t-item em::before{content:'·'; margin-right:7px; color:var(--muted); opacity:.6}
 .topbar .tbtn{padding:8px; margin:0; min-width:40px; min-height:40px; justify-content:center;
   border:1px solid var(--line); border-radius:4px}
 .topbar .tbtn svg{width:18px; height:18px}
