@@ -71,7 +71,8 @@ function renderModeList(){
   for(const id of MODE_ORDER){
     const rnd=id==='random';
     const st=rnd? null : statsFor(id,null);
-    const note=rnd? poolList().length : (st.solved? fmtTime(st.best) : '');
+    /* the draw shows no figure of its own: the size of the pool is in the sheet */
+    const note=rnd? '' : (st.solved? fmtTime(st.best) : '');
     h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
       <span class="mcard-prev">${rnd? RANDOM_PREV : previewSVG(id)}</span>
       <b>${t('m_'+id)}</b><small>${note}</small></button>`;
