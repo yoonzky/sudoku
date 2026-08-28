@@ -34,8 +34,11 @@ function renderContinue(){
   if(picking) $('contCount').textContent=t('selCount').replace('{n}',contSel.size);
   /* the newest game sits at the head of the strip */
   list.innerHTML=SES.games.map((g,idx)=>[g,idx]).reverse().map(([g,idx])=>{
-    const n=g.solution.length;
-    const filled=g.values.filter(v=>v).length;
+    /* tokkidoku is not filled but populated: the count is bunnies, not cells,
+       and the dots that mark empty ones are no part of it */
+    const bun=g.mode==='tokki';
+    const n = bun? g.solution.filter(v=>v===TOKKI_BUN).length : g.solution.length;
+    const filled = bun? g.values.filter(v=>v===TOKKI_BUN).length : g.values.filter(v=>v).length;
     const on=picking&&contSel.has(g.id);
     return `<button class="cont-card${on?' on':''}" data-idx="${idx}" data-id="${g.id}">
       <b>${t('m_'+g.mode)}</b><span>${t('d_'+g.diff)} · ${filled}/${n}</span>

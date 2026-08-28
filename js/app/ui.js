@@ -237,6 +237,7 @@ function openStats(){
     `<h3>${t('histT')}</h3>`+
     (hist.map(x=>`<div><span>${fmtDay(x.d)} · ${t('m_'+x.mode)} · ${t('d_'+x.diff)}</span><span><b>${fmtTime(x.time)}</b>${x.mistakes?` · ${t('mist')} ${x.mistakes}`:''}${x.hints?` · ${t('hintsSm')} ${x.hints}`:''}</span></div>`).join('')||`<div>${t('none')}</div>`)+
     `<div class="hist-foot"><span>${t('dataAt')}</span><span>${LOG.updated? new Date(LOG.updated).toLocaleString(loc,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—'}</span></div>`;
+  $('resetStats').disabled=!allGames().length;
   $('statsModal').classList.remove('hidden');
 }
 async function resetStats(){
