@@ -47,6 +47,7 @@ function cancelGen(){
 
 function newGame(mode,diff){
   lastRequest={mode,diff};
+  if(typeof syncUrl==='function') syncUrl(mode,diff);
   if(mode==='random'){
     const pool=poolList();
     mode=pool[Math.floor(Math.random()*pool.length)];

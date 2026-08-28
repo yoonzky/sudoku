@@ -1,6 +1,9 @@
+/* sentence case: uppercase with wide tracking is a Latin trick, and a long
+   Russian label set that way stops being a word */
 .btn{background:var(--accent); color:var(--accent-text); border:1px solid var(--accent); border-radius:4px;
-  padding:11px 24px; font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.14em;
-  text-transform:uppercase; cursor:pointer; transition:background .15s, color .15s}
+  padding:11px 22px; font-family:inherit; font-size:13px; font-weight:500; letter-spacing:.01em;
+  cursor:pointer; transition:background .15s, color .15s, transform .1s}
+.btn:active{transform:translateY(1px)}
 .btn:hover{background:transparent; color:var(--accent)}
 .btn.ghost{background:transparent; color:var(--muted); border-color:var(--line)}
 .btn.ghost:hover{color:var(--text); border-color:var(--text)}
@@ -75,11 +78,13 @@
 .langseg button.on{color:var(--accent); font-weight:600; box-shadow:inset 0 -2px 0 var(--accent)}
 .toggle{display:flex; gap:14px; align-items:flex-start; padding:15px 0; cursor:pointer; border-bottom:1px solid var(--line)}
 .toggle:last-of-type{border-bottom:0}
+/* the one place the four pixel radius steps aside: a switch has to read by its
+   shape, or it is taken for a checkbox that happens to be filled in */
 .toggle input{appearance:none; -webkit-appearance:none; width:34px; height:19px; margin-top:4px; flex:none;
-  border-radius:4px; background:transparent; border:1px solid var(--line); cursor:pointer;
+  border-radius:999px; background:var(--cell-hl); border:1px solid var(--line); cursor:pointer;
   position:relative; transition:background .18s, border-color .18s}
 .toggle input::before{content:''; position:absolute; top:2px; left:2px; width:13px; height:13px;
-  border-radius:2px; background:var(--muted); transition:transform .18s, background .18s}
+  border-radius:50%; background:var(--muted); transition:transform .18s, background .18s}
 .toggle input:checked{background:var(--accent-soft); border-color:var(--accent)}
 .toggle input:checked::before{transform:translateX(15px); background:var(--accent)}
 .toggle b{display:block; font-size:14.5px; font-weight:500; margin-bottom:2px}

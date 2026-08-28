@@ -31,6 +31,7 @@
   --d-bg:#0b0d14; --d-panel:#151824; --d-line:#252a3b; --d-text:#e6e9f5; --d-accent:#a6b4f0;
 }
 :root, html[data-theme="light"]{
+  color-scheme:light;
   --bg:var(--l-bg); --panel:var(--l-panel); --panel2:#ffffff; --line:var(--l-line); --line-strong:#14161f;
   --text:var(--l-text); --muted:#5a6072; --accent:var(--l-accent); --accent-text:#ffffff; --accent-soft:#e2e5f5;
   --accent2:#2c6b76; --accent2-soft:#dcebed;
@@ -58,7 +59,7 @@
   --face:#565ead; --mark:#98a2bd;
   /* the thumbnails paint their lines solid: half transparent ones darken
      wherever two of them cross and the board turns into a mesh */
-  --prev-rule:#9c9da1; --prev-zone:#c5c8e3; --prev-cage:#3c4270;
+  --prev-rule:#9c9da1; --prev-zone:#b4b9dd; --prev-cage:#3c4270;
   /* one colour per member, deep enough to read on any of the region tints */
   --face-nz:#565ead; --face-mj:#2f74bd; --face-hn:#c2467f;
   --face-hr:#2f8a5a; --face-hi:#7b4bc4; --face-dn:#d29a00;
@@ -67,6 +68,8 @@
   --tick:rgba(86,94,173,.58);
 }
 html[data-theme="dark"]{
+  /* the browser needs telling too, or scrollbars and form controls stay light */
+  color-scheme:dark;
   --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#1b1f30; --line:var(--d-line); --line-strong:#e6e9f5;
   --text:var(--d-text); --muted:#8c93ab; --accent:var(--d-accent); --accent-text:#0b0d14; --accent-soft:rgba(166,180,240,.20);
   --accent2:#7fc8d4; --accent2-soft:rgba(127,200,212,.20);
@@ -84,10 +87,12 @@ html[data-theme="dark"]{
   --tint-hyp:rgba(110,180,195,.34); --tint-hyp-sel:rgba(127,200,212,.50); --tint-err:rgba(190,80,105,.48);
   --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
   --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;
-  --z1:#264361; --z2:#5e3444; --z3:#453c5c; --z4:#1c4938; --z5:#4b4020;
-  --z6:#1e3247; --z7:#452833; --z8:#342d43; --z9:#17362a; --z10:#383019;
+  /* softened toward the panel: at full strength the papers sat heavier than the
+     light theme and the bright faces floated on top of them instead of on them */
+  --z1:#21334b; --z2:#402b3b; --z3:#322f48; --z4:#1c3634; --z5:#353127;
+  --z6:#1d293d; --z7:#322432; --z8:#29273a; --z9:#192c2d; --z10:#2b2823;
   --face:#a6b4f0; --mark:#5d6987;
-  --prev-rule:#585b67; --prev-zone:#52597a; --prev-cage:#9ca9d3;
+  --prev-rule:#585b67; --prev-zone:#606a94; --prev-cage:#9ca9d3;
   --face-nz:#a6b4f0; --face-mj:#7cb8ef; --face-hn:#f292b6;
   --face-hr:#6fd0a0; --face-hi:#b79bf2; --face-dn:#ddb659;
   --board-light:linear-gradient(to bottom, rgba(166,180,240,.13), rgba(166,180,240,0) 40%, rgba(0,0,0,.20));

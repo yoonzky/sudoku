@@ -5,6 +5,11 @@
 .topbar .t-item b{font-family:var(--f-num); color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
 .topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
 .topbar .tbtn:hover{color:var(--text)}
+/* the limit as three marks: empty until a mistake is actually made */
+#gMist.dots{display:inline-flex; gap:4px; vertical-align:middle; padding-left:2px}
+#gMist.dots i{width:7px; height:7px; border-radius:50%; border:1px solid var(--muted);
+  display:block; transition:background .18s, border-color .18s}
+#gMist.dots i.on{background:var(--error); border-color:var(--error)}
 .topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
 
 .board-wrap{position:relative}
@@ -59,6 +64,10 @@
   animation:wave .7s ease-out both}
 @keyframes wave{0%,100%{opacity:0}45%{opacity:.9}}
 
+/* the board closes as one: the split between what was given and what was filled
+   in has done its work by now, and two colours only break up the halo */
+body.won .cell, body.won .cell.hypv{color:var(--given); transition:color .5s ease}
+body.won .cell.hypv .v{text-decoration:none}
 body.won .controls, body.won .numpad, body.won #pickHint{display:none}
 body.win-side .controls, body.win-side .numpad{display:grid; opacity:.4; pointer-events:none}
 body.win-side .numpad{display:grid}
@@ -291,15 +300,21 @@ body.board-wide #board::before{display:none}
     linear-gradient(var(--tick),var(--tick)) left bottom/2px 13px no-repeat,
     linear-gradient(var(--tick),var(--tick)) right bottom/13px 2px no-repeat,
     linear-gradient(var(--tick),var(--tick)) right bottom/2px 13px no-repeat}
+/* a linked board keeps the ticks when its four outer corners hold real cells:
+   the frame stays off, the corners still say where the board ends */
 body.board-wide #board::after, body.board-num #board::after{display:none}
+body.board-wide #board.corners::after{display:block}
 
 /* ── desktop: board on the left, pad on the right ───────────────── */
 /* the layout the phone already uses in landscape: the board keeps its size and
    the keys gather into a three by three block, which a mouse reaches faster and
    hits more surely than a strip of nine narrow keys */
+/* the last row takes the slack: the board spans all five, and without a
+   flexible row its height stretched them and tore the pad apart */
 body.rail.in-game #game{max-width:none;
   width:min(calc(var(--boardmax,560px) + 258px), 100%);
   display:grid; grid-template-columns:minmax(0,1fr) 232px; gap:0 26px;
+  grid-template-rows:auto auto auto auto 1fr;
   align-items:start}
 body.rail.in-game.board-tokki #game{--boardmax:620px}
 body.rail.in-game.board-wide #game{--boardmax:820px}

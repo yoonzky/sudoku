@@ -50,10 +50,28 @@ function tokkiFace(g,i){
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
   '<path d="M12 12c0-2.7 1-4.3 2.9-4.3 1.8 0 3 1.2 3 3 0 1.9-1.6 2.9-4.3 2.9 2.7 0 4.3 1 4.3 2.9 0 1.8-1.2 3-3 3-1.9 0-2.9-1.6-2.9-4.3 0 2.7-1 4.3-2.9 4.3-1.8 0-3-1.2-3-3 0-1.9 1.6-2.9 4.3-2.9-2.7 0-4.3-1-4.3-2.9 0-1.8 1.2-3 3-3 1.9 0 2.9 1.6 2.9 4.3Z"/></svg>';
 
+/* what a screen reader gets instead of the drawing: where the cell is and what
+   stands in it */
+function cellLabel(g,sp,i){
+  const c=sp.cells[i];
+  const pos=t('a11yCell').replace('{r}',c.y+1).replace('{c}',c.x+1);
+  const v=g.values[i];
+  let val;
+  if(sp.kind==='tokki')
+    val = v===TOKKI_BUN? t('a11yBun') : v===TOKKI_MARK? t('a11yMark') : t('a11yEmpty');
+  else if(v) val = v+(g.given[i]? ', '+t('a11yGiven') : '');
+  else if(g.hyp[i]) val = String(g.hyp[i]);
+  else if(g.notes[i].length) val = t('a11yNote').replace('{v}',g.notes[i].join(' '));
+  else val = t('a11yEmpty');
+  return pos+', '+val;
+}
+
 function buildBoard(sp){
   SPEC=sp;
   const b=$('board');
   b.innerHTML=''; cells.length=0; cellKey.length=0;
+  b.setAttribute('role','grid');
+  b.setAttribute('aria-label',t('a11yBoard'));
   b.style.gridTemplateColumns=`repeat(${sp.W},1fr)`;
   b.style.gridTemplateRows=`repeat(${sp.H},1fr)`;
   b.style.aspectRatio=`${sp.W} / ${sp.H}`;
@@ -84,6 +102,7 @@ function buildBoard(sp){
     const c=sp.cells[i];
     const d=document.createElement('div');
     d.className='cell';
+    d.setAttribute('role','gridcell');
     d.style.gridColumn=c.x+1; d.style.gridRow=c.y+1;
     if(sp.zone[i]===1) d.classList.add('zone');
     if(sp.zone[i]===2) d.classList.add('even');
@@ -92,6 +111,9 @@ function buildBoard(sp){
     b.appendChild(d); cells.push(d);
   }
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
+  /* corner ticks need a cell in every corner, or they hang in empty space */
+  b.classList.toggle('corners', [[0,0],[sp.W-1,0],[0,sp.H-1],[sp.W-1,sp.H-1]]
+    .every(([x,y])=>cellAt(sp,x,y)>=0));
   buildGlow(sp);
   buildGrid(sp);
   buildDeco(sp);
@@ -306,7 +328,10 @@ function buildNumpad(sp){
   for(const v of keys){
     const btn=document.createElement('button');
     btn.className='num'; btn.dataset.v=v;
-    btn.innerHTML=`${v}<small></small>`;
+    /* the counter in the corner is decoration for the ear: without this the key
+       reads as two numbers in a row */
+    btn.innerHTML=`${v}<small aria-hidden="true"></small>`;
+    btn.setAttribute('aria-label',t('a11yKey').replace('{v}',v));
     btn.addEventListener('pointerdown',e=>{ e.preventDefault(); numpadPress(v) });
     np.appendChild(btn);
   }
@@ -365,6 +390,7 @@ function renderBoard(){
           d.innerHTML=h;
         }
       } else d.textContent='';
+      d.setAttribute('aria-label',cellLabel(g,sp,i));
       cellKey[i]=key;
     }
     if(isTokki){
@@ -401,6 +427,8 @@ function renderBoard(){
     const left=(tot[v]||0)-(counts[v]||0);
     const small=btn.querySelector('small');
     if(small) small.textContent=(showCounts&&left>0)?left:'';
+    btn.setAttribute('aria-label', t('a11yKey').replace('{v}',v)+
+      ((showCounts&&left>0)? ', '+t('a11yLeft').replace('{n}',left) : ''));
     btn.classList.toggle('done', !isNum && left<=0);
     btn.classList.toggle('hl', v>0 && hlDigit===v);
     btn.classList.toggle('armed', v>0 && SES.settings.digitFirst && armed===v);
@@ -409,7 +437,14 @@ function renderBoard(){
   if(np){ np.classList.toggle('mode-note', inputMode==='note'); np.classList.toggle('mode-hyp', inputMode==='hyp') }
   placeSelBox(g,sp);
   $('gMistWrap').style.display=g.instant? '' : 'none';
-  $('gMist').textContent=(SES.settings.limit&&g.instant&&!g.noLimit)? `${g.mistakes}/3` : g.mistakes;
+  /* three marks instead of a fraction: before the first mistake the figure said
+     nothing, and the dots fill up as the limit is spent */
+  const limited=SES.settings.limit&&g.instant&&!g.noLimit;
+  const mist=$('gMist');
+  mist.classList.toggle('dots',limited);
+  if(limited) mist.innerHTML=[0,1,2].map(k=>`<i${k<g.mistakes?' class="on"':''}></i>`).join('');
+  else mist.textContent=g.mistakes;
+  mist.setAttribute('aria-label',t('errorsL')+': '+g.mistakes+(limited? '/3' : ''));
   $('gMode').textContent=t('m_'+g.mode);
   const rn=LEVEL_RN[g.diff];
   $('gDiff').innerHTML=(rn? `<i class="rn">${rn}</i>` : '')+t('d_'+g.diff);

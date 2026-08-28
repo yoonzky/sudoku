@@ -211,7 +211,8 @@ function dismissPickHint(){
 }
 
 function openStats(){
-  let h=`<tr><th>${t('level')}</th><th>${t('hSolved')}</th><th>${t('hBest')}</th><th>${t('avgL')}</th><th>${t('hClean')}</th></tr>`;
+  const th=k=>`<th scope="col">${t(k)}</th>`;
+  let h=`<tr>${th('level')}${th('hSolved')}${th('hBest')}${th('avgL')}${th('hClean')}</tr>`;
   for(const d of DIFFS){
     const s=statsFor(null,d), avg=s.solved?Math.round(s.total/s.solved):null;
     h+=`<tr><td>${t('d_'+d)}</td><td>${s.solved}</td><td>${fmtTime(s.best)}</td><td>${fmtTime(avg)}</td><td>${s.perfect}</td></tr>`;
@@ -225,7 +226,7 @@ function openStats(){
     h2+=`<tr><td>${t('m_'+id)}</td><td>${s.solved}</td><td>${fmtTime(s.best)}</td><td>${fmtTime(avg)}</td><td>${s.perfect}</td></tr>`;
   }
   $('statsModes').innerHTML = h2
-    ? `<tr><th>${t('modesT')}</th><th>${t('hSolved')}</th><th>${t('hBest')}</th><th>${t('avgL')}</th><th>${t('hClean')}</th></tr>`+h2
+    ? `<tr>${th('modesT')}${th('hSolved')}${th('hBest')}${th('avgL')}${th('hClean')}</tr>`+h2
     : '';
   const hist=[...allGames()].sort((a,b)=> a.d<b.d?1:-1).slice(0,12);
   const loc=SES.settings.lang==='ru'?'ru-RU':'en-GB';

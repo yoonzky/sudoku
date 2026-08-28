@@ -210,7 +210,15 @@ $('poolAll').addEventListener('click',()=>document.querySelectorAll('#poolGrid i
 $('poolNone').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=false));
 $('poolClose').addEventListener('click',()=>{ if(savePool()) $('poolModal').classList.add('hidden') });
 
-function goHome(){ numFlush(); clearWin(); closePicker(); stopTimer(); persistCache(); show('home'); renderHome() }
+/* the address keeps the mode, and with a level it opens straight into a game:
+   a bookmark used to land on the menu whatever it was made from */
+function syncUrl(mode,diff){
+  if(!history.replaceState) return;
+  const q = mode? '?m='+mode+(diff? '&d='+diff : '') : location.pathname;
+  try{ history.replaceState(null,'',q) }catch(e){}
+}
+function goHome(){ numFlush(); clearWin(); closePicker(); stopTimer(); persistCache();
+  show('home'); renderHome(); syncUrl(pickedMode) }
 $('backBtn').addEventListener('click',goHome);
 $('rulesBtn').addEventListener('click',openRules);
 $('rulesClose').addEventListener('click',()=>$('rulesModal').classList.add('hidden'));
@@ -411,6 +419,16 @@ if(pending.length) saveLog();
   bg.addEventListener('click',e=>{ if(e.target===bg){
     try{ localStorage.setItem('sudoku-welcomed','1') }catch(err){}
     bg.classList.add('hidden') } });
+})();
+
+/* a link with a mode picks it, and one with a level deals the game at once */
+(function(){
+  if(!$('welcomeModal').classList.contains('hidden')) return;
+  const q=new URLSearchParams(location.search);
+  const m=q.get('m'), d=q.get('d');
+  if(!m || (!MODE_IDS.includes(m) && m!=='random')) return;
+  pickMode(m); closeSheet();
+  if(d && DIFFS.includes(d)) newGame(m,d);
 })();
 
 const DEV_HOST=location.hostname==='localhost'||location.hostname==='127.0.0.1';

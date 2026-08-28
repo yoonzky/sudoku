@@ -18,6 +18,10 @@
 <meta name="apple-mobile-web-app-title" content="Sudoku">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="data:,">
+<!-- the two faces the first screen is set in: without this the title and the
+     figures are drawn by the system font and jump when the files arrive -->
+<link rel="preload" as="font" type="font/woff2" href="fonts/tenor-sans-cyrillic.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/onest-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/home.css">
 <link rel="stylesheet" href="css/game.css">
@@ -64,16 +68,17 @@
         <div id="modeList"></div>
       </div>
       <aside class="mp" id="modePanel">
-        <button class="sheet-grab" id="sheetGrab" aria-label="close"><i></i></button>
+        <button class="sheet-grab" id="sheetGrab" data-i18n-label="sheetClose" aria-label="Свернуть панель"><i></i></button>
         <div class="mp-head">
           <div class="mp-prev" id="mpPrev"></div>
           <h3 id="mpName"></h3>
         </div>
         <p class="mode-tag hidden" id="mpTag"></p>
+        <h4 class="mp-rulecap" data-i18n="rulesT">Правила режима</h4>
         <p id="mpRules"></p>
         <div class="mp-pool hidden" id="mpPool">
           <span id="poolCount"></span>
-          <button id="poolOpen" data-i18n="poolBtn">Настроить жребий</button>
+          <button id="poolOpen" data-i18n="poolBtn">Настроить набор</button>
         </div>
         <h4 data-i18n="lvlT">Уровень</h4>
         <div class="diff-grid" id="diffGrid"></div>
@@ -194,7 +199,7 @@
 
 <div class="modal-bg hidden" id="poolModal">
   <div class="modal">
-    <h2 data-i18n="poolT">Что попадает в жребий</h2>
+    <h2 data-i18n="poolT">Что входит в набор</h2>
     <div class="pool-grid" id="poolGrid"></div>
     <p class="pool-note" data-i18n="r_random"></p>
     <div class="row" style="justify-content:space-between">
@@ -288,7 +293,7 @@
       <section class="sgrp">
         <h3 data-i18n="grpBoard">Подсказки на поле</h3>
         <label class="toggle"><input type="checkbox" id="optPeers">
-          <div><b data-i18n="peersT">Подсветка строки и столбца</b><span data-i18n="peersD">Выбрал клетку — её строка, столбец и область становятся светлее. В «Чёт-нечете» подсветка всегда выключена: там цвет клетки сам по себе подсказка</span></div></label>
+          <div><b data-i18n="peersT">Подсветка строки и столбца</b><span data-i18n="peersD">Выбрал клетку — её строка, столбец и область становятся светлее. В токкидоку подсветки нет: там цвет области сам по себе подсказка</span></div></label>
         <label class="toggle"><input type="checkbox" id="optSame">
           <div><b data-i18n="sameT">Подсветка таких же цифр</b><span data-i18n="sameD">Выбрал клетку — на поле светятся все такие же цифры и все заметки с ними</span></div></label>
         <label class="toggle"><input type="checkbox" id="optCounts">
@@ -346,7 +351,7 @@
 
 <footer class="site-foot">2026 · <a href="https://github.com/yoonzky/sudoku" target="_blank" rel="noopener">yoonzky</a></footer>
 
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <div id="genOverlay" class="hidden"></div>
 
 <script src="js/engine/core.js"></script>

@@ -1,8 +1,10 @@
 'use strict';
 
 /* one grid, no headings: the modes stand in the order they get harder to
-   explain, with the draw next to the classic board it falls back on */
-const MODE_ORDER=['classic','random','x','evenodd','windoku','asterisk','mosaic',
+   explain. Eighteen of them fill six columns by three without a stray tile, and
+   the draw stands under the grid on its own, since it is a choice about the
+   grid rather than another mode in it */
+const MODE_ORDER=['classic','x','evenodd','windoku','asterisk','mosaic',
   'r10','r12','double','wing','butterfly','samurai',
   'killer','dots','suguru','kakuro','numerator','tokki'];
 /* the draw shows a board with a question in it, in the same hand as the previews */
@@ -69,15 +71,19 @@ async function contDelete(){
 function renderModeList(){
   let h='<div class="mode-grid" style="--span:6">';
   for(const id of MODE_ORDER){
-    const rnd=id==='random';
-    const st=rnd? null : statsFor(id,null);
-    /* the draw shows no figure of its own: the size of the pool is in the sheet */
-    const note=rnd? '' : (st.solved? fmtTime(st.best) : '');
+    const st=statsFor(id,null);
+    /* the time under the name says what it is: a bare figure read as anything */
+    const note=st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : '';
     h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
-      <span class="mcard-prev">${rnd? RANDOM_PREV : previewSVG(id)}</span>
+      <span class="mcard-prev">${previewSVG(id)}</span>
       <b>${t('m_'+id)}</b><small>${note}</small></button>`;
   }
-  $('modeList').innerHTML=h+'</div>';
+  h+='</div>';
+  h+=`<button class="rnd-card${pickedMode==='random'?' on':''}" data-mode="random">
+    <span class="rnd-prev">${RANDOM_PREV}</span>
+    <span class="rnd-txt"><b>${t('m_random')}</b>
+      <small>${t('poolCount').replace('{n}',poolList().length)}</small></span></button>`;
+  $('modeList').innerHTML=h;
   const on=$('modeList').querySelector('.mcard.on');
   if(on && on.scrollIntoView && !isPhone()) on.scrollIntoView({block:'nearest'});
 }
@@ -94,7 +100,7 @@ function renderModePanel(){
   let h='';
   for(const d of DIFFS){
     const st = m==='random'? statsFor(null,d) : statsFor(m,d);
-    const note = st.solved? `${st.solved} · ${fmtTime(st.best)}` : t('notPlayed');
+    const note = st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : t('notPlayed');
     h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl${st.solved?' on':''}">${LEVEL_RN[d]}</i><span>${t('d_'+d)}</span><em>${note}</em></button>`;
   }
   $('diffGrid').innerHTML=h;
@@ -113,13 +119,14 @@ function pickMode(id){
   pickedMode=id;
   SES.settings.mode=id; persistCache();
   renderModeList(); renderModePanel();
+  if(typeof syncUrl==='function') syncUrl(id);
   openSheet();
 }
 
 function openPool(){
   const on=new Set(poolList());
   let h='';
-  for(const id of MODE_ORDER) if(id!=='random')
+  for(const id of MODE_ORDER)
     h+=`<label class="pool-item"><input type="checkbox" data-m="${id}"${on.has(id)?' checked':''}><span>${t('m_'+id)}</span></label>`;
   $('poolGrid').innerHTML=h;
   $('poolModal').classList.remove('hidden');
