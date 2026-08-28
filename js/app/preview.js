@@ -17,14 +17,15 @@ function previewSpec(mode){
   try{ return previewSpecRaw(mode) } finally { RNG=prev }
 }
 /* every cell of a killer board sits in a cage, so the preview cuts the whole
-   grid into them instead of scattering a few boxes about */
+   grid into them. The cages run big: at thumbnail size a board full of small
+   ones turns into fuzz */
 function killerCages(sp){
   const n=sp.cells.length, own=new Array(n).fill(-1);
   let id=0;
   for(let i=0;i<n;i++){
     if(own[i]>=0) continue;
     own[i]=id;
-    const cage=[i], want=1+Math.floor(RNG()*4);
+    const cage=[i], want=3+Math.floor(RNG()*3);
     while(cage.length<want){
       const free=[];
       for(const j of cage){
@@ -40,7 +41,22 @@ function killerCages(sp){
     }
     id++;
   }
-  return own;
+  /* neighbouring cages never share a tint, so three of them are enough */
+  const tint=new Array(id).fill(-1);
+  for(let c=0;c<id;c++){
+    const taken=new Set();
+    for(let i=0;i<n;i++){
+      if(own[i]!==c) continue;
+      const cell=sp.cells[i];
+      for(const step of [[1,0],[-1,0],[0,1],[0,-1]]){
+        const k=cellAt(sp,cell.x+step[0],cell.y+step[1]);
+        if(k>=0 && own[k]!==c && tint[own[k]]>=0) taken.add(tint[own[k]]);
+      }
+    }
+    let t=0; while(taken.has(t)) t++;
+    tint[c]=t;
+  }
+  return own.map(c=>tint[c]%3);
 }
 function previewSpecRaw(mode){
   if(mode==='meow'){
@@ -53,7 +69,7 @@ function previewSpecRaw(mode){
   }
   if(mode==='killer'){
     const sp=MODES.killer.build({});
-    sp.demoOwn=killerCages(sp);
+    sp.demoTint=killerCages(sp);
     return sp;
   }
   if(mode==='numerator') return numBuild({w:9,h:9});
@@ -83,7 +99,9 @@ function previewSVG(mode){
 
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i];
+    const cage = sp.demoTint? sp.demoTint[i] : -1;
     const fill = sp.kind==='meow'? `var(--z${(sp.region[i]%10)+1})`
+      : cage===1? 'var(--zone-fill)' : cage===2? 'var(--even-fill)'
       : sp.zone[i]===2? 'var(--even-fill)' : sp.zone[i]===1? 'var(--zone-fill)' : 'var(--panel2)';
     out+=`<rect x="${px(c)}" y="${py(c)}" width="${u}" height="${u}" fill="${fill}"/>`;
   }
@@ -136,22 +154,6 @@ function previewSVG(mode){
   }
   if(zone) out+=`<g stroke="var(--prev-zone)" stroke-width="${wThin*1.2}">${zone}</g>`;
 
-  if(mode==='killer' && sp.demoOwn){
-    const own=sp.demoOwn, d=1.5;
-    let cg='';
-    for(let i=0;i<sp.cells.length;i++){
-      const c=sp.cells[i], X=px(c), Y=py(c);
-      const same=(x,y)=>{ const j=cellAt(sp,x,y); return j>=0 && own[j]===own[i] };
-      const up=same(c.x,c.y-1), dn=same(c.x,c.y+1), lf=same(c.x-1,c.y), rt=same(c.x+1,c.y);
-      const x0=lf? X : X+d, x1=rt? X+u : X+u-d;
-      const y0=up? Y : Y+d, y1=dn? Y+u : Y+u-d;
-      if(!up) cg+=`<line x1="${x0}" y1="${Y+d}" x2="${x1}" y2="${Y+d}"/>`;
-      if(!dn) cg+=`<line x1="${x0}" y1="${Y+u-d}" x2="${x1}" y2="${Y+u-d}"/>`;
-      if(!lf) cg+=`<line x1="${X+d}" y1="${y0}" x2="${X+d}" y2="${y1}"/>`;
-      if(!rt) cg+=`<line x1="${X+u-d}" y1="${y0}" x2="${X+u-d}" y2="${y1}"/>`;
-    }
-    out+=`<g stroke="var(--prev-cage)" stroke-width=".7" stroke-dasharray="1.8 1.3">${cg}</g>`;
-  }
   if(mode==='dots'){
     for(const d of DEC.dots){
       const cx=pad+(d[0]+ (d[2]?1:.5))*u, cy=pad+(d[1]+(d[3]?1:.5))*u;
