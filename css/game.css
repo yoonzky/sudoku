@@ -82,8 +82,10 @@ body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
 body.won.in-game{overflow:auto}
 
 
+/* the board is centred inside main, so the win pins main, not the body:
+   the pad goes away, the panel comes in, and the board holds its place */
 @media (max-width:700px){
-  body.won.in-game{justify-content:flex-start; padding-top:var(--won-top,0px)}
+  body.won.in-game main{justify-content:flex-start; padding-top:var(--won-top,0px)}
 }
 .glow{position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:0;
   transition:opacity 1.2s ease-out}

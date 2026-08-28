@@ -164,9 +164,9 @@ function makeDots(sp,sol){
 const SUG_MAX=9;
 const SUG_CFG={
   easy:  {w:9, h:9, lo:5, hi:7},
-  medium:{w:10,h:10,lo:5, hi:8},
-  hard:  {w:11,h:11,lo:5, hi:9},
-  expert:{w:12,h:12,lo:6, hi:9},
+  medium:{w:10,h:10,lo:4, hi:6},
+  hard:  {w:11,h:11,lo:5, hi:7},
+  expert:{w:12,h:12,lo:6, hi:8},
 };
 
 const MODES={

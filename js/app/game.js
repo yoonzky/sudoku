@@ -164,6 +164,19 @@ function meowSweep(i){
   lastPlaced=-1;
   afterMove();
 }
+/* the win takes the pad away and the page stops centring itself, which would
+   slide the board out from under the player. It is pinned where it stood and
+   the rest of the screen moves around it */
+function pinBoard(change){
+  const b=$('board');
+  const before=b? b.getBoundingClientRect().top : 0;
+  change();
+  if(!b) return;
+  const after=b.getBoundingClientRect().top;
+  const now=parseFloat(document.body.style.getPropertyValue('--won-top'))||0;
+  document.body.style.setProperty('--won-top',Math.max(0,Math.round(now+before-after))+'px');
+}
+
 function meowClash(g,sp,i){
   if(g.values[i]!==MEOW_CAT) return false;
   for(const j of sp.peers[i]) if(g.values[j]===MEOW_CAT) return true;
@@ -399,14 +412,12 @@ function checkWin(){
     isRecord, assisted, perfect, instant:g.instant};
   renderWinPanel();
   const showWin=()=>{
-    const top=document.querySelector('header').getBoundingClientRect().top;
-    document.body.style.setProperty('--won-top',Math.max(0,Math.round(top))+'px');
     document.body.classList.add('won');
     $('winPanel').classList.remove('hidden');
     placeWinPanel();
   };
-  if(reducedMotion){ showWin(); return }
-  document.body.classList.add('won');
+  if(reducedMotion){ pinBoard(showWin); return }
+  pinBoard(()=>document.body.classList.add('won'));
   for(let i=0;i<n;i++){
     const c=SPEC.cells[i];
     cells[i].style.animationDelay=((c.x+c.y)*22)+'ms';
