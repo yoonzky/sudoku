@@ -424,13 +424,16 @@ function renderBoard(){
   }
   /* a paused board is hidden, and so is what is known about it */
   const showCounts=SES.settings.showCounts!==false && !isNum && !isTokki && !g.paused;
+  /* on a linked board every digit is short by a couple of dozen, and a two
+     figure count crowds the key: it appears once the end is in sight */
+  const countCap = n>81? 10 : 99;
   const tot=digitTotals(g);
   document.querySelectorAll('.num').forEach(btn=>{
     if(btn.dataset.v===undefined) return;
     const v=+btn.dataset.v;
     const left=(tot[v]||0)-(counts[v]||0);
     const small=btn.querySelector('small');
-    if(small) small.textContent=(showCounts&&left>0)?left:'';
+    if(small) small.textContent=(showCounts&&left>0&&left<countCap)?left:'';
     btn.setAttribute('aria-label', t('a11yKey').replace('{v}',v)+
       ((showCounts&&left>0)? ', '+t('a11yLeft').replace('{n}',left) : ''));
     btn.classList.toggle('done', !isNum && left<=0);

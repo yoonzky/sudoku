@@ -1,6 +1,7 @@
 /* the block keeps its own height and main centres it: stretching it to the full
    screen only pushed the totals to the bottom and left a hole in the middle */
 #home{display:flex; flex-direction:column; gap:18px; width:100%; max-width:1120px; margin:0 auto; flex:none; min-height:0}
+
 body:not(.in-game) main{display:flex; flex-direction:column; justify-content:safe center;
   padding-bottom:14px; min-height:0}
 /* the page scrolls as one: neither the screen nor the columns keep a scroll */
@@ -11,6 +12,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .home-main{flex:none; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:0 30px}
 @media (max-width:900px){ .home-main{grid-template-columns:1fr; gap:24px} }
 .modes-col{display:flex; flex-direction:column; min-height:0}
+@media (min-width:901px){ .modes-col{border-right:1px solid var(--line); padding-right:28px} }
 
 .mode-grid{display:grid; grid-template-columns:repeat(var(--span,6),1fr); gap:7px}
 @media (max-width:1000px){ .mode-grid{grid-template-columns:repeat(5,1fr)} }
@@ -40,12 +42,18 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .rnd-card:hover{border-color:var(--accent); color:var(--accent)}
 .rnd-card.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
 
-.mp{border-left:1px solid var(--line); padding:0 0 0 28px; display:flex; flex-direction:column;
-  position:sticky; top:16px; align-self:start}
-@media (max-width:900px){ .mp{border-left:0; border-top:1px solid var(--line); padding:20px 0 0} }
+.mp{padding:0 0 0 28px; display:flex; flex-direction:column;
+  position:sticky; top:16px; align-self:start;
+  /* one height for every mode, or the whole block is re-centred on each pick
+     and the grid steps up and down. The rule between the columns belongs to the
+     grid instead, so the spare height at the bottom shows as plain margin */
+  min-height:min(690px, calc(100vh - 250px))}
+
+@media (max-width:900px){ .mp{border-top:1px solid var(--line); padding:20px 0 0} }
 .sheet-grab{display:none}
 /* the preview is measured against window height, or on a short screen it eats the levels */
 .mp-prev{width:min(210px,20vh); max-width:100%; margin:0 0 20px}
+.mp-prev.small{width:min(130px,13vh)}
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
 .mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted)}

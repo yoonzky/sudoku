@@ -98,6 +98,10 @@ html[data-theme="dark"]{
   --board-light:linear-gradient(to bottom, rgba(166,180,240,.13), rgba(166,180,240,0) 40%, rgba(0,0,0,.20));
   --tick:rgba(201,212,234,.62);
 }
+/* the page keeps to a comfortable measure and takes the extra room only where
+   there is plenty of it */
+:root{--page:940px}
+@media (min-width:1180px){ :root{--page:1120px} }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 /* a double tap zooms nothing; two fingers still pinch */
 html,body{height:100%; touch-action:manipulation}
@@ -113,26 +117,26 @@ body{margin:0; background:var(--bg); color:var(--text);
 body.in-game main{max-width:100%; display:flex; flex-direction:column; justify-content:safe center}
 button{font-family:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
-header{width:100%; max-width:940px; display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
+header{width:100%; max-width:var(--page); display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
 header h1{font-family:var(--f-disp); font-size:35px; font-weight:400; letter-spacing:.2em; margin:0 0 0 .2em}
 .tagline{margin:0; color:var(--muted); font-size:13px}
 body.in-game .tagline{display:none}
 header .iconbtn{position:absolute; top:30px}
 #backBtn{display:none}
 body.in-game #backBtn{display:flex; margin-left:-6px; margin-right:4px}
-header #statsBtn{right:calc(50% - 440px)}
-header #setBtn{right:calc(50% - 478px)}
+header #statsBtn{right:calc(50% - var(--page)/2 + 30px)}
+header #setBtn{right:calc(50% - var(--page)/2 - 8px)}
 @media(max-width:990px){header #statsBtn{right:60px} header #setBtn{right:16px}}
 .iconbtn{background:transparent; border:1px solid transparent; border-radius:4px; cursor:pointer;
   color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
 .iconbtn:hover{color:var(--text); background:var(--panel)}
 .iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
-main{width:100%; max-width:940px; padding:6px 18px 26px; flex:1}
+main{width:100%; max-width:var(--page); padding:6px 18px 26px; flex:1}
 #game{container-type:inline-size; max-width:min(560px,100%); margin:0 auto}
 body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4px}
 body.in-game header h1{font-size:24px; flex:1; text-align:left}
 body.in-game header .iconbtn{position:static}
-.site-foot{width:100%; max-width:940px; text-align:center; padding:6px 18px 18px; font-size:11.5px; color:var(--muted)}
+.site-foot{width:100%; max-width:var(--page); text-align:center; padding:6px 18px 18px; font-size:11.5px; color:var(--muted)}
 .site-foot a{color:var(--muted)}
 .site-foot a:hover{color:var(--text)}
 body.in-game .site-foot{padding:4px 18px 10px; font-size:10.5px; opacity:.75}

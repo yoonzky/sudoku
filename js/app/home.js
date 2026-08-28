@@ -92,9 +92,13 @@ function renderModeList(){
   const on=$('modeList').querySelector('.mcard.on');
   if(on && on.scrollIntoView && !sheetWidth()) on.scrollIntoView({block:'nearest'});
 }
+/* a plain 9x9 board says nothing a name does not: those modes get a smaller
+   thumbnail and the rules move up */
+const PLAIN_SHAPE=['classic','x','evenodd','windoku','asterisk','mosaic'];
 function renderModePanel(){
   const m=pickedMode;
   $('mpPrev').innerHTML = m==='random'? previewSVG(poolList()[0]||'classic') : previewSVG(m);
+  $('mpPrev').classList.toggle('small', PLAIN_SHAPE.includes(m));
   $('mpName').textContent=t('m_'+m);
   $('mpRules').textContent=t('r_'+m);
   const tag=I18N[SES.settings.lang]&&I18N[SES.settings.lang]['tag_'+m] || I18N.en['tag_'+m] || '';
