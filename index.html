@@ -132,8 +132,9 @@
     </div>
     <div class="controls">
       <div class="ctl-row" id="ctlModes">
-        <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/></svg><span data-i18n="notes">Заметки</span></button>
-        <button class="ctl" id="hypBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.6"/></svg><span data-i18n="hyp">Черновик</span></button>
+        <button class="ctl" id="digitBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M12.6 16.4V8.6l-2 1.6"/></svg><span data-i18n="digitMode">Цифра</span></button>
+        <button class="ctl" id="notesBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><circle cx="7.6" cy="7.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="16.4" cy="7.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="7.6" cy="16.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="16.4" cy="16.4" r="1.15" fill="currentColor" stroke="none"/></svg><span data-i18n="notes">Углы</span></button>
+        <button class="ctl" id="midBtn"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><circle cx="8.6" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.4" cy="12" r="1.15" fill="currentColor" stroke="none"/></svg><span data-i18n="mid">Центр</span></button>
       </div>
       <div class="ctl-row" id="ctlActs">
         <button class="ctl" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10h-4"/><path d="M8 5 4 9l4 4"/></svg><span data-i18n="undo">Отмена</span></button>
@@ -314,23 +315,24 @@
           <h3 data-i18n="grpKinput">Ввод</h3>
           <div class="krow"><span data-i18n="k_digit">цифра в клетку</span><span class="kk"><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
           <div class="krow"><span data-i18n="k_big">числа 10–12</span><span class="kk"><kbd>A</kbd><kbd>B</kbd><kbd>C</kbd></span></div>
-          <div class="krow"><span data-i18n="k_note">заметка в клетку</span><span class="kk"><kbd>Shift</kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
-          <div class="krow"><span data-i18n="k_mid">заметка в центр</span><span class="kk"><kbd>Ctrl</kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
-          <div class="krow"><span data-i18n="k_hyp1">черновик в клетку</span><span class="kk"><kbd>Alt</kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
+          <div class="krow"><span data-i18n="k_note">пометка в углы</span><span class="kk"><kbd>Shift</kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
+          <div class="krow"><span data-i18n="k_mid">пометка в центр</span><span class="kk"><kbd class="kmod"></kbd><i class="sep">+</i><kbd>1</kbd><i class="sep">–</i><kbd>9</kbd></span></div>
           <div class="krow"><span data-i18n="k_erase">стереть клетку</span><span class="kk"><kbd>Backspace</kbd><i class="sep" data-i18n="kOr">или</i><kbd>0</kbd></span></div>
         </section>
         <section class="kgrp">
           <h3 data-i18n="grpKmode">Режимы</h3>
-          <div class="krow"><span data-i18n="k_notes">режим заметок</span><span class="kk"><kbd>N</kbd><i class="sep" data-i18n="kOr">или</i><kbd data-i18n="k_spaceK">Пробел</kbd></span></div>
-          <div class="krow"><span data-i18n="k_midm">режим центральных заметок</span><span class="kk"><kbd>C</kbd></span></div>
-          <div class="krow"><span data-i18n="k_hypm">режим черновика</span><span class="kk"><kbd>D</kbd></span></div>
+          <div class="krow"><span data-i18n="k_modeDigit">цифра</span><span class="kk"><kbd>Z</kbd></span></div>
+          <div class="krow"><span data-i18n="k_modeNote">пометки по углам</span><span class="kk"><kbd>X</kbd></span></div>
+          <div class="krow"><span data-i18n="k_modeMid">пометки в центр</span><span class="kk"><kbd>C</kbd></span></div>
+          <div class="krow"><span data-i18n="k_modeNext">следующий режим</span><span class="kk"><kbd data-i18n="k_spaceK">Пробел</kbd></span></div>
           <div class="krow"><span data-i18n="k_pick">панель у клетки</span><span class="kk gest" data-i18n="k_gest">двойной или правый клик мышью</span></div>
           <div class="krow"><span data-i18n="k_multi">выделить несколько клеток</span><span class="kk gest" data-i18n="k_multiG">протянуть мышью по полю</span></div>
+          <div class="krow"><span data-i18n="k_multiAdd">добавить клетку к выделенным</span><span class="kk"><kbd class="kmod"></kbd><i class="sep">+</i><span class="gest" data-i18n="k_click">клик</span></span></div>
         </section>
         <section class="kgrp">
           <h3 data-i18n="grpKmove">Ход</h3>
-          <div class="krow"><span data-i18n="k_undo">отменить ход</span><span class="kk"><kbd>Z</kbd><i class="sep" data-i18n="kOr">или</i><kbd>Ctrl</kbd><i class="sep">+</i><kbd>Z</kbd></span></div>
-          <div class="krow"><span data-i18n="k_redo">вернуть ход</span><span class="kk"><kbd>Y</kbd><i class="sep" data-i18n="kOr">или</i><kbd>Ctrl</kbd><i class="sep">+</i><kbd>Y</kbd></span></div>
+          <div class="krow"><span data-i18n="k_undo">отменить ход</span><span class="kk"><kbd class="kmod"></kbd><i class="sep">+</i><kbd>Z</kbd></span></div>
+          <div class="krow"><span data-i18n="k_redo">вернуть ход</span><span class="kk"><kbd class="kmod"></kbd><i class="sep">+</i><kbd>Y</kbd></span></div>
           <div class="krow"><span data-i18n="k_hint">подсказка</span><span class="kk"><kbd>H</kbd></span></div>
           <div class="krow"><span data-i18n="k_auto">авто-заметки</span><span class="kk"><kbd>A</kbd></span></div>
         </section>

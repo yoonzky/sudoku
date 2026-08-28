@@ -5,8 +5,10 @@ ru:{
   genFail:'Поле не собралось — попробуй ещё раз',
   genCancel:'Esc или касание — отмена', genStopped:'Генерация отменена',
   genSpent:'{n} с', dealWait:'до {n} с',
-  mid:'Центр', midTab:'В центр',
-  k_mid:'заметка в центр клетки', k_midm:'режим центральных заметок',
+  mid:'Центр', midTab:'В центр', digitMode:'Цифра', digitTabQ:'Цифра',
+  k_mid:'пометка в центр', k_modeDigit:'цифра', k_modeNote:'пометки по углам',
+  k_modeMid:'пометки в центр', k_modeNext:'следующий режим',
+  k_multiAdd:'добавить клетку к выделенным', k_click:'клик',
   k_multi:'выделить несколько клеток', k_multiG:'протянуть мышью по полю',
   multiHint:'Протяни мышью по клеткам — цифра ляжет заметкой во все выделенные',
   gameDropped:'Партий больше десяти: самая старая ({m}) удалена',
@@ -74,7 +76,7 @@ ru:{
   continue:'Продолжить', newGame:'Новая игра',
   d_easy:'Лёгкий', d_medium:'Средний', d_hard:'Сложный', d_expert:'Эксперт',
   solvedL:'решено', cleanL:'чистых', playtimeL:'за игрой', notPlayed:'не играл', errorsL:'Ошибки', pauseT:'Пауза', resume:'Продолжить', restart:'Начать заново',
-  undo:'Отмена', redo:'Вернуть', erase:'Стереть', notes:'Заметки', hyp:'Черновик', auto:'Авто', hint:'Подсказка',
+  undo:'Отмена', redo:'Вернуть', erase:'Стереть', notes:'Углы', auto:'Авто', hint:'Подсказка',
   pickHint:'Двойной или правый клик по клетке — быстрый ввод цифры',
   zoomIn:'Крупнее', zoomFit:'Вписать поле',
   panHint:'Поле больше экрана — двигай его пальцем',
@@ -101,10 +103,9 @@ ru:{
   resetDone:'Статистика сброшена',
   done:'Готово',
   grpKinput:'Ввод', grpKmode:'Режимы', grpKmove:'Ход', grpKgame:'Партия',
-  k_digit:'цифра в клетку', k_note:'заметка в клетку', k_hyp1:'черновик в клетку', k_notes:'режим заметок', k_spaceK:'Пробел',
-  k_hypm:'режим черновика', k_erase:'стереть клетку', k_undo:'отменить ход', k_redo:'вернуть ход', k_hint:'подсказка',
+  k_digit:'цифра в клетку', k_note:'пометка в углы', k_spaceK:'Пробел', k_erase:'стереть клетку', k_undo:'отменить ход', k_redo:'вернуть ход', k_hint:'подсказка',
   k_auto:'авто-заметки', k_pause:'пауза', k_nav:'перейти по клеткам', k_menu:'выход в меню', k_pick:'панель у клетки',
-  gen:'Генерация поля…', digitTab:'Цифра', noteTab:'Заметка', hypTab:'Черновик', eraseP:'Стереть',
+  gen:'Генерация поля…', digitTab:'Цифра', noteTab:'В углы', eraseP:'Стереть',
   k_gest:'двойной или правый клик мышью', kOr:'или',
   hasErrors:'Неверных цифр: {n}', autoDone:'Кандидаты расставлены', assistNote:'с помощью — не в статистике',
   delGame:'Удалить эту партию?', restartConfirm:'Начать эту раздачу заново? Прогресс поля будет сброшен.',
@@ -175,7 +176,7 @@ en:{
   continue:'Continue', newGame:'New game',
   d_easy:'Easy', d_medium:'Medium', d_hard:'Hard', d_expert:'Expert',
   solvedL:'solved', cleanL:'flawless', playtimeL:'time played', notPlayed:'not played', errorsL:'Mistakes', pauseT:'Paused', resume:'Resume', restart:'Restart puzzle',
-  undo:'Undo', redo:'Redo', erase:'Erase', notes:'Notes', hyp:'Draft', auto:'Auto', hint:'Hint',
+  undo:'Undo', redo:'Redo', erase:'Erase', notes:'Corners', auto:'Auto', hint:'Hint',
   pickHint:'Double-click or right-click a cell for quick entry',
   zoomIn:'Zoom in', zoomFit:'Fit the board',
   panHint:'The board is larger than the screen — drag it around',
@@ -202,14 +203,15 @@ en:{
   resetDone:'Statistics reset',
   done:'Done',
   grpKinput:'Input', grpKmode:'Modes', grpKmove:'Move', grpKgame:'Game',
-  k_digit:'digit into cell', k_note:'note into cell', k_hyp1:'draft into cell', k_notes:'notes mode', k_spaceK:'Space',
-  k_hypm:'draft mode', k_erase:'clear the cell', k_undo:'undo a move', k_redo:'redo a move', k_hint:'hint',
+  k_digit:'digit into cell', k_note:'mark in the corners', k_spaceK:'Space', k_erase:'clear the cell', k_undo:'undo a move', k_redo:'redo a move', k_hint:'hint',
   k_auto:'auto-notes', k_pause:'pause', k_nav:'move around the board', k_menu:'back to menu', k_pick:'pad at the cell',
-  gen:'Generating board…', digitTab:'Digit', noteTab:'Note', hypTab:'Draft', eraseP:'Erase',
+  gen:'Generating board…', digitTab:'Digit', noteTab:'Corners', eraseP:'Erase',
   genCancel:'Esc or a tap cancels', genStopped:'Generation cancelled',
   genSpent:'{n} s', dealWait:'up to {n} s',
-  mid:'Centre', midTab:'Centre mark',
-  k_mid:'centre mark in a cell', k_midm:'centre mark mode',
+  mid:'Centre', midTab:'Centre mark', digitMode:'Normal', digitTabQ:'Normal',
+  k_mid:'mark in the centre', k_modeDigit:'normal', k_modeNote:'corner marks',
+  k_modeMid:'centre marks', k_modeNext:'next mode',
+  k_multiAdd:'add a cell to the picked ones', k_click:'click',
   k_multi:'pick a run of cells', k_multiG:'drag across the board',
   multiHint:'Drag across cells and a digit lands as a mark in every one of them',
   gameDropped:'More than ten games: the oldest one ({m}) was dropped',
@@ -220,8 +222,11 @@ en:{
 },};
 
 function t(k){ const d=I18N[SES.settings.lang]||I18N.en; return d[k] || I18N.en[k] || I18N.ru[k] || k }
+/* the modifier key is named after the keyboard in front of the player */
+const MOD_KEY=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'')? '\u2318' : 'Ctrl';
 function applyLang(){
   document.documentElement.lang=SES.settings.lang;
+  document.querySelectorAll('kbd.kmod').forEach(el=>{ el.textContent=MOD_KEY });
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n) });
   document.querySelectorAll('[data-i18n-label]').forEach(el=>{
     el.setAttribute('aria-label',t(el.dataset.i18nLabel)) });

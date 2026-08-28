@@ -154,7 +154,7 @@ body.board-zoom .board-wrap{max-width:100%}
 .numpad.two-row .num{aspect-ratio:auto; height:46px}
 body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 .numpad.mode-note .num:hover{color:var(--accent); border-color:var(--accent)}
-.numpad.mode-hyp .num:hover{color:var(--accent2); border-color:var(--accent2)}
+.numpad.mode-mid .num:hover{color:var(--accent2); border-color:var(--accent2)}
 
 #pickHint{position:static; width:auto; margin:0 auto 7px; padding:0;
   text-align:center; font-size:12px; line-height:1.4; border:0; color:var(--muted)}

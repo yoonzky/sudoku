@@ -231,7 +231,7 @@ $('restartBtn').addEventListener('click',async()=>{
   g.values=g.solution.map((v,i)=>g.given[i]? v : 0);
   g.notes=Array.from({length:n},()=>[]);
   g.mid=Array.from({length:n},()=>[]);
-  g.hyp=new Array(n).fill(0); g.endErr=[]; g.wasFull=false;
+  g.endErr=[]; g.wasFull=false;
   g.time=0; g.mistakes=0; g.hints=0; g.done=false; g.noLimit=false; g.usedAssist=false;
   undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0;
   setPaused(false); renderBoard(); startTimer(); persistCache();
@@ -241,8 +241,9 @@ $('redoBtn').addEventListener('click',redo);
 $('eraseBtn').addEventListener('click',eraseCell);
 $('hintBtn').addEventListener('click',hint);
 $('autoNotesBtn').addEventListener('click',autoNotes);
+$('digitBtn').addEventListener('click',()=>setMode('digit'));
 $('notesBtn').addEventListener('click',()=>setMode('note'));
-$('hypBtn').addEventListener('click',()=>setMode('hyp'));
+$('midBtn').addEventListener('click',()=>setMode('mid'));
 $('winHome').addEventListener('click',goHome);
 $('winAgain').addEventListener('click',()=>newGame(lastRequest.mode,lastRequest.diff));
 $('loseNew').addEventListener('click',()=>{ $('loseModal').classList.add('hidden');
@@ -322,7 +323,7 @@ document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey){
     const cm=code.match(/^(Digit|Numpad)([1-9])$/);
     if(cm && SPEC.kind!=='num' && SPEC.kind!=='tokki'){
-      e.preventDefault(); inputDigit(+cm[2],false,false,true); return;
+      e.preventDefault(); inputDigit(+cm[2],false,true); return;
     }
   }
   if(e.ctrlKey||e.metaKey) return;
@@ -330,20 +331,18 @@ document.addEventListener('keydown',e=>{
   if(dm){
     const d=+dm[2];
     if(SPEC.kind==='num'){ e.preventDefault(); inputDigit(d); return }
-    if(d>=1){ e.preventDefault(); inputDigit(d,e.shiftKey,e.altKey); return }
+    if(d>=1){ e.preventDefault(); inputDigit(d,e.shiftKey); return }
   }
   if(SPEC.maxD>9 && LETTER_DIGIT[code] && LETTER_DIGIT[code]<=SPEC.maxD){
-    e.preventDefault(); inputDigit(LETTER_DIGIT[code],e.shiftKey,e.altKey); return;
+    e.preventDefault(); inputDigit(LETTER_DIGIT[code],e.shiftKey); return;
   }
   if(e.altKey) return;
   switch(code){
     case 'Backspace': case 'Delete': case 'Digit0': case 'Numpad0': eraseCell(); break;
-    case 'KeyN': setMode('note'); break;
-    case 'Space': e.preventDefault(); setMode('note'); break;
+    case 'KeyZ': setMode('digit'); break;
+    case 'KeyX': setMode('note'); break;
     case 'KeyC': setMode('mid'); break;
-    case 'KeyD': setMode('hyp'); break;
-    case 'KeyZ': undo(); break;
-    case 'KeyY': redo(); break;
+    case 'Space': e.preventDefault(); cycleMode(); break;
     case 'KeyH': if(SES.settings.showHint) hint(); break;
     case 'KeyA': if(SES.settings.showAuto&&SPEC.maxD<=9) autoNotes(); break;
     case 'KeyR': openRules(); break;

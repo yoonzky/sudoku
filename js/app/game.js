@@ -98,7 +98,7 @@ function newGame(mode,diff){
     SES.games.push({
       id:uid(), mode:res.mode, diff, ex:res.ex,
       solution:res.sol, given:res.puz.map(v=>!!v),
-      values:res.puz.slice(), hyp:new Array(n).fill(0),
+      values:res.puz.slice(),
       notes:Array.from({length:n},()=>[]), mid:Array.from({length:n},()=>[]),
       time:0, mistakes:0, hints:0, done:false, paused:false, noLimit:false,
       instant: sp.kind==='num'? false : SES.settings.instant,
@@ -125,12 +125,12 @@ function openGame(idx){
 
 function snapshot(){ const g=cur();
   return {values:g.values.slice(), notes:g.notes.map(n=>n.slice()), mid:g.mid.map(n=>n.slice()),
-          hyp:g.hyp.slice(), endErr:(g.endErr||[]).slice()} }
+          endErr:(g.endErr||[]).slice()} }
 function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>300) undoStack.shift(); redoStack.length=0 }
 function restore(s){ const g=cur();
   g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice());
   g.mid=(s.mid||g.mid).map(n=>n.slice());
-  g.hyp=s.hyp.slice(); g.endErr=s.endErr.slice() }
+  g.endErr=s.endErr.slice() }
 
 /* the faces come out of a bag: each one is seated once before any comes round
    again, and an emptied bag is shuffled anew */
@@ -168,7 +168,7 @@ function numChain(j,v){
   const g=cur();
   if(!g||g.done||g.paused||g.given[j]||v>SPEC.maxD) return false;
   pushUndo();
-  g.values[j]=v; g.notes[j]=[]; g.hyp[j]=0;
+  g.values[j]=v; g.notes[j]=[];
   lastPlaced=j; sel=j;
   afterMove(true);
   return true;
@@ -269,7 +269,7 @@ function inputNumber(d){
   let nv = (chain && prev>0 && prev*10+d<=SPEC.maxD)? prev*10+d : d;
   if(nv<1||nv>SPEC.maxD) return;
   pushUndo();
-  g.values[sel]=nv; g.hyp[sel]=0; g.notes[sel]=[]; lastPlaced=sel; lastNumTs=Date.now();
+  g.values[sel]=nv; g.notes[sel]=[]; lastPlaced=sel; lastNumTs=Date.now();
   dismissPickHint();
   if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
   const more=nv*10<=SPEC.maxD;
@@ -277,12 +277,37 @@ function inputNumber(d){
   if(!more && nv===g.solution[sel]){ sel=-1; hlDigit=0 }
   afterMove(true);
 }
-/* a digit typed over a run of picked cells always lands as a pencil mark */
+/* every mode works over a run of picked cells, the plain digit included: what
+   one cell would get, all of them get */
 function inputMulti(v,mode){
   const g=cur(); if(!g||g.done||g.paused) return;
   if(v<1||v>SPEC.maxD) return;
+  if(mode==='digit'){
+    const list=[...msel].filter(i=>!g.given[i]);
+    if(!list.length) return;
+    const drop=list.every(i=>g.values[i]===v);
+    pushUndo();
+    let wrong=0;
+    for(const i of list){
+      if(drop){ g.values[i]=0; continue }
+      if(g.values[i]===v) continue;
+      g.values[i]=v; g.notes[i]=[]; g.mid[i]=[];
+      if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
+      if(v!==g.solution[i]) wrong++;
+      else for(const p of SPEC.peers[i]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
+    }
+    /* one press is one move, however many cells it covered: a run of five
+       would otherwise spend the whole limit at once */
+    if(wrong && g.instant){
+      g.mistakes++;
+      if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
+    }
+    dismissPickHint();
+    afterMove(true);
+    return;
+  }
   const bank = mode==='mid'? 'mid' : 'notes';
-  const list=[...msel].filter(i=>!g.given[i]&&!g.values[i]&&!g.hyp[i]);
+  const list=[...msel].filter(i=>!g.given[i]&&!g.values[i]);
   if(!list.length) return;
   const drop=list.every(i=>g[bank][i].includes(v));
   pushUndo();
@@ -294,28 +319,23 @@ function inputMulti(v,mode){
   dismissPickHint();
   afterMove(true);
 }
-function inputDigit(v,forceNote,forceHyp,forceMid){
+function inputDigit(v,forceNote,forceMid){
   const g=cur(); if(!g||g.done||g.paused) return;
   if(SPEC.kind==='tokki') return;
   if(SPEC.kind==='num') return inputNumber(v);
-  const mode = forceNote? 'note' : forceHyp? 'hyp' : forceMid? 'mid' : inputMode;
-  if(msel.size>1) return inputMulti(v, mode==='digit'? 'note' : mode);
+  const mode = forceNote? 'note' : forceMid? 'mid' : inputMode;
+  if(msel.size>1) return inputMulti(v, mode);
   if(sel<0||g.given[sel]) return;
   if(v<1||v>SPEC.maxD) return;
-  if((mode==='note'||mode==='mid') && (g.values[sel]||g.hyp[sel])) return;
-  if(mode==='hyp' && g.values[sel]) return;
+  if((mode==='note'||mode==='mid') && g.values[sel]) return;
   pushUndo();
   if(mode==='note'||mode==='mid'){
     const nn = mode==='mid'? g.mid[sel] : g.notes[sel], k=nn.indexOf(v);
     if(k>=0) nn.splice(k,1); else { nn.push(v); nn.sort((a,b)=>a-b) }
-  } else if(mode==='hyp'){
-    g.hyp[sel]=g.hyp[sel]===v? 0 : v;
-    lastPlaced=sel;
-    if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
   } else {
     if(g.values[sel]===v){ g.values[sel]=0 }
     else{
-      g.values[sel]=v; g.notes[sel]=[]; g.mid[sel]=[]; g.hyp[sel]=0; lastPlaced=sel;
+      g.values[sel]=v; g.notes[sel]=[]; g.mid[sel]=[]; lastPlaced=sel;
       if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
       if(v!==g.solution[sel]){
         if(g.instant){
@@ -335,20 +355,19 @@ function eraseCell(){
   const g=cur(); if(!g||g.done||g.paused) return;
   if(msel.size>1){
     const list=[...msel].filter(i=>!g.given[i]);
-    if(!list.some(i=>g.values[i]||g.hyp[i]||g.notes[i].length||g.mid[i].length)) return;
+    if(!list.some(i=>g.values[i]||g.notes[i].length||g.mid[i].length)) return;
     pushUndo();
     for(const i of list){
-      g.values[i]=0; g.hyp[i]=0; g.notes[i]=[]; g.mid[i]=[];
+      g.values[i]=0; g.notes[i]=[]; g.mid[i]=[];
       if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
     }
     afterMove();
     return;
   }
   if(sel<0||g.given[sel]) return;
-  if(!g.values[sel]&&!g.hyp[sel]&&!g.notes[sel].length&&!g.mid[sel].length) return;
+  if(!g.values[sel]&&!g.notes[sel].length&&!g.mid[sel].length) return;
   pushUndo();
-  if(g.hyp[sel]&&!g.values[sel]) g.hyp[sel]=0;
-  else { g.values[sel]=0; g.hyp[sel]=0; g.notes[sel]=[]; g.mid[sel]=[] }
+  g.values[sel]=0; g.notes[sel]=[]; g.mid[sel]=[];
   if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
   afterMove();
 }
@@ -373,7 +392,7 @@ function hint(){
     i=empt[Math.floor(Math.random()*empt.length)];
   }
   pushUndo();
-  g.values[i]=g.solution[i]; g.notes[i]=[]; g.mid[i]=[]; g.hyp[i]=0; g.hints++; g.usedAssist=true; sel=i; lastPlaced=i;
+  g.values[i]=g.solution[i]; g.notes[i]=[]; g.mid[i]=[]; g.hints++; g.usedAssist=true; sel=i; lastPlaced=i;
   scrollSelIntoView();
   if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
   for(const p of SPEC.peers[i]){ const k=g.notes[p].indexOf(g.solution[i]); if(k>=0) g.notes[p].splice(k,1) }
@@ -382,7 +401,7 @@ function hint(){
 function autoNotes(){
   const g=cur(); if(!g||g.done||g.paused||SPEC.kind==='num'||SPEC.kind==='tokki') return;
   pushUndo();
-  for(let i=0;i<SPEC.cells.length;i++) if(!g.values[i]&&!g.hyp[i]){
+  for(let i=0;i<SPEC.cells.length;i++) if(!g.values[i]){
     const m=candMask(SPEC,g.values,i), nn=[];
     for(let v=1;v<=SPEC.maxD;v++) if(m&(1<<v)) nn.push(v);
     g.notes[i]=nn;
@@ -524,24 +543,40 @@ function setPaused(p){
   $('pauseBtn').querySelector('.tbtn-lbl').textContent=pl;
   $('pauseBtn').title=pl; $('pauseBtn').setAttribute('aria-label',pl);
 }
+/* three ways to fill a cell and nothing else: the digit itself, marks in the
+   corners, marks in the middle. Each one is shown on the pad, on the keypad and
+   in the pad at the cell, so the mode is never a secret */
+const MODES_IN=['digit','note','mid'];
+function modeAllowed(m){
+  if(!SPEC) return m==='digit';
+  if(SPEC.kind==='tokki') return false;
+  if(SPEC.kind==='num') return m==='digit'||m==='note';
+  return MODES_IN.indexOf(m)>=0;
+}
 function syncModeButtons(){
+  $('digitBtn').classList.toggle('on', inputMode==='digit');
   $('notesBtn').classList.toggle('on', inputMode==='note');
-  $('hypBtn').classList.toggle('on2', inputMode==='hyp');
+  $('midBtn').classList.toggle('on2', inputMode==='mid');
   syncPickerMode();
 }
 function setMode(m){
-  if(SPEC && SPEC.kind==='tokki') return;
-  if(SPEC && SPEC.kind==='num' && m!=='note') return;
-  if(m==='mid' && SPEC && SPEC.kind==='num') return;
-  inputMode = inputMode===m? 'digit' : m;
+  if(!modeAllowed(m)) return;
+  inputMode=m;
   syncModeButtons();
   if(cur() && !$('game').classList.contains('hidden')) renderBoard();
+}
+function cycleMode(){
+  const list=MODES_IN.filter(modeAllowed);
+  if(!list.length) return;
+  const k=list.indexOf(inputMode);
+  setMode(list[(k+1)%list.length]);
 }
 function applyControls(){
   const num=SPEC && SPEC.kind==='num', tokki=SPEC && SPEC.kind==='tokki';
   $('hintBtn').classList.toggle('hidden', !SES.settings.showHint);
   $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || tokki);
-  $('hypBtn').classList.toggle('hidden', num || tokki);
+  $('digitBtn').classList.toggle('hidden', tokki);
+  $('midBtn').classList.toggle('hidden', num || tokki);
   $('notesBtn').classList.toggle('hidden', tokki);
   /* a third tap clears the cell, so the erase key has nothing left to do */
   $('eraseBtn').classList.toggle('hidden', tokki);

@@ -5,7 +5,7 @@ const cells=[];
 const EMPTY=[];
 /* what the cell already shows, so a move touches one cell */
 const cellKey=[];
-const merged=(g,i)=>g.values[i]||g.hyp[i];
+const merged=(g,i)=>g.values[i];
 
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
@@ -60,7 +60,6 @@ function cellLabel(g,sp,i){
   if(sp.kind==='tokki')
     val = v===TOKKI_BUN? t('a11yBun') : v===TOKKI_MARK? t('a11yMark') : t('a11yEmpty');
   else if(v) val = v+(g.given[i]? ', '+t('a11yGiven') : '');
-  else if(g.hyp[i]) val = String(g.hyp[i]);
   else if(g.notes[i].length) val = t('a11yNote').replace('{v}',g.notes[i].join(' '));
   else val = t('a11yEmpty');
   return pos+', '+val;
@@ -363,16 +362,15 @@ function renderBoard(){
   const peersOn=SES.settings.highlightPeers!==false && !isTokki;
   const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
-    const d=cells[i], v=g.values[i], hv=g.hyp[i];
+    const d=cells[i], v=g.values[i];
     const mid=g.mid? g.mid[i] : EMPTY;
-    d.className=d.className.replace(/ (msel|mt|mr|mb|ml|sel|hl|same|err|given|hypv|d2)/g,'');
+    d.className=d.className.replace(/ (msel|mt|mr|mb|ml|sel|hl|same|err|given|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
-    const key = isTokki? 'm'+v : v? 'v'+v : hv? 'h'+hv
+    const key = isTokki? 'm'+v : v? 'v'+v
       : (g.notes[i].length||mid.length)? 'n'+g.notes[i].join(',')+'/'+mid.join(',')+'|'+(activeVal||0) : '';
     if(cellKey[i]!==key){
       if(isTokki) d.innerHTML = v===TOKKI_BUN? tokkiFace(g,i) : v===TOKKI_MARK? MARK_SVG : '';
       else if(v) d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
-      else if(hv) d.innerHTML='<i class="v">'+cellNum(hv)+'</i>';
       else if(g.notes[i].length||mid.length){
         if(isNum){
           d.innerHTML='<div class="notes wide">'+g.notes[i].slice(0,6).map(v=>`<span>${v}</span>`).join('')+'</div>';
@@ -403,9 +401,6 @@ function renderBoard(){
     } else if(v){
       if(v>9) d.classList.add('d2');
       if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');
-    } else if(hv){
-      d.classList.add('hypv');
-      if(hv>9) d.classList.add('d2');
     }
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
     /* every picked cell is ringed on all four sides: a rim around the whole run
@@ -419,7 +414,7 @@ function renderBoard(){
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
     }
     if(activeVal && !run && i!==sel){
-      const hasNote=!v&&!hv&&!isNum&&(g.notes[i].includes(activeVal)||mid.includes(activeVal));
+      const hasNote=!v&&!isNum&&(g.notes[i].includes(activeVal)||mid.includes(activeVal));
       if(merged(g,i)===activeVal||hasNote) d.classList.add('same');
     }
   }
@@ -438,7 +433,7 @@ function renderBoard(){
     btn.classList.toggle('armed', v>0 && SES.settings.digitFirst && armed===v);
   });
   const np=$('numpad');
-  if(np){ np.classList.toggle('mode-note', inputMode==='note'); np.classList.toggle('mode-hyp', inputMode==='hyp') }
+  if(np){ np.classList.toggle('mode-note', inputMode==='note'); np.classList.toggle('mode-mid', inputMode==='mid') }
   placeSelBox(g,sp);
   $('gMistWrap').style.display=g.instant? '' : 'none';
   /* three marks instead of a fraction: before the first mistake the figure said
@@ -455,7 +450,6 @@ function renderBoard(){
   const gtag=(I18N[SES.settings.lang]||{})['tag_'+g.mode] || I18N.en['tag_'+g.mode] || '';
   $('gameTag').textContent=gtag;
   $('gameTag').classList.toggle('hidden', !gtag);
-  $('board').classList.toggle('hyp-on', inputMode==='hyp');
   $('undoBtn').disabled=!undoStack.length;
   $('redoBtn').disabled=!redoStack.length;
 }
@@ -474,7 +468,7 @@ function placeSelBox(g,sp){
     ? g.values[sel]===TOKKI_BUN && g.solution[sel]!==TOKKI_BUN
     : g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
   if(g.instant && wrong) sb.classList.add('err');
-  else if(inputMode==='hyp' || g.hyp[sel]) sb.classList.add('hyp');
+  else if(inputMode==='mid') sb.classList.add('mid');
 }
 
 const ZOOM_CELL=38;

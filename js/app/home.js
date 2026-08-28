@@ -35,7 +35,7 @@ function renderContinue(){
   /* the newest game sits at the head of the strip */
   list.innerHTML=SES.games.map((g,idx)=>[g,idx]).reverse().map(([g,idx])=>{
     const n=g.solution.length;
-    const filled=g.values.filter(v=>v).length+g.hyp.filter(v=>v).length;
+    const filled=g.values.filter(v=>v).length;
     const on=picking&&contSel.has(g.id);
     return `<button class="cont-card${on?' on':''}" data-idx="${idx}" data-id="${g.id}">
       <b>${t('m_'+g.mode)}</b><span>${t('d_'+g.diff)} · ${filled}/${n}</span>
