@@ -8,7 +8,7 @@ const SYS_LANG=(()=>{ try{
 
 const DEF_SETTINGS={theme:'light', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true,
   showHint:false, showAuto:false, highlightSame:true, highlightPeers:true, showCounts:true, digitFirst:false,
-  mode:'meow', pool:null};
+  mode:'tokki', pool:null};
 
 let LOG={games:[], updated:0};
 let SES={settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0};
@@ -52,7 +52,15 @@ function loadCache(){
   for(const g of SES.games) if(!Array.isArray(g.mid)) g.mid=Array.from({length:g.solution.length},()=>[]);
   for(const g of LOG.games) if(!g.mode) g.mode='classic';
   for(const g of pending) if(!g.mode) g.mode='classic';
+  /* tokkidoku answered to meow while it was still a cat: saved games, the log
+     and the settings all keep the old id */
+  for(const list of [SES.games,LOG.games,pending])
+    for(const g of list) if(g.mode==='meow') g.mode='tokki';
+  if(SES.settings.mode==='meow') SES.settings.mode='tokki';
+  try{ if(localStorage.getItem('sudoku-meowHint')){
+    localStorage.setItem('sudoku-tokkiHint','1'); localStorage.removeItem('sudoku-meowHint') } }catch(e){}
   if(SES.settings.pool && !Array.isArray(SES.settings.pool)) SES.settings.pool=null;
+  if(SES.settings.pool) SES.settings.pool=SES.settings.pool.map(m=>m==='meow'? 'tokki' : m);
   if(!MODE_IDS.includes(SES.settings.mode) && SES.settings.mode!=='random') SES.settings.mode='classic';
 }
 function saveLog(){

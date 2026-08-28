@@ -141,7 +141,7 @@ function refreshPickerCounts(){
   });
 }
 function openPicker(i){
-  if(!pickerAllowed()||!SPEC||!SES.settings.dblPick||SPEC.kind==='meow') return;
+  if(!pickerAllowed()||!SPEC||!SES.settings.dblPick||SPEC.kind==='tokki') return;
   dismissPickHint();
   const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
   sel=i; renderBoard();
@@ -194,14 +194,14 @@ function placePickHint(){
   el.style.top=Math.round(b.top+b.height/2-el.offsetHeight/2)+'px';
 }
 const hintKey=()=> SPEC&&SPEC.kind==='num'? 'sudoku-numHint'
-  : SPEC&&SPEC.kind==='meow'? 'sudoku-meowHint' : 'sudoku-pickHint';
+  : SPEC&&SPEC.kind==='tokki'? 'sudoku-tokkiHint' : 'sudoku-pickHint';
 function updatePickHint(){
   const el=$('pickHint'); if(!el||!SPEC) return;
   let seen=false; try{ seen=!!localStorage.getItem(hintKey()) }catch(e){}
-  const num=SPEC.kind==='num', meow=SPEC.kind==='meow';
-  el.textContent = meow? (COARSE? t('meowHintTouch') : t('meowHint'))
+  const num=SPEC.kind==='num', tokki=SPEC.kind==='tokki';
+  el.textContent = tokki? (COARSE? t('tokkiHintTouch') : t('tokkiHint'))
     : num? (COARSE? t('numHintTouch') : t('numHint')) : t('pickHint');
-  el.classList.toggle('hidden', seen || (!num && !meow && (!SES.settings.dblPick || !pickerAllowed())));
+  el.classList.toggle('hidden', seen || (!num && !tokki && (!SES.settings.dblPick || !pickerAllowed())));
   placePickHint();
 }
 function dismissPickHint(){

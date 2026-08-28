@@ -1,12 +1,12 @@
 'use strict';
 
-const MEOW_N={easy:7,medium:8,hard:9,expert:10};
-const MEOW_CAT=1, MEOW_MARK=2;
+const TOKKI_N={easy:7,medium:8,hard:9,expert:10};
+const TOKKI_BUN=1, TOKKI_MARK=2;
 
-function meowBuild(ex){
+function tokkiBuild(ex){
   const n=ex.n||8, reg=ex.reg;
-  const sp=newSpec('meow');
-  sp.kind='meow';
+  const sp=newSpec('tokki');
+  sp.kind='tokki';
   for(let y=0;y<n;y++) for(let x=0;x<n;x++){
     const i=addCell(sp,x,y,1);
     sp.region[i]=reg[y*n+x];
@@ -38,9 +38,9 @@ function meowBuild(ex){
 }
 
 /* plays the deal the way a person would: singles, then lines locked to a region */
-function meowLogic(n,reg){
+function tokkiLogic(n,reg){
   const N=n*n;
-  const cand=new Array(N).fill(true), cat=new Array(N).fill(false);
+  const cand=new Array(N).fill(true), bun=new Array(N).fill(false);
   const byReg={};
   for(let i=0;i<N;i++) (byReg[reg[i]]=byReg[reg[i]]||[]).push(i);
   const groups=[];
@@ -49,7 +49,7 @@ function meowLogic(n,reg){
   for(const k in byReg) groups.push({kind:'z',id:+k,cells:byReg[k]});
   let placed=0;
   const place=i=>{
-    cat[i]=true; placed++;
+    bun[i]=true; placed++;
     const r=(i/n)|0, c=i%n;
     for(let k=0;k<n;k++){ cand[r*n+k]=false; cand[k*n+c]=false }
     for(const j of byReg[reg[i]]) cand[j]=false;
@@ -62,14 +62,14 @@ function meowLogic(n,reg){
   while(placed<n && ++guard<N*8){
     let moved=false;
     for(const g of groups){
-      if(g.cells.some(i=>cat[i])) continue;
+      if(g.cells.some(i=>bun[i])) continue;
       const open=g.cells.filter(i=>cand[i]);
       if(!open.length) return false;
       if(open.length===1){ place(open[0]); moved=true }
     }
     if(moved) continue;
     for(const g of groups){
-      if(g.cells.some(i=>cat[i])) continue;
+      if(g.cells.some(i=>bun[i])) continue;
       const open=g.cells.filter(i=>cand[i]);
       if(!open.length) return false;
       if(g.kind==='z'){
@@ -92,7 +92,7 @@ function meowLogic(n,reg){
       }
     }
     if(moved) continue;
-    const free=groups.filter(g=>!g.cells.some(i=>cat[i]));
+    const free=groups.filter(g=>!g.cells.some(i=>bun[i]));
     const zs=free.filter(g=>g.kind==='z');
     for(const key of ['r','c']){
       const line=i=> key==='r'? ((i/n)|0) : i%n;
@@ -117,7 +117,7 @@ function meowLogic(n,reg){
   return placed===n;
 }
 
-function meowCats(n){
+function tokkiSeating(n){
   for(let t=0;t<600;t++){
     const cols=SHUF([...Array(n).keys()]);
     let ok=true;
@@ -127,7 +127,7 @@ function meowCats(n){
   return null;
 }
 
-function meowRegions(n,cols){
+function tokkiRegions(n,cols){
   const reg=new Array(n*n).fill(-1);
   cols.forEach((c,r)=>{ reg[r*n+c]=r });
   let left=n*n-n, guard=0;
@@ -166,7 +166,7 @@ function meowRegions(n,cols){
 
 /* rows as bitmasks: take the row with the fewest spots left, and drop the
    branch the moment a row or a region has nowhere to sit */
-function meowSolutions(n,reg,limit){
+function tokkiSolutions(n,reg,limit){
   const full=(1<<n)-1, at=new Array(n).fill(-1), out=[];
   const rec=(colMask,zoneMask,rowMask)=>{
     if(out.length>=limit) return;
@@ -203,7 +203,7 @@ function meowSolutions(n,reg,limit){
   rec(0,0,0);
   return out;
 }
-function meowLinked(cells,n){
+function tokkiLinked(cells,n){
   if(!cells.length) return false;
   const set=new Set(cells), seen=new Set([cells[0]]), stack=[cells[0]];
   while(stack.length){
@@ -218,21 +218,21 @@ function meowLinked(cells,n){
   return seen.size===cells.length;
 }
 /* moves one cell to another region until the spare answers die off */
-function meowCarve(n,cols,reg,stop){
-  const cats=new Set(cols.map((c,r)=>r*n+c));
+function tokkiCarve(n,cols,reg,stop){
+  const seats=new Set(cols.map((c,r)=>r*n+c));
   for(let step=0;step<300;step++){
     if(Date.now()>stop) return false;
-    const sols=meowSolutions(n,reg,2);
+    const sols=tokkiSolutions(n,reg,2);
     if(sols.length<2) return sols.length===1;
     const other=sols.find(s=>s.some((c,r)=>c!==cols[r]));
     if(!other) return false;
     const spot=other.map((c,r)=>r*n+c);
     let cut=false;
     for(const b of SHUF(spot.slice())){
-      if(cats.has(b)) continue;
+      if(seats.has(b)) continue;
       const from=reg[b], rest=[];
       for(let i=0;i<n*n;i++) if(reg[i]===from&&i!==b) rest.push(i);
-      if(!rest.length||!meowLinked(rest,n)) continue;
+      if(!rest.length||!tokkiLinked(rest,n)) continue;
       const x=b%n, y=(b/n)|0, nb=[];
       if(x>0) nb.push(b-1);
       if(x<n-1) nb.push(b+1);
@@ -251,27 +251,27 @@ function meowCarve(n,cols,reg,stop){
   return false;
 }
 
-function meowMake(diff,deadline){
-  const n=MEOW_N[diff]||8;
+function tokkiMake(diff,deadline){
+  const n=TOKKI_N[diff]||8;
   const stop=deadline||(Date.now()+14000);
   let loose=null;
   while(Date.now()<stop){
-    const cols=meowCats(n); if(!cols) continue;
-    const reg=meowRegions(n,cols); if(!reg) continue;
-    if(!meowCarve(n,cols,reg,stop)) continue;
+    const cols=tokkiSeating(n); if(!cols) continue;
+    const reg=tokkiRegions(n,cols); if(!reg) continue;
+    if(!tokkiCarve(n,cols,reg,stop)) continue;
     const sizes=new Array(n).fill(0);
     for(const r of reg) sizes[r]++;
     if(Math.min(...sizes)<2) continue;
-    if(!meowLogic(n,reg)){ if(!loose) loose={cols,reg}; continue }
-    return meowDeal(diff,n,cols,reg,2);
+    if(!tokkiLogic(n,reg)){ if(!loose) loose={cols,reg}; continue }
+    return tokkiDeal(diff,n,cols,reg,2);
   }
   /* the spare deal only yields to search, and the grade says so */
-  return loose? meowDeal(diff,n,loose.cols,loose.reg,5) : null;
+  return loose? tokkiDeal(diff,n,loose.cols,loose.reg,5) : null;
 }
-function meowDeal(diff,n,cols,reg,grade){
+function tokkiDeal(diff,n,cols,reg,grade){
   const sol=new Array(n*n).fill(0);
-  cols.forEach((c,r)=>{ sol[r*n+c]=MEOW_CAT });
+  cols.forEach((c,r)=>{ sol[r*n+c]=TOKKI_BUN });
   const ex={n,reg};
-  return {mode:'meow', diff, ex, sp:meowBuild(ex), sol,
+  return {mode:'tokki', diff, ex, sp:tokkiBuild(ex), sol,
     puz:new Array(n*n).fill(0), grade:grade||2};
 }

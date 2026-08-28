@@ -39,9 +39,9 @@ function tapCell(i){
   const g=cur(); if(!g||g.paused) return;
   closePicker();
   if(msel.size){ msel.clear() }
-  if(SPEC.kind==='meow'){
+  if(SPEC.kind==='tokki'){
     sel=i;
-    if(lastPointerType==='touch') meowTap(i); else meowMark(i);
+    if(lastPointerType==='touch') tokkiTap(i); else tokkiMark(i);
     return;
   }
   if(i!==sel) numFlush();
@@ -56,7 +56,7 @@ $('board').addEventListener('pointerdown',e=>{
   lastPointerType=e.pointerType||'mouse';
   const g=cur(); if(!g||g.paused) return;
   const i=+el.dataset.i;
-  if(SPEC.kind==='meow'){
+  if(SPEC.kind==='tokki'){
     if(e.button===2) return;
     /* a zoomed board scrolls under the finger, so dragging must not leave marks */
     if(!$('boardPan').classList.contains('pan')){
@@ -84,13 +84,13 @@ $('board').addEventListener('pointermove',e=>{
     if(Math.abs(e.clientX-tapX)<TAP_SLOP && Math.abs(e.clientY-tapY)<TAP_SLOP) return;
     if(sweepFrom>=0 && !sweepSeen.size){
       sweepSeen.add(sweepFrom);
-      meowSweep(sweepFrom);
+      tokkiSweep(sweepFrom);
     }
     dragCells(e,j=>{
       if(sweepSeen.has(j)) return;
       sweepSeen.add(j);
       tapIdx=-1;
-      meowSweep(j);
+      tokkiSweep(j);
     });
     return;
   }
@@ -145,7 +145,7 @@ $('board').addEventListener('dblclick',e=>{
 $('board').addEventListener('contextmenu',e=>{
   const el=e.target.closest('.cell'); if(!el) return;
   e.preventDefault();
-  if(SPEC && SPEC.kind==='meow'){ sel=+el.dataset.i; meowSetCat(sel); return }
+  if(SPEC && SPEC.kind==='tokki'){ sel=+el.dataset.i; tokkiSeat(sel); return }
   if(lastPointerType!=='touch') openPicker(+el.dataset.i);
 });
 $('board').addEventListener('animationend',e=>{
@@ -303,17 +303,17 @@ document.addEventListener('keydown',e=>{
   }
   const g=cur(); if(!g) return;
   const code=e.code;
-  if(SPEC && SPEC.kind==='meow' && !e.ctrlKey && !e.metaKey){
+  if(SPEC && SPEC.kind==='tokki' && !e.ctrlKey && !e.metaKey){
     if(code==='Space'||code==='Enter'||code==='NumpadEnter'){
-      e.preventDefault(); if(sel>=0) meowSetCat(sel); return;
+      e.preventDefault(); if(sel>=0) tokkiSeat(sel); return;
     }
-    if(code==='KeyX'||code==='KeyM'){ e.preventDefault(); if(sel>=0) meowMark(sel); return }
+    if(code==='KeyX'||code==='KeyM'){ e.preventDefault(); if(sel>=0) tokkiMark(sel); return }
   }
   if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
   if((e.ctrlKey||e.metaKey)&&code==='KeyY'){ e.preventDefault(); redo(); return }
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey){
     const cm=code.match(/^(Digit|Numpad)([1-9])$/);
-    if(cm && SPEC.kind!=='num' && SPEC.kind!=='meow'){
+    if(cm && SPEC.kind!=='num' && SPEC.kind!=='tokki'){
       e.preventDefault(); inputDigit(+cm[2],false,false,true); return;
     }
   }
@@ -393,7 +393,7 @@ if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);
 
 loadCache();
-pickedMode=SES.settings.mode||'meow';
+pickedMode=SES.settings.mode||'tokki';
 buildSwatches();
 applyTheme(); applyLayout(); applyLang();
 renderHome(); show('home');

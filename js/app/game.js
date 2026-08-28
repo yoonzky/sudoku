@@ -122,19 +122,19 @@ function dealFace(g,i){
   persistCache();
 }
 
-function meowSetCat(i){
+function tokkiSeat(i){
   const g=cur(); if(!g||g.done||g.paused) return;
   dismissPickHint();
   pushUndo();
   const was=g.values[i];
-  g.values[i] = was===MEOW_CAT? 0 : MEOW_CAT;
-  if(g.values[i]===MEOW_CAT) dealFace(g,i);
-  if(g.values[i]===MEOW_CAT && g.instant && g.solution[i]!==MEOW_CAT){
+  g.values[i] = was===TOKKI_BUN? 0 : TOKKI_BUN;
+  if(g.values[i]===TOKKI_BUN) dealFace(g,i);
+  if(g.values[i]===TOKKI_BUN && g.instant && g.solution[i]!==TOKKI_BUN){
     g.mistakes++;
     if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
   }
-  lastPlaced = g.values[i]===MEOW_CAT? i : -1;
-  if(g.values[i]===MEOW_CAT && g.solution[i]===MEOW_CAT) sel=-1;
+  lastPlaced = g.values[i]===TOKKI_BUN? i : -1;
+  if(g.values[i]===TOKKI_BUN && g.solution[i]===TOKKI_BUN) sel=-1;
   afterMove();
 }
 /* numerator: drag from a filled cell and the run keeps counting up */
@@ -148,19 +148,19 @@ function numChain(j,v){
   return true;
 }
 
-function meowMark(i){
+function tokkiMark(i){
   const g=cur(); if(!g||g.done||g.paused) return;
   dismissPickHint();
   pushUndo();
-  g.values[i] = g.values[i]===MEOW_MARK? 0 : MEOW_MARK;
+  g.values[i] = g.values[i]===TOKKI_MARK? 0 : TOKKI_MARK;
   lastPlaced=-1;
   afterMove();
 }
-function meowSweep(i){
+function tokkiSweep(i){
   const g=cur(); if(!g||g.done||g.paused||g.values[i]!==0) return;
   dismissPickHint();
   pushUndo();
-  g.values[i]=MEOW_MARK;
+  g.values[i]=TOKKI_MARK;
   lastPlaced=-1;
   afterMove();
 }
@@ -177,23 +177,23 @@ function pinBoard(change){
   document.body.style.setProperty('--won-top',Math.max(0,Math.round(now+before-after))+'px');
 }
 
-function meowClash(g,sp,i){
-  if(g.values[i]!==MEOW_CAT) return false;
-  for(const j of sp.peers[i]) if(g.values[j]===MEOW_CAT) return true;
+function tokkiClash(g,sp,i){
+  if(g.values[i]!==TOKKI_BUN) return false;
+  for(const j of sp.peers[i]) if(g.values[j]===TOKKI_BUN) return true;
   return false;
 }
-function meowTap(i){
+function tokkiTap(i){
   const g=cur(); if(!g||g.done||g.paused) return;
   dismissPickHint();
   pushUndo();
   const was=g.values[i];
-  g.values[i] = was===0? MEOW_MARK : was===MEOW_MARK? MEOW_CAT : 0;
-  if(g.values[i]===MEOW_CAT && g.instant && g.solution[i]!==MEOW_CAT){
+  g.values[i] = was===0? TOKKI_MARK : was===TOKKI_MARK? TOKKI_BUN : 0;
+  if(g.values[i]===TOKKI_BUN && g.instant && g.solution[i]!==TOKKI_BUN){
     g.mistakes++;
     if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
   }
-  lastPlaced = g.values[i]===MEOW_CAT? i : -1;
-  if(g.values[i]===MEOW_CAT && g.solution[i]===MEOW_CAT){ sel=-1 }
+  lastPlaced = g.values[i]===TOKKI_BUN? i : -1;
+  if(g.values[i]===TOKKI_BUN && g.solution[i]===TOKKI_BUN){ sel=-1 }
   afterMove();
 }
 
@@ -270,7 +270,7 @@ function inputMulti(v,mode){
 }
 function inputDigit(v,forceNote,forceHyp,forceMid){
   const g=cur(); if(!g||g.done||g.paused) return;
-  if(SPEC.kind==='meow') return;
+  if(SPEC.kind==='tokki') return;
   if(SPEC.kind==='num') return inputNumber(v);
   const mode = forceNote? 'note' : forceHyp? 'hyp' : forceMid? 'mid' : inputMode;
   if(msel.size>1) return inputMulti(v, mode==='digit'? 'note' : mode);
@@ -328,14 +328,14 @@ function eraseCell(){
 }
 function hint(){
   const g=cur(); if(!g||g.done||g.paused) return;
-  if(SPEC.kind==='meow'){
+  if(SPEC.kind==='tokki'){
     const left=[];
     for(let k=0;k<g.solution.length;k++)
-      if(g.solution[k]===MEOW_CAT && g.values[k]!==MEOW_CAT) left.push(k);
+      if(g.solution[k]===TOKKI_BUN && g.values[k]!==TOKKI_BUN) left.push(k);
     if(!left.length) return;
     const spot=left[Math.floor(Math.random()*left.length)];
     pushUndo();
-    g.values[spot]=MEOW_CAT; g.hints++; g.usedAssist=true; sel=-1; lastPlaced=spot;
+    g.values[spot]=TOKKI_BUN; g.hints++; g.usedAssist=true; sel=-1; lastPlaced=spot;
     afterMove();
     return;
   }
@@ -354,7 +354,7 @@ function hint(){
   afterMove();
 }
 function autoNotes(){
-  const g=cur(); if(!g||g.done||g.paused||SPEC.kind==='num'||SPEC.kind==='meow') return;
+  const g=cur(); if(!g||g.done||g.paused||SPEC.kind==='num'||SPEC.kind==='tokki') return;
   pushUndo();
   for(let i=0;i<SPEC.cells.length;i++) if(!g.values[i]&&!g.hyp[i]){
     const m=candMask(SPEC,g.values,i), nn=[];
@@ -380,9 +380,9 @@ let lastWin=null, winTimer=null;
 function checkWin(){
   const g=cur(); if(!g) return;
   const n=g.solution.length;
-  if(SPEC && SPEC.kind==='meow'){
+  if(SPEC && SPEC.kind==='tokki'){
     for(let i=0;i<n;i++)
-      if((g.values[i]===MEOW_CAT)!==(g.solution[i]===MEOW_CAT)) return;
+      if((g.values[i]===TOKKI_BUN)!==(g.solution[i]===TOKKI_BUN)) return;
   } else {
     let full=true;
     for(let i=0;i<n;i++) if(!merged(g,i)){ full=false; break }
@@ -504,7 +504,7 @@ function syncModeButtons(){
   syncPickerMode();
 }
 function setMode(m){
-  if(SPEC && SPEC.kind==='meow') return;
+  if(SPEC && SPEC.kind==='tokki') return;
   if(SPEC && SPEC.kind==='num' && m!=='note') return;
   if(m==='mid' && SPEC && SPEC.kind==='num') return;
   inputMode = inputMode===m? 'digit' : m;
@@ -512,13 +512,13 @@ function setMode(m){
   if(cur() && !$('game').classList.contains('hidden')) renderBoard();
 }
 function applyControls(){
-  const num=SPEC && SPEC.kind==='num', meow=SPEC && SPEC.kind==='meow';
+  const num=SPEC && SPEC.kind==='num', tokki=SPEC && SPEC.kind==='tokki';
   $('hintBtn').classList.toggle('hidden', !SES.settings.showHint);
-  $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || meow);
-  $('hypBtn').classList.toggle('hidden', num || meow);
-  $('notesBtn').classList.toggle('hidden', meow);
+  $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || tokki);
+  $('hypBtn').classList.toggle('hidden', num || tokki);
+  $('notesBtn').classList.toggle('hidden', tokki);
   /* a third tap clears the cell, so the erase key has nothing left to do */
-  $('eraseBtn').classList.toggle('hidden', meow);
+  $('eraseBtn').classList.toggle('hidden', tokki);
   /* a row with no visible button goes away, or it leaves a gap behind */
   for(const id of ['ctlModes','ctlActs']){
     const row=$(id); if(!row) continue;

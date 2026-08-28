@@ -1,6 +1,6 @@
 'use strict';
 
-importScripts('core.js','grade.js','modes.js','numerator.js','kakuro.js','meow.js');
+importScripts('core.js','grade.js','modes.js','numerator.js','kakuro.js','tokki.js');
 
 self.onmessage=e=>{
   const d=e.data||{};

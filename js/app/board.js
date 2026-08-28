@@ -38,14 +38,14 @@ const FACE_HEADS=[
   ['hi','H','I',1,'<path d="M3.2 12.6c0-1.2.1-2.3.3-3.2a3.8 3.8 0 1 1 5-5 10 10 0 0 1 7 0 3.8 3.8 0 1 1 5 5c.2.9.3 2 .3 3.2a8.8 9 0 0 1-17.6 0Z"/>'],
   ['dn','D','N',0,'<path d="M3.6 12.6C3.6 11.4 3.7 10.4 3.9 9.5 2.6 10.2 1.6 11.2 2 11.8c.6.8 2.4-2.8 4.2-6a10 10 0 0 1 11.6 0c1.8 3.2 3.6 6.8 4.2 6 .4-.6-.6-1.6-1.9-2.3.2.9.3 1.9.3 3.1a8.4 9 0 0 1-16.8 0Z"/>']
 ];
-const CAT_SVGS=FACE_HEADS.map(f=>'<svg class="cat f-'+f[0]+'" viewBox="0 0 24 24" aria-hidden="true">'+
+const FACE_SVGS=FACE_HEADS.map(f=>'<svg class="face f-'+f[0]+'" viewBox="0 0 24 24" aria-hidden="true">'+
   f[4]+FACE_LEFT[f[1]]+FACE_RIGHT[f[2]]+FACE_MUZZLE+(f[3]? FACE_WHISKERS : '')+'</svg>');
 /* the face is dealt when the bunny is seated and stays with the cell; a game
    saved before the faces existed gets its own on the first draw */
-function catFace(g,i){
+function tokkiFace(g,i){
   if(g && (!g.face || g.face[i]==null)) dealFace(g,i);
   const n=(g&&g.face&&g.face[i]!=null)? g.face[i] : 0;
-  return CAT_SVGS[n%CAT_SVGS.length];
+  return FACE_SVGS[n%FACE_SVGS.length];
 }
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
   '<path d="M12 12c0-2.7 1-4.3 2.9-4.3 1.8 0 3 1.2 3 3 0 1.9-1.6 2.9-4.3 2.9 2.7 0 4.3 1 4.3 2.9 0 1.8-1.2 3-3 3-1.9 0-2.9-1.6-2.9-4.3 0 2.7-1 4.3-2.9 4.3-1.8 0-3-1.2-3-3 0-1.9 1.6-2.9 4.3-2.9-2.7 0-4.3-1-4.3-2.9 0-1.8 1.2-3 3-3 1.9 0 2.9 1.6 2.9 4.3Z"/></svg>';
@@ -64,7 +64,7 @@ function buildBoard(sp){
   b.style.setProperty('--nr',Math.ceil(sp.maxD/nc));
   document.body.classList.toggle('board-wide', sp.W>12);
   document.body.classList.toggle('board-num', sp.kind==='num');
-  document.body.classList.toggle('board-meow', sp.kind==='meow');
+  document.body.classList.toggle('board-tokki', sp.kind==='tokki');
 
   for(const bl of sp.blocks||[]){
     const d=document.createElement('div');
@@ -87,7 +87,7 @@ function buildBoard(sp){
     d.style.gridColumn=c.x+1; d.style.gridRow=c.y+1;
     if(sp.zone[i]===1) d.classList.add('zone');
     if(sp.zone[i]===2) d.classList.add('even');
-    if(sp.kind==='meow') d.classList.add('z'+((sp.region[i]%10)+1));
+    if(sp.kind==='tokki') d.classList.add('z'+((sp.region[i]%10)+1));
     d.dataset.i=i;
     b.appendChild(d); cells.push(d);
   }
@@ -289,7 +289,7 @@ function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
   /* tokkidoku needs no keypad: a tap walks the cell through mark, bunny and empty */
-  if(sp.kind==='meow'){
+  if(sp.kind==='tokki'){
     document.body.classList.remove('pad-two');
     np.classList.add('hidden');
     return;
@@ -324,24 +324,24 @@ function digitTotals(g){
 function renderBoard(){
   const g=cur(); if(!g||!SPEC) return;
   const sp=SPEC, n=sp.cells.length;
-  const isNum=sp.kind==='num', isMeow=sp.kind==='meow';
+  const isNum=sp.kind==='num', isTokki=sp.kind==='tokki';
   /* tokkidoku reads by its own colours, extra tinting only gets in the way */
   const hlSame=SES.settings.highlightSame!==false;
   const selVal=sel>=0? merged(g,sel) : 0;
-  const activeVal=(hlSame && !isNum && !isMeow)? (selVal||hlDigit) : 0;
+  const activeVal=(hlSame && !isNum && !isTokki)? (selVal||hlDigit) : 0;
   const counts={};
   for(let i=0;i<n;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1 }
-  const peersOn=SES.settings.highlightPeers!==false && !isMeow;
+  const peersOn=SES.settings.highlightPeers!==false && !isTokki;
   const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
     const d=cells[i], v=g.values[i], hv=g.hyp[i];
     const mid=g.mid? g.mid[i] : EMPTY;
     d.className=d.className.replace(/ (msel|mt|mr|mb|ml|sel|hl|same|err|given|hypv|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
-    const key = isMeow? 'm'+v : v? 'v'+v : hv? 'h'+hv
+    const key = isTokki? 'm'+v : v? 'v'+v : hv? 'h'+hv
       : (g.notes[i].length||mid.length)? 'n'+g.notes[i].join(',')+'/'+mid.join(',')+'|'+(activeVal||0) : '';
     if(cellKey[i]!==key){
-      if(isMeow) d.innerHTML = v===MEOW_CAT? catFace(g,i) : v===MEOW_MARK? MARK_SVG : '';
+      if(isTokki) d.innerHTML = v===TOKKI_BUN? tokkiFace(g,i) : v===TOKKI_MARK? MARK_SVG : '';
       else if(v) d.innerHTML='<i class="v">'+cellNum(v)+'</i>';
       else if(hv) d.innerHTML='<i class="v">'+cellNum(hv)+'</i>';
       else if(g.notes[i].length||mid.length){
@@ -367,8 +367,8 @@ function renderBoard(){
       } else d.textContent='';
       cellKey[i]=key;
     }
-    if(isMeow){
-      if(v===MEOW_CAT && g.instant && (g.solution[i]!==MEOW_CAT || meowClash(g,sp,i)))
+    if(isTokki){
+      if(v===TOKKI_BUN && g.instant && (g.solution[i]!==TOKKI_BUN || tokkiClash(g,sp,i)))
         d.classList.add('err');
     } else if(v){
       if(v>9) d.classList.add('d2');
@@ -385,7 +385,7 @@ function renderBoard(){
     /* while a run of cells is picked the row and column of the first are left
        alone, or half the run ends up tinted differently from the rest */
     if(sel>=0 && !run){
-      if(i===sel && !isMeow) d.classList.add('sel');
+      if(i===sel && !isTokki) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
     }
     if(activeVal && !run && i!==sel){
@@ -393,7 +393,7 @@ function renderBoard(){
       if(merged(g,i)===activeVal||hasNote) d.classList.add('same');
     }
   }
-  const showCounts=SES.settings.showCounts!==false && !isNum && !isMeow;
+  const showCounts=SES.settings.showCounts!==false && !isNum && !isTokki;
   const tot=digitTotals(g);
   document.querySelectorAll('.num').forEach(btn=>{
     if(btn.dataset.v===undefined) return;
@@ -424,15 +424,15 @@ function renderBoard(){
 function placeSelBox(g,sp){
   const sb=$('selBox'); if(!sb) return;
   /* tokkidoku seats a bunny on the tap itself, so a cell needs no ring around it */
-  if(sel<0 || sp.kind==='meow'){ sb.classList.add('hidden'); return }
+  if(sel<0 || sp.kind==='tokki'){ sb.classList.add('hidden'); return }
   const c=sp.cells[sel];
   sb.style.left=(c.x/sp.W*100)+'%';
   sb.style.top=(c.y/sp.H*100)+'%';
   sb.style.width=(100/sp.W)+'%';
   sb.style.height=(100/sp.H)+'%';
   sb.className='';
-  const wrong = sp.kind==='meow'
-    ? g.values[sel]===MEOW_CAT && g.solution[sel]!==MEOW_CAT
+  const wrong = sp.kind==='tokki'
+    ? g.values[sel]===TOKKI_BUN && g.solution[sel]!==TOKKI_BUN
     : g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
   if(g.instant && wrong) sb.classList.add('err');
   else if(inputMode==='hyp' || g.hyp[sel]) sb.classList.add('hyp');

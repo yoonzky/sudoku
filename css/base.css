@@ -55,7 +55,7 @@
      neighbouring numbers never share a tone */
   --z1:#e4eefb; --z2:#fbe6ee; --z3:#ece5fa; --z4:#dff2e9; --z5:#f8efd9;
   --z6:#d3e2f4; --z7:#f4d8e4; --z8:#ded3f0; --z9:#cfe9dc; --z10:#efe3c4;
-  --cat:#565ead; --mark:#98a2bd;
+  --face:#565ead; --mark:#98a2bd;
   /* the thumbnails paint their lines solid: half transparent ones darken
      wherever two of them cross and the board turns into a mesh */
   --prev-rule:#9c9da1; --prev-zone:#c5c8e3; --prev-cage:#3c4270;
@@ -86,7 +86,7 @@ html[data-theme="dark"]{
   --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;
   --z1:#264361; --z2:#5e3444; --z3:#453c5c; --z4:#1c4938; --z5:#4b4020;
   --z6:#1e3247; --z7:#452833; --z8:#342d43; --z9:#17362a; --z10:#383019;
-  --cat:#a6b4f0; --mark:#5d6987;
+  --face:#a6b4f0; --mark:#5d6987;
   --prev-rule:#585b67; --prev-zone:#52597a; --prev-cage:#9ca9d3;
   --face-nz:#a6b4f0; --face-mj:#7cb8ef; --face-hn:#f292b6;
   --face-hr:#6fd0a0; --face-hi:#b79bf2; --face-dn:#ddb659;

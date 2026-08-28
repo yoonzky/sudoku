@@ -4,7 +4,7 @@
    explain, with the draw next to the classic board it falls back on */
 const MODE_ORDER=['classic','random','x','evenodd','windoku','asterisk','mosaic',
   'r10','r12','double','wing','butterfly','samurai',
-  'killer','dots','suguru','kakuro','numerator','meow'];
+  'killer','dots','suguru','kakuro','numerator','tokki'];
 /* the draw shows a board with a question in it, in the same hand as the previews */
 const RANDOM_PREV='<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'+
   '<rect x=".6" y=".6" width="38.8" height="38.8" fill="var(--panel2)" stroke="var(--prev-rule)" stroke-width="1.1"/>'+
@@ -12,11 +12,11 @@ const RANDOM_PREV='<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="
   '<text x="20" y="28.6" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="22" font-weight="600" fill="var(--accent)">?</text></svg>';
 const LEVEL_N={easy:1,medium:2,hard:3,expert:4};
 const LEVEL_RN={easy:'I',medium:'II',hard:'III',expert:'IV'};
-let pickedMode='meow';
+let pickedMode='tokki';
 let contSel=null;
 
 function renderHome(){
-  if(!MODE_IDS.includes(pickedMode)&&pickedMode!=='random') pickedMode='meow';
+  if(!MODE_IDS.includes(pickedMode)&&pickedMode!=='random') pickedMode='tokki';
   renderContinue(); renderModeList(); renderModePanel(); renderTotals();
 }
 function renderContinue(){

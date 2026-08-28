@@ -169,7 +169,7 @@ body.board-zoom #pauseOverlay{border-radius:4px}
   background:var(--tint,transparent); mix-blend-mode:var(--blend); transition:background .12s}
 
 #board.cages .cell{font-size:calc(50cqw / var(--bw))}
-body.board-meow .cell::before{display:none}
+body.board-tokki .cell::before{display:none}
 
 .cell.z1{background:var(--z1)} .cell.z2{background:var(--z2)} .cell.z3{background:var(--z3)}
 .cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}
@@ -177,18 +177,18 @@ body.board-meow .cell::before{display:none}
 .cell.z10{background:var(--z10)}
 /* size and centre are set outright: an svg is a replaced element, and webkit
    keeps its own size instead of stretching it between inset edges */
-.cell .cat, .cell .mark{position:absolute; left:50%; top:50%; width:74%; height:74%;
+.cell .face, .cell .mark{position:absolute; left:50%; top:50%; width:74%; height:74%;
   transform:translate(-50%,-50%); pointer-events:none}
-.cell .cat{stroke:var(--cat); fill:none; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
-.cell .cat.f-nz{stroke:var(--face-nz)}
-.cell .cat.f-mj{stroke:var(--face-mj)}
-.cell .cat.f-hn{stroke:var(--face-hn)}
-.cell .cat.f-hr{stroke:var(--face-hr)}
-.cell .cat.f-hi{stroke:var(--face-hi)}
-.cell .cat.f-dn{stroke:var(--face-dn)}
-.cell.err .cat{stroke:var(--error)}
+.cell .face{stroke:var(--face); fill:none; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
+.cell .face.f-nz{stroke:var(--face-nz)}
+.cell .face.f-mj{stroke:var(--face-mj)}
+.cell .face.f-hn{stroke:var(--face-hn)}
+.cell .face.f-hr{stroke:var(--face-hr)}
+.cell .face.f-hi{stroke:var(--face-hi)}
+.cell .face.f-dn{stroke:var(--face-dn)}
+.cell.err .face{stroke:var(--error)}
 .cell .mark{width:26%; height:26%; fill:var(--mark); stroke:none}
-.cell.pop .cat{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}
+.cell.pop .face{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}
 @keyframes popMid{from{transform:translate(-50%,-50%) scale(.8); opacity:.25}
   to{transform:translate(-50%,-50%); opacity:1}}
 .cell.zone{background:var(--zone-fill)}
@@ -216,7 +216,7 @@ body.board-meow .cell::before{display:none}
 .clue u{top:8%; right:9%}
 .clue s{bottom:8%; left:9%}
 
-body.board-meow #game{max-width:min(760px,100%)}
+body.board-tokki #game{max-width:min(760px,100%)}
 body.pad-two #game{max-width:min(640px,100%)}
 body.board-wide #game{max-width:min(900px,100%)}
 .numpad.two-row .num{aspect-ratio:1.25}
@@ -301,7 +301,7 @@ body.rail.in-game #game{max-width:none;
   width:min(calc(var(--boardmax,560px) + 258px), 100%);
   display:grid; grid-template-columns:minmax(0,1fr) 232px; gap:0 26px;
   align-items:start}
-body.rail.in-game.board-meow #game{--boardmax:620px}
+body.rail.in-game.board-tokki #game{--boardmax:620px}
 body.rail.in-game.board-wide #game{--boardmax:820px}
 body.rail.in-game.pad-two #game{--boardmax:600px}
 

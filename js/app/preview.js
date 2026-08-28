@@ -17,12 +17,12 @@ function previewSpec(mode){
   try{ return previewSpecRaw(mode) } finally { RNG=prev }
 }
 function previewSpecRaw(mode){
-  if(mode==='meow'){
-    const n=8, cols=meowCats(n);
-    const reg=cols&&meowRegions(n,cols);
+  if(mode==='tokki'){
+    const n=8, cols=tokkiSeating(n);
+    const reg=cols&&tokkiRegions(n,cols);
     if(!reg) return buildSpec('classic',{});
-    const sp=meowBuild({n,reg});
-    sp.demoCats=cols.map((c,r)=>r*n+c);
+    const sp=tokkiBuild({n,reg});
+    sp.demoSeats=cols.map((c,r)=>r*n+c);
     return sp;
   }
   if(mode==='numerator') return numBuild({w:9,h:9});
@@ -53,13 +53,13 @@ function previewSVG(mode){
 
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i];
-    const fill = sp.kind==='meow'? `var(--z${(sp.region[i]%10)+1})`
+    const fill = sp.kind==='tokki'? `var(--z${(sp.region[i]%10)+1})`
       : sp.zone[i]===2? 'var(--even-fill)' : sp.zone[i]===1? 'var(--zone-fill)' : 'var(--panel2)';
     out+=`<rect x="${px(c)}" y="${py(c)}" width="${u}" height="${u}" fill="${fill}"/>`;
   }
-  if(mode==='meow') for(const i of (sp.demoCats||[]).filter((_,k)=>k%3===0)){
+  if(mode==='tokki') for(const i of (sp.demoSeats||[]).filter((_,k)=>k%3===0)){
     const c=sp.cells[i];
-    out+=`<circle cx="${px(c)+u/2}" cy="${py(c)+u/2}" r="${u*0.26}" fill="var(--cat)"/>`;
+    out+=`<circle cx="${px(c)+u/2}" cy="${py(c)+u/2}" r="${u*0.26}" fill="var(--face)"/>`;
   }
   if(mode==='evenodd') for(const i of DEC.evenodd){
     const c=sp.cells[i]; if(!c) continue;

@@ -64,7 +64,7 @@ js/engine/grade.js    grading by technique, level tuning
 js/engine/modes.js    the mode table and puzzle generation
 js/engine/numerator.js  the 1..81 chain and its own solver
 js/engine/kakuro.js   pattern, sums, single solution
-js/engine/meow.js     tokkidoku: bunnies, regions, single solution
+js/engine/tokki.js     tokkidoku: bunnies, regions, single solution
 js/engine/worker.js   generation off the main thread
 js/app/i18n.js        dictionaries, mode names and rules
 js/app/store.js       localStorage: settings, games, record of wins
