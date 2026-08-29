@@ -31,12 +31,12 @@
 .cell.hl{--tint:var(--tint-hl)}
 .cell.same{--tint:var(--tint-same)}
 
-.cell.msel{--tint:var(--tint-same); z-index:5; box-shadow:inset 0 0 0 1.5px var(--accent)}
-.cell.sel{--tint:var(--tint-sel); z-index:4}
+.cell.msel{--tint:var(--tint-same); box-shadow:inset 0 0 0 1.5px var(--accent)}
+.cell.sel{--tint:var(--tint-sel)}
 body.mode-note .cell.sel{--tint:var(--tint-sel2)}
 body.mode-mid .cell.sel{--tint:var(--tint-sel3)}
 .cell.err{color:var(--error); --tint:var(--tint-err); font-weight:700}
-.cell.err.sel{--tint:var(--tint-err); z-index:4}
+.cell.err.sel{--tint:var(--tint-err)}
 .cell .notes{position:absolute; inset:1px; display:grid;
   grid-template-columns:repeat(var(--nc),1fr); grid-template-rows:repeat(var(--nr),1fr); pointer-events:none}
 .cell .notes span{font-family:var(--f-num); font-size:calc(23cqw / var(--bw)); line-height:1; color:var(--note); opacity:1; display:flex; align-items:center; justify-content:center; font-weight:600}
@@ -216,10 +216,9 @@ body.board-tokki .cell::before{display:none}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
 
 
-/* the rules fade along with the light on the paper, or they stand out sharpest
-   exactly where the board is darkest */
-.grid{position:absolute; inset:0; pointer-events:none; z-index:3;
-  -webkit-mask-image:var(--rule-fade); mask-image:var(--rule-fade)}
+/* the rules sit over every fill the cells carry - the picked cell included - so
+   the grid reads as one mesh instead of breaking around what is highlighted */
+.grid{position:absolute; inset:0; pointer-events:none; z-index:3}
 .grid svg{position:absolute; inset:0; width:100%; height:100%}
 #selBox{position:absolute; z-index:7; pointer-events:none; border:2px solid var(--accent);
   border-radius:2px}

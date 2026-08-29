@@ -167,7 +167,7 @@ function buildGrid(sp){
   const g=document.createElement('div');
   g.className='grid';
   g.innerHTML=`<svg viewBox="0 0 ${sp.W} ${sp.H}">`+
-    `<path d="${thin}" fill="none" stroke="var(--line)" stroke-width=".022" shape-rendering="crispEdges"/>`+
+    `<path d="${thin}" fill="none" stroke="var(--rule-thin)" stroke-width=".022" shape-rendering="crispEdges"/>`+
     `<path d="${thick}" fill="none" stroke="var(--rule)" stroke-width=".05" stroke-linecap="square"/></svg>`;
   b.appendChild(g);
 }
