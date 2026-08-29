@@ -116,8 +116,16 @@ body.in-game #game{width:100%; max-width:100%; flex:1 1 auto;
 body.in-game .topbar{margin-top:auto}
 body.in-game .board-wrap{width:100%; margin:0}
 body.in-game .numpad{margin-bottom:auto}
-/* tokkidoku has no keypad, so the spare height hangs off the pad instead */
-body.in-game .controls:has(+ .numpad.hidden){margin-bottom:auto}
+/* tokkidoku has no keypad, and split evenly the spare height left a deep
+   band over the strip while the win panel had nowhere to land. A quarter
+   above the board, three quarters under it */
+body.board-tokki.in-game .topbar{margin-top:0}
+body.board-tokki.in-game #game::before{content:''; flex:1 1 0; min-height:0}
+body.board-tokki.in-game #game::after{content:''; flex:3 1 0; min-height:0}
+/* on a win the panel fills that room and the board is pinned where it
+   stood, so the spacers step aside */
+body.board-tokki.won.in-game #game::before,
+body.board-tokki.won.in-game #game::after{display:none}
 /* on a win the board holds the top and the panel takes the room under it.
    The pad goes and its bottom auto-margin with it, so the top one is
    dropped too: alone it dragged the strip and the board to the bottom
