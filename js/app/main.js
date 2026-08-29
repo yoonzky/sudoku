@@ -151,6 +151,13 @@ for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev
   if(runOn){ const added=runAdd; runOn=false; runAdd=false;
     if(!added && msel.size<=1){ msel.clear(); renderBoard() } }
 });
+/* a press with the mouse leaves the focus ring on the button, and the next key
+   lights it up as if it had been picked. The buttons act on click, so they need
+   no focus from a press */
+for(const sel of ['.controls','.numpad','.topbar','header']){
+  const el=document.querySelector(sel);
+  if(el) el.addEventListener('pointerdown',e=>{ if(e.target.closest('button')) e.preventDefault() });
+}
 function showMultiHint(){
   try{
     if(localStorage.getItem('sudoku-multiHint')) return;
@@ -247,7 +254,9 @@ $('backBtn').addEventListener('click',goHome);
 $('rulesBtn').addEventListener('click',openRules);
 $('rulesClose').addEventListener('click',()=>$('rulesModal').classList.add('hidden'));
 $('pauseBtn').addEventListener('click',()=>{ const g=cur(); if(g) setPaused(!g.paused) });
-$('resumeBtn').addEventListener('click',()=>setPaused(false));
+/* the plate over the board is the way back into the game: a button on it would
+   only repeat the one in the strip above */
+$('pauseOverlay').addEventListener('click',()=>setPaused(false));
 async function restartGame(){
   const g=cur(); if(!g) return;
   if(!await askConfirm(t('restartConfirm'))) return;
@@ -260,7 +269,6 @@ async function restartGame(){
   undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0;
   setPaused(false); renderBoard(); startTimer(); persistCache();
 }
-$('restartBtn').addEventListener('click',restartGame);
 $('restartBtnTop').addEventListener('click',restartGame);
 $('undoBtn').addEventListener('click',undo);
 $('redoBtn').addEventListener('click',redo);
@@ -356,6 +364,13 @@ document.addEventListener('keydown',e=>{
   }
   const g=cur(); if(!g) return;
   const code=e.code;
+  /* playing by keyboard: the ring stays with the board, not with whatever
+     button was pressed last */
+  const act=document.activeElement;
+  if(code!=='Tab' && act && act.tagName==='BUTTON' && act.closest('#game')){
+    act.blur();
+    try{ $('board').focus({preventScroll:true}) }catch(err){}
+  }
   if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
   if((e.ctrlKey||e.metaKey)&&code==='KeyY'){ e.preventDefault(); redo(); return }
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey){

@@ -103,9 +103,12 @@ body.won #board{overflow:visible}
 #pauseOverlay{position:absolute; top:0; bottom:0; left:50%; transform:translateX(-50%);
   width:var(--board-px,100%); background:var(--panel); border-radius:0;
   box-shadow:inset 0 0 0 1px var(--frame);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:7}
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:9}
 body.board-zoom #pauseOverlay{border-radius:4px}
-#pauseOverlay p{color:var(--muted); margin:0; font-weight:600}
+#pauseOverlay{cursor:pointer; gap:6px}
+#pauseOverlay p{color:var(--text); margin:0; font-weight:600; font-family:var(--f-disp);
+  font-size:15px; letter-spacing:.14em; text-transform:uppercase}
+#pauseOverlay small{color:var(--muted); font-size:12.5px}
 
 #picker{position:absolute; z-index:8; background:var(--pop); border:1px solid var(--frame);
   border-radius:4px; padding:8px; display:grid; grid-template-columns:repeat(3,46px); gap:5px;

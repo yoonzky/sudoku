@@ -58,14 +58,11 @@ function openGenOverlay(mode,diff){
   bar.className='gen-bar';
   bar.innerHTML='<i></i>';
   const foot=document.createElement('small');
+  foot.textContent=t(COARSE? 'genCancelTouch' : 'genCancel');
   el.append(title,bar,foot);
   el.classList.remove('hidden');
   const fill=bar.firstChild, started=Date.now(), budget=dealBudget(mode,diff);
-  const draw=()=>{
-    const spent=Date.now()-started;
-    fill.style.width=Math.min(97, spent/budget*100)+'%';
-    foot.textContent=t('genSpent').replace('{n}',Math.floor(spent/1000))+' · '+t(COARSE? 'genCancelTouch' : 'genCancel');
-  };
+  const draw=()=>{ fill.style.width=Math.min(97,(Date.now()-started)/budget*100)+'%' };
   draw();
   clearInterval(genTick);
   genTick=setInterval(draw,250);
@@ -551,7 +548,7 @@ function setPaused(p){
   $('pauseOverlay').classList.toggle('hidden',!p);
   if(!$('game').classList.contains('hidden')) renderBoard();
   const pl=t(p?'resume':'pauseT');
-  $('pauseBtn').innerHTML=(p? '<svg viewBox="0 0 24 24"><path d="M9.4 6.4 18 12l-8.6 5.6Z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>' : '<svg viewBox="0 0 24 24"><rect x="8.6" y="6" width="2.6" height="12" rx="1.3" fill="currentColor" stroke="none"/><rect x="12.8" y="6" width="2.6" height="12" rx="1.3" fill="currentColor" stroke="none"/></svg>')
+  $('pauseBtn').innerHTML=(p? '<svg viewBox="0 0 24 24"><path d="M8.8 6.2 18.6 12 8.8 17.8Z" fill="currentColor" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>' : '<svg viewBox="0 0 24 24"><rect x="7.4" y="5.4" width="3.6" height="13.2" rx="1.8" fill="currentColor" stroke="none"/><rect x="13" y="5.4" width="3.6" height="13.2" rx="1.8" fill="currentColor" stroke="none"/></svg>')
     + '<span class="tbtn-lbl"></span>';
   $('pauseBtn').querySelector('.tbtn-lbl').textContent=pl;
   $('pauseBtn').title=pl; $('pauseBtn').setAttribute('aria-label',pl);

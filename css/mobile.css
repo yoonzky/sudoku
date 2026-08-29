@@ -156,7 +156,9 @@ body.board-zoom .board-wrap{max-width:100%}
 .ctl{flex-direction:row; padding:7px 4px; letter-spacing:0; gap:7px; min-height:38px; font-size:11px}
 .ctl svg{width:17px; height:17px}
 .numpad{gap:5px; margin-top:7px}
-.ctl:hover:not(:disabled){color:var(--muted); background:transparent}
+/* a tap leaves hover behind on a touch screen, and it used to wash the chosen
+   mode out: the button that is on keeps its colour */
+.ctl:hover:not(:disabled):not(.on):not(.on2){color:var(--muted); background:transparent}
 .ctl:active:not(:disabled){background:var(--cell-hl); color:var(--text)}
 .ctl.on:active{color:var(--accent)}
 
