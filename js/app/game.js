@@ -302,7 +302,11 @@ function inputMulti(v,mode){
     pushUndo();
     let wrong=0;
     for(const i of list){
-      if(drop){ g.values[i]=0; continue }
+      if(drop){
+        g.values[i]=0;
+        if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
+        continue;
+      }
       if(g.values[i]===v) continue;
       g.values[i]=v; g.notes[i]=[]; g.mid[i]=[];
       if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
