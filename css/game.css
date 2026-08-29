@@ -285,7 +285,9 @@ body.win-side.in-game{overflow:hidden}
 /* the light sits under the cells or it washes the digits out: the cells go
    transparent and the board itself holds the background. Linked boards skip it,
    they have empty space between the grids that a solid fill would flood */
-body:not(.board-wide) #board{background-color:var(--panel); background-image:var(--board-light)}
+body:not(.board-wide) #board{background-color:var(--panel)}
+.light{position:absolute; inset:0; z-index:4; pointer-events:none; background:var(--board-light)}
+body.board-wide .light, body.board-tokki .light{display:none}
 .cell{background:transparent}
 body.board-wide .cell{background:var(--panel)}
 /* the frame gets a layer of its own so the corner ticks land on top of it */

@@ -124,6 +124,12 @@ function buildBoard(sp){
   buildGlow(sp);
   buildGrid(sp);
   buildDeco(sp);
+  /* the light falls on everything the board holds - cells, rules, the tint of a
+     picked row - so what is lit and what is not keeps the same difference top
+     and bottom */
+  const light=document.createElement('div');
+  light.className='light';
+  b.appendChild(light);
   const sb=document.createElement('div');
   sb.id='selBox'; sb.className='hidden';
   b.appendChild(sb);

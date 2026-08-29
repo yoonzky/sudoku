@@ -284,7 +284,6 @@ function inputNumber(d){
   if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
   const more=nv*10<=SPEC.maxD;
   numArm(more);
-  if(!more && nv===g.solution[sel]){ sel=-1; hlDigit=0 }
   afterMove(true);
 }
 /* every mode works over a run of picked cells, the plain digit included: what
@@ -352,10 +351,10 @@ function inputDigit(v,forceNote,forceMid){
           g.mistakes++;
           if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
         }
-        else { sel=-1; hlDigit=0 }
       } else {
+        /* the cell stays picked after a digit lands in it: the run of thought
+           usually carries on from the same place */
         for(const p of SPEC.peers[sel]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
-        sel=-1; hlDigit=0;
       }
     }
   }

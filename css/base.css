@@ -83,7 +83,7 @@ html[data-theme="dark"]{
   --kk:#333d5c; --kk-dark:#05070c;
   --zone-fill:rgba(166,180,240,.15); --even-fill:rgba(166,180,240,.16); --zone-edge:rgba(166,180,240,.42);
   --blend:screen;
-  --tint-hl:rgba(230,233,245,.10); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
+  --tint-hl:rgba(235,238,250,.22); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
   --tint-err:rgba(190,80,105,.48);
   --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
   --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;

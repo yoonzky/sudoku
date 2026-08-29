@@ -78,7 +78,7 @@ ru:{
   tagline:'спокойная головоломка на каждый день',
   continue:'Продолжить', newGame:'Новая игра',
   d_easy:'Лёгкий', d_medium:'Средний', d_hard:'Сложный', d_expert:'Эксперт',
-  solvedL:'решено', cleanL:'чистых', playtimeL:'за игрой', notPlayed:'не играл', errorsL:'Ошибки', pauseT:'Пауза', pausedT:'Пауза', pauseTap:'нажми, чтобы продолжить',
+  solvedL:'решено', cleanL:'чистых', playtimeL:'за игрой', notPlayed:'не играл', errorsL:'Ошибки', pauseT:'Пауза', pausedT:'Пауза', pauseTap:'нажмите, чтобы продолжить',
   resume:'Продолжить', restart:'Начать заново',
   undo:'Отмена', redo:'Вернуть', erase:'Стереть', notes:'По углам', auto:'Авто', hint:'Подсказка',
   pickHint:'Двойной или правый клик по клетке — быстрый ввод цифры',

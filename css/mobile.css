@@ -111,7 +111,10 @@ body.in-game #game{width:100%; max-width:100%; flex:1 1 auto;
    spare height splits above and below the board and the pad keeps the bottom */
 /* the spare height goes under the keypad, not around the board: the keys used
    to end up at the very bottom edge, past where a thumb rests */
-body.in-game .board-wrap{width:100%; margin:auto 0 0}
+/* the strip belongs to the board, not to the header: the spare height opens
+   above it, so the clock and the two keys sit right over the grid */
+body.in-game .topbar{margin-top:auto}
+body.in-game .board-wrap{width:100%; margin:0}
 body.in-game .numpad{margin-bottom:auto}
 /* tokkidoku has no keypad, so the spare height hangs off the pad instead */
 body.in-game .controls:has(+ .numpad.hidden){margin-bottom:auto}

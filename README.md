@@ -42,7 +42,6 @@ and starts it at the level you choose.
 - before the first deal the game asks whether a wrong digit should turn red at once or the board
   should be checked when it is full
 - in Numerator the entry waits for a second digit, since the numbers run to 81
-- a correct digit clears the selection, so the next cell is one tap away
 - up to ten unfinished games at once, each with its own timer; several can be picked and dropped together
 - notes, auto-candidates, hint, undo/redo, mistake limit — all optional
 - full keyboard control (1–9, A/B/C for 10–12, shift for corner marks, command or control for
