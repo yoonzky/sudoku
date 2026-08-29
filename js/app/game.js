@@ -487,7 +487,9 @@ function checkWin(){
   }
   winTimer=setTimeout(()=>{ winTimer=null;
     cells.forEach(d=>{ d.classList.remove('wave'); d.style.animationDelay='' });
-    showWin() },900);
+    /* the panel is the second rebuild of the screen and moves the board
+       as much as the first one did, so it is pinned too */
+    pinBoard(showWin) },900);
 }
 function renderWinPanel(){
   const w=lastWin; if(!w) return;

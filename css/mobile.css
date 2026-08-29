@@ -118,8 +118,12 @@ body.in-game .board-wrap{width:100%; margin:0}
 body.in-game .numpad{margin-bottom:auto}
 /* tokkidoku has no keypad, so the spare height hangs off the pad instead */
 body.in-game .controls:has(+ .numpad.hidden){margin-bottom:auto}
-/* on a win the board holds the top and the panel takes the room under it */
+/* on a win the board holds the top and the panel takes the room under it.
+   The pad goes and its bottom auto-margin with it, so the top one is
+   dropped too: alone it dragged the strip and the board to the bottom
+   edge, and the win panel pulled them back up a moment later */
 body.won.in-game .board-wrap{margin-top:0}
+body.won.in-game .topbar{margin-top:0}
 body.in-game .site-foot{display:none}
 /* two tiers: mode and level on top, clock and limit under them. One line
    ran everything together in the same size, and the pause was a pair of
