@@ -246,7 +246,7 @@ const MODES={
     keep:{easy:22,medium:14,hard:8,expert:4} },
 
   suguru:{
-    time:9000, tries:4, budget:200000, top:3,
+    time:9000, tries:10, budget:200000, top:3, fillTries:2, fillNodes:200000,
     band:{easy:[1,2],medium:[2,3],hard:[2,4],expert:[3,4]},
     pre(diff){
       const c=SUG_CFG[diff]||SUG_CFG.easy;
@@ -361,7 +361,11 @@ function makePuzzle(id,diff,deadline){
   for(let att=0; att<(M.tries||30) && (att===0||Date.now()<stop); att++){
     const ex=M.pre? M.pre(diff) : {};
     let sp=buildSpec(id,ex);
-    const sol=fillSpec(sp, M.tight?40:14, 600000);
+    /* how hard to push one layout before dealing another is the mode's
+       own business. Half the suguru region layouts take no solution at
+       all, and retrying those held the search for up to three minutes;
+       two short tries and the next layout costs less and finds more */
+    const sol=fillSpec(sp, M.fillTries||(M.tight?40:14), M.fillNodes||600000);
     if(!sol) continue;
     if(M.post){ M.post(sp,sol,ex,diff); sp=buildSpec(id,ex) }
     const dug=digPuzzle(sp,sol,M.keep[diff],M.budget||140000,M.passes||2,stop);
@@ -387,10 +391,14 @@ function makePuzzle(id,diff,deadline){
   }
   if(best) return best.grade>=5? fillToSolvable(best) : best;
 
+  /* the last resort has a clock of its own: without one a mode whose
+     layouts rarely fill spent minutes here */
+  const fbStop=Date.now()+6000;
   for(let att=0;att<12;att++){
+    if(att && Date.now()>fbStop) break;
     const ex=M.pre? M.pre(diff) : {};
     let sp=buildSpec(id,ex);
-    const sol=fillSpec(sp, 60, 900000);
+    const sol=fillSpec(sp, M.fillTries? M.fillTries*3 : 60, M.fillNodes||900000);
     if(!sol) continue;
     if(M.post){ M.post(sp,sol,ex,diff); sp=buildSpec(id,ex) }
     const dug=digPuzzle(sp,sol,Math.round(sp.cells.length*0.55),80000,1);
