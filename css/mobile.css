@@ -128,6 +128,11 @@ body.in-game .site-foot{display:none}
 /* two tiers: mode and level on top, clock and limit under them. One line
    ran everything together in the same size, and the pause was a pair of
    strokes at the very edge */
+/* the strip follows the board, but in the magnifier the board window is
+   narrower than the screen and the three keys left the name 60px to sit
+   in: "12 by 12" broke across two lines. Below that floor the strip keeps
+   its own width */
+.topbar{width:min(100%, max(var(--board-px,100%), 272px))}
 .topbar{margin:2px auto 8px; font-size:13px;
   display:grid; grid-template-columns:auto 1fr auto auto auto; column-gap:10px; row-gap:1px;
   align-items:center}
