@@ -111,7 +111,11 @@ html[data-theme="dark"]{
 @media (min-width:1180px){ :root{--page:1120px} }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 /* a double tap zooms nothing; two fingers still pinch */
-html,body{height:100%; touch-action:manipulation}
+html{height:100%; touch-action:manipulation}
+/* the page grows with what is in it: pinned to the window height, a home
+   screen taller than the screen spilled out of main and drew over the
+   footer instead of pushing it down */
+body{min-height:100%; touch-action:manipulation}
 /* windows draws a wide grey scrollbar beside a pale page */
 html{scrollbar-width:thin; scrollbar-color:var(--line) transparent; scrollbar-gutter:stable}
 ::-webkit-scrollbar{width:10px; height:10px}
