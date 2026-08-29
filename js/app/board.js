@@ -124,12 +124,6 @@ function buildBoard(sp){
   buildGlow(sp);
   buildGrid(sp);
   buildDeco(sp);
-  /* the light falls on everything the board holds - cells, rules, the tint of a
-     picked row - so what is lit and what is not keeps the same difference top
-     and bottom */
-  const light=document.createElement('div');
-  light.className='light';
-  b.appendChild(light);
   const sb=document.createElement('div');
   sb.id='selBox'; sb.className='hidden';
   b.appendChild(sb);
@@ -487,6 +481,7 @@ function placeSelBox(g,sp){
     : g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
   if(g.instant && wrong) sb.classList.add('err');
   else if(activeMode()==='mid') sb.classList.add('mid');
+  else if(activeMode()==='note') sb.classList.add('note');
 }
 
 const ZOOM_CELL=38;

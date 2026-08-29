@@ -35,6 +35,8 @@
   --bg:var(--l-bg); --panel:var(--l-panel); --panel2:#ffffff; --line:var(--l-line); --line-strong:#14161f;
   --text:var(--l-text); --muted:#5a6072; --accent:var(--l-accent); --accent-text:#ffffff; --accent-soft:#e2e5f5;
   --accent2:#2c6b76; --accent2-soft:#dcebed;
+  /* one colour per way of filling a cell: the digit, the corners, the centre */
+  --accent3:#8a6612; --accent3-soft:#f6eeda;
   --error:#9e3550; --note:#4f566b; --given:#14161f; --user:#565ead; --cell-hl:#e1e4ee; --cell-same:#d3d8ee; --note-sel:#333a4f;
   --shadow:0 18px 44px rgba(24,32,58,.10); --shadow-up:0 -14px 38px rgba(24,32,58,.13);
   --rule:rgba(20,22,31,.42); --frame:rgba(86,94,173,.26);
@@ -47,6 +49,7 @@
   --blend:multiply;
   /* the peer tint carries no colour: that stays with the picked cell and the matches */
   --tint-hl:rgba(20,22,31,.09); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
+  --tint-sel2:rgba(44,107,118,.36); --tint-sel3:rgba(138,102,18,.32);
   --tint-err:rgba(158,53,80,.28);
   --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
   --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
@@ -65,6 +68,7 @@
   --face-hr:#2f8a5a; --face-hi:#7b4bc4; --face-dn:#d29a00;
   /* light falls from above: the top of the board is lighter, the bottom deeper */
   --board-light:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,0) 22%, rgba(22,26,44,.095));
+  --rule-fade:linear-gradient(to bottom, rgba(0,0,0,.66), rgba(0,0,0,1) 34%);
   --tick:rgba(86,94,173,.58);
 }
 html[data-theme="dark"]{
@@ -73,6 +77,7 @@ html[data-theme="dark"]{
   --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#1b1f30; --line:var(--d-line); --line-strong:#e6e9f5;
   --text:var(--d-text); --muted:#8c93ab; --accent:var(--d-accent); --accent-text:#0b0d14; --accent-soft:rgba(166,180,240,.20);
   --accent2:#7fc8d4; --accent2-soft:rgba(127,200,212,.20);
+  --accent3:#ddb659; --accent3-soft:rgba(221,182,89,.20);
   --error:#e78ca0; --note:#98a0b8; --given:#e6e9f5; --user:#a6b4f0; --cell-hl:#1a1e2d; --cell-same:#252c47; --note-sel:#ccd3e8;
   --shadow:0 18px 44px rgba(0,0,0,.5); --shadow-up:0 -14px 38px rgba(0,0,0,.42);
   --rule:rgba(230,233,245,.32); --frame:rgba(166,180,240,.22);
@@ -84,6 +89,7 @@ html[data-theme="dark"]{
   --zone-fill:rgba(166,180,240,.15); --even-fill:rgba(166,180,240,.16); --zone-edge:rgba(166,180,240,.42);
   --blend:screen;
   --tint-hl:rgba(235,238,250,.22); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
+  --tint-sel2:rgba(127,200,212,.50); --tint-sel3:rgba(221,182,89,.46);
   --tint-err:rgba(190,80,105,.48);
   --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
   --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;
@@ -96,6 +102,7 @@ html[data-theme="dark"]{
   --face-nz:#a6b4f0; --face-mj:#7cb8ef; --face-hn:#f292b6;
   --face-hr:#6fd0a0; --face-hi:#b79bf2; --face-dn:#ddb659;
   --board-light:linear-gradient(to bottom, rgba(166,180,240,.13), rgba(166,180,240,0) 40%, rgba(0,0,0,.20));
+  --rule-fade:linear-gradient(to bottom, rgba(0,0,0,1) 30%, rgba(0,0,0,.6));
   --tick:rgba(201,212,234,.62);
 }
 /* the page keeps to a comfortable measure and takes the extra room only where

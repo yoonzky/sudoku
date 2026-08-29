@@ -18,7 +18,7 @@
   display:grid; width:100%; --bw:9; --bh:9; --nc:3; --nr:3;
   border:1px solid var(--frame); border-radius:0; overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
-.cell{position:relative; z-index:3; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
+.cell{position:relative; z-index:0; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
   font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
   font-family:var(--f-num); font-size:calc(58cqw / var(--bw)); line-height:1; font-weight:600; cursor:pointer; background:transparent;
   color:var(--user)}
@@ -33,6 +33,8 @@
 
 .cell.msel{--tint:var(--tint-same); z-index:5; box-shadow:inset 0 0 0 1.5px var(--accent)}
 .cell.sel{--tint:var(--tint-sel); z-index:4}
+body.mode-note .cell.sel{--tint:var(--tint-sel2)}
+body.mode-mid .cell.sel{--tint:var(--tint-sel3)}
 .cell.err{color:var(--error); --tint:var(--tint-err); font-weight:700}
 .cell.err.sel{--tint:var(--tint-err); z-index:4}
 .cell .notes{position:absolute; inset:1px; display:grid;
@@ -131,16 +133,17 @@ body.board-zoom #pauseOverlay{border-radius:4px}
   border-bottom-width:1px; background:var(--key-bg); color:var(--muted); width:auto; padding:0}
 #picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
 #picker .pk-mode button.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
-#picker .pk-mode button.on[data-m="mid"]{background:var(--accent2-soft); border-color:var(--accent2); color:var(--accent2)}
+#picker .pk-mode button.on[data-m="note"]{background:var(--accent2-soft); border-color:var(--accent2); color:var(--accent2)}
+#picker .pk-mode button.on[data-m="mid"]{background:var(--accent3-soft); border-color:var(--accent3); color:var(--accent3)}
 #picker button[data-v]{position:relative}
 #picker button[data-v] small{position:absolute; right:5px; bottom:3px; font-size:10px; font-weight:500; color:var(--muted); line-height:1}
-#picker.mode-note button[data-v]{color:var(--accent); border-color:var(--accent-soft); background:var(--accent-soft)}
-#picker.mode-mid button[data-v]{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
+#picker.mode-note button[data-v]{color:var(--accent2); border-color:var(--accent2-soft); background:var(--accent2-soft)}
+#picker.mode-mid button[data-v]{color:var(--accent3); border-color:var(--accent3-soft); background:var(--accent3-soft)}
 #picker.mode-note button[data-v].done, #picker.mode-mid button[data-v].done{opacity:.22}
 
-#picker .pk-mode button:not(.on):hover,
-#picker.mode-note button[data-v]:hover{border-color:var(--accent); color:var(--accent)}
-#picker.mode-mid button[data-v]:hover{border-color:var(--accent2); color:var(--accent2)}
+#picker .pk-mode button:not(.on):hover{border-color:var(--accent); color:var(--accent)}
+#picker.mode-note button[data-v]:hover{border-color:var(--accent2); color:var(--accent2)}
+#picker.mode-mid button[data-v]:hover{border-color:var(--accent3); color:var(--accent3)}
 
 /* the pad runs in two rows, input modes and actions. Each row splits its width
    between the buttons that are on screen, so turning one on breaks nothing */
@@ -160,6 +163,7 @@ body.board-zoom #pauseOverlay{border-radius:4px}
 .ctl:hover:not(:disabled){color:var(--text); background:var(--cell-hl)}
 .ctl.on{color:var(--accent); background:var(--accent-soft)}
 .ctl.on2{color:var(--accent2); background:var(--accent2-soft)}
+.ctl.on3{color:var(--accent3); background:var(--accent3-soft)}
 .ctl:disabled{opacity:.32; cursor:default}
 .numpad{display:grid; gap:6px; margin:10px auto 0; width:var(--board-px,100%)}
 .num{position:relative; touch-action:manipulation; background:var(--key-bg);
@@ -174,11 +178,12 @@ body.board-zoom #pauseOverlay{border-radius:4px}
 .num.done{opacity:.22; pointer-events:none}
 .num.hl{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 
-.numpad.mode-note .num{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
-.numpad.mode-mid .num{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
+.numpad.mode-note .num{color:var(--accent2); border-color:var(--accent2); background:var(--accent2-soft)}
+.numpad.mode-mid .num{color:var(--accent3); border-color:var(--accent3); background:var(--accent3-soft)}
 .numpad.mode-note .num.done, .numpad.mode-mid .num.done{opacity:.28}
 .num.armed{border-color:var(--accent); color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1px var(--accent)}
-.numpad.mode-mid .num.armed{border-color:var(--accent2); color:var(--accent2); background:var(--accent2-soft); box-shadow:inset 0 0 0 1px var(--accent2)}
+.numpad.mode-note .num.armed{border-color:var(--accent2); color:var(--accent2); background:var(--accent2-soft); box-shadow:inset 0 0 0 1px var(--accent2)}
+.numpad.mode-mid .num.armed{border-color:var(--accent3); color:var(--accent3); background:var(--accent3-soft); box-shadow:inset 0 0 0 1px var(--accent3)}
 
 .cell::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:-1;
   background:var(--tint,transparent); mix-blend-mode:var(--blend); transition:background .12s}
@@ -211,11 +216,15 @@ body.board-tokki .cell::before{display:none}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
 
 
-.grid{position:absolute; inset:0; pointer-events:none; z-index:1}
+/* the rules fade along with the light on the paper, or they stand out sharpest
+   exactly where the board is darkest */
+.grid{position:absolute; inset:0; pointer-events:none; z-index:3;
+  -webkit-mask-image:var(--rule-fade); mask-image:var(--rule-fade)}
 .grid svg{position:absolute; inset:0; width:100%; height:100%}
 #selBox{position:absolute; z-index:7; pointer-events:none; border:2px solid var(--accent);
   border-radius:2px}
-#selBox.mid{border-color:var(--accent2)}
+#selBox.note{border-color:var(--accent2)}
+#selBox.mid{border-color:var(--accent3)}
 #selBox.err{border-color:var(--error)}
 #selBox.hidden{display:none}
 .deco{position:absolute; inset:0; pointer-events:none; z-index:8}
@@ -289,11 +298,7 @@ body.win-side.in-game{overflow:hidden}
    transparent and the board itself holds the background. Linked boards skip it,
    they have empty space between the grids that a solid fill would flood */
 body:not(.board-wide) #board{background-color:var(--panel)}
-/* the light lies on the paper and on the rules drawn on it, and the cells sit
-   above it: what is written keeps its colour, and a picked row keeps the same
-   strength top and bottom */
-.light{position:absolute; inset:0; z-index:2; pointer-events:none; background:var(--board-light)}
-body.board-wide .light, body.board-tokki .light{display:none}
+body:not(.board-wide) #board{background-image:var(--board-light)}
 .cell{background:transparent}
 body.board-wide .cell{background:var(--panel)}
 /* the frame gets a layer of its own so the corner ticks land on top of it */

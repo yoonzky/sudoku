@@ -576,8 +576,12 @@ function modeAllowed(m){
 function syncModeButtons(){
   const m=activeMode();
   $('digitBtn').classList.toggle('on', m==='digit');
-  $('notesBtn').classList.toggle('on', m==='note');
-  $('midBtn').classList.toggle('on2', m==='mid');
+  $('notesBtn').classList.toggle('on2', m==='note');
+  $('midBtn').classList.toggle('on3', m==='mid');
+  /* the colour of the mode carries onto the board: the picked cell is filled in
+     the same tone as the keys that would write into it */
+  document.body.classList.toggle('mode-note', m==='note');
+  document.body.classList.toggle('mode-mid', m==='mid');
   syncPickerMode();
 }
 function setMode(m){
