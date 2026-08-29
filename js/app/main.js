@@ -508,16 +508,10 @@ function openFromUrl(){
   bg.addEventListener('click',e=>{ if(e.target===bg) done() });
 })();
 
-const DEV_HOST=location.hostname==='localhost'||location.hostname==='127.0.0.1';
-if('serviceWorker' in navigator && location.protocol.startsWith('http') && !DEV_HOST){
-  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}) });
-  let swReloaded=false;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(swReloaded) return;
-    swReloaded=true;
-    location.reload();
-  });
-} else if('serviceWorker' in navigator && DEV_HOST){
+/* the site is a plain page again. A copy installed while it was an app
+   still carries the old worker, so every load takes it off and drops the
+   caches it kept */
+if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
   if(window.caches) caches.keys().then(ks=>ks.forEach(k=>caches.delete(k))).catch(()=>{});
 }

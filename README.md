@@ -48,11 +48,10 @@ and starts it at the level you choose.
 - full keyboard control (1–9, A/B/C for 10–12, shift for corner marks, command or control for
   centre marks, arrows to move)
 - light and dark theme, Russian and English; the two palettes are written once, in `css/base.css`
-- the three typefaces ship with the site, so an installed copy reads the same with no network
+- the three typefaces ship with the site, so nothing is pulled from a font service
 - on a phone: picking a mode opens a sheet with its rules and the four levels; boards wider than
   the screen (Samurai, Wing, Double) open in a window you drag around, with a button to fit them
   back; the mode buttons and the keypad sit under the board, within reach of a thumb
-- works offline, installable to the home screen on iOS and Android
 
 ## Layout
 
@@ -79,9 +78,8 @@ js/app/board.js       building and drawing a board of any shape
 js/app/game.js        moves, undo, hints, win, timer
 js/app/home.js        home screen and the random draw
 js/app/main.js        events, keyboard, start-up
-sw.js                 offline cache, bumped on every release
-manifest.webmanifest  name, colours and icons for an installed copy
-icons/                app icons, maskable among them
+sw.js                 empty worker that takes the old offline cache off
+icons/                site icons
 ```
 
 One model describes every mode: cells with coordinates, groups that hold each digit once,
@@ -94,16 +92,14 @@ is stored with the game in `ex`, so a reloaded page rebuilds the exact same boar
 
 ## Run locally
 
-Open `index.html` in a browser. Over `file://` the service worker and the generator worker stay
-off, and generation runs on the main thread; everything else works.
+Open `index.html` in a browser. Over `file://` the generator worker stays off and generation
+runs on the main thread; everything else works.
 
 To serve it over http instead:
 
 ```
 python3 -m http.server 8000
 ```
-
-Bump `CACHE` in `sw.js` on every release so the old cache is dropped.
 
 ## License
 
