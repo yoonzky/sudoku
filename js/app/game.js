@@ -173,10 +173,14 @@ function tokkiSeat(i){
   if(g.values[i]===TOKKI_BUN && g.solution[i]===TOKKI_BUN) sel=-1;
   afterMove();
 }
-/* numerator: drag from a filled cell and the run keeps counting up */
+/* numerator: drag from a filled cell and the run keeps counting up. A
+   cell already holding that number carries the run on; any other filled
+   cell stops it, or one careless drag rewrites what is there */
 function numChain(j,v){
   const g=cur();
-  if(!g||g.done||g.paused||g.given[j]||v>SPEC.maxD) return false;
+  if(!g||g.done||g.paused||v>SPEC.maxD) return false;
+  if(g.values[j]===v){ lastPlaced=j; sel=j; return true }
+  if(g.given[j]||g.values[j]) return false;
   pushUndo();
   g.values[j]=v; g.notes[j]=[];
   lastPlaced=j; sel=j;
