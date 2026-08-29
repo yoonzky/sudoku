@@ -480,8 +480,13 @@ function openFromUrl(){
   newGame(m,d);
 }
 (function(){
-  const seen=localStorage.getItem('sudoku-welcomed');
-  if(seen||localStorage.getItem(LS_SES)) return openFromUrl();
+  /* a browser with storage switched off throws on the very first read, and
+     the script died before the board was ever built. No storage means no
+     answer to keep either, so the welcome is skipped */
+  let seen=null, saved=null;
+  try{ seen=localStorage.getItem('sudoku-welcomed'); saved=localStorage.getItem(LS_SES) }
+  catch(e){ seen='1' }
+  if(seen||saved) return openFromUrl();
   const bg=$('welcomeModal');
   bg.classList.remove('hidden');
   const done=()=>{
