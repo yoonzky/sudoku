@@ -3,6 +3,7 @@
 .topbar .t-item:last-of-type{margin-left:auto}
 .topbar .t-item{font-weight:500}
 .topbar .t-item b{font-family:var(--f-num); color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+.topbar .t-item:first-child b{font-variant-numeric:proportional-nums lining-nums; font-feature-settings:'tnum' 0,'pnum' 1}
 .topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
 .topbar .tbtn:hover{color:var(--text)}
 /* the limit as three marks: empty until a mistake is actually made */

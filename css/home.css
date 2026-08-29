@@ -6,8 +6,12 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   padding-bottom:14px; min-height:0}
 /* the page scrolls as one: neither the screen nor the columns keep a scroll */
 
-.hcap{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+/* names are words, not columns of figures: proportional digits keep "10 by 10"
+   from falling apart, and the tracking on a caption stays short of a gap */
+.hcap{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
   color:var(--muted); font-weight:400; margin:0 0 10px}
+.mcard b, .rnd-card b, .cont-card b, .mp h3, .diff-btn span, .mp p, .mode-tag{
+  font-variant-numeric:proportional-nums lining-nums; font-feature-settings:'tnum' 0,'pnum' 1,'lnum' 1}
 
 .home-main{flex:none; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:0 30px}
 @media (max-width:900px){ .home-main{grid-template-columns:1fr; gap:24px} }
@@ -21,7 +25,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .mcard{display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px 4px 7px;
   background:var(--panel); border:1px solid var(--line); border-radius:4px; cursor:pointer;
   color:var(--text); font-family:inherit; transition:border-color .16s, background .16s, color .16s, transform .16s}
-.mcard b{font-size:11px; font-weight:400; letter-spacing:.01em; text-align:center; line-height:1.2}
+.mcard b{font-size:11px; font-weight:400; letter-spacing:0; text-align:center; line-height:1.2}
 .mcard small{font-size:9.5px; color:var(--muted); font-family:var(--f-num); min-height:11px}
 .mcard-prev{display:flex; align-items:center; justify-content:center; width:100%; height:46px}
 .mcard-prev svg{display:block; height:100%; width:auto; max-width:100%}
@@ -37,7 +41,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .rnd-prev{flex:none; width:34px; height:34px; display:flex; align-items:center; justify-content:center}
 .rnd-prev svg{display:block; width:34px; height:34px}
 .rnd-txt{display:flex; flex-direction:column; gap:1px; min-width:0}
-.rnd-card b{font-size:13px; font-weight:400; letter-spacing:.01em}
+.rnd-card b{font-size:13px; font-weight:400; letter-spacing:0}
 .rnd-card small{font-size:10.5px; color:var(--muted); font-family:var(--f-num)}
 .rnd-card:hover{border-color:var(--accent); color:var(--accent)}
 .rnd-card.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
@@ -53,7 +57,6 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .sheet-grab{display:none}
 /* the preview is measured against window height, or on a short screen it eats the levels */
 .mp-prev{width:min(210px,20vh); max-width:100%; margin:0 0 20px}
-.mp-prev.small{width:min(130px,13vh)}
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
 .mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted)}
@@ -87,9 +90,6 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .diff-btn span{flex:1; font-size:16.5px; font-weight:400; letter-spacing:.01em}
 .diff-btn em{flex:none; font-style:normal; font-size:11px; color:var(--muted);
   font-family:var(--f-num); font-weight:500}
-.diff-btn .wait{flex:none; font-style:normal; font-size:10.5px; letter-spacing:.02em;
-  color:var(--muted); background:var(--panel2); border:1px solid var(--line);
-  border-radius:3px; padding:2px 6px; margin-right:12px; opacity:.9}
 /* the ring stays: this is the button that starts a game, and colour alone left
    the keyboard with nothing to follow */
 .diff-btn:hover,.diff-btn:focus-visible{color:var(--accent); padding-left:11px}
@@ -118,7 +118,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .cont-open{display:flex; flex-direction:column; gap:3px; width:100%; padding:10px 12px 9px;
   background:transparent; border:0; border-radius:4px; cursor:pointer; color:inherit;
   font-family:inherit; text-align:left}
-.cont-card b{font-size:13.5px; font-weight:400; letter-spacing:.01em}
+.cont-card b{font-size:13.5px; font-weight:400; letter-spacing:0}
 .cont-card span{font-size:11px; color:var(--muted)}
 .cont-card small{position:absolute; right:11px; top:10px; font-family:var(--f-num); font-size:11.5px; color:var(--muted)}
 .cont-card:hover{border-color:var(--accent); color:var(--accent)}

@@ -248,7 +248,7 @@ $('rulesBtn').addEventListener('click',openRules);
 $('rulesClose').addEventListener('click',()=>$('rulesModal').classList.add('hidden'));
 $('pauseBtn').addEventListener('click',()=>{ const g=cur(); if(g) setPaused(!g.paused) });
 $('resumeBtn').addEventListener('click',()=>setPaused(false));
-$('restartBtn').addEventListener('click',async()=>{
+async function restartGame(){
   const g=cur(); if(!g) return;
   if(!await askConfirm(t('restartConfirm'))) return;
   const n=g.solution.length;
@@ -259,7 +259,9 @@ $('restartBtn').addEventListener('click',async()=>{
   g.time=0; g.mistakes=0; g.hints=0; g.done=false; g.noLimit=false; g.usedAssist=false;
   undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0;
   setPaused(false); renderBoard(); startTimer(); persistCache();
-});
+}
+$('restartBtn').addEventListener('click',restartGame);
+$('restartBtnTop').addEventListener('click',restartGame);
 $('undoBtn').addEventListener('click',undo);
 $('redoBtn').addEventListener('click',redo);
 $('eraseBtn').addEventListener('click',eraseCell);

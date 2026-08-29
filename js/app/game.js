@@ -74,6 +74,16 @@ function closeGenOverlay(){
   clearInterval(genTick); genTick=null;
   $('genOverlay').classList.add('hidden');
 }
+/* a deal that lands early leaves the bar half full: it runs to the end first,
+   and the board opens behind a finished line rather than a broken one */
+function finishGenOverlay(then){
+  const fill=$('genOverlay').querySelector('.gen-bar i');
+  clearInterval(genTick); genTick=null;
+  if(!fill||reducedMotion){ closeGenOverlay(); then(); return }
+  fill.style.transition='width .16s ease-out';
+  fill.style.width='100%';
+  setTimeout(()=>{ closeGenOverlay(); then() },190);
+}
 
 async function newGame(mode,diff){
   lastRequest={mode,diff};
@@ -88,26 +98,27 @@ async function newGame(mode,diff){
   generateAsync(mode,diff,res=>{
     if(!genBusy) return;
     genBusy=false;
-    closeGenOverlay();
-    if(!res){ toast(t('genFail')); return }
-    const sp=buildSpec(res.mode,res.ex);
-    const n=sp.cells.length;
-    if(SES.games.length>=10){
-      const drop=SES.games.shift();
-      toast(t('gameDropped').replace('{m}',t('m_'+drop.mode)));
-    }
-    SES.games.push({
-      id:uid(), mode:res.mode, diff, ex:res.ex,
-      solution:res.sol, given:res.puz.map(v=>!!v),
-      values:res.puz.slice(),
-      notes:Array.from({length:n},()=>[]), mid:Array.from({length:n},()=>[]),
-      time:0, mistakes:0, hints:0, done:false, paused:false, noLimit:false,
-      instant: sp.kind==='num'? false : SES.settings.instant,
-      endErr:[], wasFull:false,
+    finishGenOverlay(()=>{
+      if(!res){ toast(t('genFail')); return }
+      const sp=buildSpec(res.mode,res.ex);
+      const n=sp.cells.length;
+      if(SES.games.length>=10){
+        const drop=SES.games.shift();
+        toast(t('gameDropped').replace('{m}',t('m_'+drop.mode)));
+      }
+      SES.games.push({
+        id:uid(), mode:res.mode, diff, ex:res.ex,
+        solution:res.sol, given:res.puz.map(v=>!!v),
+        values:res.puz.slice(),
+        notes:Array.from({length:n},()=>[]), mid:Array.from({length:n},()=>[]),
+        time:0, mistakes:0, hints:0, done:false, paused:false, noLimit:false,
+        instant: sp.kind==='num'? false : SES.settings.instant,
+        endErr:[], wasFull:false,
+      });
+      SES.cur=SES.games.length-1;
+      persistCache();
+      openGame();
     });
-    SES.cur=SES.games.length-1;
-    persistCache();
-    openGame();
   });
 }
 function openGame(idx){
@@ -539,9 +550,7 @@ function setPaused(p){
   $('pauseOverlay').classList.toggle('hidden',!p);
   if(!$('game').classList.contains('hidden')) renderBoard();
   const pl=t(p?'resume':'pauseT');
-  $('pauseBtn').innerHTML=(p
-    ? '<svg viewBox="0 0 24 24"><path d="M9 5.6 19 12 9 18.4Z"/></svg>'
-    : '<svg viewBox="0 0 24 24"><path d="M9.5 5.5v13M14.5 5.5v13"/></svg>')
+  $('pauseBtn').innerHTML=(p? '<svg viewBox="0 0 24 24"><path d="M9.4 6.4 18 12l-8.6 5.6Z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>' : '<svg viewBox="0 0 24 24"><rect x="8.6" y="6" width="2.6" height="12" rx="1.3" fill="currentColor" stroke="none"/><rect x="12.8" y="6" width="2.6" height="12" rx="1.3" fill="currentColor" stroke="none"/></svg>')
     + '<span class="tbtn-lbl"></span>';
   $('pauseBtn').querySelector('.tbtn-lbl').textContent=pl;
   $('pauseBtn').title=pl; $('pauseBtn').setAttribute('aria-label',pl);

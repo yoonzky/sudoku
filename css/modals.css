@@ -117,7 +117,10 @@
 .rules-prev{flex:none; width:128px}
 .rules-prev svg{display:block; width:100%; height:auto}
 .rules-body h3{font-family:var(--f-disp); font-size:19px; font-weight:400; letter-spacing:.02em;
-  color:var(--text); text-transform:none; margin:0 0 8px}
+  color:var(--text); text-transform:none; margin:0 0 8px;
+  font-variant-numeric:proportional-nums lining-nums; font-feature-settings:'tnum' 0,'pnum' 1}
+.rules-body p, .modal .toggle span, .modal .toggle b{font-variant-numeric:proportional-nums lining-nums;
+  font-feature-settings:'tnum' 0,'pnum' 1}
 .rules-body p{margin:0; font-size:13.5px; line-height:1.6; color:var(--muted)}
 .modal table.t-modes{margin-top:22px}
 .modal table.t-modes:empty{display:none}

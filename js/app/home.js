@@ -92,13 +92,9 @@ function renderModeList(){
   const on=$('modeList').querySelector('.mcard.on');
   if(on && on.scrollIntoView && !sheetWidth()) on.scrollIntoView({block:'nearest'});
 }
-/* a plain 9x9 board says nothing a name does not: those modes get a smaller
-   thumbnail and the rules move up */
-const PLAIN_SHAPE=['classic','x','evenodd','windoku','asterisk','mosaic'];
 function renderModePanel(){
   const m=pickedMode;
   $('mpPrev').innerHTML = m==='random'? previewSVG(poolList()[0]||'classic') : previewSVG(m);
-  $('mpPrev').classList.toggle('small', PLAIN_SHAPE.includes(m));
   $('mpName').textContent=t('m_'+m);
   $('mpRules').textContent=t('r_'+m);
   const tag=I18N[SES.settings.lang]&&I18N[SES.settings.lang]['tag_'+m] || I18N.en['tag_'+m] || '';
@@ -110,11 +106,7 @@ function renderModePanel(){
   for(const d of DIFFS){
     const st = m==='random'? statsFor(null,d) : statsFor(m,d);
     const note = st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : t('notPlayed');
-    /* the deals that run into tens of seconds say so before they are asked for,
-       and only the fourth level ever gets there */
-    const budget = (m==='random'||d!=='expert')? 0 : dealBudget(m,d);
-    const wait = budget>=11000? `<i class="wait">${t('dealWait').replace('{n}',Math.round(budget/1000))}</i>` : '';
-    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl${st.solved?' on':''}">${LEVEL_RN[d]}</i><span>${t('d_'+d)}</span>${wait}<em>${note}</em></button>`;
+    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl${st.solved?' on':''}">${LEVEL_RN[d]}</i><span>${t('d_'+d)}</span><em>${note}</em></button>`;
   }
   $('diffGrid').innerHTML=h;
 }

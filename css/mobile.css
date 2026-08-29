@@ -121,14 +121,15 @@ body.in-game .site-foot{display:none}
    One line ran everything together in the same size, and the pause was a pair
    of strokes at the very edge */
 .topbar{margin:2px auto 8px; font-size:13px;
-  display:grid; grid-template-columns:auto 1fr auto auto; column-gap:12px; row-gap:1px;
+  display:grid; grid-template-columns:auto 1fr auto auto auto; column-gap:10px; row-gap:1px;
   align-items:center}
 .topbar .t-item:first-child{grid-column:1/3; grid-row:1; font-size:12.5px}
 .topbar .t-item:nth-of-type(3){grid-column:1; grid-row:2; margin-left:0}
 .topbar .t-item:nth-of-type(3) b{font-size:21px; line-height:1.1}
 .topbar #gMistWrap{grid-column:2; grid-row:2; justify-self:start; font-size:12px}
-.topbar #zoomBtn{grid-column:3; grid-row:1/3}
-.topbar #pauseBtn{grid-column:4; grid-row:1/3}
+.topbar #restartBtnTop{grid-column:3; grid-row:1/3}
+.topbar #zoomBtn{grid-column:4; grid-row:1/3}
+.topbar #pauseBtn{grid-column:5; grid-row:1/3}
 /* one line holds the mode and the level, so the level needs a stop of its own:
    "12 by 12 I Easy" read as one long name */
 .topbar .t-item em{margin-left:6px; font-size:12px}

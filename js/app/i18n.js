@@ -5,7 +5,7 @@ ru:{
   genFail:'Поле не собралось — попробуй ещё раз',
   genCancel:'Esc — отмена', genCancelTouch:'Касание — отмена', genStopped:'Генерация отменена',
   siteDesc:'Судоку в браузере: восемнадцать режимов, четыре уровня, пометки и статистика. Без счетов и рекламы, работает офлайн.',
-  genSpent:'{n} с', dealWait:'до {n} с',
+  genSpent:'{n} с',
   mid:'Центр', midTab:'В центр', digitMode:'Цифра', digitTabQ:'Цифра',
   k_mid:'пометка в центр', k_modeDigit:'цифра', k_modeNote:'пометки по углам',
   k_modeMid:'пометки в центр', k_modeNext:'следующий режим',
@@ -65,7 +65,7 @@ ru:{
   m_tokki:'Токкидоку', tag_tokki:'mhdhh never die',
   r_tokki:'Головоломка на расстановку, а не на числа: в каждой строке, каждом столбце и каждой цветной области находится ровно один кролик. Кролики не могут стоять в соседних клетках, в том числе по диагонали. Область, целиком лежащая в одной строке, забирает её кролика себе. Точкой отмечают клетки, в которых кролика нет.',
   m_kakuro:'Какуро',
-  r_kakuro:'Математический кроссворд. Серая клетка разделена диагональю: число над ней — сумма ряда справа, число под ней — сумма столбца вниз. В таком ряду или столбце стоят цифры от 1 до 9, они не повторяются и вместе дают эту сумму.',
+  r_kakuro:'Математический кроссворд. Серая клетка разделена диагональю: число над ней — сумма ряда справа, число под ней — сумма столбца вниз. В таком ряду или столбце могут стоять цифры от 1 до 9: они не повторяются и вместе дают эту сумму.',
   tokkiHint:'Клик ставит точку: кролика в клетке нет. Правая кнопка ставит кролика. Протяжка отмечает несколько клеток подряд',
   tokkiHintTouch:'Нажатие ставит точку, второе — кролика, третье очищает клетку. Проведи пальцем, чтобы отметить несколько подряд',
   numHint:'Число вводится цифрами, Backspace стирает. Протяни от заполненной клетки — соседние встанут по порядку',
@@ -169,7 +169,7 @@ en:{
   m_tokki:'Tokkidoku', tag_tokki:'mhdhh never die',
   r_tokki:'A placement puzzle rather than a number one: every row, every column and every coloured region holds exactly one bunny. Two bunnies may not stand in neighbouring cells, diagonals included. A region that lies inside a single row takes that row\'s bunny. A dot marks the cells that hold no bunny.',
   m_kakuro:'Kakuro',
-  r_kakuro:'A crossword with numbers. A grey cell is split by a diagonal: the figure above it is the sum of the run to its right, the one below is the sum of the run going down. A run holds digits 1 to 9, none repeating, adding up to that sum.',
+  r_kakuro:'A crossword with numbers. A grey cell is split by a diagonal: the figure above it is the sum of the run to its right, the one below is the sum of the run going down. A run takes digits from 1 to 9, none repeating, adding up to that sum.',
   tokkiHint:'A click leaves a dot: no bunny in the cell. Right click places a bunny. Drag to mark a run of cells',
   tokkiHintTouch:'A tap leaves a dot, a second places a bunny, a third clears the cell. Drag a finger to mark a run',
   numHint:'Type the number, Backspace clears it. Drag from a filled cell and the run counts up',
@@ -216,7 +216,7 @@ en:{
   gen:'Generating board…', digitTab:'Digit', noteTab:'Corners', eraseP:'Erase',
   genCancel:'Esc cancels', genCancelTouch:'A tap cancels', genStopped:'Generation cancelled',
   siteDesc:'Sudoku in the browser: eighteen modes, four levels, pencil marks and statistics. No accounts, no ads, works offline.',
-  genSpent:'{n} s', dealWait:'up to {n} s',
+  genSpent:'{n} s',
   mid:'Centre', midTab:'Centre mark', digitMode:'Normal', digitTabQ:'Normal',
   k_mid:'mark in the centre', k_modeDigit:'normal', k_modeNote:'corner marks',
   k_modeMid:'centre marks', k_modeNext:'next mode',
@@ -246,6 +246,7 @@ function applyLang(){
   document.querySelectorAll('.sw').forEach(b=>{ const sp=b.querySelector('span'); if(sp) sp.textContent=t('th_'+b.dataset.t) });
   const lbl=(id,k)=>{ const el=$(id); if(!el) return; el.title=t(k); el.setAttribute('aria-label',t(k)) };
   lbl('statsBtn','stats'); lbl('setBtn','settings'); lbl('backBtn','backT'); lbl('rulesBtn','rulesT');
+  lbl('restartBtnTop','restart');
   const g=cur(); lbl('pauseBtn', g&&g.paused? 'resume':'pauseT');
   const bd=$('board'); if(bd) bd.setAttribute('aria-label',t('a11yBoard'));
   if(SPEC && !$('game').classList.contains('hidden')){ buildNumpad(SPEC); invalidateCells(); renderBoard() }
