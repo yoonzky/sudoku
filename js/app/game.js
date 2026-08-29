@@ -223,12 +223,22 @@ function tokkiClash(g,sp,i){
   for(const j of sp.peers[i]) if(g.values[j]===TOKKI_BUN) return true;
   return false;
 }
+/* seating a bunny takes a double tap: a lone tap leaves the clover and the
+   next one takes it off again, however long the pause between them. A
+   thumb that lands by accident never seats anything */
+const TOKKI_DBL_MS=450;
+let tokkiTapCell=-1, tokkiTapAt=0;
 function tokkiTap(i){
   const g=cur(); if(!g||g.done||g.paused) return;
+  const now=Date.now();
+  const quick = i===tokkiTapCell && now-tokkiTapAt<TOKKI_DBL_MS;
+  tokkiTapCell=i; tokkiTapAt=now;
   dismissPickHint();
   pushUndo();
   const was=g.values[i];
-  g.values[i] = was===0? TOKKI_MARK : was===TOKKI_MARK? TOKKI_BUN : 0;
+  g.values[i] = was===TOKKI_BUN? 0
+    : was===TOKKI_MARK? (quick? TOKKI_BUN : 0)
+    : TOKKI_MARK;
   if(g.values[i]===TOKKI_BUN && g.instant && g.solution[i]!==TOKKI_BUN){
     g.mistakes++;
     if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
