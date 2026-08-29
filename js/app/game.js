@@ -351,7 +351,10 @@ function inputDigit(v,forceNote,forceMid){
     const nn = mode==='mid'? g.mid[sel] : g.notes[sel], k=nn.indexOf(v);
     if(k>=0) nn.splice(k,1); else { nn.push(v); nn.sort((a,b)=>a-b) }
   } else {
-    if(g.values[sel]===v){ g.values[sel]=0 }
+    /* the same digit pressed twice clears the cell, and the end of game
+       check has to forget it too, or the empty cell stays red */
+    if(g.values[sel]===v){ g.values[sel]=0;
+      if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) } }
     else{
       g.values[sel]=v; g.notes[sel]=[]; g.mid[sel]=[]; lastPlaced=sel;
       if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
