@@ -224,8 +224,12 @@ $('contList').addEventListener('click',async e=>{
   if(del){
     e.stopPropagation();
     if(await askConfirm(t('delGame'))){
-      SES.games.splice(+del.dataset.del,1);
-      if(SES.cur>=SES.games.length) SES.cur=SES.games.length-1;
+      const k=+del.dataset.del;
+      SES.games.splice(k,1);
+      /* the pointer follows the list: dropping a game before the open one
+         used to leave it pointing at the neighbour */
+      if(SES.cur===k) SES.cur=-1;
+      else if(SES.cur>k) SES.cur--;
       persistNow(); renderHome();
     }
     return;
