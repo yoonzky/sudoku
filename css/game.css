@@ -25,6 +25,9 @@
 .cell.given{color:var(--given); font-weight:600}
 .cell .v{font-style:normal; display:block; line-height:1}
 #board{margin:0 auto}
+/* the board takes focus so the arrows and digits reach it, but the ring around
+   the whole grid says nothing: the picked cell is the marker here */
+#board:focus, #board:focus-visible{outline:none}
 .cell.hl{--tint:var(--tint-hl)}
 .cell.same{--tint:var(--tint-same)}
 
