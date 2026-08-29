@@ -296,3 +296,11 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
     .board-wrap{height:calc(100dvh - 74px)}
   }
 }
+
+/* the narrowest phones still in use are 320 wide: the pad labels were cut
+   to "By corn…" and the error dots dropped under their own word */
+@media (max-width:360px){
+  .ctl{font-size:10px; gap:5px}
+  .ctl svg{width:16px; height:16px}
+  .topbar #gMistWrap{white-space:nowrap}
+}
