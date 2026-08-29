@@ -216,8 +216,11 @@ body.board-tokki .cell::before{display:none}
 .cell .face.f-dn{stroke:var(--face-dn)}
 .cell.err .face{stroke:var(--error)}
 .cell .mark{width:34%; height:34%; fill:var(--mark); stroke:none}
-.cell.pop .face{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}
-@keyframes popMid{from{transform:translate(-50%,-50%) scale(.8); opacity:.25}
+/* the face fills three quarters of the cell, so the pop that suits a digit
+   threw the whole square about. It only fades in now, with a hint of
+   scale */
+.cell.pop .face{animation:popMid .2s ease-out}
+@keyframes popMid{from{transform:translate(-50%,-50%) scale(.94); opacity:.45}
   to{transform:translate(-50%,-50%); opacity:1}}
 .cell.zone{background:var(--zone-fill)}
 .cell.even{background:var(--even-fill)}
