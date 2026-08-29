@@ -6,8 +6,8 @@ let tapX=0, tapY=0, tapIdx=-1;
 let sweepOn=false, sweepSeen=null, sweepFrom=-1;
 let chainOn=false, chainPrev=-1, chainLast=0;
 let runOn=false, runFrom=-1, runAdd=false;
-/* a quick finger reports one move per two or three cells, so the gap between
-   two points is walked over and every cell along the way is visited */
+/* a quick finger reports one move per two or three cells, so the gap
+   between two points is walked over and every cell on the way is visited */
 const dragAt={x:0,y:0}; let dragStep=12;
 function dragCells(e,fn){
   const raw=e.getCoalescedEvents? e.getCoalescedEvents() : null;
@@ -66,7 +66,7 @@ $('board').addEventListener('pointerdown',e=>{
   const i=+el.dataset.i;
   if(SPEC.kind==='tokki'){
     if(e.button===2) return;
-    /* a zoomed board scrolls under the finger, so dragging must not leave marks */
+    /* a zoomed board scrolls under the finger, so a drag must not leave marks */
     if(!$('boardPan').classList.contains('pan')){
       sweepOn=true; sweepSeen=new Set(); sweepFrom=i;
     }
@@ -80,12 +80,12 @@ $('board').addEventListener('pointerdown',e=>{
     tapX=e.clientX; tapY=e.clientY;
     dragStart(i,e);
   }
-  /* the right button belongs to the pad at the cell: it must not clear a run
-     that the player has just picked */
+  /* the right button belongs to the pad at the cell: it must not clear a
+     run the player has just picked */
   if(e.button===2) return;
-  /* a drag with the mouse picks a run of cells, so a digit lands in all of them.
-     With a modifier held the drag adds to what is already picked, and a single
-     click on a cell toggles it, so cells that do not touch can be taken */
+  /* a mouse drag picks a run of cells, so a digit lands in all of them.
+     With a modifier held the drag adds to what is picked, and a single
+     click toggles one cell, so cells that do not touch can be taken */
   if(e.pointerType!=='touch' && e.button===0 && SPEC.kind!=='num'){
     runOn=true; runFrom=i; runAdd=addMod(e); tapX=e.clientX; tapY=e.clientY; dragStart(i,e);
     if(runAdd){
@@ -151,9 +151,9 @@ for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev
   if(runOn){ const added=runAdd; runOn=false; runAdd=false;
     if(!added && msel.size<=1){ msel.clear(); renderBoard() } }
 });
-/* a press with the mouse leaves the focus ring on the button, and the next key
-   lights it up as if it had been picked. The buttons act on click, so they need
-   no focus from a press */
+/* a mouse press leaves the focus ring on the button and the next key
+   lights it up as if picked. The buttons act on click and need no focus
+   from a press */
 for(const sel of ['.controls','.numpad','.topbar','header']){
   const el=document.querySelector(sel);
   if(el) el.addEventListener('pointerdown',e=>{ if(e.target.closest('button')) e.preventDefault() });
@@ -241,8 +241,8 @@ $('poolAll').addEventListener('click',()=>document.querySelectorAll('#poolGrid i
 $('poolNone').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=false));
 $('poolClose').addEventListener('click',()=>{ if(savePool()) $('poolModal').classList.add('hidden') });
 
-/* the address keeps the mode, and with a level it opens straight into a game:
-   a bookmark used to land on the menu whatever it was made from */
+/* the address keeps the mode, and with a level it opens straight into a
+   game: a bookmark used to land on the menu whatever it was made from */
 function syncUrl(mode,diff){
   if(!history.replaceState) return;
   const q = mode? '?m='+mode+(diff? '&d='+diff : '') : location.pathname;
@@ -254,8 +254,8 @@ $('backBtn').addEventListener('click',goHome);
 $('rulesBtn').addEventListener('click',openRules);
 $('rulesClose').addEventListener('click',()=>$('rulesModal').classList.add('hidden'));
 $('pauseBtn').addEventListener('click',()=>{ const g=cur(); if(g) setPaused(!g.paused) });
-/* the plate over the board is the way back into the game: a button on it would
-   only repeat the one in the strip above */
+/* the plate over the board is the way back into the game: a button on it
+   would only repeat the one in the strip above */
 $('pauseOverlay').addEventListener('click',()=>setPaused(false));
 async function restartGame(){
   const g=cur(); if(!g) return;
@@ -337,7 +337,7 @@ function markKeyboard(){
 try{ if(localStorage.getItem(KBD_SEEN)) document.body.classList.add('has-kbd') }catch(e){}
 window.addEventListener('keydown',e=>{ if(/^(Key[A-Z]|Digit[0-9]|Arrow)/.test(e.code)) markKeyboard() });
 
-/* the borrowed mode lights up while the key is down and goes out when it is not */
+/* the borrowed mode lights up while the key is down and goes out after */
 const trackMod=e=>{
   if($('game').classList.contains('hidden')) return setHeldMode('');
   setHeldMode(modeOfEvent(e));
@@ -439,13 +439,13 @@ window.addEventListener('resize',()=>{
   snapBoardTwice(); updatePickHint(); placeWinPanel();
 });
 syncRail();
-/* resize does not always fire (window snapping, a monitor swap), so the layout
-   listens to the media query itself */
+/* resize does not always fire (window snapping, a monitor swap), so the
+   layout listens to the media query itself */
 if(RAIL_Q.addEventListener) RAIL_Q.addEventListener('change',()=>{
   syncRail(); snapBoardTwice(); placeWinPanel();
 });
 initDialogs();
-/* resizing the board mid-drag would move the cells out from under the finger */
+/* resizing the board mid-drag would move cells out from under the finger */
 if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{
   if(sweepOn||chainOn) return;
   snapBoard();
@@ -458,17 +458,17 @@ buildSwatches();
 applyTheme(); applyLayout(); applyLang();
 renderHome(); show('home');
 if(pending.length) saveLog();
-/* a link with a mode picks it, and one with a level deals the game at once.
-   The guest who arrives by such a link is the one who also gets the welcome
-   window, so the address waits for it instead of being thrown away */
+/* a link with a mode picks it, one with a level deals the game at once.
+   A guest arriving by such a link also gets the welcome window, so the
+   address waits for it instead of being thrown away */
 function openFromUrl(){
   const q=new URLSearchParams(location.search);
   const m=q.get('m'), d=q.get('d');
   if(!m || (!MODE_IDS.includes(m) && m!=='random')) return;
   pickMode(m); closeSheet();
   if(!d || !DIFFS.includes(d)) return;
-  /* reloading the page must not deal a new board: the game the address points
-     at is still in the list, and dealing over it would push out the oldest one */
+  /* reloading must not deal a new board: the game the address points at is
+     still in the list, and dealing over it would push out the oldest one */
   const open=SES.cur>=0? SES.games[SES.cur] : null;
   if(open && !open.done && open.diff===d && (m==='random' || open.mode===m)) return openGame(SES.cur);
   const idx=SES.games.findIndex(g=>!g.done && g.diff===d && (m==='random' || g.mode===m));

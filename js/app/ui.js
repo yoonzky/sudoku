@@ -8,12 +8,12 @@ let lastPointerType='mouse';
 const PHONE_Q=matchMedia('(max-width:700px)');
 const LAND_Q=matchMedia('(orientation:landscape) and (max-height:560px) and (min-width:560px)');
 const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
-/* the sheet serves every width with no room for the side column, so it starts
-   where that column ends and not at the phone breakpoint */
+/* the sheet serves every width with no room for the side column, so it
+   starts where that column ends, not at the phone breakpoint */
 const SHEET_Q=matchMedia('(max-width:900px)');
 const sheetWidth=()=>SHEET_Q.matches;
 const isLand=()=>LAND_Q.matches;
-/* on a wide screen with a mouse the pad stands beside the board, not under it */
+/* on a wide screen with a mouse the pad stands beside the board */
 const RAIL_Q=matchMedia('(min-width:1040px) and (min-height:660px) and (pointer:fine)');
 const isRail=()=>RAIL_Q.matches;
 function syncRail(){ document.body.classList.toggle('rail', isRail()) }
@@ -24,8 +24,8 @@ function pickerAllowed(){
   return true;
 }
 let toastTimer=null;
-/* the time on screen follows the length: two and a bit seconds was not enough
-   for a long one like a game pushed out of the list */
+/* time on screen follows the length: two and a bit seconds was not enough
+   for a long message like a game pushed out of the list */
 function toast(msg){
   const el=$('toast'); el.textContent=msg; el.classList.add('show');
   const ms=Math.min(7000, Math.max(2600, 1600+msg.length*65));
@@ -284,9 +284,9 @@ function setTab(name){
   document.querySelectorAll('.stabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
   for(const tb of ['view','game','keys']) $('tab-'+tb).classList.toggle('hidden',tb!==name);
 }
-/* asked once, before the very first deal: whether a wrong digit should say so
-   at once or the board should be checked when it is full. The answer is the
-   instant-check setting, and it stays changeable in the settings */
+/* asked once, before the very first deal: whether a wrong digit says so
+   at once or the board is checked when full. The answer is the instant
+   check setting and stays changeable there */
 const CHECK_ASKED='sudoku-checkAsked';
 function needCheckAsk(){
   if(SES.games.length||LOG.games.length||pending.length) return false;
@@ -337,8 +337,8 @@ function openRules(){
 }
 
 /* ── dialogs for the keyboard and the screen reader ─────────────── */
-/* windows open and close in several places, so the roles and the focus trap are
-   wired once and follow the hidden class */
+/* windows open and close in several places, so roles and the focus trap
+   are wired once and follow the hidden class */
 const FOCUSABLE='button:not([disabled]),[href],input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
 let dlgReturn=null;
 function dialogFrame(bg){
@@ -355,7 +355,7 @@ function dialogFrame(bg){
 function openDialog(bg){
   const box=dialogFrame(bg); if(!box) return;
   dlgReturn=document.activeElement;
-  /* focus lands on the window, not on the first button: otherwise Enter goes
+  /* focus lands on the window, not the first button: otherwise Enter goes
      straight into reset statistics and the like */
   box.focus({preventScroll:true});
 }

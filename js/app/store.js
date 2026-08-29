@@ -18,8 +18,8 @@ const cur=()=>SES.games[SES.cur]||null;
 const allGames=()=>[...LOG.games,...pending];
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
-/* a move only touches the current game, so one key is written and after a pause:
-   every digit used to serialize the whole record of wins as well */
+/* a move touches only the current game, so one key is written, after a
+   pause: every digit used to serialize the record of wins as well */
 let saveTimer=null, sesDirty=false;
 function writeSes(){
   sesDirty=false;
@@ -48,17 +48,18 @@ function loadCache(){
   try{ const p=JSON.parse(localStorage.getItem(LS_PEND)); if(Array.isArray(p)) pending=p }catch(e){}
 
   for(const g of SES.games) if(!g.mode){ g.mode='classic'; g.ex={} }
-  /* centre pencil marks came later than the first saved games */
+  /* centre marks came later than the first saved games */
   for(const g of SES.games) if(!Array.isArray(g.mid)) g.mid=Array.from({length:g.solution.length},()=>[]);
-  /* the draft is gone: a trial digit becomes a plain one, and the field with it */
+  /* the draft is gone: a trial digit becomes a plain one, and the field
+     with it */
   for(const g of SES.games) if(Array.isArray(g.hyp)){
     for(let i=0;i<g.hyp.length;i++) if(g.hyp[i]&&!g.values[i]) g.values[i]=g.hyp[i];
     delete g.hyp;
   }
   for(const g of LOG.games) if(!g.mode) g.mode='classic';
   for(const g of pending) if(!g.mode) g.mode='classic';
-  /* tokkidoku answered to meow while it was still a cat: saved games, the log
-     and the settings all keep the old id */
+  /* tokkidoku answered to meow while it was still a cat: saved games, the
+     log and the settings all keep the old id */
   for(const list of [SES.games,LOG.games,pending])
     for(const g of list) if(g.mode==='meow') g.mode='tokki';
   if(SES.settings.mode==='meow') SES.settings.mode='tokki';

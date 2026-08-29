@@ -18,8 +18,8 @@
 <meta name="apple-mobile-web-app-title" content="Sudoku">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="data:,">
-<!-- the two faces the first screen is set in: without this the title and the
-     figures are drawn by the system font and jump when the files arrive -->
+<!-- the two faces the first screen is set in: without this the title and
+     the figures are drawn by the system font and jump when the files land -->
 <link rel="preload" as="font" type="font/woff2" href="fonts/tenor-sans-cyrillic.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/onest-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="css/base.css">
@@ -28,7 +28,8 @@
 <link rel="stylesheet" href="css/modals.css">
 <link rel="stylesheet" href="css/mobile.css">
 <script>
-/* the theme is set before the first paint; the colour comes from css, not a copy here */
+/* the theme is set before the first paint; the colour comes from css, not
+   from a copy kept here */
 (function(){
   try{
     var s=JSON.parse(localStorage.getItem('sudoku-ses')||'null');

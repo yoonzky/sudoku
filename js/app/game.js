@@ -40,14 +40,15 @@ function cancelGen(){
   if(genWorker&&genWorker.terminate){ try{ genWorker.terminate() }catch(e){} }
   genWorker=null;
   closeGenOverlay();
-  /* the game the deal was meant to replace is already gone, so fall back to the menu */
+  /* the game the deal was meant to replace is already gone: fall back to
+     the menu */
   if(!cur()) goHome();
   return true;
 }
 
-/* a deal of samurai or killer runs for tens of seconds, and a line of text that
-   never changes reads as a hung screen: the bar fills against the budget the
-   generator was given, and the seconds are counted out loud */
+/* a samurai or killer deal runs for tens of seconds, and a line of text
+   that never changes reads as a hung screen. The bar fills against the
+   budget the generator was given */
 let genTick=null;
 function openGenOverlay(mode,diff){
   const el=$('genOverlay');
@@ -71,8 +72,8 @@ function closeGenOverlay(){
   clearInterval(genTick); genTick=null;
   $('genOverlay').classList.add('hidden');
 }
-/* a deal that lands early leaves the bar half full: it runs to the end first,
-   and the board opens behind a finished line rather than a broken one */
+/* a deal that lands early leaves the bar half full: it runs to the end
+   first, so the board opens behind a finished line */
 function finishGenOverlay(then){
   const fill=$('genOverlay').querySelector('.gen-bar i');
   clearInterval(genTick); genTick=null;
@@ -142,8 +143,8 @@ function restore(s){ const g=cur();
   g.mid=(s.mid||g.mid).map(n=>n.slice());
   g.endErr=s.endErr.slice() }
 
-/* the faces come out of a bag: each one is seated once before any comes round
-   again, and an emptied bag is shuffled anew */
+/* faces come out of a bag: each is seated once before any repeats, and
+   an emptied bag is shuffled anew */
 function dealFace(g,i){
   if(!g.face) g.face={};
   if(g.face[i]!=null) return;
@@ -204,9 +205,9 @@ function tokkiSweep(i){
   lastPlaced=-1;
   afterMove();
 }
-/* the win takes the pad away and the page stops centring itself, which would
-   slide the board out from under the player. It is pinned where it stood and
-   the rest of the screen moves around it */
+/* a win takes the pad away and the page stops centring itself, which
+   would slide the board out from under the player. It is pinned where
+   it stood and the rest of the screen moves around it */
 function pinBoard(change){
   const b=$('board');
   const before=b? b.getBoundingClientRect().top : 0;
@@ -290,8 +291,8 @@ function inputNumber(d){
   numArm(more);
   afterMove(true);
 }
-/* every mode works over a run of picked cells, the plain digit included: what
-   one cell would get, all of them get */
+/* every mode works over a run of picked cells, the plain digit included:
+   what one cell would get, all of them get */
 function inputMulti(v,mode){
   const g=cur(); if(!g||g.done||g.paused) return;
   if(v<1||v>SPEC.maxD) return;
@@ -360,8 +361,7 @@ function inputDigit(v,forceNote,forceMid){
           if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
         }
       } else {
-        /* the cell stays picked after a digit lands in it: the run of thought
-           usually carries on from the same place */
+        /* a right digit takes itself out of the corner marks around it */
         for(const p of SPEC.peers[sel]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
       }
     }
@@ -517,8 +517,8 @@ function placeWinPanel(){
     document.body.classList.remove('win-side');
     return;
   }
-  /* with the pad beside the board the panel goes into its column: same markup
-     as the side win, the grid does the placing */
+  /* with the pad beside the board the panel goes into its column: same
+     markup as the side win, the grid does the placing */
   if(isRail()){ document.body.classList.add('win-side'); panel.style.left=''; panel.style.top=''; return }
   const b=$('board').getBoundingClientRect(), game=$('game').getBoundingClientRect();
   const side=(window.innerWidth-b.right)>=330 && window.innerHeight>=600 && !isPhone();
@@ -560,13 +560,13 @@ function setPaused(p){
   $('pauseBtn').querySelector('.tbtn-lbl').textContent=pl;
   $('pauseBtn').title=pl; $('pauseBtn').setAttribute('aria-label',pl);
 }
-/* three ways to fill a cell and nothing else: the digit itself, marks in the
-   corners, marks in the middle. Each one is shown on the pad, on the keypad and
-   in the pad at the cell, so the mode is never a secret */
+/* three ways to fill a cell and nothing else: the digit, marks in the
+   corners, marks in the middle. Each is shown on the pad, on the keypad
+   and in the pad at the cell, so the mode is never a secret */
 const MODES_IN=['digit','note','mid'];
-/* holding shift or the command key borrows a mode for as long as it is held:
-   the buttons and both keypads follow, so the borrowed mode is as visible as
-   the chosen one */
+/* holding shift or the command key borrows a mode while it is held: the
+   buttons and both keypads follow, so a borrowed mode is as visible as
+   a chosen one */
 let heldMode='';
 const activeMode=()=>heldMode||inputMode;
 function setHeldMode(m){
@@ -586,8 +586,8 @@ function syncModeButtons(){
   $('digitBtn').classList.toggle('on', m==='digit');
   $('notesBtn').classList.toggle('on2', m==='note');
   $('midBtn').classList.toggle('on3', m==='mid');
-  /* the colour of the mode carries onto the board: the picked cell is filled in
-     the same tone as the keys that would write into it */
+  /* the colour of the mode carries onto the board: the picked cell is
+     filled in the same tone as the keys that would write into it */
   document.body.classList.toggle('mode-note', m==='note');
   document.body.classList.toggle('mode-mid', m==='mid');
   syncPickerMode();

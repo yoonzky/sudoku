@@ -39,8 +39,8 @@ const FACE_HEADS=[
 ];
 const FACE_SVGS=FACE_HEADS.map(f=>'<svg class="face f-'+f[0]+'" viewBox="0 0 24 24" aria-hidden="true">'+
   f[4]+FACE_LEFT[f[1]]+FACE_RIGHT[f[2]]+FACE_MUZZLE+(f[3]? FACE_WHISKERS : '')+'</svg>');
-/* the face is dealt when the bunny is seated and stays with the cell; a game
-   saved before the faces existed gets its own on the first draw */
+/* the face is dealt when the bunny is seated and stays with the cell;
+   a game saved before the faces existed gets its own on the first draw */
 function tokkiFace(g,i){
   if(g && (!g.face || g.face[i]==null)) dealFace(g,i);
   const n=(g&&g.face&&g.face[i]!=null)? g.face[i] : 0;
@@ -49,8 +49,8 @@ function tokkiFace(g,i){
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
   '<path d="M12 12c0-2.7 1-4.3 2.9-4.3 1.8 0 3 1.2 3 3 0 1.9-1.6 2.9-4.3 2.9 2.7 0 4.3 1 4.3 2.9 0 1.8-1.2 3-3 3-1.9 0-2.9-1.6-2.9-4.3 0 2.7-1 4.3-2.9 4.3-1.8 0-3-1.2-3-3 0-1.9 1.6-2.9 4.3-2.9-2.7 0-4.3-1-4.3-2.9 0-1.8 1.2-3 3-3 1.9 0 2.9 1.6 2.9 4.3Z"/></svg>';
 
-/* what a screen reader gets instead of the drawing: where the cell is and what
-   stands in it */
+/* what a screen reader gets instead of the drawing: where the cell is
+   and what stands in it */
 function cellLabel(g,sp,i){
   const c=sp.cells[i];
   const pos=t('a11yCell').replace('{r}',c.y+1).replace('{c}',c.x+1);
@@ -64,17 +64,17 @@ function cellLabel(g,sp,i){
   return pos+', '+val;
 }
 
-/* the cell keeps what it drew last, so a language switch has to forget it or
-   the spoken labels stay in the old one */
+/* the cell keeps what it drew last, so a language switch has to forget
+   it or the spoken labels stay in the old language */
 function invalidateCells(){ cellKey.length=0 }
 
 function buildBoard(sp){
   SPEC=sp;
   const b=$('board');
   b.innerHTML=''; cells.length=0; cellKey.length=0;
-  /* the board is driven by the arrow keys rather than read as a table: the
-     cells sit in a css grid with holes in it, and rows would have to be faked.
-     The picked cell is announced through aria-activedescendant instead */
+  /* the board is driven by arrow keys, not read as a table: the cells sit
+     in a css grid with holes and rows would have to be faked. The picked
+     cell is announced through aria-activedescendant instead */
   b.setAttribute('role','application');
   b.setAttribute('tabindex','0');
   b.setAttribute('aria-label',t('a11yBoard'));
@@ -260,8 +260,8 @@ function buildDeco(sp){
     const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
     sums+=`<text x="${a.x+0.15}" y="${a.y+0.31}">${cg.sum}</text>`;
   }
-  /* a region is outlined along its outer rim only: where the neighbour belongs
-     to the same region the side is left undrawn */
+  /* a region is outlined along its outer rim only: where the neighbour is
+     in the same region the side is left undrawn */
   const outline=(mark,z,boxed)=>{
     const segs=[];
     for(let i=0;i<sp.cells.length;i++){
@@ -279,8 +279,8 @@ function buildDeco(sp){
       if(!dn) segs.push([x0,y+1-z,x1,y+1-z]);
       if(!lf) segs.push([x+z,y0,x+z,y1]);
       if(!rt) segs.push([x+1-z,y0,x+1-z,y1]);
-      /* a concave corner: both neighbours are in the region, the diagonal one is
-         not. Without these two short strokes an L shaped turn stays open */
+      /* concave corner: both neighbours in the region, the diagonal one not.
+         Without these two short strokes an L shaped turn stays open */
       const dia=(dx,dy)=>{ const j=cellAt(sp,x+dx,y+dy);
         return j>=0 && sp.zone[j]===mark && (!boxed || sp.region[j]===reg) };
       if(lf&&up&&!dia(-1,-1)){ segs.push([x+z,y,x+z,y+z]); segs.push([x,y+z,x+z,y+z]) }
@@ -315,7 +315,8 @@ function buildDeco(sp){
 function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
-  /* tokkidoku needs no keypad: a tap walks the cell through mark, bunny and empty */
+  /* tokkidoku needs no keypad: a tap walks the cell through mark, bunny
+     and empty */
   if(sp.kind==='tokki'){
     document.body.classList.remove('pad-two');
     np.classList.add('hidden');
@@ -333,8 +334,8 @@ function buildNumpad(sp){
   for(const v of keys){
     const btn=document.createElement('button');
     btn.className='num'; btn.dataset.v=v;
-    /* the counter in the corner is decoration for the ear: without this the key
-       reads as two numbers in a row */
+    /* the counter is hidden from a screen reader, or the key is read out as
+       two numbers in a row; the aria-label below carries it in words */
     btn.innerHTML=`${v}<small aria-hidden="true"></small>`;
     btn.setAttribute('aria-label',t('a11yKey').replace('{v}',v));
     btn.addEventListener('pointerdown',e=>{ e.preventDefault(); numpadPress(v) });
@@ -430,11 +431,11 @@ function renderBoard(){
       if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');
     }
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
-    /* every picked cell is ringed on all four sides: a rim around the whole run
-       read as one box with a grid inside, not as a set of chosen cells */
+    /* every picked cell is ringed on all four sides: a rim around the whole
+       run read as one box with a grid inside, not as a set of chosen cells */
     const run=msel.size>1;
     if(run && msel.has(i)) d.classList.add('msel');
-    /* while a run of cells is picked the row and column of the first are left
+    /* while a run is picked the row and column of the first cell are left
        alone, or half the run ends up tinted differently from the rest */
     if(sel>=0 && !run){
       if(i===sel && !isTokki) d.classList.add('sel');
@@ -471,8 +472,8 @@ function renderBoard(){
   else bd.removeAttribute('aria-activedescendant');
   placeSelBox(g,sp);
   $('gMistWrap').style.display=g.instant? '' : 'none';
-  /* three marks instead of a fraction: before the first mistake the figure said
-     nothing, and the dots fill up as the limit is spent */
+  /* three marks instead of a fraction: before the first mistake the figure
+     said nothing, and the dots fill up as the limit is spent */
   const limited=SES.settings.limit&&g.instant&&!g.noLimit;
   const mist=$('gMist');
   mist.classList.toggle('dots',limited);
@@ -491,7 +492,7 @@ function renderBoard(){
 
 function placeSelBox(g,sp){
   const sb=$('selBox'); if(!sb) return;
-  /* tokkidoku seats a bunny on the tap itself, so a cell needs no ring around it */
+  /* tokkidoku seats a bunny on the tap itself, so the cell needs no ring */
   if(sel<0 || sp.kind==='tokki'){ sb.classList.add('hidden'); return }
   const c=sp.cells[sel];
   sb.style.left=(c.x/sp.W*100)+'%';
@@ -510,7 +511,7 @@ let boardZoom=false, lockFit=0;
 
 function otherHeight(){
   let used=0;
-  /* with the pad beside the board these three stand aside and take no height */
+  /* with the pad beside the board these three take no height */
   const side=isRail();
   const parts=[document.querySelector('header'), document.querySelector('.site-foot'), $('pickHint'),
     side? null : $('gameTag'),
@@ -553,8 +554,8 @@ function snapBoard(){
   const box=fit*SPEC.W+bw;
   $('game').style.setProperty('--board-px',box+'px');
   if(zoom){
-    /* the magnifier works inside the board's own footprint: the window keeps the
-       size the board had, so the pad and the plate around it stay put */
+    /* the magnifier works inside the board's own footprint: the window keeps
+       the size the board had, so the pad and the plate around it stay put */
     pan.classList.add('pan');
     pan.style.width=box+'px';
     pan.style.maxHeight=(fit*SPEC.H+bw)+'px';

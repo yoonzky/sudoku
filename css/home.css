@@ -1,13 +1,11 @@
-/* the block keeps its own height and main centres it: stretching it to the full
-   screen only pushed the totals to the bottom and left a hole in the middle */
+/* the block keeps its own height and main centres it: stretched to the
+   full screen it pushed the totals down and left a hole in the middle */
 #home{display:flex; flex-direction:column; gap:18px; width:100%; max-width:1120px; margin:0 auto; flex:none; min-height:0}
 
 body:not(.in-game) main{display:flex; flex-direction:column; justify-content:safe center;
   padding-bottom:14px; min-height:0}
-/* the page scrolls as one: neither the screen nor the columns keep a scroll */
-
-/* names are words, not columns of figures: proportional digits keep "10 by 10"
-   from falling apart, and the tracking on a caption stays short of a gap */
+/* mode names are words, not columns of figures: proportional digits
+   keep "10 by 10" from falling apart */
 .hcap{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
   color:var(--muted); font-weight:400; margin:0 0 10px}
 .mcard b, .rnd-card b, .cont-card b, .mp h3, .diff-btn span, .mp p, .mode-tag{
@@ -16,8 +14,8 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .home-main{flex:none; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:0 30px}
 @media (max-width:900px){ .home-main{grid-template-columns:1fr; gap:24px} }
 .modes-col{display:flex; flex-direction:column; min-height:0}
-/* continue lives under the grid, in the same column: in the footer it drifted
-   down with the height of the side column and sat far from everything */
+/* continue sits under the grid, in the same column: in the footer it
+   drifted down with the side column and ended far from everything */
 #continueCard{margin-top:22px}
 @media (min-width:901px){ .modes-col{border-right:1px solid var(--line); padding-right:28px} }
 
@@ -35,8 +33,8 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .mcard:hover{border-color:var(--accent); color:var(--accent); transform:translateY(-1px)}
 .mcard.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
 
-/* the draw sits under the grid as one wide line: it picks from the modes above
-   rather than standing among them */
+/* the draw is one wide line under the grid: it picks from the modes
+   above rather than standing among them */
 .rnd-card{display:flex; align-items:center; gap:13px; width:100%; margin-top:7px;
   background:var(--panel); border:1px solid var(--line); border-radius:4px;
   padding:9px 14px; cursor:pointer; color:var(--text); font-family:inherit; text-align:left;
@@ -51,20 +49,21 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 
 .mp{padding:0 0 0 28px; display:flex; flex-direction:column;
   position:sticky; top:16px; align-self:start;
-  /* one height for every mode, or the whole block is re-centred on each pick
-     and the grid steps up and down. The rule between the columns belongs to the
-     grid instead, so the spare height at the bottom shows as plain margin */
+  /* one height for every mode, or the block is re-centred on each pick
+     and the grid steps up and down. The rule between the columns belongs
+     to the grid, so spare height at the bottom shows as plain margin */
   min-height:min(700px, calc(100vh - 240px))}
 
 @media (max-width:900px){ .mp{border-top:1px solid var(--line); padding:20px 0 0} }
 .sheet-grab{display:none}
-/* the preview is measured against window height, or on a short screen it eats the levels */
+/* the preview is measured against window height, or a short screen
+   loses the levels */
 .mp-prev{width:min(210px,20vh); max-width:100%; margin:0 0 20px}
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
 .mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted)}
-/* the mode line: lowercase, on a line of its own above the rules. Heavier
-   selector than the general paragraph rule inside the sheet */
+/* the mode line: lowercase, own line above the rules. Heavier selector
+   than the general paragraph rule inside the sheet */
 .mp p.mode-tag, .modal p.mode-tag, #game p.mode-tag{font-family:var(--f-disp); font-size:11px;
   letter-spacing:.07em; line-height:1.4; color:var(--accent);
   margin:0 0 9px; text-transform:lowercase}
@@ -77,7 +76,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .mp-pool button:hover{border-bottom-color:var(--accent)}
 .mp h4{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
   color:var(--muted); font-weight:400; margin:26px 0 4px; padding-top:0}
-/* on a wide screen the rules stand right under the name and need no heading */
+/* on a wide screen the rules stand under the name and need no heading */
 .mp .mp-rulecap{display:none}
 
 .diff-grid{display:flex; flex-direction:column}
@@ -86,15 +85,15 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   padding:12px 4px 11px; cursor:pointer; text-align:left; color:var(--text);
   font-family:inherit; transition:color .18s, padding-left .18s}
 .diff-btn:last-child{border-bottom:1px solid var(--line)}
-/* a level is a chapter number, not a scale. The numeral face keeps its serifs,
-   so III reads as one numeral instead of three bars */
+/* the level mark is a chapter number, not a scale. Serifs on the
+   numeral face hold III together instead of three bars */
 .diff-btn .lvl{flex:none; width:26px; font-style:normal; font-family:var(--f-num);
   font-size:13.5px; letter-spacing:0; color:var(--muted); transition:color .18s}
 .diff-btn .lvl.on{color:var(--accent)}
 .diff-btn span{flex:1; font-size:16.5px; font-weight:400; letter-spacing:.01em}
 .diff-btn em{flex:none; font-style:normal; font-size:11px; color:var(--muted);
   font-family:var(--f-num); font-weight:500}
-/* the ring stays: this is the button that starts a game, and colour alone left
+/* the ring stays: this button starts a game, and colour alone left
    the keyboard with nothing to follow */
 .diff-btn:hover,.diff-btn:focus-visible{color:var(--accent); padding-left:11px}
 .diff-btn:hover .lvl,.diff-btn:focus-visible .lvl{color:var(--accent)}

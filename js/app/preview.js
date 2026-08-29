@@ -2,8 +2,8 @@
 
 const PREV_CACHE={};
 
-/* previews run off a fixed seed, or suguru, kakuro and tokkidoku draw a new
-   thumbnail on every load */
+/* previews run off a fixed seed, or suguru, kakuro and tokkidoku draw a
+   new thumbnail on every load */
 function seeded(seed){
   let a=seed>>>0;
   return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=Math.imul(a^(a>>>15),1|a);
@@ -66,7 +66,8 @@ function previewSVG(mode){
     out+=`<rect x="${px(c)}" y="${py(c)}" width="${u}" height="${u}" fill="var(--even-fill)"/>`;
   }
 
-  /* kakuro reads by its blocked cells, so they take the board colours, not a tint */
+  /* kakuro reads by its blocked cells, so they take the board colours, not
+     a tint */
   for(const b of (sp.blocks||[])) out+=`<rect x="${pad+b.x*u}" y="${pad+b.y*u}" width="${u}" height="${u}" fill="var(--kk-dark)"/>`;
   for(const c of (sp.clues||[])){
     out+=`<rect x="${pad+c.x*u}" y="${pad+c.y*u}" width="${u}" height="${u}" fill="var(--kk)"/>`;

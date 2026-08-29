@@ -1,5 +1,5 @@
-/* fonts live in fonts/: offline, and the app on the home screen, fall back to
-   system type otherwise. Lora and Onest are variable, one file per family */
+/* fonts are bundled: needed offline and on the home screen.
+   Lora and Onest are variable, one file per family */
 @font-face{font-family:'Tenor Sans'; font-style:normal; font-weight:400; font-display:swap;
   src:url(../fonts/tenor-sans-cyrillic.woff2) format('woff2');
   unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
@@ -24,8 +24,8 @@
   --f-body:Onest,system-ui,sans-serif;
   --f-num:Lora,Georgia,serif;
 }
-/* the anchor colours of both themes. The only place they are written down:
-   markup, scripts and the theme previews read them from here */
+/* theme colours. Written down only here: markup, scripts and the
+   theme previews read them from these variables */
 :root{
   --l-bg:#eaedf4; --l-panel:#fbfcfe; --l-line:#d2d7e4; --l-text:#14161f; --l-accent:#565ead;
   --d-bg:#0b0d14; --d-panel:#151824; --d-line:#252a3b; --d-text:#e6e9f5; --d-accent:#a6b4f0;
@@ -35,13 +35,13 @@
   --bg:var(--l-bg); --panel:var(--l-panel); --panel2:#ffffff; --line:var(--l-line); --line-strong:#14161f;
   --text:var(--l-text); --muted:#5a6072; --accent:var(--l-accent); --accent-text:#ffffff; --accent-soft:#e2e5f5;
   --accent2:#2c6b76; --accent2-soft:#dcebed;
-  /* one colour per way of filling a cell: the digit, the corners, the centre.
-     All three stay on the cold side of the palette */
+  /* one colour per input mode: digit, corner marks, centre marks.
+     All three cold */
   --accent3:#8a4a96; --accent3-soft:#f3e7f6;
   --error:#9e3550; --note:#4f566b; --given:#14161f; --user:#565ead; --cell-hl:#e1e4ee; --cell-same:#d3d8ee; --note-sel:#333a4f;
   --shadow:0 18px 44px rgba(24,32,58,.10); --shadow-up:0 -14px 38px rgba(24,32,58,.13);
-  /* the rules are ink on paper, not a colour of their own: half transparent,
-     they darken with whatever the cell under them is tinted with */
+  /* grid lines are half transparent, so they darken with whatever
+     tint the cell under them carries */
   --rule:rgba(20,22,31,.42); --rule-thin:rgba(20,22,31,.16); --frame:rgba(86,94,173,.26);
   --halo:radial-gradient(ellipse 62% 40% at 50% -2%, rgba(255,255,255,.95), transparent 72%);
   --glow-edge:rgba(86,94,173,.60);
@@ -50,31 +50,31 @@
   --kk:#a9b3ca; --kk-dark:#6e788f;
   --zone-fill:#dde2f3; --even-fill:#d7dcf0; --zone-edge:rgba(86,94,173,.34);
   --blend:multiply;
-  /* the peer tint carries no colour: that stays with the picked cell and the matches */
+  /* peer tint is neutral; colour is left to the picked cell and the matches */
   --tint-hl:rgba(20,22,31,.09); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
   --tint-sel2:rgba(44,107,118,.36); --tint-sel3:rgba(138,74,150,.32);
   --tint-err:rgba(158,53,80,.28);
   --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
   --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
-  /* tokkidoku regions: five tinted papers, each in two lightnesses. The one
-     place the palette leaves the cold range, since the mode has a look of its
-     own. They stay pale so a face of any colour still reads on them, and
-     neighbouring numbers never share a tone */
+  /* tokkidoku regions: five tints in two lightnesses, the only warm
+     colours in the app. Pale, or a face of any colour stops reading
+     on them; neighbouring numbers never share a tone */
   --z1:#e4eefb; --z2:#fbe6ee; --z3:#ece5fa; --z4:#dff2e9; --z5:#f8efd9;
   --z6:#d3e2f4; --z7:#f4d8e4; --z8:#ded3f0; --z9:#cfe9dc; --z10:#efe3c4;
   --face:#565ead; --mark:#98a2bd;
-  /* the thumbnails paint their lines solid: half transparent ones darken
-     wherever two of them cross and the board turns into a mesh */
+  /* preview lines are solid: half transparent ones darken where two
+     of them cross */
   --prev-rule:#9c9da1; --prev-zone:#b4b9dd; --prev-cage:#3c4270;
-  /* one colour per member, deep enough to read on any of the region tints */
+  /* one colour per face, deep enough to read on any region tint */
   --face-nz:#565ead; --face-mj:#2f74bd; --face-hn:#c2467f;
   --face-hr:#2f8a5a; --face-hi:#7b4bc4; --face-dn:#d29a00;
-  /* light falls from above: the top of the board is lighter, the bottom deeper */
+  /* board light: lighter at the top, deeper at the bottom */
   --board-light:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,0) 22%, rgba(22,26,44,.095));
   --tick:rgba(86,94,173,.58);
 }
 html[data-theme="dark"]{
-  /* the browser needs telling too, or scrollbars and form controls stay light */
+  /* the browser needs telling too, or scrollbars and form controls
+     stay light */
   color-scheme:dark;
   --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#1b1f30; --line:var(--d-line); --line-strong:#e6e9f5;
   --text:var(--d-text); --muted:#8c93ab; --accent:var(--d-accent); --accent-text:#0b0d14; --accent-soft:rgba(166,180,240,.20);
@@ -95,8 +95,8 @@ html[data-theme="dark"]{
   --tint-err:rgba(190,80,105,.48);
   --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
   --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;
-  /* softened toward the panel: at full strength the papers sat heavier than the
-     light theme and the bright faces floated on top of them instead of on them */
+  /* softened toward the panel: at full strength the tints sat heavier
+     than in the light theme */
   --z1:#21334b; --z2:#402b3b; --z3:#322f48; --z4:#1c3634; --z5:#353127;
   --z6:#1d293d; --z7:#322432; --z8:#29273a; --z9:#192c2d; --z10:#2b2823;
   --face:#a6b4f0; --mark:#5d6987;
@@ -106,14 +106,13 @@ html[data-theme="dark"]{
   --board-light:linear-gradient(to bottom, rgba(166,180,240,.13), rgba(166,180,240,0) 40%, rgba(0,0,0,.20));
   --tick:rgba(201,212,234,.62);
 }
-/* the page keeps to a comfortable measure and takes the extra room only where
-   there is plenty of it */
+/* page measure; the extra room is taken only on wide screens */
 :root{--page:940px}
 @media (min-width:1180px){ :root{--page:1120px} }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 /* a double tap zooms nothing; two fingers still pinch */
 html,body{height:100%; touch-action:manipulation}
-/* the system scrollbar on windows is a wide grey plate beside a pale page */
+/* windows draws a wide grey scrollbar beside a pale page */
 html{scrollbar-width:thin; scrollbar-color:var(--line) transparent; scrollbar-gutter:stable}
 ::-webkit-scrollbar{width:10px; height:10px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -126,9 +125,9 @@ body{margin:0; background:var(--bg); color:var(--text);
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   transition:background .25s,color .25s}
-/* in a game the board sits in the middle of what is left under the header,
-   not pinned to its top edge; safe centring keeps the top in view when the
-   board and the pad are taller than the screen */
+/* in a game the board centres in what is left under the header.
+   Safe centring keeps the top in view when board and pad together
+   are taller than the screen */
 body.in-game main{max-width:100%; display:flex; flex-direction:column; justify-content:safe center}
 button{font-family:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
@@ -185,11 +184,12 @@ header, main, .site-foot{position:relative; z-index:1}
   body{-webkit-touch-callout:none; touch-action:manipulation;
     padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right)}
   button{touch-action:manipulation}
-  /* the top allows for the notch, or the home screen header slides under it */
+  /* room for the notch, or the home screen header slides under it */
   header{padding:calc(20px + env(safe-area-inset-top)) 14px 8px}
   header h1{font-size:25px; letter-spacing:.15em; margin-left:.15em}
   header .iconbtn{top:calc(18px + env(safe-area-inset-top)); width:40px; height:40px}
-  /* the line drops below the buttons: at 375px it ran under the statistics icon */
+  /* the tagline drops below the buttons: at 375px it ran under the
+     statistics icon */
   .tagline{font-size:12px; margin-top:16px}
   @supports (height:100dvh){ body{min-height:100dvh} }
 
@@ -198,8 +198,8 @@ header, main, .site-foot{position:relative; z-index:1}
   body.in-game main{padding:4px 4px calc(6px + env(safe-area-inset-bottom)); flex:0 1 auto}
   body.in-game #game{width:100%}
 
-  /* the header stays at the top and the board with the keys takes what is left
-     under it, or a tall screen hangs an unexplained gap above the title */
+  /* header pinned to the top, board and keys take the rest: centred,
+     a tall screen left a gap above the title */
   body.in-game{justify-content:flex-start}
   body.in-game header{padding:calc(6px + env(safe-area-inset-top)) 12px 2px}
   body.in-game header h1{font-size:20px}

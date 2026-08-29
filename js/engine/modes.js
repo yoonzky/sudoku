@@ -323,9 +323,8 @@ function killerBlank(diff,deadline){
   return blankFallback;
 }
 
-/* the budget of one deal, in milliseconds. The overlay draws its bar against
-   the same figure, so what the player waits for and what the generator is
-   given are one number */
+/* the budget of one deal, in milliseconds. The overlay bar runs against
+   the same figure, so the wait shown and the budget given are one number */
 const KILLER_BLANK_MS=8000;
 function cycleBudget(id,diff){
   const M=MODES[id];
@@ -354,8 +353,9 @@ function makePuzzle(id,diff,deadline){
      and chasing them burns the budget for nothing */
   const target=Math.min(band[1], TARGET[diff]||2, M.top||9);
   const stop=deadline||(Date.now()+cycleBudget(id,diff));
-  /* the target is chased for part of the budget, then anything sound will do,
-     or expert keeps the player waiting. Where a try is cheap, the hunt runs longer */
+  /* the target is chased for part of the budget, then anything sound will
+     do, or expert keeps the player waiting. Where a try is cheap the hunt
+     runs longer */
   const half=Date.now()+(stop-Date.now())*((M.time||3500)<=4000? .6 : .34);
   let best=null, bestScore=Infinity;
   for(let att=0; att<(M.tries||30) && (att===0||Date.now()<stop); att++){
