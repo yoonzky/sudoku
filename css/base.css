@@ -105,6 +105,13 @@ html[data-theme="dark"]{
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 /* a double tap zooms nothing; two fingers still pinch */
 html,body{height:100%; touch-action:manipulation}
+/* the system scrollbar on windows is a wide grey plate beside a pale page */
+html{scrollbar-width:thin; scrollbar-color:var(--line) transparent; scrollbar-gutter:stable}
+::-webkit-scrollbar{width:10px; height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line); border:3px solid transparent;
+  background-clip:content-box; border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted); border:3px solid transparent; background-clip:content-box}
 body{margin:0; background:var(--bg); color:var(--text);
   font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
   font-family:var(--f-body);

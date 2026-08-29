@@ -125,6 +125,7 @@ function openGame(idx){
   clearWin(); numArm(false);
   if(typeof idx==='number') SES.cur=idx;
   const g=cur(); if(!g) return;
+  if(typeof syncUrl==='function') syncUrl(g.mode,g.diff);
   const sp=buildSpec(g.mode,g.ex);
   buildBoard(sp); buildNumpad(sp); buildPicker(sp);
   undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0; armed=0; inputMode='digit';

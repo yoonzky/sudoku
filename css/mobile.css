@@ -45,7 +45,8 @@
      name, and the rules go below them, where scrolling for them is fair */
   .mp .sheet-grab{order:0}
   .mp .mp-head{order:1}
-  .mp #mpTag{order:2}
+  .mp #mpTag{order:2; min-height:0}
+  .mp p.mode-tag:empty{display:none}
   .mp h4[data-i18n="lvlT"]{order:3; margin-top:16px}
   .mp .diff-grid{order:4}
   .mp .mp-rulecap{order:5; display:block; margin-top:22px}
@@ -58,12 +59,12 @@
 body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom)); min-height:auto; flex:none}
 #home{gap:16px; flex:none; min-height:auto}
 .home-main{display:block}
-.modes-col{display:block; min-height:0}
+/* on a phone the unfinished games come first, above the grid */
+.modes-col{display:flex; flex-direction:column; min-height:0}
 #modeList{overflow:visible; flex:none}
-.home-foot{display:contents}
-#continueCard{order:-1}
-.tot{order:5; margin:2px 0 0; padding-top:14px; border-top:1px solid var(--line);
-  justify-content:space-between; gap:4px 10px}
+.home-foot{display:block; border-top:1px solid var(--line); padding-top:12px; margin-top:14px}
+#continueCard{order:-1; margin:0 0 18px}
+.tot{margin:0; justify-content:space-between; gap:4px 10px}
 .tot b{font-size:17px}
 
 .hcap{font-size:11px; margin-bottom:9px}

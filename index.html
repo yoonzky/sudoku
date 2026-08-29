@@ -66,6 +66,20 @@
       <div class="modes-col">
         <h2 class="hcap" data-i18n="modesT"></h2>
         <div id="modeList"></div>
+        <div id="continueCard" style="display:none">
+          <div class="hsec-head">
+            <h2 class="hcap" data-i18n="continue"></h2>
+            <button class="linkbtn" id="contPick" data-i18n="pickMany"></button>
+            <div class="cont-bar hidden" id="contBar">
+              <span id="contCount"></span>
+              <button class="linkbtn" id="contAll" data-i18n="pickAll"></button>
+              <button class="linkbtn" id="contNone" data-i18n="pickNone"></button>
+              <button class="linkbtn danger" id="contDel" data-i18n="delSel"></button>
+              <button class="linkbtn quiet" id="contCancel" data-i18n="pickCancel"></button>
+            </div>
+          </div>
+          <div id="contList"></div>
+        </div>
       </div>
       <aside class="mp" id="modePanel">
         <button class="sheet-grab" id="sheetGrab" data-i18n-label="sheetClose" aria-label="Свернуть панель"><i></i></button>
@@ -85,20 +99,6 @@
       </aside>
     </div>
     <div class="home-foot">
-      <div id="continueCard" style="display:none">
-        <div class="hsec-head">
-          <h2 class="hcap" data-i18n="continue"></h2>
-          <button class="linkbtn" id="contPick" data-i18n="pickMany"></button>
-          <div class="cont-bar hidden" id="contBar">
-            <span id="contCount"></span>
-            <button class="linkbtn" id="contAll" data-i18n="pickAll"></button>
-            <button class="linkbtn" id="contNone" data-i18n="pickNone"></button>
-            <button class="linkbtn danger" id="contDel" data-i18n="delSel"></button>
-            <button class="linkbtn quiet" id="contCancel" data-i18n="pickCancel"></button>
-          </div>
-        </div>
-        <div id="contList"></div>
-      </div>
       <p class="tot">
         <b id="tot-won">0</b><span data-i18n="solvedL"></span>
         <b id="tot-perfect">0</b><span data-i18n="cleanL"></span>

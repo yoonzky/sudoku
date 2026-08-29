@@ -451,7 +451,14 @@ function openFromUrl(){
   const m=q.get('m'), d=q.get('d');
   if(!m || (!MODE_IDS.includes(m) && m!=='random')) return;
   pickMode(m); closeSheet();
-  if(d && DIFFS.includes(d)) newGame(m,d);
+  if(!d || !DIFFS.includes(d)) return;
+  /* reloading the page must not deal a new board: the game the address points
+     at is still in the list, and dealing over it would push out the oldest one */
+  const open=SES.cur>=0? SES.games[SES.cur] : null;
+  if(open && !open.done && open.diff===d && (m==='random' || open.mode===m)) return openGame(SES.cur);
+  const idx=SES.games.findIndex(g=>!g.done && g.diff===d && (m==='random' || g.mode===m));
+  if(idx>=0) return openGame(idx);
+  newGame(m,d);
 }
 (function(){
   const seen=localStorage.getItem('sudoku-welcomed');

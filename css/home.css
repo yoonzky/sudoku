@@ -16,6 +16,9 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .home-main{flex:none; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:0 30px}
 @media (max-width:900px){ .home-main{grid-template-columns:1fr; gap:24px} }
 .modes-col{display:flex; flex-direction:column; min-height:0}
+/* continue lives under the grid, in the same column: in the footer it drifted
+   down with the height of the side column and sat far from everything */
+#continueCard{margin-top:22px}
 @media (min-width:901px){ .modes-col{border-right:1px solid var(--line); padding-right:28px} }
 
 .mode-grid{display:grid; grid-template-columns:repeat(var(--span,6),1fr); gap:7px}
@@ -51,7 +54,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   /* one height for every mode, or the whole block is re-centred on each pick
      and the grid steps up and down. The rule between the columns belongs to the
      grid instead, so the spare height at the bottom shows as plain margin */
-  min-height:min(690px, calc(100vh - 250px))}
+  min-height:min(700px, calc(100vh - 240px))}
 
 @media (max-width:900px){ .mp{border-top:1px solid var(--line); padding:20px 0 0} }
 .sheet-grab{display:none}
@@ -66,6 +69,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   letter-spacing:.07em; line-height:1.4; color:var(--accent);
   margin:0 0 9px; text-transform:lowercase}
 #game p.mode-tag{width:var(--board-px,100%); margin:0 auto 7px}
+.mp p.mode-tag{min-height:1.4em}
 .mp-prev, .mp h3, .mp h4, .diff-grid{flex:none}
 .mp-pool{margin:13px 0 0; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted)}
 .mp-pool button{background:transparent; border:0; border-bottom:1px solid var(--line); padding:2px 0;
@@ -95,7 +99,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .diff-btn:hover,.diff-btn:focus-visible{color:var(--accent); padding-left:11px}
 .diff-btn:hover .lvl,.diff-btn:focus-visible .lvl{color:var(--accent)}
 
-.home-foot{flex:none; border-top:1px solid var(--line); padding-top:14px}
+.home-foot{flex:none; border-top:1px solid var(--line); padding-top:12px; margin-top:18px}
 .hsec-head{display:flex; align-items:center; gap:14px; margin-bottom:9px}
 .hsec-head .hcap{margin:0}
 .linkbtn{background:transparent; border:0; padding:2px 0; cursor:pointer; font-family:inherit;
