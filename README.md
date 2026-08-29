@@ -25,15 +25,15 @@ and starts it at the level you choose.
   room for those techniques (Suguru, 12×12, Numerator) top out lower and lean on the clue count
 - every puzzle is generated with exactly one solution, whatever the mode, and every deal the
   grader cannot crack by reasoning gets extra clues until it can
-- a slow deal (Killer at Expert, 10×10, Samurai) shows how long it has been running against the
-  budget it was given, and can be dropped with Esc or a tap on the overlay; the fourth level says
-  in the menu when a deal is a long one
+- a slow deal (Killer and 12×12 at Expert, Suguru) shows how long it has been running against
+  the budget it was given, and can be dropped with Esc or a tap on the overlay; the fourth level
+  says in the menu when a deal is a long one
 - Killer at Expert opens no digit at all — the cage sums alone pin the answer down
-- Suguru grows with the level: 9×9 with regions up to seven, 12×12 with regions up to nine
+- Suguru grows with the level, 9×9 through 12×12, with regions of five to eight cells
 - three ways to fill a cell: the digit itself, marks in the corners, marks in the centre that read
-  as one figure — 28 or 135 in the middle, the way a hidden pair or triple is written down. Z, X and
-  C pick a mode and space steps through them; holding shift or the command key borrows the corners
-  or the centre for as long as it is held
+  as one figure — 28 or 135 in the middle, the way a hidden pair or triple is written down; a long
+  run breaks onto short lines instead of shrinking. Z, X and C pick a mode and space steps through
+  them; holding shift or the command key borrows the corners or the centre while it is held
 - with a mouse, drag across the board to pick a run of cells, or hold the command key and click to
   pick cells that do not touch; whatever one cell would get, all of them get, and pressing the same
   digit again takes it back out
@@ -41,7 +41,8 @@ and starts it at the level you choose.
   keypad below the board does the same job
 - before the first deal the game asks whether a wrong digit should turn red at once or the board
   should be checked when it is full
-- in Numerator the entry waits for a second digit, since the numbers run to 81
+- in Numerator the entry waits for a second digit, since the numbers run to 81; dragging from a
+  filled cell lays the run out in order and stops at anything already written
 - up to ten unfinished games at once, each with its own timer; several can be picked and dropped together
 - notes, auto-candidates, hint, undo/redo, mistake limit — all optional
 - full keyboard control (1–9, A/B/C for 10–12, shift for corner marks, command or control for
@@ -78,6 +79,9 @@ js/app/board.js       building and drawing a board of any shape
 js/app/game.js        moves, undo, hints, win, timer
 js/app/home.js        home screen and the random draw
 js/app/main.js        events, keyboard, start-up
+sw.js                 offline cache, bumped on every release
+manifest.webmanifest  name, colours and icons for an installed copy
+icons/                app icons, maskable among them
 ```
 
 One model describes every mode: cells with coordinates, groups that hold each digit once,
