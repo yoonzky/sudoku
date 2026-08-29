@@ -215,7 +215,7 @@ body.board-tokki .cell::before{display:none}
 .cell .face.f-hi{stroke:var(--face-hi)}
 .cell .face.f-dn{stroke:var(--face-dn)}
 .cell.err .face{stroke:var(--error)}
-.cell .mark{width:26%; height:26%; fill:var(--mark); stroke:none}
+.cell .mark{width:34%; height:34%; fill:var(--mark); stroke:none}
 .cell.pop .face{animation:popMid .24s cubic-bezier(.22,.8,.3,1)}
 @keyframes popMid{from{transform:translate(-50%,-50%) scale(.8); opacity:.25}
   to{transform:translate(-50%,-50%); opacity:1}}
