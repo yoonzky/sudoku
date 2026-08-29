@@ -147,8 +147,12 @@ function refreshPickerCounts(){
 function openPicker(i){
   if(!pickerAllowed()||!SPEC||!SES.settings.dblPick||SPEC.kind==='tokki') return;
   dismissPickHint();
-  const g=cur(); if(!g||g.done||g.paused||g.given[i]) return;
-  sel=i; renderBoard();
+  const g=cur(); if(!g||g.done||g.paused) return;
+  /* opened over a picked run the pad fills all of it, so the run stays */
+  const run=msel.size>1 && msel.has(i);
+  if(!run && g.given[i]) return;
+  if(!run) sel=i;
+  renderBoard();
   const pk=$('picker');
   if(SPEC.kind!=='num') syncPickerMode();
   pk.classList.remove('hidden');

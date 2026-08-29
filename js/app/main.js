@@ -5,7 +5,7 @@ const TAP_SLOP=14;
 let tapX=0, tapY=0, tapIdx=-1;
 let sweepOn=false, sweepSeen=null, sweepFrom=-1;
 let chainOn=false, chainPrev=-1, chainLast=0;
-let runOn=false, runFrom=-1;
+let runOn=false, runFrom=-1, runAdd=false;
 /* a quick finger reports one move per two or three cells, so the gap between
    two points is walked over and every cell along the way is visited */
 const dragAt={x:0,y:0}; let dragStep=12;
@@ -35,6 +35,8 @@ function dragStart(i,e){
 const MOD_MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'');
 const pickMod=e=> MOD_MAC? e.metaKey : e.ctrlKey;
 const modeOfEvent=e=> e.shiftKey? 'note' : pickMod(e)? 'mid' : '';
+/* either modifier adds to the run instead of starting a new one */
+const addMod=e=> e.shiftKey || pickMod(e);
 function chainStop(){ chainOn=false; chainPrev=-1; chainLast=0 }
 function tapCancel(){ tapIdx=-1 }
 function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
@@ -62,16 +64,6 @@ $('board').addEventListener('pointerdown',e=>{
   lastPointerType=e.pointerType||'mouse';
   const g=cur(); if(!g||g.paused) return;
   const i=+el.dataset.i;
-  /* the modifier picks cells that do not touch: each click adds one to the run */
-  if(e.pointerType!=='touch' && e.button===0 && pickMod(e) && SPEC.kind!=='tokki' && SPEC.kind!=='num'){
-    e.preventDefault();
-    closePicker();
-    if(msel.has(i)) msel.delete(i); else msel.add(i);
-    sel=i; hlDigit=0;
-    renderBoard();
-    if(msel.size>1) showMultiHint();
-    return;
-  }
   if(SPEC.kind==='tokki'){
     if(e.button===2) return;
     /* a zoomed board scrolls under the finger, so dragging must not leave marks */
@@ -88,9 +80,23 @@ $('board').addEventListener('pointerdown',e=>{
     tapX=e.clientX; tapY=e.clientY;
     dragStart(i,e);
   }
-  /* a drag with the mouse picks a run of cells, so a digit can be pencilled into all of them */
+  /* the right button belongs to the pad at the cell: it must not clear a run
+     that the player has just picked */
+  if(e.button===2) return;
+  /* a drag with the mouse picks a run of cells, so a digit lands in all of them.
+     With a modifier held the drag adds to what is already picked, and a single
+     click on a cell toggles it, so cells that do not touch can be taken */
   if(e.pointerType!=='touch' && e.button===0 && SPEC.kind!=='num'){
-    runOn=true; runFrom=i; tapX=e.clientX; tapY=e.clientY; dragStart(i,e);
+    runOn=true; runFrom=i; runAdd=addMod(e); tapX=e.clientX; tapY=e.clientY; dragStart(i,e);
+    if(runAdd){
+      e.preventDefault();
+      closePicker();
+      if(msel.has(i)) msel.delete(i); else msel.add(i);
+      sel=i; hlDigit=0;
+      renderBoard();
+      if(msel.size>1) showMultiHint();
+      return;
+    }
   }
   if(e.pointerType!=='touch'){ tapCell(i); return }
   tapIdx=i; tapX=e.clientX; tapY=e.clientY;
@@ -129,8 +135,8 @@ $('board').addEventListener('pointermove',e=>{
 });
 $('board').addEventListener('pointerup',e=>{
   if(runOn){
-    runOn=false;
-    if(msel.size<=1){ msel.clear(); renderBoard() }
+    const added=runAdd; runOn=false; runAdd=false;
+    if(!added && msel.size<=1){ msel.clear(); renderBoard() }
   }
   const i=tapIdx; tapCancel();
   const swept=sweepOn && sweepSeen && sweepSeen.size>0;
@@ -142,7 +148,8 @@ $('board').addEventListener('pointerup',e=>{
 });
 for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{
   tapCancel(); sweepStop(); chainStop();
-  if(runOn){ runOn=false; if(msel.size<=1){ msel.clear(); renderBoard() } }
+  if(runOn){ const added=runAdd; runOn=false; runAdd=false;
+    if(!added && msel.size<=1){ msel.clear(); renderBoard() } }
 });
 function showMultiHint(){
   try{
