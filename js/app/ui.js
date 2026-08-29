@@ -67,9 +67,9 @@ function setFavicon(bg,accent){
 function applyLayout(){ placePickHint() }
 
 const PK_ICONS={
-  digit:'<svg viewBox="0 0 24 24"><rect x="3.6" y="3.6" width="16.8" height="16.8" rx="3.2" stroke-width="1.3"/><path d="M10.4 9.8 12.5 8.3v7.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  note:'<svg viewBox="0 0 24 24"><rect x="3.6" y="3.6" width="16.8" height="16.8" rx="3.2" stroke-width="1.3"/><circle cx="8" cy="8" r="1.45" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.45" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.45" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.45" fill="currentColor" stroke="none"/></svg>',
-  mid:'<svg viewBox="0 0 24 24"><rect x="3.6" y="3.6" width="16.8" height="16.8" rx="3.2" stroke-width="1.3"/><circle cx="8.3" cy="12" r="1.45" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.45" fill="currentColor" stroke="none"/><circle cx="15.7" cy="12" r="1.45" fill="currentColor" stroke="none"/></svg>',
+  digit:'<svg viewBox="0 0 24 24"><path d="M9.6 8.4 13 5.9v12.2" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.9 18.1h6.2" stroke-width="1.9" stroke-linecap="round"/></svg>',
+  note:'<svg viewBox="0 0 24 24"><circle cx="6.6" cy="6.6" r="2" fill="currentColor" stroke="none"/><circle cx="17.4" cy="6.6" r="2" fill="currentColor" stroke="none"/><circle cx="6.6" cy="17.4" r="2" fill="currentColor" stroke="none"/><circle cx="17.4" cy="17.4" r="2" fill="currentColor" stroke="none"/></svg>',
+  mid:'<svg viewBox="0 0 24 24"><circle cx="6.4" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="17.6" cy="12" r="2" fill="currentColor" stroke="none"/></svg>',
 };
 const PK_TABS={digit:'digitTab', note:'noteTab', mid:'midTab'};
 function buildPicker(sp){
