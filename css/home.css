@@ -120,6 +120,21 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .cont-bar #contCount{font-family:var(--f-num); font-weight:500}
 
 #contList{display:flex; gap:9px; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin}
+/* the games wrap into rows instead of running off the right edge: ten
+   saved ones showed four and hid the rest behind a sideways scroll */
+@media (min-width:701px){
+  #contList{display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
+    align-content:start; overflow-x:hidden; padding:0 0 2px}
+  .cont-card{width:auto}
+}
+/* beside the mode panel the column has a bottom, so the list takes what is
+   left under the grid and scrolls only once the rows reach it */
+@media (min-width:901px){
+  .modes-col > .hcap, #modeList{flex:none}
+  #continueCard{display:flex; flex-direction:column; min-height:0; flex:1 1 0}
+  #contList{overflow-y:auto; flex:1 1 0; min-height:0; padding-right:4px}
+  #contList::-webkit-scrollbar{width:7px}
+}
 #contList::-webkit-scrollbar{height:7px}
 #contList::-webkit-scrollbar-track{background:transparent}
 #contList::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px}
