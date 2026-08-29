@@ -50,6 +50,9 @@
   .mp h4[data-i18n="lvlT"]{order:3; margin-top:16px}
   .mp .diff-grid{order:4}
   .mp .mp-rulecap{order:5; display:block; margin-top:22px}
+  /* the sheet orders the rules and the pool itself, so the desktop
+     wrapper drops out of the box tree */
+  .mp-body{display:contents}
   .mp #mpRules{order:6; margin-top:6px}
   .mp .mp-pool{order:7}
 }

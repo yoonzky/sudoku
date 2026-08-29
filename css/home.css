@@ -61,7 +61,8 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .mp-prev{width:min(210px,20vh); max-width:100%; margin:0 0 20px}
 .mp-prev svg{display:block; width:100%; height:auto}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
-.mp p{margin:0; font-size:13px; line-height:1.6; color:var(--muted)}
+.mp{--rule-fs:13px}
+.mp p{margin:0; font-size:var(--rule-fs); line-height:1.6; color:var(--muted)}
 /* the mode line: lowercase, own line above the rules. Heavier selector
    than the general paragraph rule inside the sheet */
 .mp p.mode-tag, .modal p.mode-tag, #game p.mode-tag{font-family:var(--f-disp); font-size:11px;
@@ -69,6 +70,12 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   margin:0 0 9px; text-transform:lowercase}
 #game p.mode-tag{width:var(--board-px,100%); margin:0 auto 7px}
 .mp p.mode-tag{min-height:1.4em}
+/* the rules keep seven lines of room whatever the mode, the pool line of
+   the draw included: without the reserve a longer text grew the column,
+   the centred block shifted and the mode grid stepped on every pick.
+   Seven lines is the longest text there is — a longer one brings the
+   jump back */
+@media (min-width:901px){ .mp-body{min-height:calc(11.2 * var(--rule-fs))} }
 .mp-prev, .mp h3, .mp h4, .diff-grid{flex:none}
 .mp-pool{margin:13px 0 0; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted)}
 .mp-pool button{background:transparent; border:0; border-bottom:1px solid var(--line); padding:2px 0;
@@ -180,7 +187,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   .mcard b{font-size:12px}
   .mcard small{font-size:10.5px}
   .mp h3{font-size:25px}
-  .mp p{font-size:13.5px}
+  .mp{--rule-fs:13.5px}
   .diff-btn{padding:14px 4px 13px}
   .diff-btn span{font-size:18px}
   .cont-card{width:180px}
