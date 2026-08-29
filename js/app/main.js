@@ -168,6 +168,14 @@ function showMultiHint(){
 $('boardPan').addEventListener('scroll',()=>{ tapCancel(); sweepStop(); chainStop() });
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
+/* tabbing onto the board left nothing on screen: the grid draws no ring of
+   its own, and with no cell picked the keyboard had no visible place to
+   stand. Arriving by keyboard picks the first cell */
+$('board').addEventListener('focus',()=>{
+  if(sel>=0||msel.size||!SPEC||!cur()) return;
+  try{ if(!$('board').matches(':focus-visible')) return }catch(e){ return }
+  sel=0; renderBoard();
+});
 $('board').addEventListener('dblclick',e=>{
   const el=e.target.closest('.cell');
   if(el && lastPointerType!=='touch') openPicker(+el.dataset.i);
