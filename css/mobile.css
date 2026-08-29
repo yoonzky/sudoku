@@ -108,7 +108,12 @@ body.in-game #game{width:100%; max-width:100%; flex:1 1 auto;
    width of a board that has not been measured yet: it takes the full width and
    the board centres itself inside. Up and down the margins are auto, so the
    spare height splits above and below the board and the pad keeps the bottom */
-body.in-game .board-wrap{width:100%; margin:auto 0}
+/* the spare height goes under the keypad, not around the board: the keys used
+   to end up at the very bottom edge, past where a thumb rests */
+body.in-game .board-wrap{width:100%; margin:auto 0 0}
+body.in-game .numpad{margin-bottom:auto}
+/* tokkidoku has no keypad, so the spare height hangs off the pad instead */
+body.in-game .controls:has(+ .numpad.hidden){margin-bottom:auto}
 /* on a win the board holds the top and the panel takes the room under it */
 body.won.in-game .board-wrap{margin-top:0}
 body.in-game .site-foot{display:none}
@@ -143,14 +148,16 @@ body.board-zoom .board-wrap{max-width:100%}
 
 /* input modes take a row of their own and everything else the second: labels
    stop being clipped and a finger lands twice as surely as in a row of seven */
-.controls{margin-top:11px; gap:6px}
-.ctl{padding:9px 2px 8px; letter-spacing:0; gap:5px; min-height:50px; font-size:10.5px}
-.ctl svg{width:20px; height:20px}
+/* the pad lies in a line rather than in blocks: two stacked rows of tall
+   buttons pushed the keypad so low that the digits sat under the thumb */
+.controls{margin-top:9px; gap:5px}
+.ctl{flex-direction:row; padding:7px 4px; letter-spacing:0; gap:7px; min-height:38px; font-size:11px}
+.ctl svg{width:17px; height:17px}
+.numpad{gap:5px; margin-top:7px}
 .ctl:hover:not(:disabled){color:var(--muted); background:transparent}
 .ctl:active:not(:disabled){background:var(--cell-hl); color:var(--text)}
 .ctl.on:active{color:var(--accent)}
 
-.numpad{gap:5px; margin-top:9px}
 .num{aspect-ratio:auto; height:54px; font-size:23px; font-weight:500; border-radius:4px}
 .num small{right:4px; bottom:3px; font-size:10px}
 .num:hover{border-color:var(--key-line); color:var(--text)}
