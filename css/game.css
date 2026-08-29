@@ -52,8 +52,13 @@ body.mode-mid .cell.sel{--tint:var(--tint-sel3)}
 .cell .mid{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
   font-family:var(--f-num); font-weight:600; font-size:calc(26cqw / var(--bw)); line-height:1;
   color:var(--note); letter-spacing:.02em; white-space:nowrap; pointer-events:none; font-style:normal}
-.cell .mid.tight{font-size:calc(20cqw / var(--bw))}
-.cell .mid.tiny{font-size:calc(16cqw / var(--bw))}
+.cell .mid.tight{font-size:calc(23cqw / var(--bw))}
+/* a long run stands in lines of five instead of one shrinking string */
+.cell .mid.stack{display:flex; flex-direction:column; align-items:center; line-height:1.06;
+  font-size:calc(23cqw / var(--bw))}
+.cell .mid.stack.tight{font-size:calc(19cqw / var(--bw))}
+.cell .mid.stack.tiny{font-size:calc(15cqw / var(--bw))}
+.cell .mid.stack b{display:block; font-weight:inherit}
 .cell .mid.nhl{color:var(--accent); font-weight:700}
 .cell.sel .mid{color:var(--note-sel)}
 .cell.sel .notes span{color:var(--note-sel)}

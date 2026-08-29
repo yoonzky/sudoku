@@ -342,6 +342,33 @@ function buildNumpad(sp){
   }
 }
 
+/* centre marks: one long line shrank to a smudge, six pixels on a phone.
+   The run is packed into lines of five characters and the face keeps
+   its size */
+const MID_ROW=5, MID_ROWS=4;
+function midSplit(mid,sp){
+  const sep = sp.maxD>9? ' ' : '';
+  const cut=n=>{ const out=[], per=Math.ceil(mid.length/n);
+    for(let k=0;k<mid.length;k+=per) out.push(mid.slice(k,k+per).join(sep));
+    return out };
+  const one=mid.join(sep);
+  if(one.length<=MID_ROW) return [one];
+  for(let n=2;n<MID_ROWS;n++){
+    const out=cut(n);
+    if(out.every(r=>r.length<=MID_ROW)) return out;
+  }
+  return cut(MID_ROWS);
+}
+function midText(mid,sp){
+  const rows=midSplit(mid,sp);
+  return rows.length>1? rows.map(r=>`<b>${r}</b>`).join('') : rows[0];
+}
+function midSize(mid,sp){
+  const rows=midSplit(mid,sp);
+  if(rows.length===1) return rows[0].length>3? ' tight' : '';
+  return ' stack'+(rows.length>3? ' tiny' : rows.length>2? ' tight' : '');
+}
+
 const TOT_CACHE={};
 function digitTotals(g){
   if(TOT_CACHE.id===g.id) return TOT_CACHE.map;
@@ -386,10 +413,8 @@ function renderBoard(){
             h+='</div>';
           }
           if(mid.length){
-            const txt=mid.join(sp.maxD>9? ' ' : '');
-            const size = txt.length>5? ' tiny' : txt.length>3? ' tight' : '';
             const hl = activeVal&&mid.includes(activeVal)? ' nhl' : '';
-            h+=`<i class="mid${size}${hl}">${txt}</i>`;
+            h+=`<i class="mid${midSize(mid,sp)}${hl}">${midText(mid,sp)}</i>`;
           }
           d.innerHTML=h;
         }
