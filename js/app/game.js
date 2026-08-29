@@ -439,10 +439,10 @@ function checkWin(){
       if((g.values[i]===TOKKI_BUN)!==(g.solution[i]===TOKKI_BUN)) return;
   } else {
     let full=true;
-    for(let i=0;i<n;i++) if(!merged(g,i)){ full=false; break }
+    for(let i=0;i<n;i++) if(!g.values[i]){ full=false; break }
     if(!full){ g.wasFull=false; return }
     const wrong=[];
-    for(let i=0;i<n;i++) if(merged(g,i)!==g.solution[i]) wrong.push(i);
+    for(let i=0;i<n;i++) if(g.values[i]!==g.solution[i]) wrong.push(i);
     if(wrong.length){
       if(numPending) return;
       if(!g.instant){ g.endErr=wrong; renderBoard() }

@@ -3,16 +3,15 @@
 let SPEC=null;
 const cells=[];
 const EMPTY=[];
-/* what the cell already shows, so a move touches one cell */
+/* what the cell drew last, so a move repaints one cell */
 const cellKey=[];
-const merged=(g,i)=>g.values[i];
 
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
-/* six faces, one per member: a head, two letters and the muzzle hanging under
-   them. Drawn the way the sketches are — one round outline, no straight sides.
-   Every head shares the same lower half, so the whiskers meet the line wherever
-   they are drawn. Whiskers on all but the bear and the dog */
+/* six faces, one per member: head, two letters, muzzle under them. One
+   round outline, no straight sides. Every head shares the same lower
+   half, so whiskers meet the line wherever they are drawn. Whiskers on
+   all but the bear and the dog */
 const FACE_MUZZLE='<path d="M12 10.8v5.8"/>'+
   '<path d="M8 16.6a2 2 0 0 0 4 0"/><path d="M12 16.6a2 2 0 0 0 4 0"/>';
 const FACE_WHISKERS='<path d="M3.6 15.4H.8M4.4 17.2H1.6M5.8 19H3"/>'+
@@ -109,7 +108,6 @@ function buildBoard(sp){
     const c=sp.cells[i];
     const d=document.createElement('div');
     d.className='cell';
-    d.setAttribute('role','gridcell');
     d.style.gridColumn=c.x+1; d.style.gridRow=c.y+1;
     if(sp.zone[i]===1) d.classList.add('zone');
     if(sp.zone[i]===2) d.classList.add('even');
@@ -357,18 +355,18 @@ function renderBoard(){
   const g=cur(); if(!g||!SPEC) return;
   const sp=SPEC, n=sp.cells.length;
   const isNum=sp.kind==='num', isTokki=sp.kind==='tokki';
-  /* tokkidoku reads by its own colours, extra tinting only gets in the way */
+  /* tokkidoku reads by its own colours, extra tinting gets in the way */
   const hlSame=SES.settings.highlightSame!==false;
-  const selVal=sel>=0? merged(g,sel) : 0;
+  const selVal=sel>=0? g.values[sel] : 0;
   const activeVal=(hlSame && !isNum && !isTokki)? (selVal||hlDigit) : 0;
   const counts={};
-  for(let i=0;i<n;i++){ const v=merged(g,i); if(v) counts[v]=(counts[v]||0)+1 }
+  for(let i=0;i<n;i++){ const v=g.values[i]; if(v) counts[v]=(counts[v]||0)+1 }
   const peersOn=SES.settings.highlightPeers!==false && !isTokki;
   const peers=(sel>=0&&peersOn)? sp.peers[sel] : null;
   for(let i=0;i<n;i++){
     const d=cells[i], v=g.values[i];
     const mid=g.mid? g.mid[i] : EMPTY;
-    d.className=d.className.replace(/ (msel|mt|mr|mb|ml|sel|hl|same|err|given|d2)/g,'');
+    d.className=d.className.replace(/ (msel|sel|hl|same|err|given|d2)/g,'');
     if(g.given[i]) d.classList.add('given');
     const key = isTokki? 'm'+v : v? 'v'+v
       : (g.notes[i].length||mid.length)? 'n'+g.notes[i].join(',')+'/'+mid.join(',')+'|'+(activeVal||0) : '';
@@ -419,7 +417,7 @@ function renderBoard(){
     }
     if(activeVal && !run && i!==sel){
       const hasNote=!v&&!isNum&&(g.notes[i].includes(activeVal)||mid.includes(activeVal));
-      if(merged(g,i)===activeVal||hasNote) d.classList.add('same');
+      if(g.values[i]===activeVal||hasNote) d.classList.add('same');
     }
   }
   /* a paused board is hidden, and so is what is known about it */
@@ -476,9 +474,7 @@ function placeSelBox(g,sp){
   sb.style.width=(100/sp.W)+'%';
   sb.style.height=(100/sp.H)+'%';
   sb.className='';
-  const wrong = sp.kind==='tokki'
-    ? g.values[sel]===TOKKI_BUN && g.solution[sel]!==TOKKI_BUN
-    : g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
+  const wrong = g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
   if(g.instant && wrong) sb.classList.add('err');
   else if(activeMode()==='mid') sb.classList.add('mid');
   else if(activeMode()==='note') sb.classList.add('note');

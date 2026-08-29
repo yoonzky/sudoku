@@ -135,7 +135,7 @@ function refreshPickerCounts(){
   const pk=$('picker'); if(pk.classList.contains('hidden')) return;
   const g=cur(); if(!g){ closePicker(); return }
   const counts={};
-  for(let k=0;k<SPEC.cells.length;k++){ const v=merged(g,k); if(v) counts[v]=(counts[v]||0)+1 }
+  for(let k=0;k<SPEC.cells.length;k++){ const v=g.values[k]; if(v) counts[v]=(counts[v]||0)+1 }
   const tot=digitTotals(g);
   const showCounts=SES.settings.showCounts!==false;
   pk.querySelectorAll('button[data-v]').forEach(b=>{
