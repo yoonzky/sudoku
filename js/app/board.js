@@ -46,16 +46,13 @@ function tokkiFace(g,i){
   const n=(g&&g.face&&g.face[i]!=null)? g.face[i] : 0;
   return FACE_SVGS[n%FACE_SVGS.length];
 }
-/* the mark says "no bunny here": four heart leaves round a short stem, so
-   at a third of a cell it still reads as a clover. One path per leaf,
-   turned about the centre — a <use> would want an id, and a board carries
-   dozens of these */
-const MARK_LEAF='M12 12C12 12 5.2 8.6 5.2 5.7 5.2 3.9 6.6 2.7 8.3 2.7c1.5 0 3 1 3.7 2.6.7-1.6 2.2-2.6 3.7-2.6 1.7 0 3.1 1.2 3.1 3C18.8 8.6 12 12 12 12Z';
+/* the mark says "no bunny here". Four leaves round a stem, each an ellipse
+   leaning out of the centre: at a third of a cell the gaps between them
+   are what makes it read as a clover rather than a flower */
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
-  '<path d="M12.9 11.8c1 2.5 1.1 5.2.3 7.9l-1.9-.5c.7-2.3.6-4.6-.2-6.8Z"/>'+
-  '<g transform="rotate(45 12 12)">'+
-  [0,90,180,270].map(a=>`<path d="${MARK_LEAF}" transform="rotate(${a} 12 12)"/>`).join('')+
-  '</g></svg>';
+  '<path d="M12.6 12.4c1.2 2.6 1.3 5.4.4 8.2l-1.9-.5c.8-2.5.7-4.9-.4-7.1Z"/>'+
+  [225,315,45,135].map(a=>`<ellipse cx="12" cy="7.2" rx="3.7" ry="4.6" transform="rotate(${a} 12 12)"/>`).join('')+
+  '</svg>';
 
 /* what a screen reader gets instead of the drawing: where the cell is
    and what stands in it */
