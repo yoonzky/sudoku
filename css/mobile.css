@@ -161,7 +161,11 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 .numpad.mode-mid .num:hover{color:var(--accent3); border-color:var(--accent3)}
 
 #pickHint{position:static; width:auto; margin:0 auto 7px; padding:0;
-  text-align:center; font-size:12px; line-height:1.4; border:0; color:var(--muted)}
+  text-align:center; font-size:12px; line-height:1.4; border:0; color:var(--muted);
+  overflow:hidden; max-height:9em; opacity:1;
+  transition:max-height .28s ease, opacity .16s ease, margin-bottom .28s ease}
+/* the hint sits in the flow: it folds away instead of snapping the board upwards */
+#pickHint.hidden{display:block !important; max-height:0; opacity:0; margin-bottom:0}
 #pickHint.right-side{padding:0; text-align:center; border:0}
 
 #picker{padding:9px; grid-template-columns:repeat(3,58px); gap:6px}
