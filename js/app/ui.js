@@ -51,13 +51,14 @@ function applyTheme(){
   const bg=cssVar('--bg'), accent=cssVar('--accent');
   if(bg) $('metaTheme').setAttribute('content',bg);
   document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('selq',b.dataset.t===SES.settings.theme));
-  setFavicon(bg||'#0d1119', accent||'#9ec1f5');
+  setFavicon(bg||'#0b0d14', accent||'#a6b4f0');
 }
+/* nimb: small radii, 4 on the tile and 2 on the cells */
 function setFavicon(bg,accent){
   let cellsSvg='';
   for(let r=0;r<3;r++) for(let c=0;c<3;c++)
-    cellsSvg+=`<rect x="${10+c*16}" y="${10+r*16}" width="12" height="12" rx="3.5" fill="${accent}" opacity="${r===c?'1':'.18'}"/>`;
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="${bg}"/>${cellsSvg}</svg>`;
+    cellsSvg+=`<rect x="${10+c*16}" y="${10+r*16}" width="12" height="12" rx="2" fill="${accent}" opacity="${r===c?'1':'.22'}"/>`;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="4" fill="${bg}"/>${cellsSvg}</svg>`;
   let link=document.querySelector('link[rel="icon"]');
   if(!link){ link=document.createElement('link'); link.rel='icon'; document.head.appendChild(link) }
   link.href='data:image/svg+xml,'+encodeURIComponent(svg);
