@@ -153,6 +153,7 @@ body.board-zoom .board-wrap{max-width:100%}
 
 .num{aspect-ratio:auto; height:54px; font-size:23px; font-weight:500; border-radius:4px}
 .num small{right:4px; bottom:3px; font-size:10px}
+.num small.two{font-size:8.5px}
 .num:hover{border-color:var(--key-line); color:var(--text)}
 .numpad.two-row .num{aspect-ratio:auto; height:46px}
 body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}

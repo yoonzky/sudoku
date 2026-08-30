@@ -427,15 +427,17 @@ function renderBoard(){
     }
   }
   const showCounts=SES.settings.showCounts!==false && !isNum && !isTokki && !g.paused;
-  /* a two figure count crowds the key: shown once the end is in sight */
-  const countCap = n>81? 10 : 99;
   const tot=digitTotals(g);
   document.querySelectorAll('.num').forEach(btn=>{
     if(btn.dataset.v===undefined) return;
     const v=+btn.dataset.v;
     const left=(tot[v]||0)-(counts[v]||0);
     const small=btn.querySelector('small');
-    if(small) small.textContent=(showCounts&&left>0&&left<countCap)?left:'';
+    if(small){
+      small.textContent=(showCounts&&left>0)?left:'';
+      /* linked boards leave more than nine of a digit: two figures get a smaller size */
+      small.classList.toggle('two', left>9);
+    }
     btn.setAttribute('aria-label', t('a11yKey').replace('{v}',v)+
       ((showCounts&&left>0)? ', '+t('a11yLeft').replace('{n}',left) : ''));
     btn.classList.toggle('done', !isNum && left<=0);
