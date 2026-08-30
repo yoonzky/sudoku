@@ -290,13 +290,13 @@ body.board-wide #board::before{display:none}
 #board::after{content:''; position:absolute; inset:0; z-index:6; pointer-events:none;
   background:
     linear-gradient(var(--tick),var(--tick)) left top/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left top/2px 13px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left top 2px/2px 11px no-repeat,
     linear-gradient(var(--tick),var(--tick)) right top/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right top/2px 13px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) right top 2px/2px 11px no-repeat,
     linear-gradient(var(--tick),var(--tick)) left bottom/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left bottom/2px 13px no-repeat,
+    linear-gradient(var(--tick),var(--tick)) left bottom 2px/2px 11px no-repeat,
     linear-gradient(var(--tick),var(--tick)) right bottom/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right bottom/2px 13px no-repeat}
+    linear-gradient(var(--tick),var(--tick)) right bottom 2px/2px 11px no-repeat}
 /* linked boards keep the ticks only with real corner cells */
 body.board-wide #board::after, body.board-num #board::after{display:none}
 body.board-wide #board.corners::after{display:block}
