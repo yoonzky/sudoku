@@ -234,7 +234,7 @@ en:{
 },};
 
 function t(k){ const d=I18N[SES.settings.lang]||I18N.en; return d[k] || I18N.en[k] || I18N.ru[k] || k }
-/* the modifier key is named after the keyboard in front of the player */
+/* named after the keyboard in front of the player */
 const MOD_KEY=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'')? '\u2318' : 'Ctrl';
 function applyLang(){
   document.documentElement.lang=SES.settings.lang;

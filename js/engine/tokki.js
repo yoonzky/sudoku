@@ -37,7 +37,7 @@ function tokkiBuild(ex){
   return sp;
 }
 
-/* plays the deal the way a person would: singles, then lines locked to a region */
+/* singles first, then lines locked to a region */
 function tokkiLogic(n,reg){
   const N=n*n;
   const cand=new Array(N).fill(true), bun=new Array(N).fill(false);
@@ -164,8 +164,7 @@ function tokkiRegions(n,cols){
   return left? null : reg;
 }
 
-/* rows as bitmasks: take the row with the fewest spots left, and drop the
-   branch the moment a row or a region has nowhere to sit */
+/* rows as bitmasks, fewest spots first */
 function tokkiSolutions(n,reg,limit){
   const full=(1<<n)-1, at=new Array(n).fill(-1), out=[];
   const rec=(colMask,zoneMask,rowMask)=>{
@@ -265,7 +264,7 @@ function tokkiMake(diff,deadline){
     if(!tokkiLogic(n,reg)){ if(!loose) loose={cols,reg}; continue }
     return tokkiDeal(diff,n,cols,reg,2);
   }
-  /* the spare deal only yields to search, and the grade says so */
+  /* the spare deal only yields to search */
   return loose? tokkiDeal(diff,n,loose.cols,loose.reg,5) : null;
 }
 function tokkiDeal(diff,n,cols,reg,grade){

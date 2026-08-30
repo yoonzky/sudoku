@@ -6,8 +6,7 @@ let tapX=0, tapY=0, tapIdx=-1;
 let sweepOn=false, sweepSeen=null, sweepFrom=-1;
 let chainOn=false, chainPrev=-1, chainLast=0;
 let runOn=false, runFrom=-1, runAdd=false;
-/* a quick finger reports one move per two or three cells, so the gap
-   between two points is walked over and every cell on the way is visited */
+/* a quick finger skips cells, so the gap between points is walked over */
 const dragAt={x:0,y:0}; let dragStep=12;
 function dragCells(e,fn){
   const raw=e.getCoalescedEvents? e.getCoalescedEvents() : null;
@@ -30,8 +29,7 @@ function dragStart(i,e){
   const w=cells[i]? cells[i].getBoundingClientRect().width : 0;
   dragStep=Math.max(6, w*0.4 || 12);
 }
-/* on a mac the command key stands where control stands elsewhere, since
-   control-click is the right button there */
+/* on a mac the command key stands where control stands elsewhere */
 const MOD_MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'');
 const pickMod=e=> MOD_MAC? e.metaKey : e.ctrlKey;
 const modeOfEvent=e=> e.shiftKey? 'note' : pickMod(e)? 'mid' : '';
@@ -66,7 +64,7 @@ $('board').addEventListener('pointerdown',e=>{
   const i=+el.dataset.i;
   if(SPEC.kind==='tokki'){
     if(e.button===2) return;
-    /* a zoomed board scrolls under the finger, so a drag must not leave marks */
+    /* a zoomed board scrolls under the finger, so a drag leaves no marks */
     if(!$('boardPan').classList.contains('pan')){
       sweepOn=true; sweepSeen=new Set(); sweepFrom=i;
     }
@@ -80,12 +78,9 @@ $('board').addEventListener('pointerdown',e=>{
     tapX=e.clientX; tapY=e.clientY;
     dragStart(i,e);
   }
-  /* the right button belongs to the pad at the cell: it must not clear a
-     run the player has just picked */
+  /* the right button belongs to the pad at the cell */
   if(e.button===2) return;
-  /* a mouse drag picks a run of cells, so a digit lands in all of them.
-     With a modifier held the drag adds to what is picked, and a single
-     click toggles one cell, so cells that do not touch can be taken */
+  /* a drag picks a run; with a modifier it adds to what is picked */
   if(e.pointerType!=='touch' && e.button===0 && SPEC.kind!=='num'){
     runOn=true; runFrom=i; runAdd=addMod(e); tapX=e.clientX; tapY=e.clientY; dragStart(i,e);
     if(runAdd){
@@ -151,9 +146,7 @@ for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev
   if(runOn){ const added=runAdd; runOn=false; runAdd=false;
     if(!added && msel.size<=1){ msel.clear(); renderBoard() } }
 });
-/* a mouse press leaves the focus ring on the button and the next key
-   lights it up as if picked. The buttons act on click and need no focus
-   from a press */
+/* buttons act on click and need no focus from a press */
 for(const sel of ['.controls','.numpad','.topbar','header']){
   const el=document.querySelector(sel);
   if(el) el.addEventListener('pointerdown',e=>{ if(e.target.closest('button')) e.preventDefault() });
@@ -168,9 +161,7 @@ function showMultiHint(){
 $('boardPan').addEventListener('scroll',()=>{ tapCancel(); sweepStop(); chainStop() });
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
-/* tabbing onto the board left nothing on screen: the grid draws no ring of
-   its own, and with no cell picked the keyboard had no visible place to
-   stand. Arriving by keyboard picks the first cell */
+/* arriving by keyboard picks the first cell: the grid draws no ring */
 $('board').addEventListener('focus',()=>{
   if(sel>=0||msel.size||!SPEC||!cur()) return;
   try{ if(!$('board').matches(':focus-visible')) return }catch(e){ return }
@@ -234,8 +225,7 @@ $('contList').addEventListener('click',async e=>{
     if(await askConfirm(t('delGame'))){
       const k=+del.dataset.del;
       SES.games.splice(k,1);
-      /* the pointer follows the list: dropping a game before the open one
-         used to leave it pointing at the neighbour */
+      /* the pointer follows the list when a game is dropped */
       if(SES.cur===k) SES.cur=-1;
       else if(SES.cur>k) SES.cur--;
       persistNow(); renderHome();
@@ -253,8 +243,7 @@ $('poolAll').addEventListener('click',()=>document.querySelectorAll('#poolGrid i
 $('poolNone').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=false));
 $('poolClose').addEventListener('click',()=>{ if(savePool()) $('poolModal').classList.add('hidden') });
 
-/* the address keeps the mode, and with a level it opens straight into a
-   game: a bookmark used to land on the menu whatever it was made from */
+/* ?m= keeps the mode, ?m=&d= deals the game at once */
 function syncUrl(mode,diff){
   if(!history.replaceState) return;
   const q = mode? '?m='+mode+(diff? '&d='+diff : '') : location.pathname;
@@ -266,8 +255,6 @@ $('backBtn').addEventListener('click',goHome);
 $('rulesBtn').addEventListener('click',openRules);
 $('rulesClose').addEventListener('click',()=>$('rulesModal').classList.add('hidden'));
 $('pauseBtn').addEventListener('click',()=>{ const g=cur(); if(g) setPaused(!g.paused) });
-/* the plate over the board is the way back into the game: a button on it
-   would only repeat the one in the strip above */
 $('pauseOverlay').addEventListener('click',()=>setPaused(false));
 async function restartGame(){
   const g=cur(); if(!g) return;
@@ -349,7 +336,6 @@ function markKeyboard(){
 try{ if(localStorage.getItem(KBD_SEEN)) document.body.classList.add('has-kbd') }catch(e){}
 window.addEventListener('keydown',e=>{ if(/^(Key[A-Z]|Digit[0-9]|Arrow)/.test(e.code)) markKeyboard() });
 
-/* the borrowed mode lights up while the key is down and goes out after */
 const trackMod=e=>{
   if($('game').classList.contains('hidden')) return setHeldMode('');
   setHeldMode(modeOfEvent(e));
@@ -376,8 +362,7 @@ document.addEventListener('keydown',e=>{
   }
   const g=cur(); if(!g) return;
   const code=e.code;
-  /* playing by keyboard: the ring stays with the board, not with whatever
-     button was pressed last */
+  /* the ring stays with the board, not with the last button pressed */
   const act=document.activeElement;
   if(code!=='Tab' && act && act.tagName==='BUTTON' && act.closest('#game')){
     act.blur();
@@ -451,13 +436,12 @@ window.addEventListener('resize',()=>{
   snapBoardTwice(); updatePickHint(); placeWinPanel();
 });
 syncRail();
-/* resize does not always fire (window snapping, a monitor swap), so the
-   layout listens to the media query itself */
+/* resize does not always fire (window snapping, monitor swap) */
 if(RAIL_Q.addEventListener) RAIL_Q.addEventListener('change',()=>{
   syncRail(); snapBoardTwice(); placeWinPanel();
 });
 initDialogs();
-/* resizing the board mid-drag would move cells out from under the finger */
+/* resizing mid-drag would move cells out from under the finger */
 if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{
   if(sweepOn||chainOn) return;
   snapBoard();
@@ -470,17 +454,14 @@ buildSwatches();
 applyTheme(); applyLayout(); applyLang();
 renderHome(); show('home');
 if(pending.length) saveLog();
-/* a link with a mode picks it, one with a level deals the game at once.
-   A guest arriving by such a link also gets the welcome window, so the
-   address waits for it instead of being thrown away */
+/* a guest arriving by such a link gets the welcome first */
 function openFromUrl(){
   const q=new URLSearchParams(location.search);
   const m=q.get('m'), d=q.get('d');
   if(!m || (!MODE_IDS.includes(m) && m!=='random')) return;
   pickMode(m); closeSheet();
   if(!d || !DIFFS.includes(d)) return;
-  /* reloading must not deal a new board: the game the address points at is
-     still in the list, and dealing over it would push out the oldest one */
+  /* reloading must not deal over the game the address points at */
   const open=SES.cur>=0? SES.games[SES.cur] : null;
   if(open && !open.done && open.diff===d && (m==='random' || open.mode===m)) return openGame(SES.cur);
   const idx=SES.games.findIndex(g=>!g.done && g.diff===d && (m==='random' || g.mode===m));
@@ -488,9 +469,7 @@ function openFromUrl(){
   newGame(m,d);
 }
 (function(){
-  /* a browser with storage switched off throws on the very first read, and
-     the script died before the board was ever built. No storage means no
-     answer to keep either, so the welcome is skipped */
+  /* a browser with storage switched off throws on the first read */
   let seen=null, saved=null;
   try{ seen=localStorage.getItem('sudoku-welcomed'); saved=localStorage.getItem(LS_SES) }
   catch(e){ seen='1' }
@@ -508,9 +487,7 @@ function openFromUrl(){
   bg.addEventListener('click',e=>{ if(e.target===bg) done() });
 })();
 
-/* the site is a plain page again. A copy installed while it was an app
-   still carries the old worker, so every load takes it off and drops the
-   caches it kept */
+/* takes off the worker an older build registered */
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
   if(window.caches) caches.keys().then(ks=>ks.forEach(k=>caches.delete(k))).catch(()=>{});

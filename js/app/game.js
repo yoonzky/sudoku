@@ -3,7 +3,7 @@
 let sel=-1, msel=new Set(), inputMode='digit', undoStack=[], redoStack=[], timerId=null,
     lastPlaced=-1, hlDigit=0, armed=0, lastNumTs=0, numPending=false, numTimer=null;
 let lastRequest={mode:'classic',diff:'medium'};
-/* how many unfinished games are kept at once */
+/* unfinished games kept at once */
 const MAX_GAMES=8;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -34,7 +34,6 @@ function generateAsync(mode,diff,done){
   genWaiting={seq, ok:done, fail:sync};
   w.postMessage({mode,diff,seq});
 }
-/* samurai and killer take seconds to deal, so the wait needs a way out */
 let genBusy=false;
 function cancelGen(){
   if(!genBusy) return false;
@@ -42,15 +41,11 @@ function cancelGen(){
   if(genWorker&&genWorker.terminate){ try{ genWorker.terminate() }catch(e){} }
   genWorker=null;
   closeGenOverlay();
-  /* the game the deal was meant to replace is already gone: fall back to
-     the menu */
   if(!cur()) goHome();
   return true;
 }
 
-/* a samurai or killer deal runs for tens of seconds, and a line of text
-   that never changes reads as a hung screen. The bar fills against the
-   budget the generator was given */
+/* the bar fills against the budget the generator was given */
 let genTick=null;
 function openGenOverlay(mode,diff){
   const el=$('genOverlay');
@@ -74,8 +69,6 @@ function closeGenOverlay(){
   clearInterval(genTick); genTick=null;
   $('genOverlay').classList.add('hidden');
 }
-/* a deal that lands early leaves the bar half full: it runs to the end
-   first, so the board opens behind a finished line */
 function finishGenOverlay(then){
   const fill=$('genOverlay').querySelector('.gen-bar i');
   clearInterval(genTick); genTick=null;
@@ -102,8 +95,7 @@ async function newGame(mode,diff){
       if(!res){ toast(t('genFail')); return }
       const sp=buildSpec(res.mode,res.ex);
       const n=sp.cells.length;
-      /* the list holds eight games; a save from an older build may carry
-         more, so the overflow goes in one go rather than one per deal */
+      /* a save from an older build may carry more than the limit */
       if(SES.games.length>=MAX_GAMES){
         const gone=SES.games.splice(0, SES.games.length-MAX_GAMES+1);
         const names=gone.map(x=>t('m_'+x.mode)).join(', ');
@@ -148,8 +140,7 @@ function restore(s){ const g=cur();
   g.mid=(s.mid||g.mid).map(n=>n.slice());
   g.endErr=s.endErr.slice() }
 
-/* faces come out of a bag: each is seated once before any repeats, and
-   an emptied bag is shuffled anew */
+/* faces come from a bag: each seated once before any repeats */
 function dealFace(g,i){
   if(!g.face) g.face={};
   if(g.face[i]!=null) return;
@@ -179,9 +170,7 @@ function tokkiSeat(i){
   if(g.values[i]===TOKKI_BUN && g.solution[i]===TOKKI_BUN) sel=-1;
   afterMove();
 }
-/* numerator: drag from a filled cell and the run keeps counting up. A
-   cell already holding that number carries the run on; any other filled
-   cell stops it, or one careless drag rewrites what is there */
+/* drag from a filled cell and the run counts up */
 function numChain(j,v){
   const g=cur();
   if(!g||g.done||g.paused||v>SPEC.maxD) return false;
@@ -210,9 +199,7 @@ function tokkiSweep(i){
   lastPlaced=-1;
   afterMove();
 }
-/* a win takes the pad away and the page stops centring itself, which
-   would slide the board out from under the player. It is pinned where
-   it stood and the rest of the screen moves around it */
+/* a win pins the board and moves the rest of the screen around it */
 function pinBoard(change){
   const b=$('board');
   const before=b? b.getBoundingClientRect().top : 0;
@@ -228,9 +215,7 @@ function tokkiClash(g,sp,i){
   for(const j of sp.peers[i]) if(g.values[j]===TOKKI_BUN) return true;
   return false;
 }
-/* seating a bunny takes a double tap: a lone tap leaves the clover and the
-   next one takes it off again, however long the pause between them. A
-   thumb that lands by accident never seats anything */
+/* a lone tap leaves the clover; the bunny takes a double tap */
 const TOKKI_DBL_MS=450;
 let tokkiTapCell=-1, tokkiTapAt=0;
 function tokkiTap(i){
@@ -306,8 +291,7 @@ function inputNumber(d){
   numArm(more);
   afterMove(true);
 }
-/* every mode works over a run of picked cells, the plain digit included:
-   what one cell would get, all of them get */
+/* a run of picked cells gets what one cell would get */
 function inputMulti(v,mode){
   const g=cur(); if(!g||g.done||g.paused) return;
   if(v<1||v>SPEC.maxD) return;
@@ -329,8 +313,7 @@ function inputMulti(v,mode){
       if(v!==g.solution[i]) wrong++;
       else for(const p of SPEC.peers[i]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
     }
-    /* one press is one move, however many cells it covered: a run of five
-       would otherwise spend the whole limit at once */
+    /* one press is one move, however many cells it covered */
     if(wrong && g.instant){
       g.mistakes++;
       if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
@@ -366,8 +349,7 @@ function inputDigit(v,forceNote,forceMid){
     const nn = mode==='mid'? g.mid[sel] : g.notes[sel], k=nn.indexOf(v);
     if(k>=0) nn.splice(k,1); else { nn.push(v); nn.sort((a,b)=>a-b) }
   } else {
-    /* the same digit pressed twice clears the cell, and the end of game
-       check has to forget it too, or the empty cell stays red */
+    /* the end check has to forget a cleared cell */
     if(g.values[sel]===v){ g.values[sel]=0;
       if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) } }
     else{
@@ -379,7 +361,6 @@ function inputDigit(v,forceNote,forceMid){
           if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
         }
       } else {
-        /* a right digit takes itself out of the corner marks around it */
         for(const p of SPEC.peers[sel]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
       }
     }
@@ -505,8 +486,7 @@ function checkWin(){
   }
   winTimer=setTimeout(()=>{ winTimer=null;
     cells.forEach(d=>{ d.classList.remove('wave'); d.style.animationDelay='' });
-    /* the panel is the second rebuild of the screen and moves the board
-       as much as the first one did, so it is pinned too */
+    /* the panel moves the board as much as the class did, so it is pinned too */
     pinBoard(showWin) },900);
 }
 function renderWinPanel(){
@@ -537,8 +517,7 @@ function placeWinPanel(){
     document.body.classList.remove('win-side');
     return;
   }
-  /* with the pad beside the board the panel goes into its column: same
-     markup as the side win, the grid does the placing */
+  /* beside the board the panel goes into the pad column */
   if(isRail()){ document.body.classList.add('win-side'); panel.style.left=''; panel.style.top=''; return }
   const b=$('board').getBoundingClientRect(), game=$('game').getBoundingClientRect();
   const side=(window.innerWidth-b.right)>=330 && window.innerHeight>=600 && !isPhone();
@@ -580,13 +559,9 @@ function setPaused(p){
   $('pauseBtn').querySelector('.tbtn-lbl').textContent=pl;
   $('pauseBtn').title=pl; $('pauseBtn').setAttribute('aria-label',pl);
 }
-/* three ways to fill a cell and nothing else: the digit, marks in the
-   corners, marks in the middle. Each is shown on the pad, on the keypad
-   and in the pad at the cell, so the mode is never a secret */
+/* digit, corner marks, centre marks */
 const MODES_IN=['digit','note','mid'];
-/* holding shift or the command key borrows a mode while it is held: the
-   buttons and both keypads follow, so a borrowed mode is as visible as
-   a chosen one */
+/* shift or command borrows a mode while held */
 let heldMode='';
 const activeMode=()=>heldMode||inputMode;
 function setHeldMode(m){
@@ -606,8 +581,6 @@ function syncModeButtons(){
   $('digitBtn').classList.toggle('on', m==='digit');
   $('notesBtn').classList.toggle('on2', m==='note');
   $('midBtn').classList.toggle('on3', m==='mid');
-  /* the colour of the mode carries onto the board: the picked cell is
-     filled in the same tone as the keys that would write into it */
   document.body.classList.toggle('mode-note', m==='note');
   document.body.classList.toggle('mode-mid', m==='mid');
   syncPickerMode();
@@ -631,9 +604,8 @@ function applyControls(){
   $('digitBtn').classList.toggle('hidden', tokki);
   $('midBtn').classList.toggle('hidden', num || tokki);
   $('notesBtn').classList.toggle('hidden', tokki);
-  /* a third tap clears the cell, so the erase key has nothing left to do */
   $('eraseBtn').classList.toggle('hidden', tokki);
-  /* a row with no visible button goes away, or it leaves a gap behind */
+  /* a row with no visible button goes away */
   for(const id of ['ctlModes','ctlActs']){
     const row=$(id); if(!row) continue;
     row.classList.toggle('hidden', !row.querySelector('.ctl:not(.hidden)'));

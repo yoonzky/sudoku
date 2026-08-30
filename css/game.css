@@ -6,7 +6,6 @@
 .topbar .t-item:first-child b{font-variant-numeric:proportional-nums lining-nums; font-feature-settings:'tnum' 0,'pnum' 1}
 .topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
 .topbar .tbtn:hover{color:var(--text)}
-/* the limit as three marks: empty until a mistake is made */
 #gMist.dots{display:inline-flex; gap:4px; vertical-align:middle; padding-left:2px}
 #gMist.dots i{width:7px; height:7px; border-radius:50%; border:1px solid var(--muted);
   display:block; transition:background .18s, border-color .18s}
@@ -25,8 +24,7 @@
 .cell.given{color:var(--given); font-weight:600}
 .cell .v{font-style:normal; display:block; line-height:1}
 #board{margin:0 auto}
-/* the board takes focus so arrows and digits reach it, but a ring round
-   the whole grid says nothing: the picked cell is the marker */
+/* no ring on the grid: the picked cell is the marker */
 #board:focus, #board:focus-visible{outline:none}
 .cell.hl{--tint:var(--tint-hl)}
 .cell.same{--tint:var(--tint-same)}
@@ -41,8 +39,6 @@ body.mode-mid .cell.sel{--tint:var(--tint-sel3)}
   grid-template-columns:repeat(var(--nc),1fr); grid-template-rows:repeat(var(--nr),1fr); pointer-events:none}
 .cell .notes span{font-family:var(--f-num); font-size:calc(23cqw / var(--bw)); line-height:1; color:var(--note); opacity:1; display:flex; align-items:center; justify-content:center; font-weight:600}
 
-/* centre marks take the middle of the cell, so corner marks move out
-   to the edges */
 .cell .notes.split{grid-template-columns:repeat(5,1fr); grid-template-rows:1fr 1.15fr 1fr}
 .cell .notes.split span{font-size:calc(19cqw / var(--bw))}
 .cell .notes.split span:nth-child(-n+5){grid-row:1}
@@ -54,7 +50,6 @@ body.mode-mid .cell.sel{--tint:var(--tint-sel3)}
   font-family:var(--f-num); font-weight:600; font-size:calc(26cqw / var(--bw)); line-height:1;
   color:var(--note); letter-spacing:.02em; white-space:nowrap; pointer-events:none; font-style:normal}
 .cell .mid.tight{font-size:calc(23cqw / var(--bw))}
-/* a long run stands in lines of five instead of one shrinking string */
 .cell .mid.stack{display:flex; flex-direction:column; align-items:center; line-height:1.06;
   font-size:calc(23cqw / var(--bw))}
 .cell .mid.stack.tight{font-size:calc(19cqw / var(--bw))}
@@ -71,16 +66,12 @@ body.mode-mid .cell.sel{--tint:var(--tint-sel3)}
   animation:wave .7s ease-out both}
 @keyframes wave{0%,100%{opacity:0}45%{opacity:.9}}
 
-/* on a win the board closes as one: the split between given and filled
-   has done its work, and two colours only break up the halo */
 body.won .cell{color:var(--given); transition:color .5s ease}
 body.won .controls, body.won .numpad, body.won #pickHint{display:none}
 body.win-side .controls, body.win-side .numpad{display:grid; opacity:.4; pointer-events:none}
 body.win-side .numpad{display:grid}
 
 body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
-/* the pad answers nothing while the game is paused, so it stops looking
-   alive */
 body.paused .controls, body.paused .numpad{opacity:.4; pointer-events:none}
 .win-lead{font-family:var(--f-disp); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
   color:var(--accent); margin-bottom:7px}
@@ -100,8 +91,7 @@ body.paused .controls, body.paused .numpad{opacity:.4; pointer-events:none}
 body.won.in-game{overflow:auto}
 
 
-/* the board is centred inside main, so a win pins main, not the body:
-   the pad goes, the panel comes, and the board holds its place */
+/* a win pins main, not the body */
 @media (max-width:700px){
   body.won.in-game main{justify-content:flex-start; padding-top:var(--won-top,0px)}
 }
@@ -110,8 +100,6 @@ body.won.in-game{overflow:auto}
 .glow svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
 body.won .glow{opacity:1}
 body.won #board{overflow:visible}
-/* the plate stands exactly where the board stands: on a roomy screen the
-   wrap is wider than the board, and the corner ticks sit above the frame */
 #pauseOverlay{position:absolute; top:0; bottom:0; left:50%; transform:translateX(-50%);
   width:var(--board-px,100%); background:var(--panel); border-radius:0;
   box-shadow:inset 0 0 0 1px var(--frame);
@@ -152,8 +140,6 @@ body.board-zoom #pauseOverlay{border-radius:4px}
 #picker.mode-note button[data-v]:hover{border-color:var(--accent2); color:var(--accent2)}
 #picker.mode-mid button[data-v]:hover{border-color:var(--accent3); color:var(--accent3)}
 
-/* the pad runs in two rows, input modes and actions. Each row splits its
-   width between the buttons on screen, so turning one on breaks nothing */
 .controls{display:grid; gap:6px; margin:16px auto 0; width:var(--board-px,100%)}
 .ctl-row{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:6px}
 .ctl{min-width:0; background:transparent; border:1px solid var(--line); border-radius:4px;
@@ -164,9 +150,6 @@ body.board-zoom #pauseOverlay{border-radius:4px}
 .ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2;
   stroke-linecap:square; stroke-linejoin:miter}
-/* one language for a press: the keypad and the kbd marks look like keys
-   because they stand for keys; everything else stays flat and answers by
-   moving a pixel */
 .ctl:active:not(:disabled), .iconbtn:active, .topbar .tbtn:active{transform:translateY(1px)}
 .ctl:hover:not(:disabled){color:var(--text); background:var(--cell-hl)}
 .ctl.on{color:var(--accent); background:var(--accent-soft)}
@@ -203,8 +186,7 @@ body.board-tokki .cell::before{display:none}
 .cell.z4{background:var(--z4)} .cell.z5{background:var(--z5)} .cell.z6{background:var(--z6)}
 .cell.z7{background:var(--z7)} .cell.z8{background:var(--z8)} .cell.z9{background:var(--z9)}
 .cell.z10{background:var(--z10)}
-/* size and centre are set outright: an svg is a replaced element, and
-   webkit keeps its own size instead of stretching between inset edges */
+/* svg is a replaced element: size it outright, not by inset */
 .cell .face, .cell .mark{position:absolute; left:50%; top:50%; width:74%; height:74%;
   transform:translate(-50%,-50%); pointer-events:none}
 .cell .face{stroke:var(--face); fill:none; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
@@ -216,9 +198,6 @@ body.board-tokki .cell::before{display:none}
 .cell .face.f-dn{stroke:var(--face-dn)}
 .cell.err .face{stroke:var(--error)}
 .cell .mark{width:34%; height:34%; fill:var(--mark); stroke:none}
-/* the face fills three quarters of the cell, so the pop that suits a digit
-   threw the whole square about. It only fades in now, with a hint of
-   scale */
 .cell.pop .face{animation:popMid .2s ease-out}
 @keyframes popMid{from{transform:translate(-50%,-50%) scale(.94); opacity:.45}
   to{transform:translate(-50%,-50%); opacity:1}}
@@ -227,8 +206,7 @@ body.board-tokki .cell::before{display:none}
 .cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
 
 
-/* the rules sit over every fill a cell carries, the picked cell included,
-   so the grid reads as one mesh instead of breaking around a highlight */
+/* rules draw over every cell fill */
 .grid{position:absolute; inset:0; pointer-events:none; z-index:3}
 .grid svg{position:absolute; inset:0; width:100%; height:100%}
 #selBox{position:absolute; z-index:7; pointer-events:none; border:2px solid var(--accent);
@@ -264,7 +242,6 @@ body.board-num .cell.d2{font-size:calc(40cqw / var(--bw))}
 .cell .notes.wide span{font-family:var(--f-num); font-size:calc(26cqw / var(--bw)); line-height:1.15;
   color:var(--note); font-weight:600; display:inline}
 .topbar .t-item em{font-style:normal; color:var(--muted); margin-left:8px; font-size:12px}
-/* the numeral face for the level mark: serifs hold III together */
 .topbar .t-item em .rn{font-style:normal; font-family:var(--f-num); color:var(--accent);
   letter-spacing:0; margin-right:7px}
 
@@ -301,17 +278,11 @@ body.win-side .win-act .btn{width:100%; padding:13px 20px}
 body.win-side .win-act .btn.ghost{order:2}
 body.win-side.in-game{overflow:hidden}
 
-/* ── light and corner ticks ─────────────────────────────────────── */
-/* the board catches light from above and the corners carry a short tick,
-   which lets the frame stay thin instead of a solid ring. The light sits
-   under the cells or it washes the digits out: the cells go transparent
-   and the board holds the background. Linked boards skip it, a solid fill
-   would flood the gaps between their grids */
+/* light and corner ticks */
 body:not(.board-wide) #board{background-color:var(--panel)}
 body:not(.board-wide) #board{background-image:var(--board-light)}
 .cell{background:transparent}
 body.board-wide .cell{background:var(--panel)}
-/* the frame gets its own layer so the corner ticks land on top of it */
 #board{border:0}
 #board::before{content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
   box-shadow:inset 0 0 0 1px var(--frame)}
@@ -326,17 +297,11 @@ body.board-wide #board::before{display:none}
     linear-gradient(var(--tick),var(--tick)) left bottom/2px 13px no-repeat,
     linear-gradient(var(--tick),var(--tick)) right bottom/13px 2px no-repeat,
     linear-gradient(var(--tick),var(--tick)) right bottom/2px 13px no-repeat}
-/* a linked board keeps the ticks when its four outer corners hold real
-   cells: frame off, corners still say where the board ends */
+/* linked boards keep the ticks only with real corner cells */
 body.board-wide #board::after, body.board-num #board::after{display:none}
 body.board-wide #board.corners::after{display:block}
 
-/* ── desktop: board on the left, pad on the right ───────────────── */
-/* the layout the phone already uses in landscape: the board keeps its
-   size and the keys gather into a three by three block, faster for a
-   mouse than a strip of nine narrow keys. The last row takes the slack:
-   the board spans all five, and without a flexible row its height
-   stretched them and tore the pad apart */
+/* desktop: board on the left, pad on the right */
 body.rail.in-game #game{max-width:none;
   width:min(calc(var(--boardmax,560px) + 258px), 100%);
   display:grid; grid-template-columns:minmax(0,1fr) 232px; gap:0 26px;
@@ -362,7 +327,6 @@ body.rail .topbar .tbtn{margin:9px 0 0; padding:6px 9px; min-height:0; min-width
   border:1px solid var(--line); border-radius:4px; width:100%}
 .tbtn-lbl{display:none}
 body.rail .topbar .tbtn .tbtn-lbl{display:inline}
-/* the double click hint is about the mouse, so it belongs in this column */
 body.rail #pickHint{position:static; grid-area:5/2/6/3; width:auto;
   margin:12px 0 0; padding:0 0 0 11px; text-align:left; font-size:12px; line-height:1.5;
   border-left:1px solid var(--line); border-right:0}
@@ -370,24 +334,20 @@ body.rail #pickHint{position:static; grid-area:5/2/6/3; width:auto;
 body.rail #gameTag{grid-area:2/2/3/3; width:auto; margin:0 0 10px}
 body.rail .controls{grid-area:3/2/4/3; width:auto; margin:0}
 body.rail .ctl{padding:9px 3px 8px; font-size:10.5px}
-/* the column is narrow: actions wrap three to a row or labels get clipped */
 body.rail #ctlActs{grid-auto-flow:row; grid-template-columns:repeat(3,1fr)}
 
 body.rail .numpad{grid-area:4/2/5/3; width:auto; margin:10px 0 0;
   grid-template-columns:repeat(3,1fr) !important; gap:6px; align-content:start}
 body.rail .num{aspect-ratio:1.08; font-size:25px}
 body.rail.board-num .num{aspect-ratio:1.3; font-size:21px}
-/* ten keys in a three wide pad leave the zero alone on the last row: it
-   goes under the eight, the way a dialler sets it */
+/* zero under the eight, the way a dialler sets it */
 body.rail.board-num .numpad .num:last-child{grid-column:2}
 body.rail .numpad.two-row .num{aspect-ratio:1.08}
 
-/* the win panel takes the pad's place and the board stays where it is */
 body.rail.won #winPanel{grid-area:1/2/6/3; position:static; transform:none;
   width:auto; margin:0; border-top:0; padding:20px 20px 18px;
   background:var(--panel); border:1px solid var(--line); border-radius:4px; box-shadow:var(--shadow);
   animation:winIn .5s cubic-bezier(.2,.7,.3,1) both}
 body.rail.won .topbar{display:none}
-/* the pad rules come after the general hide on a win, so they are
-   repeated here */
+/* repeated after the general hide on a win */
 body.rail.won .controls, body.rail.won .numpad, body.rail.won #gameTag{display:none}

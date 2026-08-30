@@ -1,11 +1,8 @@
-/* the block keeps its own height and main centres it: stretched to the
-   full screen it pushed the totals down and left a hole in the middle */
 #home{display:flex; flex-direction:column; gap:18px; width:100%; max-width:1120px; margin:0 auto; flex:none; min-height:0}
 
 body:not(.in-game) main{display:flex; flex-direction:column; justify-content:safe center;
   padding-bottom:14px; min-height:0}
-/* mode names are words, not columns of figures: proportional digits
-   keep "10 by 10" from falling apart */
+/* proportional digits: mode names are words, not columns */
 .hcap{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
   color:var(--muted); font-weight:400; margin:0 0 10px}
 .mcard b, .rnd-card b, .cont-card b, .mp h3, .diff-btn span, .mp p, .mode-tag{
@@ -14,8 +11,6 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .home-main{flex:none; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:0 30px}
 @media (max-width:900px){ .home-main{grid-template-columns:1fr; gap:24px} }
 .modes-col{display:flex; flex-direction:column; min-height:0}
-/* continue sits under the grid, in the same column: in the footer it
-   drifted down with the side column and ended far from everything */
 #continueCard{margin-top:22px}
 @media (min-width:901px){ .modes-col{border-right:1px solid var(--line); padding-right:28px} }
 
@@ -33,8 +28,6 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .mcard:hover{border-color:var(--accent); color:var(--accent); transform:translateY(-1px)}
 .mcard.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
 
-/* the draw is one wide line under the grid: it picks from the modes
-   above rather than standing among them */
 .rnd-card{display:flex; align-items:center; gap:13px; width:100%; margin-top:7px;
   background:var(--panel); border:1px solid var(--line); border-radius:4px;
   padding:9px 14px; cursor:pointer; color:var(--text); font-family:inherit; text-align:left;
@@ -49,33 +42,21 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 
 .mp{padding:0 0 0 28px; display:flex; flex-direction:column;
   position:sticky; top:16px; align-self:start;
-  /* one height for every mode, or the block is re-centred on each pick
-     and the grid steps up and down. The rule between the columns belongs
-     to the grid, so spare height at the bottom shows as plain margin */
   min-height:min(700px, calc(100vh - 240px))}
 
 @media (max-width:900px){ .mp{border-top:1px solid var(--line); padding:20px 0 0} }
 .sheet-grab{display:none}
-/* the preview is measured against window height, or a short screen
-   loses the levels. The box stays square whatever the shape inside it:
-   wing is wider than tall and used to make the whole column shorter */
 .mp-prev{width:min(210px,20vh); height:min(210px,20vh); max-width:100%; margin:0 0 20px}
 .mp-prev svg{display:block; width:100%; height:100%}
 .mp h3{font-family:var(--f-disp); font-size:23px; font-weight:400; letter-spacing:.02em; margin:0 0 9px}
 .mp{--rule-fs:13px}
 .mp p{margin:0; font-size:var(--rule-fs); line-height:1.6; color:var(--muted)}
-/* the mode line: lowercase, own line above the rules. Heavier selector
-   than the general paragraph rule inside the sheet */
 .mp p.mode-tag, .modal p.mode-tag, #game p.mode-tag{font-family:var(--f-disp); font-size:11px;
   letter-spacing:.07em; line-height:1.4; color:var(--accent);
   margin:0 0 9px; text-transform:lowercase}
 #game p.mode-tag{width:var(--board-px,100%); margin:0 auto 7px}
 .mp p.mode-tag{min-height:1.4em}
-/* the rules keep seven lines of room whatever the mode, the pool line of
-   the draw included: without the reserve a longer text grew the column,
-   the centred block shifted and the mode grid stepped on every pick.
-   Seven lines is the longest text there is — a longer one brings the
-   jump back */
+/* seven lines is the longest rules text; the reserve keeps the column steady */
 @media (min-width:901px){ .mp-body{min-height:calc(11.2 * var(--rule-fs))} }
 .mp-prev, .mp h3, .mp h4, .diff-grid{flex:none}
 .mp-pool{margin:13px 0 0; display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted)}
@@ -84,7 +65,6 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .mp-pool button:hover{border-bottom-color:var(--accent)}
 .mp h4{font-family:var(--f-disp); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
   color:var(--muted); font-weight:400; margin:26px 0 4px; padding-top:0}
-/* on a wide screen the rules stand under the name and need no heading */
 .mp .mp-rulecap{display:none}
 
 .diff-grid{display:flex; flex-direction:column}
@@ -93,16 +73,12 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   padding:12px 4px 11px; cursor:pointer; text-align:left; color:var(--text);
   font-family:inherit; transition:color .18s, padding-left .18s}
 .diff-btn:last-child{border-bottom:1px solid var(--line)}
-/* the level mark is a chapter number, not a scale. Serifs on the
-   numeral face hold III together instead of three bars */
 .diff-btn .lvl{flex:none; width:26px; font-style:normal; font-family:var(--f-num);
   font-size:13.5px; letter-spacing:0; color:var(--muted); transition:color .18s}
 .diff-btn .lvl.on{color:var(--accent)}
 .diff-btn span{flex:1; font-size:16.5px; font-weight:400; letter-spacing:.01em}
 .diff-btn em{flex:none; font-style:normal; font-size:11px; color:var(--muted);
   font-family:var(--f-num); font-weight:500}
-/* the ring stays: this button starts a game, and colour alone left
-   the keyboard with nothing to follow */
 .diff-btn:hover,.diff-btn:focus-visible{color:var(--accent); padding-left:11px}
 .diff-btn:hover .lvl,.diff-btn:focus-visible .lvl{color:var(--accent)}
 
@@ -120,15 +96,11 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .cont-bar #contCount{font-family:var(--f-num); font-weight:500}
 
 #contList{display:flex; gap:9px; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin}
-/* the games wrap into rows instead of running off the right edge: ten
-   saved ones showed four and hid the rest behind a sideways scroll */
 @media (min-width:701px){
   #contList{display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
     align-content:start; overflow-x:hidden; padding:0 0 2px}
   .cont-card{width:auto}
 }
-/* beside the mode panel the column has a bottom, so the list takes what is
-   left under the grid and scrolls only once the rows reach it */
 @media (min-width:901px){
   .modes-col > .hcap, #modeList{flex:none}
   #continueCard{display:flex; flex-direction:column; min-height:0; flex:1 1 0}

@@ -70,8 +70,7 @@ function randomPath(w,h){
   }
   return p;
 }
-/* solving by the chain: from a known number to its neighbour when only one fits.
-   The mode used to report grade 0, so its levels meant nothing */
+/* solving by the chain: to the neighbour when only one fits */
 function numLogic(sp,puz){
   const n=sp.cells.length;
   const pos=new Array(n+2).fill(-1), used=new Array(n).fill(false);
@@ -102,8 +101,7 @@ function numLogic(sp,puz){
   return placed===n;
 }
 
-/* at 30 clues the chain almost always breaks; at 34 an easy deal falls to plain
-   steps four times out of ten, and sixteen tries cover the rest */
+/* 34 clues: below that the chain almost always breaks */
 const NUM_KEEP={easy:34,medium:24,hard:19,expert:15};
 const NUM_WANT={easy:2,medium:4,hard:4,expert:4};
 function numMake(diff,deadline){

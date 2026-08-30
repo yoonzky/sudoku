@@ -1,14 +1,9 @@
 'use strict';
 
-/* one grid, no headings: the modes stand in the order they get harder to
-   explain. Eighteen fill six columns by three with no stray tile, and the
-   draw stands under the grid, being a choice about the grid rather than
-   another mode in it */
+/* eighteen modes fill six columns by three; the draw stands apart */
 const MODE_ORDER=['classic','x','evenodd','windoku','asterisk','mosaic',
   'r10','r12','double','wing','butterfly','samurai',
   'killer','dots','suguru','kakuro','numerator','tokki'];
-/* the draw shows a board with a question in it, in the same hand as the
-   previews */
 const RANDOM_PREV='<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'+
   '<rect x=".6" y=".6" width="38.8" height="38.8" fill="var(--panel2)" stroke="var(--prev-rule)" stroke-width="1.1"/>'+
   '<path d="M13.7.6v38.8M26.3.6v38.8M.6 13.7h38.8M.6 26.3h38.8" stroke="var(--line)" stroke-width=".8" fill="none"/>'+
@@ -33,10 +28,9 @@ function renderContinue(){
   $('contPick').classList.toggle('hidden',picking);
   $('contPick').textContent=t('pickMany');
   if(picking) $('contCount').textContent=t('selCount').replace('{n}',contSel.size);
-  /* the newest game sits at the head of the strip */
+  /* the newest game sits first */
   list.innerHTML=SES.games.map((g,idx)=>[g,idx]).reverse().map(([g,idx])=>{
-    /* tokkidoku is not filled but populated: the count is bunnies, not cells,
-       and the dots marking empty ones are no part of it */
+    /* tokkidoku counts bunnies, not filled cells */
     const bun=g.mode==='tokki';
     const n = bun? g.solution.filter(v=>v===TOKKI_BUN).length : g.solution.length;
     const filled = bun? g.values.filter(v=>v===TOKKI_BUN).length : g.values.filter(v=>v).length;
@@ -78,7 +72,6 @@ function renderModeList(){
   let h='<div class="mode-grid" style="--span:6">';
   for(const id of MODE_ORDER){
     const st=statsFor(id,null);
-    /* the time under the name is labelled: a bare figure read as anything */
     const note=st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : '';
     h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
       <span class="mcard-prev">${previewSVG(id)}</span>
@@ -99,8 +92,7 @@ function renderModePanel(){
   $('mpName').textContent=t('m_'+m);
   $('mpRules').textContent=t('r_'+m);
   const tag=I18N[SES.settings.lang]&&I18N[SES.settings.lang]['tag_'+m] || I18N.en['tag_'+m] || '';
-  /* empty but present: min-height holds the line, or the column grows by
-     one whenever a mode with a tag is picked */
+  /* empty but present: min-height holds the line */
   $('mpTag').textContent=tag;
   $('mpPool').classList.toggle('hidden', m!=='random');
   $('poolCount').textContent=t('poolCount').replace('{n}',poolList().length);

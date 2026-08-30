@@ -9,16 +9,12 @@
 #pickHint b{font-weight:500; color:var(--accent)}
 
 
-/* the sheet serves every width with no room for the side column, phone
-   and tablet alike: in between the levels used to fall below the fold */
+/* the sheet covers every width with no room for the side column */
 @media (max-width:900px){
   body.sheet{overflow:hidden}
   body.sheet #sheetBg{opacity:1; pointer-events:auto}
-  /* the footer shares the stacking context with the page and would show
-     through the sheet, across the rules */
   body.sheet .site-foot{visibility:hidden}
-  /* top:auto is a must: on a desktop the side column is sticky and sets
-     top, while here the sheet hangs off the bottom and would not slide away */
+  /* top:auto: the sheet hangs off the bottom, not the top */
   .mp{position:fixed; left:0; right:0; bottom:0; top:auto; z-index:25;
     border:0; border-top:1px solid var(--line); border-radius:4px 4px 0 0;
     background:var(--panel); box-shadow:var(--shadow-up);
@@ -41,8 +37,7 @@
   .mp-pool button{font-size:12.5px; padding:6px 0}
   .mp h4{margin:18px 0 2px; padding-top:0; font-size:11px}
   .diff-grid{flex:none}
-  /* the sheet leads with its only action: levels under the name, rules
-     below them, where scrolling for them is fair */
+  /* sheet order: levels first, rules under them */
   .mp .sheet-grab{order:0}
   .mp .mp-head{order:1}
   .mp #mpTag{order:2; min-height:0}
@@ -50,8 +45,7 @@
   .mp h4[data-i18n="lvlT"]{order:3; margin-top:16px}
   .mp .diff-grid{order:4}
   .mp .mp-rulecap{order:5; display:block; margin-top:22px}
-  /* the sheet orders the rules and the pool itself, so the desktop
-     wrapper drops out of the box tree */
+  /* the sheet orders these itself, so the desktop wrapper drops out */
   .mp-body{display:contents}
   .mp #mpRules{order:6; margin-top:6px}
   .mp .mp-pool{order:7}
@@ -62,7 +56,6 @@
 body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom)); min-height:auto; flex:none}
 #home{gap:16px; flex:none; min-height:auto}
 .home-main{display:block}
-/* on a phone the unfinished games come first, above the grid */
 .modes-col{display:flex; flex-direction:column; min-height:0}
 #modeList{overflow:visible; flex:none}
 .home-foot{display:block; border-top:1px solid var(--line); padding-top:12px; margin-top:14px}
@@ -102,44 +95,25 @@ body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom));
 .rnd-card:hover{border-color:var(--line); color:var(--text)}
 .rnd-card:active{background:var(--accent-soft); border-color:var(--accent)}
 
-/* board under the strip, pad at the bottom by the thumb: centring the
-   whole block left a dead band under the header */
 body.in-game main{padding:2px 8px calc(4px + env(safe-area-inset-bottom)); flex:1 1 auto;
   display:flex; flex-direction:column; justify-content:flex-start; min-height:0}
 body.in-game #game{width:100%; max-width:100%; flex:1 1 auto;
   display:flex; flex-direction:column; min-height:0}
-/* the wrap takes the full width and the board centres inside it: sized
-   to the board it collapsed before the board had a size.
-   Spare height splits in two, above the strip so the clock and the keys
-   sit over the grid, and under the keypad so the digits stay off the
-   very bottom edge */
+/* spare height splits above the strip and under the pad */
 body.in-game .topbar{margin-top:auto}
 body.in-game .board-wrap{width:100%; margin:0}
 body.in-game .numpad{margin-bottom:auto}
-/* tokkidoku has no keypad, and split evenly the spare height left a deep
-   band over the strip while the win panel had nowhere to land. A quarter
-   above the board, three quarters under it */
+/* tokkidoku has no keypad: a quarter of the spare height above, three under */
 body.board-tokki.in-game .topbar{margin-top:0}
 body.board-tokki.in-game #game::before{content:''; flex:1 1 0; min-height:0}
 body.board-tokki.in-game #game::after{content:''; flex:3 1 0; min-height:0}
-/* on a win the panel fills that room and the board is pinned where it
-   stood, so the spacers step aside */
+/* on a win the spacers step aside and pinBoard holds the board */
 body.board-tokki.won.in-game #game::before,
 body.board-tokki.won.in-game #game::after{display:none}
-/* on a win the board holds the top and the panel takes the room under it.
-   The pad goes and its bottom auto-margin with it, so the top one is
-   dropped too: alone it dragged the strip and the board to the bottom
-   edge, and the win panel pulled them back up a moment later */
 body.won.in-game .board-wrap{margin-top:0}
 body.won.in-game .topbar{margin-top:0}
 body.in-game .site-foot{display:none}
-/* two tiers: mode and level on top, clock and limit under them. One line
-   ran everything together in the same size, and the pause was a pair of
-   strokes at the very edge */
-/* the strip follows the board, but in the magnifier the board window is
-   narrower than the screen and the three keys left the name 60px to sit
-   in: "12 by 12" broke across two lines. Below that floor the strip keeps
-   its own width */
+/* in the magnifier the board window is narrower than the screen */
 .topbar{width:min(100%, max(var(--board-px,100%), 272px))}
 .topbar{margin:2px auto 8px; font-size:13px;
   display:grid; grid-template-columns:auto 1fr auto auto auto; column-gap:10px; row-gap:1px;
@@ -151,8 +125,6 @@ body.in-game .site-foot{display:none}
 .topbar #restartBtnTop{grid-column:3; grid-row:1/3}
 .topbar #zoomBtn{grid-column:4; grid-row:1/3}
 .topbar #pauseBtn{grid-column:5; grid-row:1/3}
-/* one line holds the mode and the level, so the level needs a stop of
-   its own: "12 by 12 I Easy" read as one long name */
 .topbar .t-item em{margin-left:6px; font-size:12px}
 .topbar .t-item em::before{content:'·'; margin-right:7px; color:var(--muted); opacity:.6}
 .topbar .tbtn{padding:8px; margin:0; min-width:40px; min-height:40px; justify-content:center;
@@ -168,16 +140,11 @@ body.board-zoom .board-wrap{max-width:100%}
 .board-pan.pan::-webkit-scrollbar{width:0; height:0}
 .board-pan.pan #board{box-shadow:none; margin:0}
 
-/* input modes take a row of their own, actions the second, both in a
-   line rather than in blocks: labels stop being clipped, a finger lands
-   more surely than in a row of seven, and two stacked rows of tall
-   buttons no longer push the keypad under the thumb */
 .controls{margin-top:9px; gap:5px}
 .ctl{flex-direction:row; padding:7px 4px; letter-spacing:0; gap:7px; min-height:38px; font-size:11px}
 .ctl svg{width:17px; height:17px}
 .numpad{gap:5px; margin-top:7px}
-/* a tap leaves hover behind on a touch screen and used to wash the
-   chosen mode out: the button that is on keeps its colour */
+/* a tap leaves hover behind on a touch screen */
 .ctl:hover:not(:disabled):not(.on):not(.on2):not(.on3){color:var(--muted); background:transparent}
 .ctl:active:not(:disabled){background:var(--cell-hl); color:var(--text)}
 .ctl.on:active{color:var(--accent)}
@@ -221,12 +188,10 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 }
 
 @media (pointer:coarse){
-  /* a double tap no longer zooms the page, a two finger pinch still does */
   *{touch-action:manipulation}
   .sheet-grab{touch-action:none}
   .only-fine{display:none !important}
-  /* a tablet reports a coarse pointer even with a keyboard attached, so
-     the tab waits for a key rather than for the pointer */
+  /* a tablet reports a coarse pointer even with a keyboard */
   #tabKeysBtn{display:none}
   body.has-kbd #tabKeysBtn{display:block}
   .mcard:hover,.cont-card:hover{border-color:var(--line); color:var(--text); background:var(--panel)}
@@ -305,8 +270,7 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
   }
 }
 
-/* the narrowest phones still in use are 320 wide: the pad labels were cut
-   to "By corn…" and the error dots dropped under their own word */
+/* 320 wide phones: labels were clipped */
 @media (max-width:360px){
   .ctl{font-size:10px; gap:5px}
   .ctl svg{width:16px; height:16px}

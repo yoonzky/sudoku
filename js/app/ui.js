@@ -1,15 +1,14 @@
 'use strict';
 
 const $=id=>document.getElementById(id);
-/* two themes; their colours live in css/base.css and are read from there */
+/* colours live in css/base.css */
 const THEMES=[{id:'light'},{id:'dark'}];
 const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 let lastPointerType='mouse';
 const PHONE_Q=matchMedia('(max-width:700px)');
 const LAND_Q=matchMedia('(orientation:landscape) and (max-height:560px) and (min-width:560px)');
 const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
-/* the sheet serves every width with no room for the side column, so it
-   starts where that column ends, not at the phone breakpoint */
+/* the sheet starts where the side column ends, not at the phone breakpoint */
 const SHEET_Q=matchMedia('(max-width:900px)');
 const sheetWidth=()=>SHEET_Q.matches;
 const isLand=()=>LAND_Q.matches;
@@ -24,8 +23,7 @@ function pickerAllowed(){
   return true;
 }
 let toastTimer=null;
-/* time on screen follows the length: two and a bit seconds was not enough
-   for a long message like a game pushed out of the list */
+/* time on screen follows the length of the message */
 function toast(msg){
   const el=$('toast'); el.textContent=msg; el.classList.add('show');
   const ms=Math.min(7000, Math.max(2600, 1600+msg.length*65));
@@ -104,7 +102,7 @@ function addEraseRow(pk){
   x.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); eraseCell(); closePicker() });
   pk.appendChild(x);
 }
-/* bound once: inside addEraseRow it piled up another listener per game */
+/* bound once: inside addEraseRow it piled up a listener per game */
 $('picker').addEventListener('pointerdown',e=>e.stopPropagation());
 
 function buildNumPicker(pk){
@@ -148,7 +146,7 @@ function openPicker(i){
   if(!pickerAllowed()||!SPEC||!SES.settings.dblPick||SPEC.kind==='tokki') return;
   dismissPickHint();
   const g=cur(); if(!g||g.done||g.paused) return;
-  /* opened over a picked run the pad fills all of it, so the run stays */
+  /* opened over a picked run the pad fills all of it */
   const run=msel.size>1 && msel.has(i);
   if(!run && g.given[i]) return;
   if(!run) sel=i;
@@ -284,9 +282,7 @@ function setTab(name){
   document.querySelectorAll('.stabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
   for(const tb of ['view','game','keys']) $('tab-'+tb).classList.toggle('hidden',tb!==name);
 }
-/* asked once, before the very first deal: whether a wrong digit says so
-   at once or the board is checked when full. The answer is the instant
-   check setting and stays changeable there */
+/* asked once, before the very first deal */
 const CHECK_ASKED='sudoku-checkAsked';
 function needCheckAsk(){
   if(SES.games.length||LOG.games.length||pending.length) return false;
@@ -336,9 +332,7 @@ function openRules(){
   $('rulesModal').classList.remove('hidden');
 }
 
-/* ── dialogs for the keyboard and the screen reader ─────────────── */
-/* windows open and close in several places, so roles and the focus trap
-   are wired once and follow the hidden class */
+/* dialogs: roles and focus trap */
 const FOCUSABLE='button:not([disabled]),[href],input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
 let dlgReturn=null;
 function dialogFrame(bg){
@@ -355,8 +349,7 @@ function dialogFrame(bg){
 function openDialog(bg){
   const box=dialogFrame(bg); if(!box) return;
   dlgReturn=document.activeElement;
-  /* focus lands on the window, not the first button: otherwise Enter goes
-     straight into reset statistics and the like */
+  /* focus lands on the window, not on the first button */
   box.focus({preventScroll:true});
 }
 function closeDialog(){

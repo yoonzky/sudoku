@@ -8,10 +8,7 @@ const cellKey=[];
 
 function cellNum(v){ return v==null||v===0? '' : String(v) }
 
-/* six faces, one per member: head, two letters, muzzle under them. One
-   round outline, no straight sides. Every head shares the same lower
-   half, so whiskers meet the line wherever they are drawn. Whiskers on
-   all but the bear and the dog */
+/* six faces, one per member; every head shares the lower half */
 const FACE_MUZZLE='<path d="M12 10.8v5.8"/>'+
   '<path d="M8 16.6a2 2 0 0 0 4 0"/><path d="M12 16.6a2 2 0 0 0 4 0"/>';
 const FACE_WHISKERS='<path d="M3.6 15.4H.8M4.4 17.2H1.6M5.8 19H3"/>'+
@@ -39,23 +36,17 @@ const FACE_HEADS=[
 ];
 const FACE_SVGS=FACE_HEADS.map(f=>'<svg class="face f-'+f[0]+'" viewBox="0 0 24 24" aria-hidden="true">'+
   f[4]+FACE_LEFT[f[1]]+FACE_RIGHT[f[2]]+FACE_MUZZLE+(f[3]? FACE_WHISKERS : '')+'</svg>');
-/* the face is dealt when the bunny is seated and stays with the cell;
-   a game saved before the faces existed gets its own on the first draw */
 function tokkiFace(g,i){
   if(g && (!g.face || g.face[i]==null)) dealFace(g,i);
   const n=(g&&g.face&&g.face[i]!=null)? g.face[i] : 0;
   return FACE_SVGS[n%FACE_SVGS.length];
 }
-/* the mark says "no bunny here". Four leaves round a stem, each an ellipse
-   leaning out of the centre: at a third of a cell the gaps between them
-   are what makes it read as a clover rather than a flower */
+/* four leaves and a stem: the gaps are what make it a clover */
 const MARK_SVG='<svg class="mark" viewBox="0 0 24 24" aria-hidden="true">'+
   '<path d="M12.6 12.4c1.2 2.6 1.3 5.4.4 8.2l-1.9-.5c.8-2.5.7-4.9-.4-7.1Z"/>'+
   [225,315,45,135].map(a=>`<ellipse cx="12" cy="7.2" rx="3.7" ry="4.6" transform="rotate(${a} 12 12)"/>`).join('')+
   '</svg>';
 
-/* what a screen reader gets instead of the drawing: where the cell is
-   and what stands in it */
 function cellLabel(g,sp,i){
   const c=sp.cells[i];
   const pos=t('a11yCell').replace('{r}',c.y+1).replace('{c}',c.x+1);
@@ -69,17 +60,14 @@ function cellLabel(g,sp,i){
   return pos+', '+val;
 }
 
-/* the cell keeps what it drew last, so a language switch has to forget
-   it or the spoken labels stay in the old language */
+/* a language switch has to forget what the cell drew */
 function invalidateCells(){ cellKey.length=0 }
 
 function buildBoard(sp){
   SPEC=sp;
   const b=$('board');
   b.innerHTML=''; cells.length=0; cellKey.length=0;
-  /* the board is driven by arrow keys, not read as a table: the cells sit
-     in a css grid with holes and rows would have to be faked. The picked
-     cell is announced through aria-activedescendant instead */
+  /* a grid with holes is no table: the picked cell goes through aria-activedescendant */
   b.setAttribute('role','application');
   b.setAttribute('tabindex','0');
   b.setAttribute('aria-label',t('a11yBoard'));
@@ -121,7 +109,6 @@ function buildBoard(sp){
     b.appendChild(d); cells.push(d);
   }
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
-  /* corner ticks need a cell in every corner, or they hang in empty space */
   b.classList.toggle('corners', [[0,0],[sp.W-1,0],[0,sp.H-1],[sp.W-1,sp.H-1]]
     .every(([x,y])=>cellAt(sp,x,y)>=0));
   buildGlow(sp);
@@ -219,7 +206,7 @@ function joinSegments(segs){
   return d;
 }
 
-/* dash step fitted to each edge so corners always meet */
+/* dash step fitted to each edge so corners meet */
 function dashLine(segs,dash,gap){
   let d='';
   for(const s of segs){
@@ -265,15 +252,13 @@ function buildDeco(sp){
     const a=sp.cells[cg.anchor!=null? cg.anchor : cg.cells[0]];
     sums+=`<text x="${a.x+0.15}" y="${a.y+0.31}">${cg.sum}</text>`;
   }
-  /* a region is outlined along its outer rim only: where the neighbour is
-     in the same region the side is left undrawn */
+  /* outline the outer rim only */
   const outline=(mark,z,boxed)=>{
     const segs=[];
     for(let i=0;i<sp.cells.length;i++){
       if(sp.zone[i]!==mark) continue;
       const c=sp.cells[i], x=c.x, y=c.y;
-      /* even cells join up inside their own box only: across a box wall the
-         marks belong to different threes and are ringed apart */
+      /* even cells join up inside their own box only */
       const reg=sp.region[i];
       const inSame=(px,py)=>{ const j=cellAt(sp,px,py);
         return j>=0 && sp.zone[j]===mark && (!boxed || sp.region[j]===reg) };
@@ -284,8 +269,7 @@ function buildDeco(sp){
       if(!dn) segs.push([x0,y+1-z,x1,y+1-z]);
       if(!lf) segs.push([x+z,y0,x+z,y1]);
       if(!rt) segs.push([x+1-z,y0,x+1-z,y1]);
-      /* concave corner: both neighbours in the region, the diagonal one not.
-         Without these two short strokes an L shaped turn stays open */
+      /* concave corner: without these two strokes an L turn stays open */
       const dia=(dx,dy)=>{ const j=cellAt(sp,x+dx,y+dy);
         return j>=0 && sp.zone[j]===mark && (!boxed || sp.region[j]===reg) };
       if(lf&&up&&!dia(-1,-1)){ segs.push([x+z,y,x+z,y+z]); segs.push([x,y+z,x+z,y+z]) }
@@ -320,8 +304,7 @@ function buildDeco(sp){
 function buildNumpad(sp){
   const np=$('numpad');
   np.innerHTML='';
-  /* tokkidoku needs no keypad: a tap walks the cell through mark, bunny
-     and empty */
+  /* tokkidoku needs no keypad */
   if(sp.kind==='tokki'){
     document.body.classList.remove('pad-two');
     np.classList.add('hidden');
@@ -339,8 +322,7 @@ function buildNumpad(sp){
   for(const v of keys){
     const btn=document.createElement('button');
     btn.className='num'; btn.dataset.v=v;
-    /* the counter is hidden from a screen reader, or the key is read out as
-       two numbers in a row; the aria-label below carries it in words */
+    /* the counter is hidden from a screen reader; aria-label carries it */
     btn.innerHTML=`${v}<small aria-hidden="true"></small>`;
     btn.setAttribute('aria-label',t('a11yKey').replace('{v}',v));
     btn.addEventListener('pointerdown',e=>{ e.preventDefault(); numpadPress(v) });
@@ -348,9 +330,7 @@ function buildNumpad(sp){
   }
 }
 
-/* centre marks: one long line shrank to a smudge, six pixels on a phone.
-   The run is packed into lines of five characters and the face keeps
-   its size */
+/* centre marks pack into lines of five characters */
 const MID_ROW=5, MID_ROWS=4;
 function midSplit(mid,sp){
   const sep = sp.maxD>9? ' ' : '';
@@ -388,7 +368,6 @@ function renderBoard(){
   const g=cur(); if(!g||!SPEC) return;
   const sp=SPEC, n=sp.cells.length;
   const isNum=sp.kind==='num', isTokki=sp.kind==='tokki';
-  /* tokkidoku reads by its own colours, extra tinting gets in the way */
   const hlSame=SES.settings.highlightSame!==false;
   const selVal=sel>=0? g.values[sel] : 0;
   const activeVal=(hlSame && !isNum && !isTokki)? (selVal||hlDigit) : 0;
@@ -436,12 +415,8 @@ function renderBoard(){
       if(g.instant && !g.given[i] && v!==g.solution[i]) d.classList.add('err');
     }
     if(!g.instant && g.endErr && g.endErr.includes(i)) d.classList.add('err');
-    /* every picked cell is ringed on all four sides: a rim around the whole
-       run read as one box with a grid inside, not as a set of chosen cells */
     const run=msel.size>1;
     if(run && msel.has(i)) d.classList.add('msel');
-    /* while a run is picked the row and column of the first cell are left
-       alone, or half the run ends up tinted differently from the rest */
     if(sel>=0 && !run){
       if(i===sel && !isTokki) d.classList.add('sel');
       else if(peers && peers.indexOf(i)>=0) d.classList.add('hl');
@@ -451,10 +426,8 @@ function renderBoard(){
       if(g.values[i]===activeVal||hasNote) d.classList.add('same');
     }
   }
-  /* a paused board is hidden, and so is what is known about it */
   const showCounts=SES.settings.showCounts!==false && !isNum && !isTokki && !g.paused;
-  /* on a linked board every digit is short by a couple of dozen, and a two
-     figure count crowds the key: it appears once the end is in sight */
+  /* a two figure count crowds the key: shown once the end is in sight */
   const countCap = n>81? 10 : 99;
   const tot=digitTotals(g);
   document.querySelectorAll('.num').forEach(btn=>{
@@ -477,8 +450,6 @@ function renderBoard(){
   else bd.removeAttribute('aria-activedescendant');
   placeSelBox(g,sp);
   $('gMistWrap').style.display=g.instant? '' : 'none';
-  /* three marks instead of a fraction: before the first mistake the figure
-     said nothing, and the dots fill up as the limit is spent */
   const limited=SES.settings.limit&&g.instant&&!g.noLimit;
   const mist=$('gMist');
   mist.classList.toggle('dots',limited);
@@ -497,7 +468,6 @@ function renderBoard(){
 
 function placeSelBox(g,sp){
   const sb=$('selBox'); if(!sb) return;
-  /* tokkidoku seats a bunny on the tap itself, so the cell needs no ring */
   if(sel<0 || sp.kind==='tokki'){ sb.classList.add('hidden'); return }
   const c=sp.cells[sel];
   sb.style.left=(c.x/sp.W*100)+'%';
@@ -516,7 +486,7 @@ let boardZoom=false, lockFit=0;
 
 function otherHeight(){
   let used=0;
-  /* with the pad beside the board these three take no height */
+  /* with the pad beside the board these take no height */
   const side=isRail();
   const parts=[document.querySelector('header'), document.querySelector('.site-foot'), $('pickHint'),
     side? null : $('gameTag'),
@@ -559,8 +529,7 @@ function snapBoard(){
   const box=fit*SPEC.W+bw;
   $('game').style.setProperty('--board-px',box+'px');
   if(zoom){
-    /* the magnifier works inside the board's own footprint: the window keeps
-       the size the board had, so the pad and the plate around it stay put */
+    /* the magnifier works inside the board footprint */
     pan.classList.add('pan');
     pan.style.width=box+'px';
     pan.style.maxHeight=(fit*SPEC.H+bw)+'px';

@@ -269,8 +269,7 @@ const MODE_IDS=['classic','x','evenodd','windoku','asterisk','mosaic','r10','r12
   'double','wing','butterfly','samurai','killer','dots','suguru','numerator','kakuro','tokki'];
 const DIFFS=['easy','medium','hard','expert'];
 const BAND={easy:[1,2],medium:[2,3],hard:[3,4],expert:[3,4]};
-/* the band says what passes, the target says what to aim for. With no target
-   hard and expert matched: same band, and both kept landing on 3 */
+/* band: what passes. target: what to aim for */
 const TARGET={easy:1,medium:2,hard:3,expert:4};
 
 function buildSpec(id,ex){
@@ -281,8 +280,7 @@ function buildSpec(id,ex){
   return prep(sp);
 }
 
-/* last resort: a deal the solver cannot reason through takes clues back
-   until it can */
+/* a deal the solver cannot reason through takes clues back */
 function fillToSolvable(res){
   const sp=res.sp, b=Array.from(res.puz);
   let g=gradeSolve(sp,b);
@@ -323,8 +321,7 @@ function killerBlank(diff,deadline){
   return blankFallback;
 }
 
-/* the budget of one deal, in milliseconds. The overlay bar runs against
-   the same figure, so the wait shown and the budget given are one number */
+/* deal budget in ms; the overlay bar runs against the same figure */
 const KILLER_BLANK_MS=8000;
 function cycleBudget(id,diff){
   const M=MODES[id];
@@ -344,27 +341,20 @@ function makePuzzle(id,diff,deadline){
   if(id==='kakuro') return kakMake(diff,deadline);
   if(id==='tokki') return tokkiMake(diff,deadline);
   if(id==='killer'&&diff==='expert'){
-    /* a blank deal takes a while to find; uncapped it ate the whole budget */
     const blank=killerBlank(diff, deadline||(Date.now()+KILLER_BLANK_MS));
     if(blank) return blank;
   }
   const M=MODES[id], band=(M.band&&M.band[diff])||BAND[diff];
-  /* M.top is the ceiling of a mode: suguru has no fourth-level techniques,
-     and chasing them burns the budget for nothing */
+  /* M.top: the ceiling of a mode */
   const target=Math.min(band[1], TARGET[diff]||2, M.top||9);
   const stop=deadline||(Date.now()+cycleBudget(id,diff));
-  /* the target is chased for part of the budget, then anything sound will
-     do, or expert keeps the player waiting. Where a try is cheap the hunt
-     runs longer */
+  /* the target is chased for part of the budget, then anything sound will do */
   const half=Date.now()+(stop-Date.now())*((M.time||3500)<=4000? .6 : .34);
   let best=null, bestScore=Infinity;
   for(let att=0; att<(M.tries||30) && (att===0||Date.now()<stop); att++){
     const ex=M.pre? M.pre(diff) : {};
     let sp=buildSpec(id,ex);
-    /* how hard to push one layout before dealing another is the mode's
-       own business. Half the suguru region layouts take no solution at
-       all, and retrying those held the search for up to three minutes;
-       two short tries and the next layout costs less and finds more */
+    /* half the suguru layouts take no solution: two tries, then the next layout */
     const sol=fillSpec(sp, M.fillTries||(M.tight?40:14), M.fillNodes||600000);
     if(!sol) continue;
     if(M.post){ M.post(sp,sol,ex,diff); sp=buildSpec(id,ex) }
@@ -372,8 +362,7 @@ function makePuzzle(id,diff,deadline){
     let eased=easeTo(sp,dug.puz,sol,dug.removed,band[1]);
     let clues=eased.puz.reduce((s,v)=>s+(v?1:0),0);
 
-    /* fall back to the barer deal only while it still yields to reasoning:
-       six clues more beat a board that only search can crack */
+    /* the barer deal only while it still yields to reasoning */
     const cap=M.keep[diff]+((diff==='hard'||diff==='expert')?6:999);
     if(clues>cap){
       const g0=gradeSolve(sp,dug.puz);
@@ -391,8 +380,7 @@ function makePuzzle(id,diff,deadline){
   }
   if(best) return best.grade>=5? fillToSolvable(best) : best;
 
-  /* the last resort has a clock of its own: without one a mode whose
-     layouts rarely fill spent minutes here */
+  /* the last resort has a clock of its own */
   const fbStop=Date.now()+6000;
   for(let att=0;att<12;att++){
     if(att && Date.now()>fbStop) break;

@@ -135,6 +135,6 @@ function kakMake(diff,deadline){
     if(g.solved && g.grade<=hi) return res;
     if(!best) best=res;
   }
-  /* a deal the solver cannot reason through takes clues back until it can */
+  /* a deal the solver cannot reason through takes clues back */
   return best && best.grade>=5? fillToSolvable(best) : best;
 }
