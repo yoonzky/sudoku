@@ -4,7 +4,6 @@ const I18N = {
 ru:{
   genFail:'Поле не собралось — попробуйте ещё раз',
   genCancel:'Esc — отмена', genCancelTouch:'Касание — отмена', genStopped:'Генерация отменена',
-  siteDesc:'Судоку в браузере: восемнадцать режимов, четыре уровня, пометки и статистика. Без счетов и рекламы, работает офлайн.',
   mid:'В центре', midTab:'В центре', digitMode:'Цифра',
   k_mid:'пометка в центре', k_modeDigit:'цифра', k_modeNote:'пометки по углам',
   k_modeMid:'пометки в центре', k_modeNext:'следующий режим',
@@ -239,8 +238,9 @@ const MOD_KEY=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||''
 function applyLang(){
   document.documentElement.lang=SES.settings.lang;
   document.querySelectorAll('kbd.kmod').forEach(el=>{ el.textContent=MOD_KEY });
+  /* the description stays English: link previews travel outside the site */
   const desc=document.querySelector('meta[name="description"]');
-  if(desc) desc.setAttribute('content',t('siteDesc'));
+  if(desc) desc.setAttribute('content',I18N.en.siteDesc);
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n) });
   document.querySelectorAll('[data-i18n-label]').forEach(el=>{
     el.setAttribute('aria-label',t(el.dataset.i18nLabel)) });
