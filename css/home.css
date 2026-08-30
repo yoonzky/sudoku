@@ -99,7 +99,8 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 @media (min-width:701px){
   #contList{display:grid; grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
     align-content:start; overflow-x:hidden; padding:0 0 2px}
-  .cont-card{width:auto}
+  /* the column sets the width here: a fixed card would overrun the track */
+  #contList .cont-card{width:auto}
 }
 @media (min-width:901px){
   .modes-col > .hcap, #modeList{flex:none}
@@ -148,6 +149,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
 .pool-item input:checked::before{content:''; position:absolute; inset:3px; border-radius:2px; background:var(--accent)}
 .pool-note{margin:14px 0 0; font-size:12px; color:var(--muted)}
 
+@media (max-height:820px) and (max-width:700px){ .cont-card{width:150px} }
 @media (max-height:820px){
   header{padding:16px 18px 4px}
   #home{gap:14px}
@@ -158,7 +160,7 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   .rnd-card{padding:7px 12px; gap:11px}
   .rnd-prev, .rnd-prev svg{width:28px; height:28px}
   .home-foot{padding-top:11px}
-  .cont-card{width:150px; padding:7px 10px 6px}
+  .cont-card{padding:7px 10px 6px}
   .cont-card b{font-size:12.5px}
   .mp-prev{margin-bottom:10px}
   .mp h3{font-size:20px}
@@ -178,5 +180,5 @@ body:not(.in-game) main{display:flex; flex-direction:column; justify-content:saf
   .mp{--rule-fs:13.5px}
   .diff-btn{padding:14px 4px 13px}
   .diff-btn span{font-size:18px}
-  .cont-card{width:180px}
+  #contList{grid-template-columns:repeat(auto-fill,minmax(168px,1fr))}
 }
