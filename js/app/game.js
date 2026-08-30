@@ -3,6 +3,8 @@
 let sel=-1, msel=new Set(), inputMode='digit', undoStack=[], redoStack=[], timerId=null,
     lastPlaced=-1, hlDigit=0, armed=0, lastNumTs=0, numPending=false, numTimer=null;
 let lastRequest={mode:'classic',diff:'medium'};
+/* how many unfinished games are kept at once */
+const MAX_GAMES=8;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let genWorker=null, genSeq=0, genWaiting=null;
@@ -100,9 +102,12 @@ async function newGame(mode,diff){
       if(!res){ toast(t('genFail')); return }
       const sp=buildSpec(res.mode,res.ex);
       const n=sp.cells.length;
-      if(SES.games.length>=10){
-        const drop=SES.games.shift();
-        toast(t('gameDropped').replace('{m}',t('m_'+drop.mode)));
+      /* the list holds eight games; a save from an older build may carry
+         more, so the overflow goes in one go rather than one per deal */
+      if(SES.games.length>=MAX_GAMES){
+        const gone=SES.games.splice(0, SES.games.length-MAX_GAMES+1);
+        const names=gone.map(x=>t('m_'+x.mode)).join(', ');
+        toast(t(gone.length>1? 'gamesDropped' : 'gameDropped').replace('{m}',names));
       }
       SES.games.push({
         id:uid(), mode:res.mode, diff, ex:res.ex,
