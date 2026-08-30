@@ -1,101 +1,60 @@
 # Sudoku
 
-Browser sudoku in eighteen shapes, no accounts and no ads. Play it here: https://yoonzky.github.io/sudoku/
+Eighteen kinds of sudoku in the browser. No accounts, no ads, no build step.
 
-Plain HTML, CSS and JavaScript — no build step, no dependencies. Games, settings and statistics live in localStorage.
+**[Play →](https://yoonzky.github.io/sudoku/)**
+
+Plain HTML, CSS and JavaScript. Games, settings and statistics live in localStorage.
 
 ## Modes
 
 | Group | Modes |
 |---|---|
-| Plain board | Classic · X-Sudoku · Even-Odd · Windoku · Asterisk · Mosaic |
-| Other sizes | 10×10 (5×2 regions) · 12×12 (4×3 regions) |
-| Linked boards | Double · Wing · Butterfly · Samurai |
-| Extra rules | Killer · Dots (Kropki) · Suguru · Numerator · Kakuro · Tokkidoku |
+| **Plain board** | Classic · X-Sudoku · Even-Odd · Windoku · Asterisk · Mosaic |
+| **Other sizes** | 10×10 · 12×12 |
+| **Linked boards** | Double · Wing · Butterfly · Samurai |
+| **Extra rules** | Killer · Dots · Suguru · Numerator · Kakuro · Tokkidoku |
 
-Every mode has four levels and its own statistics. The home screen shows a thumbnail of each
-board, so a mode can be picked by its shape. **Random mode** draws one of the modes you ticked
-and starts it at the level you choose.
+Four levels each, own statistics each. **Random mode** deals one of the modes you tick.
 
-## Features
+## What it does
 
-- difficulty set by two things: how many clues stay on the board, and which techniques the
-  puzzle needs — a solver grades every deal, so Easy yields to singles, Hard wants locked
-  candidates and naked pairs, and Expert aims at hidden pairs, triples and X-wing. Modes with no
-  room for those techniques (Suguru, 12×12, Numerator) top out lower and lean on the clue count
-- every puzzle is generated with exactly one solution, whatever the mode, and every deal the
-  grader cannot crack by reasoning gets extra clues until it can
-- a slow deal (Killer and 12×12 at Expert, Suguru) shows how long it has been running against
-  the budget it was given, and can be dropped with Esc or a tap on the overlay; the fourth level
-  says in the menu when a deal is a long one
-- Killer at Expert opens no digit at all — the cage sums alone pin the answer down
-- Suguru grows with the level, 9×9 through 12×12, with regions of five to eight cells
-- three ways to fill a cell: the digit itself, marks in the corners, marks in the centre that read
-  as one figure — 28 or 135 in the middle, the way a hidden pair or triple is written down; a long
-  run breaks onto short lines instead of shrinking. Z, X and C pick a mode and space steps through
-  them; holding shift or the command key borrows the corners or the centre while it is held
-- with a mouse, drag across the board to pick a run of cells, or hold the command key and click to
-  pick cells that do not touch; whatever one cell would get, all of them get, and pressing the same
-  digit again takes it back out
-- with a mouse, a digit pad opens right at the cell (double or right click); on a phone the
-  keypad below the board does the same job
-- before the first deal the game asks whether a wrong digit should turn red at once or the board
-  should be checked when it is full
-- in Numerator the entry waits for a second digit, since the numbers run to 81; dragging from a
-  filled cell lays the run out in order and stops at anything already written
-- up to ten unfinished games at once, each with its own timer; several can be picked and dropped together
-- notes, auto-candidates, hint, undo/redo, mistake limit — all optional
-- full keyboard control (1–9, A/B/C for 10–12, shift for corner marks, command or control for
-  centre marks, arrows to move)
-- light and dark theme, Russian and English; the two palettes are written once, in `css/base.css`
-- the three typefaces ship with the site, so nothing is pulled from a font service
-- on a phone: picking a mode opens a sheet with its rules and the four levels; boards wider than
-  the screen (Samurai, Wing, Double) open in a window you drag around, with a button to fit them
-  back; the mode buttons and the keypad sit under the board, within reach of a thumb
+- **Levels mean something.** A solver grades every deal: Easy yields to singles, Hard wants
+  locked candidates, Expert aims at hidden triples and X-wing.
+- **One solution, always.** A deal the grader cannot crack by reasoning gets clues back until
+  it can.
+- **Three ways to fill a cell** — the digit, corner marks, centre marks. `Z` `X` `C` pick one,
+  space steps through them, shift or ⌘ borrows one while held.
+- **Mouse:** drag across cells to pick a run, ⌘-click to pick cells apart; a digit pad opens
+  at the cell on double or right click.
+- **Phone:** the mode opens as a sheet, wide boards (Samurai, Wing, Double) open in a window
+  you drag, the keypad sits under the board.
+- **Eight unfinished games** at once, each with its own timer.
+- Hints, auto-candidates, undo/redo, mistake limit — all optional.
+- Two themes, Russian and English. The three typefaces ship with the site.
 
-## Layout
+## How it is built
 
-```
-index.html            markup and the load order
-fonts/                Tenor Sans, Onest and Lora, latin and cyrillic subsets
-css/base.css          palette, type, page frame, buttons, toast
-css/home.css          home screen: continue, mode grid, mode card
-css/game.css          board, rule marks, controls, keypad, result panel
-css/modals.css        settings, statistics, rules, confirmations
-css/mobile.css        phone: home sheet, board window, keypad, landscape
-js/engine/core.js     cells, groups, solver, clue digging
-js/engine/grade.js    grading by technique, level tuning
-js/engine/modes.js    the mode table and puzzle generation
-js/engine/numerator.js  the 1..81 chain and its own solver
-js/engine/kakuro.js   pattern, sums, single solution
-js/engine/tokki.js     tokkidoku: bunnies, regions, single solution
-js/engine/worker.js   generation off the main thread
-js/app/i18n.js        dictionaries, mode names and rules
-js/app/store.js       localStorage: settings, games, record of wins
-js/app/ui.js          theme, cell pad, settings, statistics
-js/app/preview.js     board thumbnails
-js/app/board.js       building and drawing a board of any shape
-js/app/game.js        moves, undo, hints, win, timer
-js/app/home.js        home screen and the random draw
-js/app/main.js        events, keyboard, start-up
-sw.js                 empty worker that takes the old offline cache off
-icons/                site icons
-```
-
-One model describes every mode: cells with coordinates, groups that hold each digit once,
-pairs that must differ, summed areas, dots, and a mask of allowed digits. Solver, grading and
-drawing are shared, so a new mode is one entry in `js/engine/modes.js`. Numerator falls outside
-the model — it is about connectivity rather than groups — and lives in its own file.
+One model covers every mode: cells with coordinates, groups that hold each digit once, pairs
+that must differ, summed areas, dots, a mask of allowed digits. Solver, grading and drawing are
+shared, so a new mode is one entry in `js/engine/modes.js`. Numerator is about connectivity
+rather than groups and lives apart.
 
 Everything random in a deal — Suguru regions, Killer cages, dots, parity, the Kakuro pattern —
-is stored with the game in `ex`, so a reloaded page rebuilds the exact same board.
+is saved with the game in `ex`, so a reloaded page rebuilds the same board.
 
-## Run locally
+```
+index.html          markup and the load order
+css/                base · home · game · modals · mobile
+js/engine/          core · grade · modes · numerator · kakuro · tokki · worker
+js/app/             i18n · store · ui · preview · board · game · home · main
+fonts/ icons/       Tenor Sans, Onest, Lora · site icons
+```
 
-Open `index.html` in a browser. Over `file://` the generator worker stays off and generation
-runs on the main thread; everything else works.
+## Run it locally
 
-To serve it over http instead:
+Open `index.html` in a browser — over `file://` generation runs on the main thread and
+everything else works. To serve it over http:
 
 ```
 python3 -m http.server 8000
