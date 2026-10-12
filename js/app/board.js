@@ -110,6 +110,8 @@ function buildBoard(sp){
     b.appendChild(d); cells.push(d);
   }
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
+  /* a board with holes is drawn by its outline, and an outline has square corners all round */
+  b.classList.toggle('holes', sp.cells.length+(sp.blocks||[]).length+(sp.clues||[]).length!==sp.W*sp.H);
   b.classList.toggle('corners', [[0,0],[sp.W-1,0],[0,sp.H-1],[sp.W-1,sp.H-1]]
     .every(([x,y])=>cellAt(sp,x,y)>=0));
   buildGlow(sp);
@@ -474,6 +476,7 @@ function renderBoard(){
 
 /* which rounded corner of the board a cell sits in, if any */
 function cornerOf(sp,c){
+  if(sp.cells.length!==sp.W*sp.H) return '';
   const l=c.x===0, r=c.x===sp.W-1, t=c.y===0, b=c.y===sp.H-1;
   return t&&l? 'k-tl' : t&&r? 'k-tr' : b&&l? 'k-bl' : b&&r? 'k-br' : '';
 }

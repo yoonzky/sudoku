@@ -300,6 +300,7 @@ body:not(.board-wide) #board{background-color:var(--panel)}
 .cell{background:transparent}
 body.board-wide .cell{background:var(--panel)}
 #board{border:0}
+#board.holes{border-radius:0}
 
 /* desktop: board on the left, pad on the right */
 body.rail.in-game #game{max-width:none;
