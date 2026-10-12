@@ -2,64 +2,68 @@
 
 Eighteen kinds of sudoku in the browser. No accounts, no ads, no build step.
 
-**[Play →](https://yoonzky.github.io/sudoku/)**
+[yoonzky.github.io/sudoku](https://yoonzky.github.io/sudoku/)
 
-Plain HTML, CSS and JavaScript. Games, settings and statistics live in localStorage.
+![Sudoku on a desktop and a phone](.github/preview.png)
 
 ## Modes
 
 | Group | Modes |
 |---|---|
-| **Plain board** | Classic · X-Sudoku · Even-Odd · Windoku · Asterisk · Mosaic |
-| **Other sizes** | 10×10 · 12×12 |
-| **Linked boards** | Double · Wing · Butterfly · Samurai |
-| **Extra rules** | Killer · Dots · Suguru · Numerator · Kakuro · Tokkidoku |
+| Plain board | Classic, X-Sudoku, Even-Odd, Windoku, Asterisk, Mosaic |
+| Other sizes | 10x10, 12x12 |
+| Linked boards | Double, Wing, Butterfly, Samurai |
+| Extra rules | Killer, Dots, Suguru, Numerator, Kakuro, Tokkidoku |
 
-Four levels each, own statistics each. **Random mode** deals one of the modes you tick.
+Every mode has four levels and its own statistics. Random mode deals one of the modes ticked in its pool.
 
-## What it does
+## Features
 
-- **Levels mean something.** A solver grades every deal: Easy yields to singles, Hard wants
-  locked candidates, Expert aims at hidden triples and X-wing.
-- **One solution, always.** A deal the grader cannot crack by reasoning gets clues back until
-  it can.
-- **Three ways to fill a cell** — the digit, corner marks, centre marks. `Z` `X` `C` pick one,
-  space steps through them, shift or ⌘ borrows one while held.
-- **Mouse:** drag across cells to pick a run, ⌘-click to pick cells apart; a digit pad opens
-  at the cell on double or right click.
-- **Phone:** the mode opens as a sheet, wide boards (Samurai, Wing, Double) open in a window
-  you drag, the keypad sits under the board.
-- **Eight unfinished games** at once, each with its own timer.
-- Hints, auto-candidates, undo/redo, mistake limit — all optional.
-- Two themes, Russian and English, in the system typeface: SF on Apple devices, Segoe UI on Windows.
+- Levels are graded by a solver: Easy needs singles only, Hard needs locked candidates, Expert needs hidden triples and X-wing.
+- Every deal has exactly one solution.
+- Three ways to fill a cell: digit, corner marks, centre marks.
+- Several cells can be picked at once by dragging or with Cmd-click.
+- Up to eight unfinished games, each with its own timer.
+- Hints, auto-candidates, undo and redo, a three-mistake limit. Each can be switched off.
+- Light and dark themes, Russian and English.
+- On a phone the level picker opens as a sheet and large boards open in a window with a minimap.
 
-## How it is built
+## Keyboard
 
-One model covers every mode: cells with coordinates, groups that hold each digit once, pairs
-that must differ, summed areas, dots, a mask of allowed digits. Solver, grading and drawing are
-shared, so a new mode is one entry in `js/engine/modes.js`. Numerator is about connectivity
-rather than groups and lives apart.
+| Action | Keys |
+|---|---|
+| Digit | `1`-`9`, `A` `B` `C` for 10-12 |
+| Corner mark | `Shift` + digit |
+| Centre mark | `Cmd` / `Ctrl` + digit |
+| Input mode | `Z` digit, `X` corner, `C` centre, `Space` next |
+| Erase | `Backspace` or `0` |
+| Undo, redo | `Cmd` / `Ctrl` + `Z`, `Cmd` / `Ctrl` + `Y` |
+| Move | arrow keys |
+| Hint, auto-candidates | `H`, `A` |
+| Rules, pause, menu | `R`, `P`, `Esc` |
 
-Everything random in a deal — Suguru regions, Killer cages, dots, parity, the Kakuro pattern —
-is saved with the game in `ex`, so a reloaded page rebuilds the same board.
+## Structure
 
 ```
-index.html          markup and the load order
-css/                base · home · game · modals · mobile
-js/engine/          core · grade · modes · numerator · kakuro · tokki · worker
-js/app/             i18n · store · ui · preview · board · game · home · main
-icons/              site and app icons
+index.html     markup and script order
+css/           base, home, game, modals, mobile
+js/engine/     core, grade, modes, numerator, kakuro, tokki, worker
+js/app/        i18n, store, ui, preview, board, game, home, main
+icons/         site and app icons
 ```
 
-## Run it locally
+All modes share one model: cells with coordinates, groups that hold each digit once, pairs that must differ, summed areas, dots and a mask of allowed digits. The solver, the grader and the board drawing work on this model, and a new mode is one entry in `js/engine/modes.js`. Numerator is checked by connectivity and has its own module.
 
-Open `index.html` in a browser — over `file://` generation runs on the main thread and
-everything else works. To serve it over http:
+Random parts of a deal (Suguru regions, Killer cages, dots, parity, the Kakuro pattern) are stored with the game, so a reload rebuilds the same board. Games, settings and statistics are kept in `localStorage`.
+
+## Running locally
 
 ```
 python3 -m http.server 8000
 ```
 
+Then open `http://localhost:8000`. Opening `index.html` directly also works; puzzle generation then runs on the main thread.
+
 ## License
 
-MIT © [yoonzky](https://github.com/yoonzky)
+MIT, see [LICENSE](LICENSE).
