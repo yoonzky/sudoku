@@ -31,7 +31,7 @@ Four levels each, own statistics each. **Random mode** deals one of the modes yo
   you drag, the keypad sits under the board.
 - **Eight unfinished games** at once, each with its own timer.
 - Hints, auto-candidates, undo/redo, mistake limit — all optional.
-- Two themes, Russian and English. The three typefaces ship with the site.
+- Two themes, Russian and English, in the system typeface: SF on Apple devices, Segoe UI on Windows.
 
 ## How it is built
 
@@ -48,7 +48,7 @@ index.html          markup and the load order
 css/                base · home · game · modals · mobile
 js/engine/          core · grade · modes · numerator · kakuro · tokki · worker
 js/app/             i18n · store · ui · preview · board · game · home · main
-fonts/ icons/       Tenor Sans, Onest, Lora · site icons
+icons/              site and app icons
 ```
 
 ## Run it locally

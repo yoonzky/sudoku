@@ -12,8 +12,8 @@ const isPhone=()=>PHONE_Q.matches||LAND_Q.matches;
 const SHEET_Q=matchMedia('(max-width:900px)');
 const sheetWidth=()=>SHEET_Q.matches;
 const isLand=()=>LAND_Q.matches;
-/* on a wide screen with a mouse the pad stands beside the board */
-const RAIL_Q=matchMedia('(min-width:1040px) and (min-height:660px) and (pointer:fine)');
+/* on a wide screen with a mouse, or a tablet on its side, the pad stands beside the board */
+const RAIL_Q=matchMedia('(min-width:1040px) and (min-height:660px) and (pointer:fine), (min-width:1040px) and (min-height:660px) and (orientation:landscape)');
 const isRail=()=>RAIL_Q.matches;
 function syncRail(){ document.body.classList.toggle('rail', isRail()) }
 const COARSE=(()=>{ try{ return matchMedia('(pointer:coarse)').matches }catch(e){} return false })();

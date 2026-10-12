@@ -10,7 +10,7 @@ const MODE_ORDER=MODE_GROUPS.flatMap(g=>g[1]);
 const RANDOM_PREV='<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'+
   '<rect x=".6" y=".6" width="38.8" height="38.8" fill="var(--panel2)" stroke="var(--prev-rule)" stroke-width="1.1"/>'+
   '<path d="M13.7.6v38.8M26.3.6v38.8M.6 13.7h38.8M.6 26.3h38.8" stroke="var(--line)" stroke-width=".8" fill="none"/>'+
-  '<text x="20" y="28.6" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="22" font-weight="600" fill="var(--accent)">?</text></svg>';
+  '<text x="20" y="28.6" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,system-ui,sans-serif" font-size="22" font-weight="600" fill="var(--accent)">?</text></svg>';
 const LEVEL_N={easy:1,medium:2,hard:3,expert:4};
 const LEVEL_RN={easy:'I',medium:'II',hard:'III',expert:'IV'};
 let pickedMode='tokki';
@@ -40,8 +40,8 @@ function renderContinue(){
     const on=picking&&contSel.has(g.id);
     return `<div class="cont-card${on?' on':''}" data-id="${g.id}">
       <button class="cont-open" data-idx="${idx}">
-        <b>${t('m_'+g.mode)}</b><span>${t('d_'+g.diff)} · ${filled}/${n}</span>
-        <small>${fmtTime(g.time)}</small>
+        <b>${t('m_'+g.mode)}</b>
+        <span class="cont-meta"><span>${t('d_'+g.diff)} · ${filled}/${n}</span><small>${fmtTime(g.time)}</small></span>
       </button>
       ${picking? `<i class="cbox${on?' on':''}"></i>`
         : `<button class="cont-x" data-del="${idx}" aria-label="${t('delGameA')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`}
@@ -120,6 +120,8 @@ function renderTotals(){
   $('tot-won').textContent=won;
   $('tot-perfect').textContent=perfect;
   $('tot-time').textContent=total? fmtTime(total) : '—';
+  /* a fresh player sees no row of zeros */
+  document.querySelector('.home-foot').classList.toggle('hidden', !won);
 }
 function pickMode(id){
   pickedMode=id;

@@ -1,27 +1,27 @@
 .topbar{display:flex; align-items:center; margin:4px auto 12px; width:var(--board-px,100%);
-  font-size:12.5px; color:var(--muted); gap:14px}
+  font-size:13px; color:var(--muted); gap:14px}
 .topbar .t-item:last-of-type{margin-left:auto}
-.topbar .t-item{font-weight:500}
+.topbar .t-item{font-weight:400}
 .topbar .t-item b{font-family:var(--f-num); color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
-.topbar .t-item:first-child b{font-variant-numeric:proportional-nums lining-nums; font-feature-settings:'tnum' 0,'pnum' 1}
-.topbar .tbtn{background:none; border:none; color:var(--muted); cursor:pointer; font-size:13px; font-weight:600; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
-.topbar .tbtn:hover{color:var(--text)}
+.topbar .t-item:first-child b{font-family:var(--f-body); font-variant-numeric:proportional-nums}
+.topbar .tbtn{background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; font-weight:500; padding:9px; margin:-9px -6px -9px 0; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:flex-end; gap:4px}
+.topbar .tbtn:hover{opacity:.75}
 #gMist.dots{display:inline-flex; gap:4px; vertical-align:middle; padding-left:2px}
-#gMist.dots i{width:7px; height:7px; border-radius:50%; border:1px solid var(--muted);
+#gMist.dots i{width:7px; height:7px; border-radius:50%; border:1.5px solid var(--chevron);
   display:block; transition:background .18s, border-color .18s}
 #gMist.dots i.on{background:var(--error); border-color:var(--error)}
-.topbar .tbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
+.topbar .tbtn svg{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
 
 .board-wrap{position:relative}
 #board{position:relative; container-type:inline-size;
   display:grid; width:100%; --bw:9; --bh:9; --nc:3; --nr:3;
-  border:1px solid var(--frame); border-radius:0; overflow:hidden; background:var(--panel);
+  border:0; border-radius:var(--board-r); overflow:hidden; background:var(--panel);
   user-select:none; touch-action:manipulation; box-shadow:var(--shadow)}
 .cell{position:relative; z-index:0; display:flex; align-items:center; justify-content:center; touch-action:manipulation;
   font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
-  font-family:var(--f-num); font-size:calc(58cqw / var(--bw)); line-height:1; font-weight:600; cursor:pointer; background:transparent;
+  font-family:var(--f-num); font-size:calc(58cqw / var(--bw)); line-height:1; font-weight:400; cursor:pointer; background:transparent;
   color:var(--user)}
-.cell.given{color:var(--given); font-weight:600}
+.cell.given{color:var(--given); font-weight:500}
 .cell .v{font-style:normal; display:block; line-height:1}
 #board{margin:0 auto}
 /* no ring on the grid: the picked cell is the marker */
@@ -73,9 +73,9 @@ body.win-side .numpad{display:grid}
 
 body.won .topbar .tbtn{visibility:hidden; pointer-events:none}
 body.paused .controls, body.paused .numpad{opacity:.4; pointer-events:none}
-.win-lead{font-family:var(--f-disp); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--accent); margin-bottom:7px}
-#winPanel{border-top:1px solid var(--line); margin:16px auto 0; width:var(--board-px,100%); padding-top:14px;
+.win-lead{font-family:var(--f-body); font-size:15px; font-weight:600; letter-spacing:-.01em;
+  color:var(--accent); margin-bottom:4px}
+#winPanel{margin:16px auto 0; width:var(--board-px,100%); padding-top:4px;
   animation:winIn .55s cubic-bezier(.2,.7,.3,1) both}
 @keyframes winIn{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:none}}
 .win-head{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap}
@@ -101,34 +101,32 @@ body.won.in-game{overflow:auto}
 body.won .glow{opacity:1}
 body.won #board{overflow:visible}
 #pauseOverlay{position:absolute; top:0; bottom:0; left:50%; transform:translateX(-50%);
-  width:var(--board-px,100%); background:var(--panel); border-radius:0;
-  box-shadow:inset 0 0 0 1px var(--frame);
+  width:var(--board-px,100%); background:var(--panel); border-radius:var(--board-r);
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:9}
-body.board-zoom #pauseOverlay{border-radius:4px}
 #pauseOverlay{cursor:pointer; gap:6px}
-#pauseOverlay p{color:var(--text); margin:0; font-weight:600; font-family:var(--f-disp);
-  font-size:15px; letter-spacing:.08em; text-transform:uppercase}
-#pauseOverlay small{color:var(--muted); font-size:12.5px}
+#pauseOverlay p{color:var(--text); margin:0; font-weight:700; font-family:var(--f-disp);
+  font-size:22px; letter-spacing:-.02em}
+#pauseOverlay small{color:var(--muted); font-size:15px}
 
-#picker{position:absolute; z-index:8; background:var(--pop); border:1px solid var(--frame);
-  border-radius:4px; padding:8px; display:grid; grid-template-columns:repeat(3,46px); gap:5px;
+#picker{position:absolute; z-index:8; background:var(--pop); border:0;
+  border-radius:16px; padding:8px; display:grid; grid-template-columns:repeat(3,46px); gap:5px;
   box-shadow:var(--pop-shadow); animation:pkIn .16s cubic-bezier(.2,.7,.3,1)}
 /* the pad grows out of its cell, placePicker sets the origin */
 @keyframes pkIn{from{transform:scale(.92); opacity:0}to{transform:none; opacity:1}}
-#picker button{width:100%; aspect-ratio:1; border-radius:4px; border:0;
-  box-shadow:0 1px 0 var(--key-line), 0 0 0 .5px var(--key-line); background:var(--key-bg); font-family:var(--f-num); font-size:21px; font-weight:500; color:var(--text);
-  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+#picker button{width:100%; aspect-ratio:1; border-radius:9px; border:0;
+  box-shadow:none; background:var(--seg-bg); font-family:var(--f-num); font-size:22px; font-weight:400; color:var(--text);
+  font-variant-numeric:tabular-nums;
   cursor:pointer; display:flex; align-items:center; justify-content:center;
   transition:border-color .12s, color .12s, background .12s}
 #picker button:hover{color:var(--accent)}
-#picker button:active{background:var(--accent-soft); transform:translateY(1px); box-shadow:none; transition:none}
+#picker button:active{background:var(--accent-soft); transform:scale(.96); transition:none}
 #picker button.done{opacity:.25; pointer-events:none}
-#picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:32px; color:var(--muted); font-size:12px; font-weight:500; letter-spacing:.01em; border-radius:4px}
-#picker .pk-x svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; margin-right:6px}
+#picker .pk-x{grid-column:1/-1; width:100%; aspect-ratio:auto; height:34px; color:var(--accent); font-size:13px; font-weight:500; letter-spacing:0; background:transparent}
+#picker .pk-x svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; margin-right:6px}
 #picker .pk-mode{grid-column:1/-1; display:flex; gap:4px; margin-bottom:2px}
-#picker .pk-mode button{flex:1; aspect-ratio:auto; height:32px; border-radius:4px; border:0; box-shadow:none;
+#picker .pk-mode button{flex:1; aspect-ratio:auto; height:32px; border-radius:8px; border:0; box-shadow:none;
   background:var(--seg-bg); color:var(--muted); width:auto; padding:0}
-#picker .pk-mode svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
+#picker .pk-mode svg{width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
 #picker .pk-mode button.on{background:var(--accent-soft); color:var(--accent)}
 #picker .pk-mode button.on[data-m="note"]{background:var(--accent2-soft); color:var(--accent2)}
 #picker .pk-mode button.on[data-m="mid"]{background:var(--accent3-soft); color:var(--accent3)}
@@ -142,50 +140,52 @@ body.board-zoom #pauseOverlay{border-radius:4px}
 
 .controls{display:grid; gap:6px; margin:16px auto 0; width:var(--board-px,100%)}
 .ctl-row{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:6px}
-.ctl{min-width:0; background:var(--seg-bg); border:0; border-radius:4px;
-  padding:11px 5px 9px; cursor:pointer; color:var(--muted); font-family:inherit;
-  font-size:clamp(8px,2.5cqw,11px); font-weight:500; letter-spacing:.01em;
+.ctl{min-width:0; background:transparent; border:0; border-radius:var(--r-ctl);
+  padding:11px 5px 9px; cursor:pointer; color:var(--accent); font-family:inherit;
+  font-size:clamp(9px,2.6cqw,12px); font-weight:500; letter-spacing:0;
   display:flex; flex-direction:column; align-items:center; gap:5px;
   transition:color .15s, background .15s}
 .ctl span{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.ctl svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2;
-  stroke-linecap:square; stroke-linejoin:miter}
-.ctl:active:not(:disabled), .iconbtn:active, .topbar .tbtn:active{transform:translateY(1px)}
-.ctl:hover:not(:disabled){color:var(--text); background:var(--fill-hover)}
+.ctl svg{width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.6;
+  stroke-linecap:round; stroke-linejoin:round}
+.ctl:active:not(:disabled), .iconbtn:active, .topbar .tbtn:active{transform:scale(.96)}
+.ctl:hover:not(:disabled){background:var(--seg-bg)}
 .ctl.on{color:var(--accent); background:var(--accent-soft)}
 .ctl.on2{color:var(--accent2); background:var(--accent2-soft)}
 .ctl.on3{color:var(--accent3); background:var(--accent3-soft)}
-.ctl:disabled{opacity:.32; cursor:default}
+.ctl:disabled{color:var(--muted); opacity:.45; cursor:default}
 /* input modes as one segmented control: a pill slides under the picked one */
-#ctlModes{position:relative; gap:0; padding:3px; border-radius:6px; background:var(--seg-bg); --seg-n:3; --seg-i:0}
+#ctlModes{position:relative; gap:0; padding:2px; border-radius:9px; background:var(--seg-bg); --seg-n:3; --seg-i:0}
 #ctlModes:has(#midBtn.hidden){--seg-n:2}
 #ctlModes:has(#notesBtn.on2){--seg-i:1}
 #ctlModes:has(#midBtn.on3){--seg-i:2}
-#ctlModes::before{content:''; position:absolute; z-index:0; top:3px; bottom:3px; left:3px;
-  width:calc((100% - 6px) / var(--seg-n)); border-radius:4px; background:var(--seg-pill); box-shadow:var(--seg-shadow);
+#ctlModes::before{content:''; position:absolute; z-index:0; top:2px; bottom:2px; left:2px;
+  width:calc((100% - 4px) / var(--seg-n)); border-radius:7px; background:var(--seg-pill); box-shadow:var(--seg-shadow);
   transform:translateX(calc(100% * var(--seg-i))); transition:transform .3s cubic-bezier(.2,.7,.3,1)}
-#ctlModes .ctl{position:relative; z-index:1; background:transparent}
+#ctlModes .ctl{position:relative; z-index:1; background:transparent; color:var(--text); border-radius:7px}
 #ctlModes .ctl:hover:not(:disabled){background:transparent}
-.numpad{display:grid; gap:6px; margin:10px auto 0; width:var(--board-px,100%)}
+/* keys as on the iOS keyboard: light caps on a grey tray */
+.numpad{display:grid; gap:6px; margin:10px auto 0; width:var(--board-px,100%);
+  background:var(--tray); border-radius:12px; padding:6px}
 .num{position:relative; touch-action:manipulation; background:var(--key-bg);
-  border:0; box-shadow:0 1px 0 var(--key-line), 0 0 0 .5px var(--key-line); border-radius:4px; aspect-ratio:.78; cursor:pointer;
-  font-family:var(--f-num); font-size:clamp(18px,4.5vw,26px); font-weight:500; color:var(--text);
-  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  border:0; box-shadow:0 1px 0 var(--key-line); border-radius:7px; aspect-ratio:.78; cursor:pointer;
+  font-family:var(--f-num); font-size:clamp(18px,4.5vw,26px); font-weight:400; color:var(--text);
+  font-variant-numeric:tabular-nums;
   display:flex; align-items:center; justify-content:center;
   transition:color .12s, background .12s}
-.num small{position:absolute; right:5px; bottom:3px; font-size:10px; color:var(--muted); font-weight:500; line-height:1; opacity:.85}
+.num small{position:absolute; right:5px; bottom:4px; font-size:10px; color:var(--muted); font-weight:500; line-height:1}
 .num small.two{font-size:8.5px; letter-spacing:-.02em}
-.num:hover{color:var(--accent)}
-.num:active{transform:translateY(1px); box-shadow:none; background:var(--accent-soft); transition:none}
+.num:hover{background:var(--panel2)}
+.num:active{transform:scale(.96); box-shadow:none; background:var(--seg-pill); transition:none}
 .num.done{opacity:.22; pointer-events:none}
-.num.hl{color:var(--accent); background:var(--accent-soft); box-shadow:none}
+.num.hl{color:var(--accent); box-shadow:0 1px 0 var(--key-line), inset 0 0 0 2px var(--accent)}
 
-.numpad.mode-note .num{color:var(--accent2); background:var(--accent2-soft); box-shadow:none}
-.numpad.mode-mid .num{color:var(--accent3); background:var(--accent3-soft); box-shadow:none}
+.numpad.mode-note .num{color:var(--accent2)}
+.numpad.mode-mid .num{color:var(--accent3)}
 .numpad.mode-note .num.done, .numpad.mode-mid .num.done{opacity:.28}
-.num.armed{color:var(--accent); background:var(--accent-soft); box-shadow:inset 0 0 0 1.5px var(--accent)}
-.numpad.mode-note .num.armed{color:var(--accent2); background:var(--accent2-soft); box-shadow:inset 0 0 0 1.5px var(--accent2)}
-.numpad.mode-mid .num.armed{color:var(--accent3); background:var(--accent3-soft); box-shadow:inset 0 0 0 1.5px var(--accent3)}
+.num.armed{color:var(--accent-text); background:var(--accent); box-shadow:none}
+.numpad.mode-note .num.armed{color:var(--accent-text); background:var(--accent2)}
+.numpad.mode-mid .num.armed{color:var(--accent-text); background:var(--accent3)}
 
 .cell::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:-1;
   background:var(--tint,transparent); mix-blend-mode:var(--blend); transition:background .12s}
@@ -214,18 +214,25 @@ body.board-tokki .cell::before{display:none}
   to{transform:translate(-50%,-50%); opacity:1}}
 .cell.zone{background:var(--zone-fill)}
 .cell.even{background:var(--even-fill)}
-.cell.d2{font-size:calc(44cqw / var(--bw)); letter-spacing:-.02em}
+/* two digits: proportional figures keep 11 from falling apart, so the size can stay near a single digit */
+.cell.d2{font-size:calc(52cqw / var(--bw)); letter-spacing:-.045em; font-variant-numeric:proportional-nums}
+.num, #picker button{font-variant-numeric:proportional-nums}
 
 
 /* rules draw over every cell fill */
 .grid{position:absolute; inset:0; pointer-events:none; z-index:3}
 .grid svg{position:absolute; inset:0; width:100%; height:100%}
 #selBox{position:absolute; z-index:7; pointer-events:none; border:2px solid var(--accent);
-  border-radius:2px}
+  border-radius:3px}
 #selBox.note{border-color:var(--accent2)}
 #selBox.mid{border-color:var(--accent3)}
 #selBox.err{border-color:var(--error)}
 #selBox.hidden{display:none}
+/* a corner cell follows the board's curve, so the ring and the tint stay concentric with it */
+.cell.k-tl, #selBox.k-tl{border-top-left-radius:var(--board-r)}
+.cell.k-tr, #selBox.k-tr{border-top-right-radius:var(--board-r)}
+.cell.k-bl, #selBox.k-bl{border-bottom-left-radius:var(--board-r)}
+.cell.k-br, #selBox.k-br{border-bottom-right-radius:var(--board-r)}
 .deco{position:absolute; inset:0; pointer-events:none; z-index:8}
 .deco svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
 .deco .sums text{font-family:var(--f-num); font-weight:700; fill:var(--cage-num)}
@@ -253,8 +260,7 @@ body.board-num .cell.d2{font-size:calc(40cqw / var(--bw))}
 .cell .notes.wide span{font-family:var(--f-num); font-size:calc(26cqw / var(--bw)); line-height:1.15;
   color:var(--note); font-weight:600; display:inline}
 .topbar .t-item em{font-style:normal; color:var(--muted); margin-left:8px; font-size:12px}
-.topbar .t-item em .rn{font-style:normal; font-family:var(--f-num); color:var(--accent);
-  letter-spacing:0; margin-right:7px}
+.topbar .t-item em .rn{display:none}
 
 #board{background:transparent}
 .cell{background:var(--panel)}
@@ -271,7 +277,7 @@ body.win-side #game{position:relative}
 body.win-side #winPanel{position:absolute; transform:translateY(-50%);
   animation:winSideIn .5s cubic-bezier(.2,.7,.3,1) both;
   width:300px; margin:0; border-top:0; padding:24px 24px 22px;
-  background:var(--panel); border:0; border-radius:4px; box-shadow:var(--shadow)}
+  background:var(--panel); border:0; border-radius:var(--r-card); box-shadow:var(--shadow)}
 body.win-side .win-lead{margin-bottom:4px}
 body.win-side .win-head{flex-direction:column; align-items:flex-start; gap:6px}
 body.win-side .win-big{font-size:46px; letter-spacing:-.01em}
@@ -283,34 +289,17 @@ body.win-side .win-grid{display:flex; flex-direction:column; border:0}
 body.win-side .win-grid div{display:flex; align-items:baseline; justify-content:space-between;
   border:0; border-top:1px solid var(--line); padding:9px 0}
 body.win-side .win-grid b{margin:0; font-size:15.5px; order:2}
-body.win-side .win-grid span{font-size:10px; letter-spacing:.07em}
+body.win-side .win-grid span{font-size:13px; letter-spacing:0}
 body.win-side .win-act{flex-direction:column; gap:9px; margin-top:18px}
 body.win-side .win-act .btn{width:100%; padding:13px 20px}
 body.win-side .win-act .btn.ghost{order:2}
 body.win-side.in-game{overflow:hidden}
 
-/* light and corner ticks */
+/* the board is a card; linked boards are cells on the page */
 body:not(.board-wide) #board{background-color:var(--panel)}
-body:not(.board-wide) #board{background-image:var(--board-light)}
 .cell{background:transparent}
 body.board-wide .cell{background:var(--panel)}
 #board{border:0}
-#board::before{content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
-  box-shadow:inset 0 0 0 1px var(--frame)}
-body.board-wide #board::before{display:none}
-#board::after{content:''; position:absolute; inset:0; z-index:6; pointer-events:none;
-  background:
-    linear-gradient(var(--tick),var(--tick)) left top/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left top 2px/2px 11px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right top/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right top 2px/2px 11px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left bottom/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) left bottom 2px/2px 11px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right bottom/13px 2px no-repeat,
-    linear-gradient(var(--tick),var(--tick)) right bottom 2px/2px 11px no-repeat}
-/* linked boards keep the ticks only with real corner cells */
-body.board-wide #board::after, body.board-num #board::after{display:none}
-body.board-wide #board.corners::after{display:block}
 
 /* desktop: board on the left, pad on the right */
 body.rail.in-game #game{max-width:none;
@@ -325,33 +314,33 @@ body.rail.in-game.pad-two #game{--boardmax:600px}
 body.rail .board-wrap{grid-area:1/1/6/2}
 body.rail .topbar{grid-area:1/2/2/3; width:auto; margin:0 0 10px;
   flex-direction:column; align-items:flex-start; gap:3px;
-  background:var(--panel); border-radius:4px; padding:12px 14px}
+  background:var(--panel); border-radius:var(--r-card); box-shadow:var(--shadow); padding:16px 16px 14px}
 body.rail .topbar .t-item{width:100%; display:block}
 body.rail .topbar .t-item:last-of-type{margin-left:0}
-body.rail .topbar .t-item:first-child b{display:block; font-family:var(--f-disp); font-size:17px; font-weight:400; letter-spacing:.01em}
-body.rail .topbar .t-item em{display:block; margin:3px 0 0; font-size:12.5px; color:var(--muted)}
-body.rail .topbar #gMistWrap{margin-top:9px}
+body.rail .topbar .t-item:first-child b{display:block; font-family:var(--f-disp); font-size:20px; font-weight:700; letter-spacing:-.02em}
+body.rail .topbar .t-item em{display:block; margin:2px 0 0; font-size:15px; color:var(--muted)}
+body.rail .topbar #gMistWrap{margin-top:12px}
 body.rail .topbar .t-item:nth-of-type(3){margin-top:1px}
-body.rail .topbar .t-item:nth-of-type(3) b{font-size:27px; line-height:1.15}
-body.rail .topbar .tbtn{margin:6px 0 0; padding:7px 9px; min-height:0; min-width:0;
-  justify-content:flex-start; gap:7px; font-weight:400; font-size:12px;
-  background:var(--seg-bg); border-radius:4px; width:100%}
-body.rail .topbar #restartBtnTop{margin-top:12px}
-body.rail .topbar .tbtn:hover{background:var(--fill-hover)}
+body.rail .topbar .t-item:nth-of-type(3) b{font-size:32px; font-weight:600; letter-spacing:-.02em; line-height:1.15}
+body.rail .topbar .tbtn{margin:6px 0 0; padding:8px 10px; min-height:0; min-width:0;
+  justify-content:flex-start; gap:8px; font-weight:500; font-size:14px;
+  background:var(--seg-bg); border-radius:var(--r-ctl); width:100%}
+body.rail .topbar #restartBtnTop{margin-top:14px}
+body.rail .topbar .tbtn:hover{opacity:1; filter:brightness(.97)}
 .tbtn-lbl{display:none}
 body.rail .topbar .tbtn .tbtn-lbl{display:inline}
 body.rail #pickHint{position:static; grid-area:5/2/6/3; width:auto;
-  margin:12px 0 0; padding:0 0 0 11px; text-align:left; font-size:12px; line-height:1.5;
-  border-left:1px solid var(--line); border-right:0}
+  margin:12px 0 0; padding:0 2px; text-align:left; font-size:13px; line-height:1.45;
+  border:0}
 
 body.rail #gameTag{grid-area:2/2/3/3; width:auto; margin:0 0 10px}
 body.rail .controls{grid-area:3/2/4/3; width:auto; margin:0}
-body.rail .ctl{padding:9px 3px 8px; font-size:10.5px}
+body.rail .ctl{padding:9px 3px 8px; font-size:11.5px}
 body.rail #ctlActs{grid-auto-flow:row; grid-template-columns:repeat(3,1fr)}
 
 body.rail .numpad{grid-area:4/2/5/3; width:auto; margin:10px 0 0;
   grid-template-columns:repeat(3,1fr) !important; gap:6px; align-content:start}
-body.rail .num{aspect-ratio:1.08; font-size:25px}
+body.rail .num{aspect-ratio:1.08; font-size:26px}
 body.rail.board-num .num{aspect-ratio:1.3; font-size:21px}
 /* zero under the eight, the way a dialler sets it */
 body.rail.board-num .numpad .num:last-child{grid-column:2}
@@ -359,7 +348,7 @@ body.rail .numpad.two-row .num{aspect-ratio:1.08}
 
 body.rail.won #winPanel{grid-area:1/2/6/3; position:static; transform:none;
   width:auto; margin:0; border-top:0; padding:20px 20px 18px;
-  background:var(--panel); border:0; border-radius:4px; box-shadow:var(--shadow);
+  background:var(--panel); border:0; border-radius:var(--r-card); box-shadow:var(--shadow);
   animation:winIn .5s cubic-bezier(.2,.7,.3,1) both}
 body.rail.won .topbar{display:none}
 /* repeated after the general hide on a win */

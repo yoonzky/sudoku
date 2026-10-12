@@ -1,97 +1,78 @@
-@font-face{font-family:'Tenor Sans'; font-style:normal; font-weight:400; font-display:swap;
-  src:url(../fonts/tenor-sans-cyrillic.woff2) format('woff2');
-  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'Tenor Sans'; font-style:normal; font-weight:400; font-display:swap;
-  src:url(../fonts/tenor-sans-latin.woff2) format('woff2');
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:Onest; font-style:normal; font-weight:100 900; font-display:swap;
-  src:url(../fonts/onest-cyrillic.woff2) format('woff2');
-  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:Onest; font-style:normal; font-weight:100 900; font-display:swap;
-  src:url(../fonts/onest-latin.woff2) format('woff2');
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:Lora; font-style:normal; font-weight:400 700; font-display:swap;
-  src:url(../fonts/lora-cyrillic.woff2) format('woff2');
-  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:Lora; font-style:normal; font-weight:400 700; font-display:swap;
-  src:url(../fonts/lora-latin.woff2) format('woff2');
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-
+/* system faces: SF on Apple devices, Segoe UI on Windows */
 :root{
-  --f-disp:'Tenor Sans',system-ui,sans-serif;
-  --f-body:Onest,system-ui,sans-serif;
-  --f-num:Lora,Georgia,serif;
+  --f-disp:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI Variable Display','Segoe UI',system-ui,sans-serif;
+  --f-body:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI Variable Text','Segoe UI',system-ui,sans-serif;
+  --f-num:var(--f-disp);
+  --r-card:14px; --r-ctl:10px; --board-r:12px;
 }
-/* every theme colour lives here */
+/* every theme colour lives here; no pure white or black */
 :root{
-  --l-bg:#eaedf4; --l-panel:#fbfcfe; --l-line:#d2d7e4; --l-text:#14161f; --l-accent:#565ead;
-  --d-bg:#0b0d14; --d-panel:#151824; --d-line:#252a3b; --d-text:#e6e9f5; --d-accent:#a6b4f0;
+  --l-bg:#f2f2f7; --l-panel:#fcfcfd; --l-line:#e2e2e7; --l-text:#2b2b2f; --l-accent:#0a6fe8;
+  --d-bg:#141416; --d-panel:#212124; --d-line:#343438; --d-text:#e6e6eb; --d-accent:#4b9bff;
 }
 :root, html[data-theme="light"]{
   color-scheme:light;
-  --bg:var(--l-bg); --panel:var(--l-panel); --panel2:#ffffff; --line:var(--l-line); --line-strong:#14161f;
-  --text:var(--l-text); --muted:#5a6072; --accent:var(--l-accent); --accent-text:#ffffff; --accent-soft:#e2e5f5;
-  --accent2:#2c6b76; --accent2-soft:#dcebed;
+  --bg:var(--l-bg); --panel:var(--l-panel); --panel2:#fefefe; --line:var(--l-line); --line-strong:var(--l-text);
+  --text:var(--l-text); --muted:#76767c; --accent:var(--l-accent); --accent-text:#fcfcfd; --accent-soft:rgba(10,111,232,.10);
   /* digit, corner marks, centre marks */
-  --accent3:#8a4a96; --accent3-soft:#f3e7f6;
-  --error:#9e3550; --note:#4f566b; --given:#14161f; --user:#565ead; --cell-hl:#e1e4ee;
-  --seg-bg:rgba(20,22,31,.06); --fill-hover:#eff1f9; --seg-pill:#ffffff; --seg-shadow:0 1px 3px rgba(18,24,48,.14), 0 0 0 .5px rgba(18,24,48,.06); --cell-same:#d3d8ee; --note-sel:#333a4f;
-  --shadow:0 18px 44px rgba(24,32,58,.10); --shadow-up:0 -14px 38px rgba(24,32,58,.13);
+  --accent2:#16879b; --accent2-soft:rgba(22,135,155,.11);
+  --accent3:#5b57d1; --accent3-soft:rgba(91,87,209,.10);
+  --error:#d93d42; --note:#5f5f66; --given:var(--l-text); --user:var(--l-accent);
+  --cell-hl:#ececf1; --cell-same:rgba(10,111,232,.10); --note-sel:#2b2b2f;
+  --seg-bg:rgba(118,118,128,.12); --seg-pill:#fefefe; --seg-shadow:0 3px 8px rgba(0,0,0,.10), 0 0 0 .5px rgba(0,0,0,.04);
+  --fill-hover:#f7f7f9; --tray:#d5d6dc; --chevron:#c4c4c9;
+  --shadow:0 1px 2px rgba(0,0,0,.04), 0 6px 24px rgba(0,0,0,.05); --shadow-up:0 -8px 30px rgba(0,0,0,.08);
   /* solid: a tinted cell must not show through the rules */
-  --rule:#9a9ba0; --rule-thin:#d6d7da; --frame:rgba(86,94,173,.26);
-  --halo:radial-gradient(ellipse 62% 40% at 50% -2%, rgba(255,255,255,.95), transparent 72%);
-  --glow-edge:rgba(86,94,173,.60);
-  --pop:#ffffff; --pop-shadow:0 16px 38px rgba(18,24,48,.22), 0 2px 8px rgba(18,24,48,.13);
-  --key-bg:#ffffff; --key-line:#ccd2e2;
-  --kk:#a9b3ca; --kk-dark:#6e788f;
-  --zone-fill:#dde2f3; --even-fill:#d7dcf0; --zone-edge:rgba(86,94,173,.34);
-  --blend:multiply;
-  --tint-hl:rgba(20,22,31,.045); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
-  --tint-sel2:rgba(44,107,118,.36); --tint-sel3:rgba(138,74,150,.32);
-  --tint-err:rgba(158,53,80,.28);
-  --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
-  --dot-w-bg:#ffffff; --dot-w-line:#14161f; --dot-b-bg:#14161f; --dot-b-line:#14161f;
+  --rule:#9c9ca3; --rule-thin:#e6e6eb; --frame:transparent;
+  --halo:none; --glow-edge:rgba(10,111,232,.28);
+  --pop:#fdfdfe; --pop-shadow:0 12px 40px rgba(0,0,0,.14), 0 0 0 .5px rgba(0,0,0,.06);
+  --key-bg:#fdfdfe; --key-line:rgba(0,0,0,.16);
+  --kk:#d8d8de; --kk-dark:#8e8e94;
+  --zone-fill:#e9eef8; --even-fill:#e2e8f5; --zone-edge:rgba(10,111,232,.3);
+  --blend:normal;
+  --tint-hl:rgba(60,60,67,.045); --tint-same:rgba(10,111,232,.10); --tint-sel:rgba(10,111,232,.18);
+  --tint-sel2:rgba(22,135,155,.18); --tint-sel3:rgba(91,87,209,.16); --tint-err:rgba(217,61,66,.14);
+  --cage:rgba(60,60,67,.55); --cage-num:#4a4a50;
+  --dot-w-bg:#fefefe; --dot-w-line:#2b2b2f; --dot-b-bg:#2b2b2f; --dot-b-line:#2b2b2f;
   /* tokkidoku regions */
-  --z1:#e4eefb; --z2:#fbe6ee; --z3:#ece5fa; --z4:#dff2e9; --z5:#f8efd9;
-  --z6:#d3e2f4; --z7:#f4d8e4; --z8:#ded3f0; --z9:#cfe9dc; --z10:#efe3c4;
-  --face:#565ead; --mark:#98a2bd;
+  --z1:#e4eefb; --z2:#fbe6ee; --z3:#ece5fa; --z4:#dff2e9; --z5:#f5efdc;
+  --z6:#d3e2f4; --z7:#f4d8e4; --z8:#ded3f0; --z9:#cfe9dc; --z10:#ece4cc;
+  --face:var(--l-accent); --mark:#b4b4ba;
   /* solid: alpha stacks where preview lines cross */
-  --prev-rule:#9c9da1; --prev-zone:#b4b9dd; --prev-cage:#3c4270;
-  --face-nz:#565ead; --face-mj:#2f74bd; --face-hn:#c2467f;
-  --face-hr:#2f8a5a; --face-hi:#7b4bc4; --face-dn:#d29a00;
-  --board-light:linear-gradient(to bottom, rgba(255,255,255,.95), rgba(255,255,255,0) 22%, rgba(22,26,44,.095));
-  --tick:rgba(86,94,173,.58);
+  --prev-rule:#a7a7ad; --prev-zone:#b9c7e6; --prev-cage:#5c5c62;
+  --face-nz:#3d5fd6; --face-mj:#2f74bd; --face-hn:#c2467f;
+  --face-hr:#2f8a5a; --face-hi:#7b4bc4; --face-dn:#b8860b;
+  --board-light:none; --tick:transparent;
 }
 html[data-theme="dark"]{
   color-scheme:dark;
-  --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#1b1f30; --line:var(--d-line); --line-strong:#e6e9f5;
-  --text:var(--d-text); --muted:#8c93ab; --accent:var(--d-accent); --accent-text:#0b0d14; --accent-soft:rgba(166,180,240,.20);
-  --accent2:#7fc8d4; --accent2-soft:rgba(127,200,212,.20);
-  --accent3:#cba4ee; --accent3-soft:rgba(203,164,238,.20);
-  --error:#e78ca0; --note:#98a0b8; --given:#e6e9f5; --user:#a6b4f0; --cell-hl:#1a1e2d;
-  --seg-bg:rgba(235,238,250,.06); --fill-hover:#1c2134; --seg-pill:#262b3f; --seg-shadow:0 1px 3px rgba(0,0,0,.45); --cell-same:#252c47; --note-sel:#ccd3e8;
-  --shadow:0 18px 44px rgba(0,0,0,.5); --shadow-up:0 -14px 38px rgba(0,0,0,.42);
-  --rule:#585b67; --rule-thin:#343743; --frame:rgba(166,180,240,.22);
-  --halo:radial-gradient(ellipse 62% 40% at 50% -2%, rgba(166,180,240,.16), transparent 72%);
-  --glow-edge:rgba(166,180,240,.62);
-  --pop:#212637; --pop-shadow:0 16px 38px rgba(0,0,0,.62), 0 2px 8px rgba(0,0,0,.45);
-  --key-bg:#191d2c; --key-line:#39415a;
-  --kk:#333d5c; --kk-dark:#05070c;
-  --zone-fill:rgba(166,180,240,.15); --even-fill:rgba(166,180,240,.16); --zone-edge:rgba(166,180,240,.42);
-  --blend:screen;
-  --tint-hl:rgba(235,238,250,.075); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
-  --tint-sel2:rgba(127,200,212,.50); --tint-sel3:rgba(190,150,235,.50);
-  --tint-err:rgba(190,80,105,.48);
-  --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
-  --dot-w-bg:#e6e9f5; --dot-w-line:#0b0d14; --dot-b-bg:#0b0d14; --dot-b-line:#c2cbe2;
+  --bg:var(--d-bg); --panel:var(--d-panel); --panel2:#2a2a2d; --line:var(--d-line); --line-strong:var(--d-text);
+  --text:var(--d-text); --muted:#94949b; --accent:var(--d-accent); --accent-text:#141416; --accent-soft:rgba(75,155,255,.16);
+  --accent2:#55c3d6; --accent2-soft:rgba(85,195,214,.15);
+  --accent3:#8c88ff; --accent3-soft:rgba(140,136,255,.16);
+  --error:#ff6b6b; --note:#a6a6ad; --given:var(--d-text); --user:#62a8ff;
+  --cell-hl:#29292c; --cell-same:rgba(75,155,255,.16); --note-sel:#f0f0f4;
+  --seg-bg:rgba(118,118,128,.24); --seg-pill:#5a5a5f; --seg-shadow:0 3px 8px rgba(0,0,0,.25);
+  --fill-hover:#2a2a2d; --tray:#1c1c1e; --chevron:#5a5a5f;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 28px rgba(0,0,0,.28); --shadow-up:0 -8px 30px rgba(0,0,0,.4);
+  --rule:#6d6d73; --rule-thin:#303034; --frame:transparent;
+  --halo:none; --glow-edge:rgba(75,155,255,.3);
+  --pop:#2c2c2f; --pop-shadow:0 12px 40px rgba(0,0,0,.5), 0 0 0 .5px rgba(255,255,255,.06);
+  --key-bg:#3a3a3e; --key-line:rgba(0,0,0,.45);
+  --kk:#3a3a3e; --kk-dark:#111113;
+  --zone-fill:#25303f; --even-fill:#2a3648; --zone-edge:rgba(75,155,255,.35);
+  --blend:normal;
+  --tint-hl:rgba(235,235,245,.04); --tint-same:rgba(75,155,255,.15); --tint-sel:rgba(75,155,255,.28);
+  --tint-sel2:rgba(85,195,214,.24); --tint-sel3:rgba(140,136,255,.24); --tint-err:rgba(255,107,107,.2);
+  --cage:rgba(235,235,245,.5); --cage-num:#c8c8ce;
+  --dot-w-bg:#e6e6eb; --dot-w-line:#141416; --dot-b-bg:#141416; --dot-b-line:#c8c8ce;
   --z1:#21334b; --z2:#402b3b; --z3:#322f48; --z4:#1c3634; --z5:#353127;
   --z6:#1d293d; --z7:#322432; --z8:#29273a; --z9:#192c2d; --z10:#2b2823;
-  --face:#a6b4f0; --mark:#5d6987;
-  --prev-rule:#585b67; --prev-zone:#606a94; --prev-cage:#9ca9d3;
-  --face-nz:#a6b4f0; --face-mj:#7cb8ef; --face-hn:#f292b6;
+  --face:#62a8ff; --mark:#55555b;
+  --prev-rule:#66666c; --prev-zone:#3a4a66; --prev-cage:#a6a6ad;
+  --face-nz:#7d9cff; --face-mj:#7cb8ef; --face-hn:#f292b6;
   --face-hr:#6fd0a0; --face-hi:#b79bf2; --face-dn:#ddb659;
-  --board-light:linear-gradient(to bottom, rgba(166,180,240,.13), rgba(166,180,240,0) 40%, rgba(0,0,0,.20));
-  --tick:rgba(201,212,234,.62);
+  --board-light:none; --tick:transparent;
 }
 :root{--page:940px}
 @media (min-width:1180px){ :root{--page:1120px} }
@@ -106,60 +87,64 @@ html{scrollbar-width:thin; scrollbar-color:var(--line) transparent; scrollbar-gu
   background-clip:content-box; border-radius:8px}
 ::-webkit-scrollbar-thumb:hover{background:var(--muted); border:3px solid transparent; background-clip:content-box}
 body{margin:0; background:var(--bg); color:var(--text);
-  font-variant-numeric:lining-nums tabular-nums; font-feature-settings:'lnum' 1,'tnum' 1;
+  font-variant-numeric:tabular-nums;
   font-family:var(--f-body);
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   transition:background .25s,color .25s}
 body.in-game main{max-width:100%; display:flex; flex-direction:column; justify-content:safe center}
 button{font-family:inherit; color:inherit}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
-header{width:100%; max-width:var(--page); display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
-/* caps run tight on purpose, .06-.09em */
-header h1{font-family:var(--f-disp); font-size:35px; font-weight:400; letter-spacing:.09em; margin:0 0 0 .09em}
-.tagline{margin:0; color:var(--muted); font-size:13px}
-body.in-game .tagline{display:none}
-header .iconbtn{position:absolute; top:30px}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px}
+/* a large title on the left, as in the apps */
+header{width:100%; max-width:var(--page); display:flex; flex-direction:column; align-items:flex-start; gap:0; padding:30px 18px 18px; position:relative}
+header h1{font-family:var(--f-disp); font-size:34px; font-weight:700; letter-spacing:-.022em; line-height:1.2; margin:0}
+header .iconbtn{position:absolute; top:34px}
 #backBtn{display:none}
-body.in-game #backBtn{display:flex; margin-left:-6px; margin-right:4px}
-header #statsBtn{right:calc(50% - var(--page)/2 + 30px)}
-header #setBtn{right:calc(50% - var(--page)/2 - 8px)}
-@media(max-width:990px){header #statsBtn{right:60px} header #setBtn{right:16px}}
-.iconbtn{background:transparent; border:1px solid transparent; border-radius:4px; cursor:pointer;
-  color:var(--muted); width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0}
-.iconbtn:hover{color:var(--text); background:var(--panel)}
-.iconbtn svg{width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.2; stroke-linecap:square; stroke-linejoin:miter}
+/* in a game the back button carries the title, as a back button does on iOS */
+.back-lbl{display:none}
+body.in-game #backBtn{display:flex; width:auto; height:36px; margin-left:-10px; padding:0 10px 0 4px; gap:1px; border-radius:18px}
+body.in-game .back-lbl{display:inline; font-size:17px; font-weight:400; letter-spacing:-.015em}
+body.in-game header h1{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+body.in-game #rulesBtn{margin-left:auto}
+header #statsBtn{right:60px}
+header #setBtn{right:16px}
+.iconbtn{background:transparent; border:0; border-radius:50%; cursor:pointer;
+  color:var(--accent); width:36px; height:36px; display:flex; align-items:center; justify-content:center; padding:0;
+  transition:background .15s}
+.iconbtn:hover{background:var(--seg-bg)}
+.iconbtn svg{width:21px; height:21px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
 main{width:100%; max-width:var(--page); padding:6px 18px 26px; flex:1}
-#game{container-type:inline-size; max-width:min(560px,100%); margin:0 auto}
-body.in-game header{flex-direction:row; align-items:center; padding:14px 18px 4px}
-body.in-game header h1{font-size:24px; flex:1; text-align:left}
+/* auto margins in a flex column shrink the box, and a size container has no content width: set it outright */
+#game{container-type:inline-size; width:100%; max-width:min(560px,100%); margin:0 auto}
+/* a tablet held upright has room for a bigger board */
+@media (min-width:701px) and (orientation:portrait) and (min-height:900px){ #game{max-width:min(700px,100%)} }
+body.in-game header{flex-direction:row; align-items:center; gap:2px; padding:12px 18px 4px; max-width:calc(var(--board-px,560px) + 36px)}
+body.rail.in-game header{max-width:calc(var(--board-px,560px) + 294px)}
 body.in-game header .iconbtn{position:static}
-.site-foot{width:100%; max-width:var(--page); text-align:center; padding:6px 18px 18px; font-size:11.5px; color:var(--muted)}
+.site-foot{width:100%; max-width:var(--page); text-align:center; padding:6px 18px 18px; font-size:12px; color:var(--muted)}
 .site-foot a{color:var(--muted)}
 .site-foot a:hover{color:var(--text)}
 body.in-game .site-foot{display:none}
 
-body::before{content:''; position:fixed; inset:0; background:var(--halo); pointer-events:none; z-index:0; transition:opacity .3s}
-body.in-game::before{opacity:.4}
 header, main, .site-foot{position:relative; z-index:1}
 .wel-grid{display:flex; gap:12px; margin:18px 0 14px}
-.wel-card{flex:1; background:var(--seg-bg); border:1px solid transparent; border-radius:4px; padding:11px 11px 13px;
+.wel-card{flex:1; background:var(--seg-bg); border:0; border-radius:var(--r-card); padding:12px 12px 14px;
   cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:10px; align-items:center;
-  transition:border-color .15s, background .15s}
-.wel-card:hover{color:var(--accent); background:var(--accent-soft)}
-.wel-card:active{background:var(--accent-soft)}
-.wel-card b{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
-.wel-card span{font-size:12px; font-weight:400; line-height:1.4; color:var(--muted); text-transform:none; letter-spacing:0}
-#checkModal .wel-card{gap:7px; padding:15px 13px 16px}
-.wel-prev{width:100%; aspect-ratio:16/10; border-radius:4px; display:grid; grid-template-columns:1fr 1fr;
-  grid-template-rows:1fr 1fr; gap:5px; padding:9px; border:1px solid rgba(127,127,127,.25)}
-.wel-prev i{display:block; border-radius:2px}
+  transition:background .15s, box-shadow .15s}
+.wel-card:hover{background:var(--accent-soft)}
+.wel-card:active{background:var(--accent-soft); box-shadow:inset 0 0 0 2px var(--accent)}
+.wel-card b{font-size:15px; font-weight:600; letter-spacing:-.01em; color:var(--text)}
+.wel-card span{font-size:13px; font-weight:400; line-height:1.4; color:var(--muted)}
+#checkModal .wel-card{gap:6px; padding:16px 14px 17px}
+.wel-prev{width:100%; aspect-ratio:16/10; border-radius:10px; display:grid; grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr; gap:5px; padding:9px; box-shadow:0 0 0 .5px rgba(127,127,127,.35)}
+.wel-prev i{display:block; border-radius:5px}
 .wp-light{background:var(--l-bg)}
-.wp-light i{background:var(--l-panel); border:1px solid var(--l-line)}
-.wp-light i.a{background:var(--l-accent); border-color:var(--l-accent)}
+.wp-light i{background:var(--l-panel); box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.wp-light i.a{background:var(--l-accent)}
 .wp-dark{background:var(--d-bg)}
-.wp-dark i{background:var(--d-panel); border:1px solid var(--d-line)}
-.wp-dark i.a{background:var(--d-accent); border-color:var(--d-accent)}
+.wp-dark i{background:var(--d-panel)}
+.wp-dark i.a{background:var(--d-accent)}
 .hidden{display:none !important}
 @media(min-height:640px){body.in-game{overflow:hidden}}
 
@@ -168,21 +153,20 @@ header, main, .site-foot{position:relative; z-index:1}
   body{-webkit-touch-callout:none; touch-action:manipulation;
     padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right)}
   button{touch-action:manipulation}
-  /* safe centring keeps the top of the board in view */
-  header{padding:calc(20px + env(safe-area-inset-top)) 14px 8px}
-  header h1{font-size:25px; letter-spacing:.08em; margin-left:.08em}
-  header .iconbtn{top:calc(18px + env(safe-area-inset-top)); width:40px; height:40px}
-  .tagline{font-size:12px; margin-top:16px}
+  header{padding:calc(14px + env(safe-area-inset-top)) 16px 20px}
+  header h1{font-size:32px}
+  header .iconbtn{top:calc(16px + env(safe-area-inset-top)); width:40px; height:40px}
+  header #statsBtn{right:56px}
+  header #setBtn{right:12px}
   @supports (height:100dvh){ body{min-height:100dvh} }
 
-  main{padding:4px 10px calc(14px + env(safe-area-inset-bottom))}
+  main{padding:4px 16px calc(14px + env(safe-area-inset-bottom))}
 
   body.in-game main{padding:4px 4px calc(6px + env(safe-area-inset-bottom)); flex:0 1 auto}
   body.in-game #game{width:100%}
 
   body.in-game{justify-content:flex-start}
   body.in-game header{padding:calc(6px + env(safe-area-inset-top)) 12px 2px}
-  body.in-game header h1{font-size:20px}
 
   #game{max-width:100%}
 
@@ -193,18 +177,19 @@ header, main, .site-foot{position:relative; z-index:1}
   body.in-game{justify-content:flex-start; overflow:auto}
 }
 
-#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
-  background:var(--panel2); border:1px solid var(--line-strong); color:var(--text);
-  padding:10px 18px; border-radius:4px; font-size:13px; font-weight:600; z-index:50;
-  transition:opacity .25s, transform .25s; pointer-events:none; box-shadow:var(--shadow)}
+/* a banner at the top, as on iOS: the keys below stay free */
+#toast{position:fixed; top:calc(14px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%) translateY(-16px); opacity:0;
+  background:var(--pop); color:var(--text); width:max-content; max-width:calc(100vw - 32px); text-align:center;
+  padding:11px 20px; border-radius:999px; font-size:14px; font-weight:500; z-index:50;
+  transition:opacity .25s, transform .3s cubic-bezier(.2,.7,.3,1); pointer-events:none; box-shadow:var(--pop-shadow)}
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
-#genOverlay{position:fixed; inset:0; background:var(--bg); opacity:.92; z-index:30;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px;
-  color:var(--muted); font-size:14px; font-weight:600; cursor:pointer}
-#genOverlay b{font-weight:600}
-#genOverlay small{font-size:12px; font-weight:400; opacity:.7}
-.gen-bar{width:min(240px,60vw); height:3px; background:var(--line); border-radius:2px; overflow:hidden}
-.gen-bar i{display:block; height:100%; width:0; background:var(--accent); transition:width .25s linear}
+#genOverlay{position:fixed; inset:0; background:var(--bg); opacity:.94; z-index:30;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  color:var(--muted); font-size:15px; font-weight:500; cursor:pointer}
+#genOverlay b{font-weight:600; color:var(--text)}
+#genOverlay small{font-size:13px; font-weight:400}
+.gen-bar{width:min(240px,60vw); height:4px; background:var(--seg-bg); border-radius:2px; overflow:hidden}
+.gen-bar i{display:block; height:100%; width:0; background:var(--accent); border-radius:2px; transition:width .25s linear}
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important; transition:none !important}
 }

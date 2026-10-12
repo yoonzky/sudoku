@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#eaedf4" id="metaTheme">
+<meta name="theme-color" content="#f2f2f7" id="metaTheme">
 <title>Sudoku</title>
 <meta name="description" content="Sudoku in the browser: eighteen modes, four levels, pencil marks and statistics. No accounts, no ads, works offline.">
 <meta property="og:type" content="website">
@@ -13,10 +13,7 @@
 <meta property="og:image" content="https://yoonzky.github.io/sudoku/icons/icon-512.png">
 <meta name="twitter:card" content="summary">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<link rel="icon" href="data:,">
-<!-- the two faces the first screen is set in -->
-<link rel="preload" as="font" type="font/woff2" href="fonts/tenor-sans-cyrillic.woff2" crossorigin>
-<link rel="preload" as="font" type="font/woff2" href="fonts/onest-cyrillic.woff2" crossorigin>
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/home.css">
 <link rel="stylesheet" href="css/game.css">
@@ -41,15 +38,14 @@
 <body>
 <header>
   <button class="iconbtn" id="backBtn">
-    <svg viewBox="0 0 24 24"><path d="M20 12H5M11 5l-7 7 7 7"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M15 4.5 7.5 12l7.5 7.5"/></svg><span class="back-lbl">Sudoku</span>
   </button>
-  <h1>SUDOKU</h1>
-  <p class="tagline" data-i18n="tagline"></p>
+  <h1>Sudoku</h1>
   <button class="iconbtn in-game-only" id="rulesBtn">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.9"/></svg>
   </button>
   <button class="iconbtn" id="statsBtn">
-    <svg viewBox="0 0 24 24"><path d="M7.8 3.6h8.4v4.8a4.2 4.2 0 0 1-8.4 0Z"/><path d="M7.8 5.4H5.2v1.5a3.2 3.2 0 0 0 2.8 3.1"/><path d="M16.2 5.4h2.6v1.5a3.2 3.2 0 0 1-2.8 3.1"/><path d="M12 12.6v4.6M7.6 20.4h8.8M9.9 17.2h4.2v3.2"/></svg>
+    <svg viewBox="0 0 24 24"><rect x="4" y="12.5" width="4" height="7.5" rx="1.2"/><rect x="10" y="4" width="4" height="16" rx="1.2"/><rect x="16" y="8.5" width="4" height="11.5" rx="1.2"/></svg>
   </button>
   <button class="iconbtn" id="setBtn">
     <svg viewBox="0 0 24 24" style="stroke-linejoin:round; stroke-linecap:round"><circle cx="12" cy="12" r="3"/><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/></svg>
@@ -140,7 +136,7 @@
         <button class="ctl" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10h-4"/><path d="M8 5 4 9l4 4"/></svg><span data-i18n="undo"></span></button>
         <button class="ctl" id="redoBtn"><svg viewBox="0 0 24 24"><path d="M20 9H9a5 5 0 0 0 0 10h4"/><path d="m16 5 4 4-4 4"/></svg><span data-i18n="redo"></span></button>
         <button class="ctl" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="M9 20 3 14 13 4l6 6-10 10Z"/><path d="M21 20H9"/><path d="m7 10 6 6"/></svg><span data-i18n="erase"></span></button>
-        <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg><span data-i18n="auto"></span></button>
+        <button class="ctl" id="autoNotesBtn"><svg viewBox="0 0 24 24"><path d="M4.5 19.5 15 9"/><path d="m13 7 4 4"/><path d="M18.5 3v3M17 4.5h3M20 9.5v2M19 10.5h2M9.5 3.5v2M8.5 4.5h2"/></svg><span data-i18n="auto"></span></button>
         <button class="ctl" id="hintBtn"><svg viewBox="0 0 24 24"><path d="M9 19h6M10 22h4"/><path d="M12 3a6 6 0 0 1 4 10.5V16H8v-2.5A6 6 0 0 1 12 3Z"/></svg><span data-i18n="hint"></span></button>
       </div>
     </div>
@@ -203,9 +199,9 @@
     <div class="pool-grid" id="poolGrid"></div>
     <p class="pool-note" data-i18n="r_random"></p>
     <div class="row" style="justify-content:space-between">
-      <span style="display:flex; gap:10px">
-        <button class="btn quiet" id="poolAll" data-i18n="poolAll"></button>
-        <button class="btn quiet" id="poolNone" data-i18n="poolNone"></button>
+      <span class="pool-acts">
+        <button class="linkbtn" id="poolAll" data-i18n="poolAll"></button>
+        <button class="linkbtn" id="poolNone" data-i18n="poolNone"></button>
       </span>
       <button class="btn" id="poolClose" data-i18n="done"></button>
     </div>

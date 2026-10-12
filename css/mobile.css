@@ -1,11 +1,9 @@
-#sheetBg{position:fixed; inset:0; z-index:24; background:rgba(6,9,16,.5);
+#sheetBg{position:fixed; inset:0; z-index:24; background:rgba(0,0,0,.32);
   opacity:0; pointer-events:none; transition:opacity .24s}
 
-#pickHint{position:fixed; z-index:5; width:176px; margin:0; padding:2px 0 2px 13px;
-  text-align:left; font-size:13px; font-weight:400; line-height:1.55; color:var(--muted);
-  border-left:1px solid var(--line)}
-#pickHint.right-side{padding:2px 13px 2px 0; text-align:right;
-  border-left:0; border-right:1px solid var(--line)}
+#pickHint{position:fixed; z-index:5; width:176px; margin:0; padding:0;
+  text-align:left; font-size:13px; font-weight:400; line-height:1.45; color:var(--muted)}
+#pickHint.right-side{text-align:right}
 #pickHint b{font-weight:500; color:var(--accent)}
 
 
@@ -16,8 +14,8 @@
   body.sheet .site-foot{visibility:hidden}
   /* top:auto: the sheet hangs off the bottom, not the top */
   .mp{position:fixed; left:0; right:0; bottom:0; top:auto; z-index:25;
-    border:0; border-top:1px solid var(--line); border-radius:4px 4px 0 0;
-    background:var(--panel); box-shadow:var(--shadow-up);
+    border:0; border-radius:16px 16px 0 0;
+    background:var(--bg); box-shadow:var(--shadow-up);
     padding:0 16px calc(12px + env(safe-area-inset-bottom));
     min-height:0; max-height:86vh; overflow-y:auto; overscroll-behavior:contain;
     display:flex; flex-direction:column; align-items:stretch;
@@ -29,14 +27,17 @@
     transition:transform .26s cubic-bezier(.2,.7,.3,1), visibility 0s}
   .sheet-grab{display:block; width:100%; padding:10px 0 12px; margin:0;
     background:none; border:0; cursor:pointer; touch-action:none}
-  .sheet-grab i{display:block; width:38px; height:4px; margin:0 auto; border-radius:2px; background:var(--line)}
-  .mp-prev{width:64px; max-width:64px; height:64px; flex:none; margin:0}
-  .mp h3{font-size:21px; margin:0}
-  .mp p{margin:13px 0 0; font-size:13.5px; line-height:1.55}
-  .mp-pool{margin:14px 0 0; font-size:12.5px}
-  .mp-pool button{font-size:12.5px; padding:6px 0}
-  .mp h4{margin:18px 0 2px; padding-top:0; font-size:11px}
-  .diff-grid{flex:none}
+  .sheet-grab i{display:block; width:36px; height:5px; margin:0 auto; border-radius:3px; background:var(--chevron)}
+  .mp-prev{width:60px; max-width:60px; height:60px; flex:none; margin:0}
+  .mp h3{font-size:24px; margin:0}
+  .mp p{margin:12px 0 0; font-size:15px; line-height:1.45}
+  .mp-pool{margin:12px 0 0; font-size:15px}
+  .mp-pool button{font-size:15px; padding:6px 0}
+  .mp h4{margin:18px 0 6px 16px; padding-top:0; font-size:13px}
+  /* an inset grouped list, as in Settings */
+  .diff-grid{flex:none; background:var(--panel); border-radius:12px; padding:0 0 0 16px}
+  .mp .diff-btn{padding:13px 12px 13px 0; border-radius:0}
+  .mp #mpRules, .mp .mp-pool{padding:0 16px}
   /* sheet order: levels first, rules under them */
   .mp .sheet-grab{order:0}
   .mp .mp-head{order:1}
@@ -44,7 +45,7 @@
   .mp p.mode-tag:empty{display:none}
   .mp h4[data-i18n="lvlT"]{order:3; margin-top:16px}
   .mp .diff-grid{order:4}
-  .mp .mp-rulecap{order:5; display:block; margin-top:22px}
+  .mp .mp-rulecap{order:5; display:block; margin-top:24px}
   /* the sheet orders these itself, so the desktop wrapper drops out */
   .mp-body{display:contents}
   .mp #mpRules{order:6; margin-top:6px}
@@ -58,49 +59,38 @@ body:not(.in-game) main{padding-bottom:calc(10px + env(safe-area-inset-bottom));
 .home-main{display:block}
 .modes-col{display:flex; flex-direction:column; min-height:0}
 #modeList{overflow:visible; flex:none}
-.home-foot{display:block; border-top:1px solid var(--line); padding-top:12px; margin-top:14px}
-#continueCard{order:-1; margin:0 0 18px}
-.tot{margin:0; justify-content:space-between; gap:4px 10px}
+.home-foot{display:block; padding-top:4px; margin-top:20px}
+#continueCard{order:-1; margin:0 0 22px}
+.tot{margin:0; justify-content:flex-start; gap:4px 18px}
 .tot b{font-size:17px}
 
-.hcap{font-size:11px; margin-bottom:9px}
+.hcap{font-size:20px; margin-bottom:10px}
 .hsec-head{gap:10px; margin-bottom:10px; flex-wrap:wrap}
 .hsec-head:has(.cont-bar:not(.hidden)) .hcap{display:none}
-.linkbtn{font-size:12.5px; padding:6px 0}
-.cont-bar{margin-left:0; width:100%; justify-content:space-between; gap:6px; font-size:12px}
+.linkbtn{font-size:15px; padding:6px 0}
+.cont-bar{margin-left:0; width:100%; justify-content:space-between; gap:6px; font-size:15px}
 .cont-bar #contCount{margin-right:auto}
-#contList{gap:8px; padding-bottom:8px; scrollbar-width:none;
-  margin:0 -10px; padding-left:10px; padding-right:10px;
-  scroll-snap-type:x proximity;
-  -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 34px), transparent);
-  mask-image:linear-gradient(to right, #000 calc(100% - 34px), transparent)}
+#contList{gap:10px; scrollbar-width:none;
+  margin:-6px -16px -14px; padding:6px 16px 14px;
+  scroll-snap-type:x proximity; scroll-padding:0 16px}
 .cont-card{scroll-snap-align:start}
 #contList::-webkit-scrollbar{height:0}
-.cont-card{width:154px; padding:11px 12px 12px; border-radius:4px}
-.cont-card b{font-size:14px}
-.cont-card span{font-size:11.5px}
-.cont-x{width:30px; height:30px; right:2px; bottom:2px; opacity:.75}
-.cbox{width:17px; height:17px; right:11px; bottom:11px}
+.cont-card{width:176px}
+.cont-x{width:32px; height:32px; right:3px; top:3px; opacity:.8}
 
-/* a group is a shelf that scrolls sideways, the cut tile says there is more */
-.mgroups{gap:18px}
-.mode-grid{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;
-  margin:0 -10px; padding:0 10px 2px; scroll-snap-type:x proximity; scroll-padding:0 10px;
-  -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 26px), transparent);
-  mask-image:linear-gradient(to right, #000 calc(100% - 26px), transparent)}
+/* a group is a shelf that scrolls sideways, edge to edge; the cut tile says there is more */
+.mgroups{gap:22px}
+.mode-grid{display:flex; gap:10px; overflow-x:auto; scrollbar-width:none;
+  margin:-6px -16px -14px; padding:6px 16px 14px; scroll-snap-type:x proximity; scroll-padding:0 16px}
 .mode-grid::-webkit-scrollbar{height:0}
-.mcard{flex:none; width:calc((100vw - 36px) / 3.35); scroll-snap-align:start;
-  padding:10px 4px 9px; gap:6px; border-radius:4px}
-.mcard-prev{height:44px}
-.mcard b{font-size:11.5px}
-.mcard small{font-size:10px; min-height:12px}
-.mcard:hover{transform:none}
-.mcard:active{background:var(--accent-soft)}
-.rnd-card{margin-top:18px; padding:11px 14px}
-.rnd-card b{font-size:14px}
-.rnd-card small{font-size:11.5px}
-.rnd-card:hover{background:var(--panel); color:var(--text)}
-.rnd-card:active{background:var(--accent-soft)}
+.mcard{flex:none; width:calc((100vw - 52px) / 3.3); scroll-snap-align:start;
+  padding:12px 4px 10px; gap:7px}
+.mcard-prev{height:46px}
+.mcard b{font-size:13px}
+.mcard small{font-size:11.5px}
+.mcard:active{background:var(--fill-hover); transform:scale(.97)}
+.rnd-card{margin-top:22px}
+.rnd-card:active{background:var(--fill-hover); transform:scale(.98)}
 
 body.in-game main{padding:2px 8px calc(4px + env(safe-area-inset-bottom)); flex:1 1 auto;
   display:flex; flex-direction:column; justify-content:flex-start; min-height:0}
@@ -129,33 +119,33 @@ body.in-game .site-foot{display:none}
 .topbar{margin:2px auto 8px; font-size:13px;
   display:grid; grid-template-columns:auto 1fr auto auto auto; column-gap:10px; row-gap:1px;
   align-items:center}
-.topbar .t-item:first-child{grid-column:1/3; grid-row:1; font-size:12.5px}
+.topbar .t-item:first-child{grid-column:1/3; grid-row:1; font-size:15px}
 .topbar .t-item:nth-of-type(3){grid-column:1; grid-row:2; margin-left:0}
-.topbar .t-item:nth-of-type(3) b{font-size:21px; line-height:1.1}
-.topbar #gMistWrap{grid-column:2; grid-row:2; justify-self:start; font-size:12px}
+.topbar .t-item:nth-of-type(3) b{font-size:22px; font-weight:600; letter-spacing:-.02em; line-height:1.15}
+.topbar #gMistWrap{grid-column:2; grid-row:2; justify-self:start; font-size:13px}
 .topbar #restartBtnTop{grid-column:3; grid-row:1/3}
 .topbar #zoomBtn{grid-column:4; grid-row:1/3}
 .topbar #pauseBtn{grid-column:5; grid-row:1/3}
-.topbar .t-item em{margin-left:6px; font-size:12px}
+.topbar .t-item em{margin-left:6px; font-size:15px}
 .topbar .t-item em::before{content:'·'; margin-right:7px; color:var(--muted); opacity:.6}
 .topbar .tbtn{padding:8px; margin:0; min-width:40px; min-height:40px; justify-content:center;
-  background:var(--seg-bg); border-radius:4px}
-.topbar .tbtn svg{width:18px; height:18px}
-#board{border-radius:0}
+  background:var(--seg-bg); border-radius:50%}
+.topbar .tbtn svg{width:19px; height:19px}
+:root{--board-r:10px}
 
 .board-pan{width:100%; margin:0 auto}
 body.board-zoom .board-wrap{max-width:100%}
 .board-pan.pan{overflow:auto; overscroll-behavior:contain;
   scrollbar-width:none; -webkit-overflow-scrolling:touch;
-  border-radius:4px; box-shadow:var(--shadow)}
+  border-radius:var(--board-r); box-shadow:var(--shadow)}
 .board-pan.pan::-webkit-scrollbar{width:0; height:0}
 .board-pan.pan #board{box-shadow:none; margin:0}
 /* the map floats over the lower right corner of the window */
 #miniMap{position:absolute; z-index:7; bottom:8px; right:calc((100% - var(--board-px,100%)) / 2 + 8px);
-  width:62px; padding:5px; border-radius:6px; cursor:pointer;
-  background:color-mix(in srgb, var(--panel) 86%, transparent);
-  -webkit-backdrop-filter:blur(14px) saturate(160%); backdrop-filter:blur(14px) saturate(160%);
-  box-shadow:0 4px 14px rgba(18,24,48,.16), 0 0 0 .5px var(--line)}
+  width:62px; padding:6px; border-radius:12px; cursor:pointer;
+  background:color-mix(in srgb, var(--pop) 80%, transparent);
+  -webkit-backdrop-filter:blur(20px) saturate(160%); backdrop-filter:blur(20px) saturate(160%);
+  box-shadow:var(--pop-shadow)}
 #miniMap svg{display:block; width:100%; height:100%}
 #miniMap rect{fill:var(--rule); opacity:.5}
 #miniMap rect.view{fill:var(--accent); opacity:1; fill-opacity:.2; stroke:var(--accent); stroke-width:1.5px; vector-effect:non-scaling-stroke}
@@ -163,22 +153,20 @@ body.won #miniMap, body.paused #miniMap{display:none}
 @media (prefers-reduced-transparency: reduce){ #miniMap{background:var(--panel); backdrop-filter:none; -webkit-backdrop-filter:none} }
 
 .controls{gap:6px}
-.ctl{flex-direction:row; padding:7px 4px; letter-spacing:0; gap:7px; min-height:38px; font-size:11px}
-.ctl svg{width:17px; height:17px}
-.numpad{gap:5px; margin-top:7px}
+.ctl{flex-direction:row; padding:7px 4px; letter-spacing:0; gap:6px; min-height:36px; font-size:13px}
+.ctl svg{width:18px; height:18px}
+#ctlModes .ctl{min-height:32px; padding:5px 4px}
+.numpad{gap:5px; margin-top:8px; padding:5px; border-radius:11px}
 /* a tap leaves hover behind on a touch screen */
-.ctl:hover:not(:disabled):not(.on):not(.on2):not(.on3){color:var(--muted); background:transparent}
-.ctl:active:not(:disabled){background:var(--cell-hl); color:var(--text)}
-.ctl.on:active{color:var(--accent)}
-.ctl.on2:active{color:var(--accent2)}
-.ctl.on3:active{color:var(--accent3)}
+.ctl:hover:not(:disabled){background:transparent}
+.ctl:active:not(:disabled){background:var(--seg-bg)}
 
-.num{aspect-ratio:auto; height:54px; font-size:23px; font-weight:500; border-radius:4px}
-.num small{right:4px; bottom:3px; font-size:10px}
+.num{aspect-ratio:auto; height:50px; font-size:25px; font-weight:400; border-radius:7px}
+.num small{right:4px; bottom:4px; font-size:10px}
 .num small.two{font-size:8.5px}
-.num:hover{color:var(--text)}
+.num:hover{background:var(--key-bg)}
 .numpad.two-row .num{aspect-ratio:auto; height:46px}
-body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
+body.board-num .num{aspect-ratio:auto; height:46px; font-size:22px}
 .numpad.mode-note .num:hover{color:var(--accent2)}
 .numpad.mode-mid .num:hover{color:var(--accent3)}
 
@@ -198,20 +186,14 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
 #picker .pk-mode button{height:38px}
 #picker .pk-x{height:38px}
 
-.win-lead{font-size:10.5px}
-.win-big{font-size:36px}
-#winPanel{margin-top:13px; padding-top:12px}
-.win-grid b{font-size:16px}
-.win-grid span{font-size:9.5px; letter-spacing:.1em}
+.win-big{font-size:40px}
+#winPanel{margin-top:14px; padding-top:2px}
+.win-grid b{font-size:18px}
 
 #pauseOverlay{gap:12px}
 #pauseOverlay .btn{min-width:190px}
-.diff-btn{padding:15px 4px; gap:14px}
-.diff-btn b{font-size:19px}
-.diff-btn span{font-size:17px}
-.diff-btn em{font-size:11.5px}
-.diff-btn:hover,.diff-btn:focus-visible{padding-left:4px}
-.diff-btn:active{color:var(--accent); background:var(--accent-soft)}
+.diff-btn:hover{color:var(--text)}
+.diff-btn:active{background:var(--cell-hl)}
 }
 
 @media (pointer:coarse){
@@ -221,44 +203,36 @@ body.board-num .num{aspect-ratio:auto; height:46px; font-size:21px}
   /* a tablet reports a coarse pointer even with a keyboard */
   #tabKeysBtn{display:none}
   body.has-kbd #tabKeysBtn{display:block}
-  .mcard:hover,.cont-card:hover{color:var(--text); background:var(--panel)}
-  .mcard.on:hover{color:var(--accent); background:var(--accent-soft)}
-  .num:active{background:var(--accent-soft); color:var(--accent)}
+  .mcard:hover,.cont-card:hover,.rnd-card:hover{background:var(--panel)}
+  .mcard.on:hover{color:var(--accent)}
 }
 
 @media (max-width:620px){
-  .modal-bg{align-items:flex-start; padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
-  #setModal{padding-top:10px}
-  .modal{padding:18px 16px 0; max-height:100%}
+  .modal-bg{align-items:flex-start; padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom))}
+  /* short alerts sit in the middle, as on iOS; long sheets start at the top */
+  #loseModal, #confirmModal, #checkModal, #welcomeModal{align-items:center}
+  #loseModal .row .btn{flex:1 1 100%}
+  #setModal{padding-top:calc(10px + env(safe-area-inset-top))}
+  .modal{padding:20px 16px 0; max-height:100%; border-radius:18px}
   #welcomeModal .modal{padding-bottom:18px}
-  .modal h2{margin-bottom:11px}
+  .modal h2{margin-bottom:12px}
   .modal .row:last-child{position:sticky; bottom:0; z-index:2;
     margin:10px -16px 0; padding:12px 16px calc(14px + env(safe-area-inset-bottom));
-    border-top:1px solid var(--line); background:var(--panel)}
+    background:var(--panel); box-shadow:0 -.5px 0 var(--line)}
 
-  .stabs{flex-direction:row; border-right:0; border-bottom:1px solid var(--line);
-    padding:0; margin-bottom:14px; gap:0}
-  .stabs button{flex:1; text-align:center; padding:13px 4px; border-radius:0;
-    border-bottom:2px solid transparent; margin-bottom:-1px}
-  .stabs button.on{background:transparent; border-bottom-color:var(--accent); box-shadow:none}
-  .modal h3{margin:14px 0 6px}
-  .toggle{padding:9px 0; gap:12px}
-  .toggle input{width:40px; height:23px; margin-top:3px; border-radius:999px}
-  .toggle input::before{width:17px; height:17px; border-radius:50%}
-  .toggle input:checked::before{transform:translateX(17px)}
-  .toggle b{font-size:15px; margin-bottom:1px}
-  .toggle span{font-size:12.5px; line-height:1.35}
+  /* tabs become one segmented control */
+  .stabs{flex-direction:row; padding:2px; margin-bottom:14px; gap:2px; background:var(--seg-bg); border-radius:9px}
+  .stabs button{flex:1; text-align:center; padding:7px 4px; border-radius:7px; font-size:14px; font-weight:500}
+  .stabs button:hover{background:transparent}
+  .stabs button.on{background:var(--seg-pill); color:var(--text); box-shadow:var(--seg-shadow)}
+  .modal h3{margin:16px 0 6px}
+  .toggle{padding:11px 0; gap:12px}
   .modal .row{margin-top:12px; gap:8px}
   .modal .row .btn{flex:1 1 40%}
-  .btn{padding:13px 16px; min-height:46px}
+  .btn{padding:13px 16px; min-height:48px}
   .keys{gap:16px 0}
-  .krow{font-size:13px; padding:7px 0}
   .rules-body{gap:16px}
   .rules-prev{width:96px}
-  .pool-item{padding:11px 0; font-size:14px}
-  .pool-item input{width:20px; height:20px}
-  .modal td{padding:9px 4px}
-  .hist div{padding:8px 0}
   .wel-card{padding:13px 12px 15px}
 }
 

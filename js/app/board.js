@@ -106,6 +106,7 @@ function buildBoard(sp){
     if(sp.zone[i]===2) d.classList.add('even');
     if(sp.kind==='tokki') d.classList.add('z'+((sp.region[i]%10)+1));
     d.dataset.i=i; d.id='cell'+i;
+    const k=cornerOf(sp,c); if(k) d.classList.add(k);
     b.appendChild(d); cells.push(d);
   }
   b.classList.toggle('cages', !!(sp.cages||[]).length && sp.kind!=='kakuro');
@@ -145,15 +146,17 @@ function buildGrid(sp){
   const b=$('board');
   const old=b.querySelector('.grid'); if(old) old.remove();
   let thin='', thick='';
+  /* a full rectangle is a rounded card: its edge is the card, not a drawn rule */
+  const full=sp.cells.length===sp.W*sp.H;
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i], x=c.x, y=c.y;
     const up=cellAt(sp,x,y-1), lf=cellAt(sp,x-1,y);
     const dn=cellAt(sp,x,y+1), rt=cellAt(sp,x+1,y);
     const wall=n=> n<0 || sp.region[n]!==sp.region[i];
-    (wall(up)? thick=thick+`M${x} ${y}H${x+1}` : thin=thin+`M${x} ${y}H${x+1}`);
-    (wall(lf)? thick=thick+`M${x} ${y}V${y+1}` : thin=thin+`M${x} ${y}V${y+1}`);
-    if(dn<0) thick+=`M${x} ${y+1}H${x+1}`;
-    if(rt<0) thick+=`M${x+1} ${y}V${y+1}`;
+    if(!(full&&up<0)) (wall(up)? thick=thick+`M${x} ${y}H${x+1}` : thin=thin+`M${x} ${y}H${x+1}`);
+    if(!(full&&lf<0)) (wall(lf)? thick=thick+`M${x} ${y}V${y+1}` : thin=thin+`M${x} ${y}V${y+1}`);
+    if(dn<0&&!full) thick+=`M${x} ${y+1}H${x+1}`;
+    if(rt<0&&!full) thick+=`M${x+1} ${y}V${y+1}`;
   }
   const g=document.createElement('div');
   g.className='grid';
@@ -469,6 +472,11 @@ function renderBoard(){
   $('redoBtn').disabled=!redoStack.length;
 }
 
+/* which rounded corner of the board a cell sits in, if any */
+function cornerOf(sp,c){
+  const l=c.x===0, r=c.x===sp.W-1, t=c.y===0, b=c.y===sp.H-1;
+  return t&&l? 'k-tl' : t&&r? 'k-tr' : b&&l? 'k-bl' : b&&r? 'k-br' : '';
+}
 function placeSelBox(g,sp){
   const sb=$('selBox'); if(!sb) return;
   if(sel<0 || sp.kind==='tokki'){ sb.classList.add('hidden'); return }
@@ -477,7 +485,7 @@ function placeSelBox(g,sp){
   sb.style.top=(c.y/sp.H*100)+'%';
   sb.style.width=(100/sp.W)+'%';
   sb.style.height=(100/sp.H)+'%';
-  sb.className='';
+  sb.className=cornerOf(sp,c);
   const wrong = g.values[sel] && !g.given[sel] && g.values[sel]!==g.solution[sel];
   if(g.instant && wrong) sb.classList.add('err');
   else if(activeMode()==='mid') sb.classList.add('mid');
@@ -531,6 +539,8 @@ function snapBoard(){
   if(!won) lockFit=fit;
   const box=fit*SPEC.W+bw;
   $('game').style.setProperty('--board-px',box+'px');
+  /* the header lines up with the board, so it needs the width too */
+  document.documentElement.style.setProperty('--board-px',box+'px');
   if(zoom){
     /* the magnifier works inside the board footprint */
     pan.classList.add('pan');
