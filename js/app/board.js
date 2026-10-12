@@ -114,6 +114,7 @@ function buildBoard(sp){
   buildGlow(sp);
   buildGrid(sp);
   buildDeco(sp);
+  buildMini(sp);
   const sb=document.createElement('div');
   sb.id='selBox'; sb.className='hidden';
   b.appendChild(sb);
@@ -540,7 +541,31 @@ function snapBoard(){
     b.style.width=box+'px';
   }
   syncZoomBtn();
+  syncMini();
   return fit;
+}
+/* the small map of a big board: its frames and the window over them */
+function buildMini(sp){
+  const m=$('miniMap'); if(!m) return;
+  const boxes=(sp.frames&&sp.frames.length)? sp.frames : [{x:0,y:0,w:sp.W,h:sp.H}];
+  m.innerHTML=`<svg viewBox="-.5 -.5 ${sp.W+1} ${sp.H+1}" aria-hidden="true">`+
+    boxes.map(f=>`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}"/>`).join('')+
+    '<rect class="view" x="0" y="0" width="0" height="0" rx=".4"/></svg>';
+  m.style.aspectRatio=`${sp.W+1} / ${sp.H+1}`;
+}
+function syncMini(){
+  const m=$('miniMap'), pan=$('boardPan'), b=$('board');
+  if(!m||!SPEC||!pan) return;
+  const on=pan.classList.contains('pan');
+  m.classList.toggle('hidden',!on);
+  if(!on) return;
+  /* px per cell */
+  const k=b.offsetWidth/SPEC.W, v=m.querySelector('.view');
+  if(!k||!v) return;
+  v.setAttribute('x',pan.scrollLeft/k);
+  v.setAttribute('y',pan.scrollTop/k);
+  v.setAttribute('width',pan.clientWidth/k);
+  v.setAttribute('height',pan.clientHeight/k);
 }
 /* keypad height follows board width, so fit twice */
 function snapBoardTwice(){

@@ -18,7 +18,8 @@ ru:{
   delSelConfirm:'Удалить выбранные партии: {n}?', delAllConfirm:'Удалить все незаконченные партии?',
   delDone:'Партии удалены',
 
-  modesT:'Режимы', lvlT:'Уровень', poolBtn:'Настроить набор', bestShort:'рекорд {t}',
+  modesT:'Режимы', lvlT:'Уровень',
+  g_plain:'Обычное поле', g_size:'Другой размер', g_linked:'Связанные поля', g_rules:'Особые правила', miniMap:'Где окно на поле', poolBtn:'Настроить набор', bestShort:'рекорд {t}',
   sheetClose:'Свернуть панель',
   a11yBoard:'Игровое поле', a11yCell:'строка {r}, столбец {c}',
   a11yEmpty:'пусто', a11yGiven:'дано', a11yNote:'пометки: {v}',
@@ -124,7 +125,8 @@ en:{
   delSelConfirm:'Delete the selected games: {n}?', delAllConfirm:'Delete every unfinished game?',
   delDone:'Games deleted',
 
-  modesT:'Modes', lvlT:'Level', poolBtn:'Edit the pool', bestShort:'best {t}',
+  modesT:'Modes', lvlT:'Level',
+  g_plain:'Plain board', g_size:'Other sizes', g_linked:'Linked boards', g_rules:'Extra rules', miniMap:'Where the window sits', poolBtn:'Edit the pool', bestShort:'best {t}',
   sheetClose:'Close the sheet',
   a11yBoard:'Board', a11yCell:'row {r}, column {c}',
   a11yEmpty:'empty', a11yGiven:'given', a11yNote:'marks: {v}',

@@ -34,7 +34,8 @@
   --accent2:#2c6b76; --accent2-soft:#dcebed;
   /* digit, corner marks, centre marks */
   --accent3:#8a4a96; --accent3-soft:#f3e7f6;
-  --error:#9e3550; --note:#4f566b; --given:#14161f; --user:#565ead; --cell-hl:#e1e4ee; --cell-same:#d3d8ee; --note-sel:#333a4f;
+  --error:#9e3550; --note:#4f566b; --given:#14161f; --user:#565ead; --cell-hl:#e1e4ee;
+  --seg-bg:rgba(20,22,31,.06); --fill-hover:#eff1f9; --seg-pill:#ffffff; --seg-shadow:0 1px 3px rgba(18,24,48,.14), 0 0 0 .5px rgba(18,24,48,.06); --cell-same:#d3d8ee; --note-sel:#333a4f;
   --shadow:0 18px 44px rgba(24,32,58,.10); --shadow-up:0 -14px 38px rgba(24,32,58,.13);
   /* solid: a tinted cell must not show through the rules */
   --rule:#9a9ba0; --rule-thin:#d6d7da; --frame:rgba(86,94,173,.26);
@@ -45,7 +46,7 @@
   --kk:#a9b3ca; --kk-dark:#6e788f;
   --zone-fill:#dde2f3; --even-fill:#d7dcf0; --zone-edge:rgba(86,94,173,.34);
   --blend:multiply;
-  --tint-hl:rgba(20,22,31,.09); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
+  --tint-hl:rgba(20,22,31,.045); --tint-same:rgba(86,94,173,.24); --tint-sel:rgba(86,94,173,.40);
   --tint-sel2:rgba(44,107,118,.36); --tint-sel3:rgba(138,74,150,.32);
   --tint-err:rgba(158,53,80,.28);
   --cage:rgba(38,45,96,.90); --cage-num:#2f3672;
@@ -67,7 +68,8 @@ html[data-theme="dark"]{
   --text:var(--d-text); --muted:#8c93ab; --accent:var(--d-accent); --accent-text:#0b0d14; --accent-soft:rgba(166,180,240,.20);
   --accent2:#7fc8d4; --accent2-soft:rgba(127,200,212,.20);
   --accent3:#cba4ee; --accent3-soft:rgba(203,164,238,.20);
-  --error:#e78ca0; --note:#98a0b8; --given:#e6e9f5; --user:#a6b4f0; --cell-hl:#1a1e2d; --cell-same:#252c47; --note-sel:#ccd3e8;
+  --error:#e78ca0; --note:#98a0b8; --given:#e6e9f5; --user:#a6b4f0; --cell-hl:#1a1e2d;
+  --seg-bg:rgba(235,238,250,.06); --fill-hover:#1c2134; --seg-pill:#262b3f; --seg-shadow:0 1px 3px rgba(0,0,0,.45); --cell-same:#252c47; --note-sel:#ccd3e8;
   --shadow:0 18px 44px rgba(0,0,0,.5); --shadow-up:0 -14px 38px rgba(0,0,0,.42);
   --rule:#585b67; --rule-thin:#343743; --frame:rgba(166,180,240,.22);
   --halo:radial-gradient(ellipse 62% 40% at 50% -2%, rgba(166,180,240,.16), transparent 72%);
@@ -77,7 +79,7 @@ html[data-theme="dark"]{
   --kk:#333d5c; --kk-dark:#05070c;
   --zone-fill:rgba(166,180,240,.15); --even-fill:rgba(166,180,240,.16); --zone-edge:rgba(166,180,240,.42);
   --blend:screen;
-  --tint-hl:rgba(235,238,250,.22); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
+  --tint-hl:rgba(235,238,250,.075); --tint-same:rgba(140,160,225,.34); --tint-sel:rgba(150,170,235,.52);
   --tint-sel2:rgba(127,200,212,.50); --tint-sel3:rgba(190,150,235,.50);
   --tint-err:rgba(190,80,105,.48);
   --cage:rgba(190,205,255,.80); --cage-num:#bccdff;
@@ -113,7 +115,8 @@ body.in-game main{max-width:100%; display:flex; flex-direction:column; justify-c
 button{font-family:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
 header{width:100%; max-width:var(--page); display:flex; flex-direction:column; align-items:center; gap:2px; padding:34px 18px 10px; position:relative}
-header h1{font-family:var(--f-disp); font-size:35px; font-weight:400; letter-spacing:.2em; margin:0 0 0 .2em}
+/* caps run tight on purpose, .06-.09em */
+header h1{font-family:var(--f-disp); font-size:35px; font-weight:400; letter-spacing:.09em; margin:0 0 0 .09em}
 .tagline{margin:0; color:var(--muted); font-size:13px}
 body.in-game .tagline{display:none}
 header .iconbtn{position:absolute; top:30px}
@@ -134,18 +137,18 @@ body.in-game header .iconbtn{position:static}
 .site-foot{width:100%; max-width:var(--page); text-align:center; padding:6px 18px 18px; font-size:11.5px; color:var(--muted)}
 .site-foot a{color:var(--muted)}
 .site-foot a:hover{color:var(--text)}
-body.in-game .site-foot{padding:4px 18px 10px; font-size:10.5px; opacity:.75}
+body.in-game .site-foot{display:none}
 
 body::before{content:''; position:fixed; inset:0; background:var(--halo); pointer-events:none; z-index:0; transition:opacity .3s}
 body.in-game::before{opacity:.4}
 header, main, .site-foot{position:relative; z-index:1}
 .wel-grid{display:flex; gap:12px; margin:18px 0 14px}
-.wel-card{flex:1; background:transparent; border:1px solid var(--line); border-radius:4px; padding:11px 11px 13px;
+.wel-card{flex:1; background:var(--seg-bg); border:1px solid transparent; border-radius:4px; padding:11px 11px 13px;
   cursor:pointer; font:inherit; color:inherit; display:flex; flex-direction:column; gap:10px; align-items:center;
   transition:border-color .15s, background .15s}
-.wel-card:hover{border-color:var(--accent)}
+.wel-card:hover{color:var(--accent); background:var(--accent-soft)}
 .wel-card:active{background:var(--accent-soft)}
-.wel-card b{font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+.wel-card b{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
 .wel-card span{font-size:12px; font-weight:400; line-height:1.4; color:var(--muted); text-transform:none; letter-spacing:0}
 #checkModal .wel-card{gap:7px; padding:15px 13px 16px}
 .wel-prev{width:100%; aspect-ratio:16/10; border-radius:4px; display:grid; grid-template-columns:1fr 1fr;
@@ -167,7 +170,7 @@ header, main, .site-foot{position:relative; z-index:1}
   button{touch-action:manipulation}
   /* safe centring keeps the top of the board in view */
   header{padding:calc(20px + env(safe-area-inset-top)) 14px 8px}
-  header h1{font-size:25px; letter-spacing:.15em; margin-left:.15em}
+  header h1{font-size:25px; letter-spacing:.08em; margin-left:.08em}
   header .iconbtn{top:calc(18px + env(safe-area-inset-top)); width:40px; height:40px}
   .tagline{font-size:12px; margin-top:16px}
   @supports (height:100dvh){ body{min-height:100dvh} }

@@ -169,6 +169,7 @@ function placePicker(i){
   left=Math.min(left,Math.max(pad,window.innerWidth-pw-pad));
   let top=cellR.top+cellR.height/2-ph/2;
   top=Math.max(pad,Math.min(top,window.innerHeight-ph-pad));
+  pk.style.transformOrigin=`${Math.round(cellR.left+cellR.width/2-left)}px ${Math.round(cellR.top+cellR.height/2-top)}px`;
   pk.style.left=Math.round(left-wrapR.left)+'px';
   pk.style.top=Math.round(top-wrapR.top)+'px';
 }

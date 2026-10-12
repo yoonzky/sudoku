@@ -1,9 +1,12 @@
 'use strict';
 
-/* eighteen modes fill six columns by three; the draw stands apart */
-const MODE_ORDER=['classic','x','evenodd','windoku','asterisk','mosaic',
-  'r10','r12','double','wing','butterfly','samurai',
-  'killer','dots','suguru','kakuro','numerator','tokki'];
+/* four groups on six columns: sizes and linked boards share a row; the draw stands apart */
+const MODE_GROUPS=[
+  ['g_plain',['classic','x','evenodd','windoku','asterisk','mosaic']],
+  ['g_size',['r10','r12']],
+  ['g_linked',['double','wing','butterfly','samurai']],
+  ['g_rules',['killer','dots','suguru','kakuro','numerator','tokki']]];
+const MODE_ORDER=MODE_GROUPS.flatMap(g=>g[1]);
 const RANDOM_PREV='<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'+
   '<rect x=".6" y=".6" width="38.8" height="38.8" fill="var(--panel2)" stroke="var(--prev-rule)" stroke-width="1.1"/>'+
   '<path d="M13.7.6v38.8M26.3.6v38.8M.6 13.7h38.8M.6 26.3h38.8" stroke="var(--line)" stroke-width=".8" fill="none"/>'+
@@ -69,13 +72,17 @@ async function contDelete(){
   persistNow(); renderHome(); toast(t('delDone'));
 }
 function renderModeList(){
-  let h='<div class="mode-grid" style="--span:6">';
-  for(const id of MODE_ORDER){
-    const st=statsFor(id,null);
-    const note=st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : '';
-    h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
-      <span class="mcard-prev">${previewSVG(id)}</span>
-      <b>${t('m_'+id)}</b><small>${note}</small></button>`;
+  let h='<div class="mgroups">';
+  for(const [cap,ids] of MODE_GROUPS){
+    h+=`<div class="mgroup" style="--n:${ids.length}"><h3 class="hcap">${t(cap)}</h3><div class="mode-grid">`;
+    for(const id of ids){
+      const st=statsFor(id,null);
+      const note=st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : '';
+      h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
+        <span class="mcard-prev">${previewSVG(id)}</span>
+        <b>${t('m_'+id)}</b><small>${note}</small></button>`;
+    }
+    h+='</div></div>';
   }
   h+='</div>';
   h+=`<button class="rnd-card${pickedMode==='random'?' on':''}" data-mode="random">

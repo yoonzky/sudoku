@@ -158,7 +158,15 @@ function showMultiHint(){
   }catch(e){}
   toast(t('multiHint'));
 }
-$('boardPan').addEventListener('scroll',()=>{ tapCancel(); sweepStop(); chainStop() });
+$('boardPan').addEventListener('scroll',()=>{ tapCancel(); sweepStop(); chainStop(); syncMini() });
+$('miniMap').addEventListener('pointerdown',e=>{
+  e.preventDefault(); e.stopPropagation();
+  const m=$('miniMap'), pan=$('boardPan'), r=m.getBoundingClientRect();
+  const k=$('board').offsetWidth/SPEC.W;
+  /* the tapped point becomes the centre of the window */
+  const cx=((e.clientX-r.left)/r.width*(SPEC.W+1)-.5)*k, cy=((e.clientY-r.top)/r.height*(SPEC.H+1)-.5)*k;
+  pan.scrollTo({left:cx-pan.clientWidth/2, top:cy-pan.clientHeight/2, behavior:'smooth'});
+});
 $('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
 
 /* arriving by keyboard picks the first cell: the grid draws no ring */
@@ -192,26 +200,58 @@ $('diffGrid').addEventListener('click',e=>{
 });
 $('sheetBg').addEventListener('click',closeSheet);
 (function(){
-  const mp=$('modePanel'), grab=$('sheetGrab');
-  let y0=null;
+  const mp=$('modePanel'), grab=$('sheetGrab'), bg=$('sheetBg');
+  const EASE='cubic-bezier(.2,.7,.3,1)';
+  let y0=null, sy=0, h=1, moved=false, trail=[], tid=0;
+  const set=y=>{
+    mp.style.transform=`translateY(${y}px)`;
+    bg.style.opacity=Math.min(1,Math.max(0,1-y/h));
+  };
+  /* above the open position the sheet gives a little and resists more the further it goes */
+  const band=d=>d*h*.55/(h+.55*Math.abs(d));
+  const settle=(close,T)=>{
+    mp.style.transition=`transform ${T}s ${EASE}, visibility 0s ${close?T:0}s`;
+    bg.style.transition=`opacity ${T}s ${EASE}`;
+    mp.style.transform=bg.style.opacity='';
+    if(close) closeSheet();
+    clearTimeout(tid);
+    tid=setTimeout(()=>{ mp.style.transition=bg.style.transition='' },T*1000+50);
+  };
   grab.addEventListener('pointerdown',e=>{
-    y0=e.clientY; mp.style.transition='none';
+    h=mp.offsetHeight||1;
+    /* caught mid-flight the sheet stays where it is on screen */
+    const y=Math.max(0,new DOMMatrix(getComputedStyle(mp).transform).m42);
+    clearTimeout(tid);
+    document.body.classList.add('sheet');
+    mp.style.transition=bg.style.transition='none';
+    set(y);
+    y0=e.clientY-y; sy=e.clientY; moved=false; trail=[[e.clientY,e.timeStamp]];
     try{ grab.setPointerCapture(e.pointerId) }catch(err){}
   });
   grab.addEventListener('pointermove',e=>{
     if(y0==null) return;
-    const dy=Math.max(0,e.clientY-y0);
-    mp.style.transform=dy? `translateY(${dy}px)` : '';
+    if(Math.abs(e.clientY-sy)>6) moved=true;
+    const dy=e.clientY-y0;
+    set(dy>0? dy : band(dy));
+    trail.push([e.clientY,e.timeStamp]);
+    if(trail.length>5) trail.shift();
   });
   const end=e=>{
     if(y0==null) return;
-    const dy=e.clientY-y0; y0=null;
-    mp.style.transition=''; mp.style.transform='';
-    if(dy>60) closeSheet();
+    const dy=Math.max(0,e.clientY-y0); y0=null;
+    setTimeout(()=>{ moved=false },0);
+    if(!moved){ mp.style.transition=bg.style.transition=''; mp.style.transform=bg.style.opacity=''; return }
+    const [py,pt]=trail[0], dt=e.timeStamp-pt;
+    const v=dt>0? (e.clientY-py)/dt*1000 : 0;
+    /* a flick is judged by where it would come to rest, v/1000*d/(1-d) at d=.99 */
+    const close=dy+v*.099>Math.min(h*.3,110);
+    /* this ease starts at 3.5x its mean speed, so the time is picked to keep the finger's speed */
+    const dist=close? h*1.03-dy : dy, sp=close? v : -v;
+    settle(close, sp>0? Math.min(.32,Math.max(.12,3.5*dist/sp)) : .26);
   };
   grab.addEventListener('pointerup',end);
-  grab.addEventListener('pointercancel',()=>{ y0=null; mp.style.transition=''; mp.style.transform='' });
-  grab.addEventListener('click',closeSheet);
+  grab.addEventListener('pointercancel',()=>{ if(y0==null) return; y0=null; moved=false; settle(false,.26) });
+  grab.addEventListener('click',()=>{ if(!moved) closeSheet() });
 })();
 $('contPick').addEventListener('click',contPickStart);
 $('contCancel').addEventListener('click',contPickStop);
