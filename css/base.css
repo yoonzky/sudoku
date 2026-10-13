@@ -28,7 +28,7 @@ svg{display:block}
 .btn{height:46px;padding:0 22px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:600;font-size:16px;letter-spacing:-.01em;transition:transform .1s ease-out}
 .btn:active{transform:scale(.97)}
 @media (hover:hover){ .btn:hover{background-image:linear-gradient(var(--hover),var(--hover))} }
-.btn.soft{background:var(--tint);color:var(--accent)}
+.btn.soft{background:var(--tint);color:var(--accent-ink)}
 .btn.plain{background:var(--surface-2);color:var(--text)}
 .link{color:var(--accent);font-size:15px;transition:color .12s}
 @media (hover:hover){ .link:hover{color:var(--accent-ink)} }
