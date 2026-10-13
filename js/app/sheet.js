@@ -119,9 +119,12 @@ function ask(o){
   return new Promise(res=>{
     const bg=document.createElement('div');
     bg.className='alert-bg';
-    bg.innerHTML=`<div class="alert" role="alertdialog" aria-modal="true">${o.title? `<b>${o.title}</b>` : ''}<p>${o.text}</p>
+    bg.innerHTML=`<div class="alert" role="alertdialog" aria-modal="true">${o.title? `<b>${o.title}</b><p>${o.text}</p>` : `<b class="solo">${o.text}</b>`}
       <div class="acts">${o.alt? `<button data-r="alt">${o.alt}</button>` : `<button data-r="no">${t('cancel')}</button>`}<button data-r="ok" class="${o.danger?'danger':'strong'}">${o.ok}</button></div></div>`;
     document.body.appendChild(bg);
+    /* a label that does not fit puts the buttons in a column, as in ios */
+    const acts=bg.querySelector('.acts');
+    if([...acts.children].some(b=>b.scrollWidth>b.clientWidth)) acts.classList.add('stack');
     requestAnimationFrame(()=>bg.classList.add('on'));
     const done=r=>{ bg.remove(); removeEventListener('keydown',key,true); res(r==='ok'? 'ok' : r==='alt'? 'alt' : false) };
     const key=e=>{ if(e.key==='Escape'){ e.stopPropagation(); done(o.alt? 'none' : 'no') } else if(e.key==='Enter'){ e.stopPropagation(); e.preventDefault(); done('ok') } };

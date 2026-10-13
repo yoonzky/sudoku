@@ -27,7 +27,7 @@ function swRow(key,title,desc,dis){
 }
 function keysHTML(){
   const M=MAC? 'Cmd' : 'Ctrl';
-  const row=(a,k)=>`<div class="li"><span class="tx">${t(a)}</span><span class="meta">${k}</span></div>`;
+  const row=(a,k)=>`<div class="li"><span class="tx">${t(a).charAt(0).toUpperCase()+t(a).slice(1)}</span><span class="meta">${k}</span></div>`;
   const kb=s=>s.split(' ').map(x=>x==='/'? ` ${t('kOr')} ` : x==='+'? ' + ' : `<kbd>${x}</kbd>`).join('');
   return `<div class="lcap">${t('sGame')}</div><div class="list">`+
     row('kDigit',kb('1 ... 9'))+row('kBig',kb('A B C'))+row('kCorner',kb('Shift + 1'))+row('kCenter',kb(M+' + 1'))+row('kErase',kb('Backspace / 0'))+

@@ -9,11 +9,10 @@
 .gbar .sub{display:flex;align-items:center;gap:8px}
 .gbar .div{width:.5px;height:22px;background:var(--sep);margin:0 6px}
 .gbar .timer{font-size:15px;color:var(--text-2);min-width:44px;text-align:right;padding-right:2px}
-.mist{display:flex;gap:4px;padding:0 2px}
-.mist i{width:7px;height:7px;border-radius:4px;background:var(--surface-2)}
-.mist i.on{background:var(--red)}
-.mist.n{font-size:13px;color:var(--text-2)}
-.mist.n b{color:var(--red);font-weight:500}
+.gbar .gr{display:flex;align-items:center;gap:4px}
+.mist{font-size:13px;color:var(--text-2);white-space:nowrap}
+.mist b{font-weight:500}
+.mist.on b{color:var(--red)}
 
 .gstage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:40px;padding:80px 32px 28px}
 .bwrap{position:relative;flex:none}
@@ -114,10 +113,13 @@ body.paused .pad{opacity:.45;pointer-events:none;transition:opacity .2s}
 .gen small{font-size:12.5px;color:var(--text-2)}
 
 /* narrow or upright: board on top, tray at the bottom under the thumb */
-body.col .gbar{position:relative;left:auto;top:auto;transform:none;margin:calc(10px + env(safe-area-inset-top)) 10px 0;justify-content:space-between}
-body.col .gbar .gt{flex:1;flex-direction:column;align-items:center;gap:1px;line-height:1.15}
+/* title in the middle of the capsule whatever the buttons on either side */
+body.col .gbar{position:relative;left:auto;top:auto;transform:none;margin:calc(10px + env(safe-area-inset-top)) 10px 0;display:grid;grid-template-columns:minmax(44px,1fr) minmax(0,auto) minmax(max-content,1fr)}
+body.col .gbar #backBtn{justify-self:start}
+body.col .gbar .gr{justify-self:end}
+body.col .gbar .gt{min-width:0;overflow:hidden;flex-direction:column;align-items:center;gap:1px;line-height:1.15}
 body.col .gbar .gt .gm{max-width:100%}
-body.col .gbar .sub small{font-size:12px}
+body.col .gbar .sub small,body.col .gbar .mist{font-size:12px}
 body.col .gbar .sub .timer{font-size:12px;min-width:0;padding:0;order:2}
 body.col .gbar .div{display:none}
 body.col .gbar{height:52px}
@@ -127,6 +129,7 @@ body.col .bwrap{flex:1;min-height:0;display:flex;align-items:center;justify-cont
 body.col .bwrap.zoom{display:block;overflow:auto;scrollbar-width:none;overscroll-behavior:contain}
 .bwrap.zoom::-webkit-scrollbar{display:none}
 .bwrap.zoom .board{margin:12px;touch-action:pan-x pan-y}
+.zoomfab{position:absolute;right:12px;z-index:4;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-1)}
 .minimap{position:absolute;left:12px;z-index:4;border-radius:10px;padding:5px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow-1);cursor:pointer}
 .minimap svg{width:100%;height:100%}
 .minimap rect{fill:var(--surface);stroke:var(--rule);stroke-width:.35}
@@ -136,6 +139,8 @@ body.col .modes{padding:0 4px}
 body.col .modes button{height:44px;flex-direction:row;gap:8px;font-size:13px}
 body.col .keys{grid-template-columns:repeat(var(--kc),1fr);gap:5px}
 @media (max-width:360px){ body.col .pad{padding-left:6px;padding-right:6px} body.col .keys{gap:3px} }
+@media (max-width:380px){ body.col .gbar .sub{gap:6px} body.col .gbar .sub small,body.col .gbar .mist,body.col .gbar .sub .timer{font-size:11px} }
+@media (max-width:340px){ body.col .gbar #gDiff{display:none} }
 body.col .key{height:56px;font-size:26px;border-radius:9px}
 body.col .keys.two .key{height:48px;font-size:22px}
 body.col .key small{margin-top:4px;font-size:10px}
@@ -160,7 +165,7 @@ body.col .cover{border-radius:0}
   .selbox{transition:none}
 }
 @media (prefers-reduced-transparency:reduce){
-  .gbar,.pad,.gen,.cover{background:var(--raise);-webkit-backdrop-filter:none;backdrop-filter:none}
+  .gbar,.pad,.gen,.cover,.zoomfab{background:var(--raise);-webkit-backdrop-filter:none;backdrop-filter:none}
 }
 @keyframes wave{40%{background-color:var(--tint)}}
 

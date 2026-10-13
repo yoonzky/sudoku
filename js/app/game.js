@@ -407,7 +407,8 @@ function renderPad(){
   if(SES.settings.hintBtn) tools.push(['hint','bulb']);
   h+=`<div class="tools" id="tools">${tools.map(([k,i])=>`<button class="tool" data-t="${k}">${ic(i)}${t(k)}</button>`).join('')}</div>`;
   pad.innerHTML=h;
-  if(col){ const k=$('keys'), tl=$('tools'); if(k) pad.insertBefore(tl,k) }
+  /* on a phone the digits come first, right under the board */
+  if(col&&$('keys')) pad.insertBefore($('keys'),pad.firstChild);
   paintPad();
 }
 function paintPad(){
@@ -432,9 +433,8 @@ function paintPad(){
   if(tb('redo')) tb('redo').disabled=!U.redo.length;
   const mi=$('gMist'), lim=SES.settings.limit&&G.instant&&!G.noLimit;
   if(!G.instant){ mi.className='mist hidden' }
-  else if(lim){ mi.className='mist'; mi.innerHTML=[0,1,2].map(k=>`<i${k<G.mistakes?' class="on"':''}></i>`).join('') }
-  else { mi.className='mist n'; mi.innerHTML=`<b class="num">${G.mistakes}</b>` }
-  mi.setAttribute('aria-label',t('mistakes')+' '+G.mistakes);
+  else { mi.className='mist num'+(G.mistakes?' on':''); mi.innerHTML=`${t('mistakes')} <b>${G.mistakes}</b>${lim?'/3':''}` }
+  mi.setAttribute('aria-label',lim? tf('mistakesN',{n:G.mistakes}) : t('mistakes')+' '+G.mistakes);
 }
 
 /* rail beside the board on a wide screen, a tray under it on a phone or upright tablet */

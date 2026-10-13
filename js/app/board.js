@@ -154,6 +154,7 @@ function fitBoard(){
   w.classList.toggle('zoom',zoom);
   $('zoomBtn').classList.toggle('hidden',!big);
   $('zoomBtn').innerHTML=ic(zoom?'zoomOut':'zoomIn');
+  if(big) $('zoomBtn').style.bottom=($('pad').offsetHeight+12)+'px';
   const cs=zoom? ZOOM_CS : fit;
   CS=cs;
   BR=Math.round(Math.min(18,Math.max(8,cs*.26)));

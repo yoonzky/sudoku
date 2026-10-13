@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#eceef2" id="metaTheme">
 <title>Yoondoku</title>
+<meta name="author" content="yoonzky">
 <meta name="description" content="Yoondoku: sudoku in the browser, eighteen modes, four levels, pencil marks and statistics. No accounts, no ads.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Yoondoku">
+<meta property="og:description" content="Eighteen kinds of sudoku in the browser: four levels, pencil marks and statistics. No accounts, no ads.">
+<meta property="og:url" content="https://yoonzky.github.io/yoondoku/">
+<meta property="og:image" content="https://yoonzky.github.io/yoondoku/icons/icon-512.png">
+<meta name="twitter:card" content="summary">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/tokens.css">
@@ -21,8 +28,7 @@
     <header class="home-head">
       <div class="ttl"><h1 id="homeTitle">Yoondoku</h1><p class="tagline" data-i18n="tagline">18 видов судоку</p></div>
       <div class="tb">
-        <button type="button" class="ibtn" id="rndBtn" data-i18n-aria="random" aria-label="Случайная партия"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01"/></svg></button>
-        <button type="button" class="ibtn" id="statsBtn" data-i18n-aria="stats" aria-label="Статистика"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19v-7M12 19V6M18 19v-10"/></svg></button>
+        <button type="button" class="ibtn" id="statsBtn" data-i18n-aria="stats" aria-label="Статистика"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="12" width="4" height="7.5" rx="1.2"/><rect x="10" y="4.5" width="4" height="15" rx="1.2"/><rect x="15.5" y="8.5" width="4" height="11" rx="1.2"/></svg></button>
         <button type="button" class="ibtn" id="setBtn" data-i18n-aria="settings" aria-label="Настройки"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg></button>
       </div>
     </header>
@@ -30,19 +36,22 @@
       <div class="shelf-head"><h2 data-i18n="continue">Продолжить</h2><button type="button" class="link" id="editBtn">Изменить</button></div>
       <div class="shelf" id="contShelf"></div>
     </section>
+    <button type="button" class="rnd-card" id="rndBtn"><span class="dice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="8.5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="8.5" cy="15.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></svg></span><span class="info"><b data-i18n="m_random">Случайный режим</b><small id="rndSub"></small></span><svg class="icon chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></button>
     <div id="shelves"></div>
+    <footer class="site-foot"><span>&copy; 2026 yoonzky</span><a href="https://github.com/yoonzky/yoondoku" target="_blank" rel="noopener">GitHub</a></footer>
   </div>
 </div>
 
 <div id="game" class="screen game hidden">
   <div class="gbar">
     <button type="button" class="ibtn" id="backBtn" data-i18n-aria="back" aria-label="Режимы"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-    <div class="gt"><h1 id="gMode" class="gm">Yoondoku</h1><div class="sub"><small id="gDiff"></small><span class="mist" id="gMist" role="img"></span></div></div>
+    <div class="gt"><h1 id="gMode" class="gm">Yoondoku</h1><div class="sub"><small id="gDiff"></small><span class="mist num" id="gMist" role="img"></span></div></div>
     <span class="div"></span>
     <span class="timer num" id="gTime">0:00</span>
-    <button type="button" class="ibtn hidden" id="zoomBtn" data-i18n-aria="zoom" aria-label="Масштаб поля"></button>
-    <button type="button" class="ibtn" id="pauseBtn" aria-label="Пауза"></button>
-    <button type="button" class="ibtn" id="moreBtn" data-i18n-aria="more" aria-label="Ещё" aria-haspopup="menu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r=".6"/><circle cx="12" cy="12" r=".6"/><circle cx="18" cy="12" r=".6"/></svg></button>
+    <div class="gr">
+      <button type="button" class="ibtn" id="pauseBtn" aria-label="Пауза"></button>
+      <button type="button" class="ibtn" id="moreBtn" data-i18n-aria="more" aria-label="Ещё" aria-haspopup="menu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="1.1"/><circle cx="12" cy="12" r="1.1"/><circle cx="18" cy="12" r="1.1"/></svg></button>
+    </div>
   </div>
   <div class="gstage">
     <div class="bwrap" id="bwrap">
@@ -51,6 +60,7 @@
     </div>
     <aside class="pad hidden" id="pad"></aside>
     <div class="minimap hidden" id="mini" aria-hidden="true"></div>
+    <button type="button" class="ibtn zoomfab hidden" id="zoomBtn" data-i18n-aria="zoom" aria-label="Масштаб поля"></button>
   </div>
   <div class="gen hidden" id="gen"><b data-i18n="gen">Раскладываю поле</b><div class="gbarline"><i></i></div><small data-i18n="genCancel"></small></div>
 </div>

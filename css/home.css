@@ -12,7 +12,7 @@
 .shelf::-webkit-scrollbar{display:none}
 .shelf>*{scroll-snap-align:start;flex:none}
 
-.cont{position:relative;display:flex;gap:16px;align-items:center;width:330px;padding:14px;background:var(--surface);border-radius:var(--r-tile);box-shadow:var(--shadow-1);text-align:left;transition:transform .12s ease-out}
+.cont{position:relative;display:flex;gap:16px;align-items:center;width:330px;padding:14px;background:var(--surface);border-radius:var(--r-tile);box-shadow:var(--shadow-1);text-align:left;transition:transform .2s ease-out,box-shadow .2s ease-out}
 .cont:active{transform:scale(.98)}
 .cont .mini{width:96px;height:96px;flex:none;display:grid;place-items:center}
 .cont .info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
@@ -27,8 +27,31 @@
 @media (hover:hover){ .cont .del:hover{background:var(--text)} }
 .editing .cont:active{transform:none}
 
-.tile{width:160px;padding:12px;background:var(--surface);border-radius:var(--r-tile);box-shadow:var(--shadow-1);display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:left;transition:transform .12s ease-out}
+.tile{width:160px;padding:12px;background:var(--surface);border-radius:var(--r-tile);box-shadow:var(--shadow-1);display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:left;transition:transform .2s ease-out,box-shadow .2s ease-out}
 .tile:active{transform:scale(.97)}
+/* cards rise under the pointer */
+@media (hover:hover){
+  .tile:hover,.cont:hover,.rnd-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
+  .tile:hover:active{transform:scale(.97)}
+  .cont:hover:active,.rnd-card:hover:active{transform:scale(.98)}
+  .editing .cont:hover{transform:none;box-shadow:var(--shadow-1)}
+}
+@media (prefers-reduced-motion:reduce){ .tile:hover,.cont:hover,.rnd-card:hover{transform:none} }
+
+.site-foot{display:flex;justify-content:center;gap:14px;margin-top:44px;font-size:13px;color:var(--text-2)}
+.site-foot a{color:var(--accent);text-decoration:none;transition:color .12s}
+@media (hover:hover){ .site-foot a:hover{color:var(--accent-ink)} }
+
+/* random mode, a card of its own */
+.rnd-card{display:flex;align-items:center;gap:14px;width:330px;margin-top:26px;padding:12px 14px 12px 12px;background:var(--surface);border-radius:var(--r-tile);box-shadow:var(--shadow-1);text-align:left;transition:transform .2s ease-out,box-shadow .2s ease-out}
+.rnd-card:active{transform:scale(.98)}
+.rnd-card .dice{width:48px;height:48px;flex:none;border-radius:12px;background:var(--tint);color:var(--accent);display:grid;place-items:center}
+.rnd-card .dice svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7}
+.rnd-card .dice circle{fill:currentColor;stroke:none}
+.rnd-card .info{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.rnd-card b{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.rnd-card small{font-size:13px;color:var(--text-2)}
+.rnd-card .chev{width:16px;height:16px;color:var(--text-3);stroke-width:2.2}
 .tile .art{height:104px;display:grid;place-items:center}
 .tile b{font-size:14px;font-weight:600;letter-spacing:-.006em;line-height:1.25}
 .tile small{font-size:12px;color:var(--text-2);margin-top:-8px;min-height:15px}
@@ -78,6 +101,7 @@
   .shelf{margin:-12px 0;padding:12px 20px;scroll-padding:0 20px;gap:12px}
   .cont{width:min(300px,calc(100vw - 72px))}
   .tile{width:140px}
+  .rnd-card{margin:22px 20px 0;width:calc(100% - 40px)}
   .tile .art{height:92px}
   .cont .mini svg{width:100%;height:auto}
   .msheet,.msheet.rnd{grid-template-columns:1fr;gap:18px}
@@ -115,6 +139,7 @@
   .cont b{font-size:15px}
 }
 @media (pointer:coarse){
+  .site-foot a{padding:13px 6px;margin:-13px -6px}
   .shelf-head .link{padding:11px 0;margin:-11px 0}
   .pool-bar .link{padding:12px 8px}
 }

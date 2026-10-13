@@ -49,6 +49,7 @@ function renderHome(){
   }
   $('shelves').innerHTML=h;
   $('homeTitle').textContent='Yoondoku';
+  rndSub();
 }
 
 /* the card of a mode opens out of its tile */
@@ -95,11 +96,16 @@ function poolHTML(){
   const on=new Set(SES.settings.pool? SES.settings.pool : MODE_IDS);
   return MODE_IDS.map(m=>`<button data-m="${m}" class="${on.has(m)?'on':''}"><span class="ck">${ic('check')}</span>${modeArt(m,40)}${t('m_'+m)}</button>`).join('');
 }
+function rndSub(){
+  const p=SES.settings.pool, n=p? p.length : MODE_IDS.length;
+  $('rndSub').textContent= !n? t('poolEmpty') : n===MODE_IDS.length? t('rndAll') : tf('rndSome',{n});
+}
 function poolSync(){
   const empty=SES.settings.pool&&!SES.settings.pool.length;
   $('pool').innerHTML=poolHTML();
   $('poolN').textContent= empty? t('poolEmpty') : tf('poolN',{n:poolList().length});
   document.querySelectorAll('.lv').forEach(b=>b.disabled=!!empty);
+  rndSub();
   saveSoon();
 }
 
