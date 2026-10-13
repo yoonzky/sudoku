@@ -23,7 +23,7 @@
 .cont .bar i{display:block;height:100%;background:var(--accent);border-radius:2px}
 .cont .t{font-size:13px;color:var(--text-2);margin-top:6px}
 .cont .del{position:absolute;top:-7px;left:-7px;width:26px;height:26px;border-radius:13px;background:var(--text-2);color:var(--surface);display:grid;place-items:center;box-shadow:var(--shadow-1)}
-.cont .del .icon{width:13px;height:13px;stroke-width:2.6}
+.cont .del .icon{width:14px;height:14px;stroke-width:2.6}
 .cont .del:active{transform:scale(.96)}
 @media (hover:hover){ .cont .del:hover{background:var(--text)} }
 .editing .cont:active{transform:none}
@@ -54,6 +54,7 @@
 .rnd-card small{font-size:13px;color:var(--text-2)}
 .rnd-card .chev{width:16px;height:16px;color:var(--text-3);stroke-width:2.2}
 .tile .art{height:104px;display:grid;place-items:center}
+.tile .art svg{max-height:100%}
 .tile b{font-size:14px;font-weight:600;letter-spacing:-.006em;line-height:1.25}
 .tile small{font-size:12px;color:var(--text-2);margin-top:-8px;min-height:15px}
 
@@ -84,13 +85,14 @@
 .pool{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
 .pool button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 4px 8px;border-radius:12px;background:var(--surface);font-size:11.5px;color:var(--text-2);position:relative;transition:background-color .15s,color .15s}
 .pool button svg{opacity:.45;transition:opacity .15s}
+.pool button>svg{height:40px}
 .pool button.on{background:var(--tint);color:var(--text)}
 .pool button:active{background-image:linear-gradient(var(--press),var(--press))}
 @media (hover:hover){ .pool button:hover{background-image:linear-gradient(var(--hover),var(--hover))} }
 .pool button.on svg{opacity:1}
 .pool button .ck{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:8px;display:grid;place-items:center;color:var(--accent);opacity:0}
 .pool button.on .ck{opacity:1}
-.pool button .ck .icon{width:13px;height:13px;stroke-width:2.6}
+.pool button .ck .icon{width:12px;height:12px;stroke-width:2.8}
 .pool-bar{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--text-2);min-height:28px}
 .pool-bar div{display:flex;gap:16px}
 

@@ -40,17 +40,45 @@ const DEC={
   numerator:[36,37,38,29,20,21,22,13,4,5,6,15,24,33,42,51,60,61,62],
 };
 const ART_CACHE={};
+/* outer contour of the cells, clockwise, convex corners rounded by r; k scales cell units */
+function outlinePath(sp,r,k=1){
+  const has=(x,y)=>cellAt(sp,x,y)>=0, key=(x,y)=>x+','+y, next=new Map();
+  for(const c of sp.cells){
+    const x=c.x, y=c.y;
+    if(!has(x,y-1)) next.set(key(x,y),[x+1,y]);
+    if(!has(x+1,y)) next.set(key(x+1,y),[x+1,y+1]);
+    if(!has(x,y+1)) next.set(key(x+1,y+1),[x,y+1]);
+    if(!has(x-1,y)) next.set(key(x,y+1),[x,y]);
+  }
+  const f=v=>+(v*k).toFixed(2);
+  let d='';
+  while(next.size){
+    const [k0,p0]=next.entries().next().value;
+    const loop=[k0.split(',').map(Number)];
+    let p=p0; next.delete(k0);
+    while(key(p[0],p[1])!==k0){ loop.push(p); const q=next.get(key(p[0],p[1])); next.delete(key(p[0],p[1])); p=q }
+    const pts=loop.filter((c,i)=>{ const a=loop[(i+loop.length-1)%loop.length], b=loop[(i+1)%loop.length]; return (c[0]-a[0])*(b[1]-c[1])!==(c[1]-a[1])*(b[0]-c[0]) });
+    pts.forEach((c,i)=>{
+      const a=pts[(i+pts.length-1)%pts.length], b=pts[(i+1)%pts.length];
+      const ax=Math.sign(c[0]-a[0]), ay=Math.sign(c[1]-a[1]), bx=Math.sign(b[0]-c[0]), by=Math.sign(b[1]-c[1]);
+      const rr=ax*by-ay*bx>0? r : 0;
+      d+=(i?'L':'M')+f(c[0]-ax*rr)+' '+f(c[1]-ay*rr);
+      if(rr) d+=`A${f(rr)} ${f(rr)} 0 0 1 ${f(c[0]+bx*rr)} ${f(c[1]+by*rr)}`;
+    });
+    d+='Z';
+  }
+  return d;
+}
 const isFull=sp=>sp.cells.length+(sp.blocks||[]).length+(sp.clues||[]).length===sp.W*sp.H;
 
 /* board picture: rules, fills, optional values */
 function boardPic(sp,px,o={}){
   const W=sp.W, H=sp.H, s=px/Math.max(W,H), full=isFull(sp);
   const thinW=(o.thin||.7)/s, thickW=(o.thick||1.3)/s;
-  const R=full? (o.r||px*.06)/s : 0;
+  const R=(o.r||px*.06)/s, edge=full? '' : outlinePath(sp,R);
   const id='p'+Math.random().toString(36).slice(2,8);
   let out=`<svg viewBox="0 0 ${W} ${H}" width="${(W*s).toFixed(1)}" height="${(H*s).toFixed(1)}" aria-hidden="true">`;
-  if(full) out+=`<defs><clipPath id="${id}"><rect width="${W}" height="${H}" rx="${R}"/></clipPath></defs><g clip-path="url(#${id})">`;
-  else out+='<g>';
+  out+=`<defs><clipPath id="${id}">${full? `<rect width="${W}" height="${H}" rx="${R}"/>` : `<path d="${edge}"/>`}</clipPath></defs><g clip-path="url(#${id})">`;
   const even=new Set(o.evenDemo? DEC.evenodd : []);
   for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i];
@@ -66,15 +94,9 @@ function boardPic(sp,px,o={}){
     for(let y=1;y<H;y++) thin+=`M0 ${y}H${W}`;
   } else for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i];
-    const rt=cellAt(sp,c.x+1,c.y), dn=cellAt(sp,c.x,c.y+1), up=cellAt(sp,c.x,c.y-1), lf=cellAt(sp,c.x-1,c.y);
+    const rt=cellAt(sp,c.x+1,c.y), dn=cellAt(sp,c.x,c.y+1);
     if(rt>=0){ const l=`M${c.x+1} ${c.y}v1`; if(sp.region[rt]!==sp.region[i]) thick+=l; else thin+=l }
     if(dn>=0){ const l=`M${c.x} ${c.y+1}h1`; if(sp.region[dn]!==sp.region[i]) thick+=l; else thin+=l }
-    if(!full){
-      if(up<0) thick+=`M${c.x} ${c.y}h1`;
-      if(dn<0) thick+=`M${c.x} ${c.y+1}h1`;
-      if(lf<0) thick+=`M${c.x} ${c.y}v1`;
-      if(rt<0) thick+=`M${c.x+1} ${c.y}v1`;
-    }
   }
   out+=`<path d="${thin}" stroke="var(--cell-line)" stroke-width="${thinW}" fill="none"/>`;
   out+=`<path d="${thick}" stroke="var(--rule)" stroke-width="${thickW}" fill="none" stroke-linecap="square"/>`;
@@ -101,9 +123,11 @@ function boardPic(sp,px,o={}){
         continue;
       }
       const fs=v>9? .46 : .62;
-      out+=`<text x="${c.x+.5}" y="${c.y+.53}" font-size="${fs}" text-anchor="middle" dominant-baseline="central" font-family="var(--font-disp)" font-weight="480" fill="${g.given[i]?'var(--text)':'var(--accent)'}">${v}</text>`;
+      out+=`<text x="${c.x+.5}" y="${(c.y+.5+fs*.352).toFixed(3)}" font-size="${fs}" text-anchor="middle" font-family="var(--font-disp)" font-weight="480" fill="${g.given[i]?'var(--text)':'var(--accent)'}">${v}</text>`;
     }
   }
+  /* double width under the clip leaves the inner half, as on a full board */
+  if(!full) out+=`<path d="${edge}" fill="none" stroke="var(--rule)" stroke-width="${2*thickW}"/>`;
   out+='</g>';
   if(full) out+=`<rect x="${thickW/2}" y="${thickW/2}" width="${W-thickW}" height="${H-thickW}" rx="${Math.max(0,R-thickW/2)}" fill="none" stroke="var(--rule)" stroke-width="${thickW}"/>`;
   return out+'</svg>';

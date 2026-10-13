@@ -78,23 +78,21 @@ function drawLayers(){
     for(let y=1;y<H;y++) tn+=`M0 ${y}H${W}`;
   } else for(let i=0;i<sp.cells.length;i++){
     const c=sp.cells[i], x=c.x, y=c.y;
-    const rt=cellAt(sp,x+1,y), dn=cellAt(sp,x,y+1), up=cellAt(sp,x,y-1), lf=cellAt(sp,x-1,y);
+    const rt=cellAt(sp,x+1,y), dn=cellAt(sp,x,y+1);
     if(rt>=0){ if(sp.region[rt]!==sp.region[i]) tk+=`M${x+1} ${y}v1`; else tn+=`M${x+1} ${y}v1` }
     if(dn>=0){ if(sp.region[dn]!==sp.region[i]) tk+=`M${x} ${y+1}h1`; else tn+=`M${x} ${y+1}h1` }
-    if(!full){
-      if(up<0) tk+=`M${x} ${y}h1`;
-      if(dn<0) tk+=`M${x} ${y+1}h1`;
-      if(lf<0) tk+=`M${x} ${y}v1`;
-      if(rt<0) tk+=`M${x+1} ${y}v1`;
-    }
   }
   let over=`<path d="${tn}" stroke="var(--cell-line)" stroke-width="${thin}" fill="none"/>`+
     `<path d="${tk}" stroke="var(--rule)" stroke-width="${thick}" fill="none" stroke-linecap="square"/>`;
+  /* linked boards: rounded contour clips the board, its inner half is the rule */
+  b.style.clipPath= full? '' : `path('${outlinePath(sp,BR/CS,CS)}')`;
+  if(!full) over+=`<path d="${outlinePath(sp,BR/CS)}" stroke="var(--rule)" stroke-width="${2*thick}" fill="none"/>`;
   if(sp.kind==='kakuro'){
     for(const k of sp.clues||[]){
       over+=`<path d="M${k.x} ${k.y}l1 1" stroke="var(--rule)" stroke-width="${thin}"/>`;
-      if(k.r) over+=`<text x="${k.x+.7}" y="${k.y+.33}" font-size=".29" font-weight="600" fill="var(--text-2)" text-anchor="middle" dominant-baseline="central">${k.r}</text>`;
-      if(k.d) over+=`<text x="${k.x+.3}" y="${k.y+.69}" font-size=".29" font-weight="600" fill="var(--text-2)" text-anchor="middle" dominant-baseline="central">${k.d}</text>`;
+      /* baseline from the digit height: engines place a central baseline differently */
+      if(k.r) over+=`<text x="${k.x+.7}" y="${k.y+.432}" font-size=".29" font-weight="600" fill="var(--text-2)" text-anchor="middle">${k.r}</text>`;
+      if(k.d) over+=`<text x="${k.x+.3}" y="${k.y+.792}" font-size=".29" font-weight="600" fill="var(--text-2)" text-anchor="middle">${k.d}</text>`;
     }
   } else if(sp.cages.length){
     const segs=[], d=.085;
