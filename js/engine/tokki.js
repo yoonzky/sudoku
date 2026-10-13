@@ -1,3 +1,4 @@
+/* Copyright (C) 2026 yoonzky. AGPL-3.0, see LICENSE */
 'use strict';
 
 const TOKKI_N={easy:7,medium:8,hard:9,expert:10};

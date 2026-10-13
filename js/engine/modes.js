@@ -1,3 +1,4 @@
+/* Copyright (C) 2026 yoonzky. AGPL-3.0, see LICENSE */
 'use strict';
 
 const EVEN_MASK=(1<<2)|(1<<4)|(1<<6)|(1<<8);

@@ -1,3 +1,4 @@
+/* Copyright (C) 2026 yoonzky. AGPL-3.0, see LICENSE */
 'use strict';
 
 /* how far a finger may travel before a tap turns into a drag */

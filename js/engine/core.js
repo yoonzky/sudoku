@@ -1,3 +1,4 @@
+/* Copyright (C) 2026 yoonzky. AGPL-3.0, see LICENSE */
 const BITS=(()=>{const a=new Uint8Array(8192);for(let i=1;i<8192;i++)a[i]=a[i>>1]+(i&1);return a})();
 const popc=m=>BITS[m];
 const lowV=m=>{for(let v=1;v<=12;v++) if(m&(1<<v)) return v; return 0};

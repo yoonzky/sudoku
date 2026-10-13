@@ -1,3 +1,4 @@
+/* Copyright (C) 2026 yoonzky. AGPL-3.0, see LICENSE */
 'use strict';
 
 const DARK_Q=matchMedia('(prefers-color-scheme: dark)');

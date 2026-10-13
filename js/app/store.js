@@ -1,3 +1,4 @@
+/* Copyright (C) 2026 yoonzky. AGPL-3.0, see LICENSE */
 'use strict';
 
 const LS_SES='yoondoku-ses', LS_LOG='yoondoku-log';

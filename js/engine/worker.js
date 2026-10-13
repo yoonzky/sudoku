@@ -1,3 +1,4 @@
+/* Copyright (C) 2026 yoonzky. AGPL-3.0, see LICENSE */
 'use strict';
 
 importScripts('core.js','grade.js','modes.js','numerator.js','kakuro.js','tokki.js');

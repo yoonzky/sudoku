@@ -67,4 +67,6 @@ Then open `http://localhost:8000`. Opening `index.html` directly also works; puz
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+Copyright (C) 2026 yoonzky. GNU Affero General Public License v3.0, see [LICENSE](LICENSE).
+
+Anyone who copies or changes the code, including running a changed version as a website, has to keep this notice and share the source under the same license.
