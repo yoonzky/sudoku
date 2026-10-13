@@ -1,10 +1,10 @@
-# Sudoku
+# Yoondoku
 
 Eighteen kinds of sudoku in the browser. No accounts, no ads, no build step.
 
-[yoonzky.github.io/sudoku](https://yoonzky.github.io/sudoku/)
+[yoonzky.github.io/yoondoku](https://yoonzky.github.io/yoondoku/)
 
-![Sudoku on a desktop and a phone](.github/preview.png)
+![Yoondoku on a desktop and a phone](.github/preview.png)
 
 ## Modes
 
@@ -13,9 +13,9 @@ Eighteen kinds of sudoku in the browser. No accounts, no ads, no build step.
 | Plain board | Classic, X-Sudoku, Even-Odd, Windoku, Asterisk, Mosaic |
 | Other sizes | 10x10, 12x12 |
 | Linked boards | Double, Wing, Butterfly, Samurai |
-| Extra rules | Killer, Dots, Suguru, Numerator, Kakuro, Tokkidoku |
+| Extra rules | Killer, Dots, Suguru, Kakuro, Numerator, Tokkidoku |
 
-Every mode has four levels and its own statistics. Random mode deals one of the modes ticked in its pool.
+Every mode has four levels and its own records. Random mode deals one of the modes ticked in its pool.
 
 ## Features
 
@@ -23,10 +23,11 @@ Every mode has four levels and its own statistics. Random mode deals one of the 
 - Every deal has exactly one solution.
 - Three ways to fill a cell: digit, corner marks, centre marks.
 - Several cells can be picked at once by dragging or with Cmd-click.
+- A pad at the cell opens on a double or right click.
 - Up to eight unfinished games, each with its own timer.
 - Hints, auto-candidates, undo and redo, a three-mistake limit. Each can be switched off.
 - Light and dark themes, Russian and English.
-- On a phone the level picker opens as a sheet and large boards open in a window with a minimap.
+- On a phone large boards open magnified, with a minimap.
 
 ## Keyboard
 
@@ -40,21 +41,21 @@ Every mode has four levels and its own statistics. Random mode deals one of the 
 | Undo, redo | `Cmd` / `Ctrl` + `Z`, `Cmd` / `Ctrl` + `Y` |
 | Move | arrow keys |
 | Hint, auto-candidates | `H`, `A` |
-| Rules, pause, menu | `R`, `P`, `Esc` |
+| Rules, pause, back | `R`, `P`, `Esc` |
 
 ## Structure
 
 ```
 index.html     markup and script order
-css/           base, home, game, modals, mobile
+css/           tokens, base, home, game
 js/engine/     core, grade, modes, numerator, kakuro, tokki, worker
-js/app/        i18n, store, ui, preview, board, game, home, main
+js/app/        i18n, store, util, art, sheet, board, game, input, home, main
 icons/         site and app icons
 ```
 
 All modes share one model: cells with coordinates, groups that hold each digit once, pairs that must differ, summed areas, dots and a mask of allowed digits. The solver, the grader and the board drawing work on this model, and a new mode is one entry in `js/engine/modes.js`. Numerator is checked by connectivity and has its own module.
 
-Random parts of a deal (Suguru regions, Killer cages, dots, parity, the Kakuro pattern) are stored with the game, so a reload rebuilds the same board. Games, settings and statistics are kept in `localStorage`.
+Random parts of a deal (Suguru regions, Killer cages, dots, parity, the Kakuro pattern) are stored with the game, so a reload rebuilds the same board. Games, settings and records are kept in `localStorage`.
 
 ## Running locally
 

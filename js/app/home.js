@@ -1,148 +1,124 @@
 'use strict';
 
-/* four groups on six columns: sizes and linked boards share a row; the draw stands apart */
-const MODE_GROUPS=[
+const GROUPS=[
   ['g_plain',['classic','x','evenodd','windoku','asterisk','mosaic']],
   ['g_size',['r10','r12']],
   ['g_linked',['double','wing','butterfly','samurai']],
   ['g_rules',['killer','dots','suguru','kakuro','numerator','tokki']]];
-const MODE_ORDER=MODE_GROUPS.flatMap(g=>g[1]);
-const RANDOM_PREV='<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'+
-  '<rect x=".6" y=".6" width="38.8" height="38.8" fill="var(--panel2)" stroke="var(--prev-rule)" stroke-width="1.1"/>'+
-  '<path d="M13.7.6v38.8M26.3.6v38.8M.6 13.7h38.8M.6 26.3h38.8" stroke="var(--line)" stroke-width=".8" fill="none"/>'+
-  '<text x="20" y="28.6" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,system-ui,sans-serif" font-size="22" font-weight="600" fill="var(--accent)">?</text></svg>';
-const LEVEL_N={easy:1,medium:2,hard:3,expert:4};
-const LEVEL_RN={easy:'I',medium:'II',hard:'III',expert:'IV'};
-let pickedMode='tokki';
-let contSel=null;
+const groupOf=m=>(GROUPS.find(g=>g[1].includes(m))||['g_plain'])[0];
+let editing=false;
+
+function progressOf(g){
+  if(g.mode==='tokki'){
+    const all=g.sol.filter(v=>v===TOKKI_BUN).length, on=g.val.filter((v,i)=>v===TOKKI_BUN&&g.sol[i]===TOKKI_BUN).length;
+    return all? on/all : 0;
+  }
+  let open=0, ok=0;
+  for(let i=0;i<g.sol.length;i++) if(!g.given[i]){ open++; if(g.val[i]) ok++ }
+  return open? ok/open : 0;
+}
+function bestLine(m){
+  let b=null;
+  for(const d of DIFFS){ const s=statsFor(m,d).best; if(s!=null&&(b==null||s<b)) b=s }
+  return b!=null? tf('best',{t:fmtTime(b)}) : '';
+}
 
 function renderHome(){
-  if(!MODE_IDS.includes(pickedMode)&&pickedMode!=='random') pickedMode='tokki';
-  renderContinue(); renderModeList(); renderModePanel(); renderTotals();
-}
-function renderContinue(){
-  const list=$('contList');
-  const has=SES.games.length>0;
-  $('continueCard').style.display=has? '' : 'none';
-  if(!has) contSel=null;
-  const picking=!!contSel;
-  if(contSel) for(const id of [...contSel]) if(!SES.games.some(g=>g.id===id)) contSel.delete(id);
-  $('contBar').classList.toggle('hidden',!picking);
-  $('contPick').classList.toggle('hidden',picking);
-  $('contPick').textContent=t('pickMany');
-  if(picking) $('contCount').textContent=t('selCount').replace('{n}',contSel.size);
-  /* the newest game sits first */
-  list.innerHTML=SES.games.map((g,idx)=>[g,idx]).reverse().map(([g,idx])=>{
-    /* tokkidoku counts bunnies, not filled cells */
-    const bun=g.mode==='tokki';
-    const n = bun? g.solution.filter(v=>v===TOKKI_BUN).length : g.solution.length;
-    const filled = bun? g.values.filter(v=>v===TOKKI_BUN).length : g.values.filter(v=>v).length;
-    const on=picking&&contSel.has(g.id);
-    return `<div class="cont-card${on?' on':''}" data-id="${g.id}">
-      <button class="cont-open" data-idx="${idx}">
-        <b>${t('m_'+g.mode)}</b>
-        <span class="cont-meta"><span>${t('d_'+g.diff)} · ${filled}/${n}</span><small>${fmtTime(g.time)}</small></span>
-      </button>
-      ${picking? `<i class="cbox${on?' on':''}"></i>`
-        : `<button class="cont-x" data-del="${idx}" aria-label="${t('delGameA')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`}
-    </div>`;
+  const games=SES.games.slice().sort((a,b)=>b.at-a.at);
+  if(!games.length) editing=false;
+  $('home').classList.toggle('editing',editing);
+  $('contSec').classList.toggle('hidden',!games.length);
+  $('editBtn').textContent=t(editing?'done':'edit');
+  $('contShelf').innerHTML=games.map(g=>{
+    const p=progressOf(g);
+    return `<button class="cont" data-id="${g.id}">
+      <span class="mini">${gamePic(g,96)}</span>
+      <span class="info"><b>${t('m_'+g.mode)}</b><small>${t('d_'+g.diff)}</small>
+        <span class="bar"><i style="width:${Math.round(p*100)}%"></i></span>
+        <span class="t num">${Math.round(p*100)}%, ${fmtTime(g.time)}</span></span>
+      ${editing? `<span class="del" data-del="${g.id}" role="button" aria-label="${t('delGame')}">${ic('minus')}</span>` : ''}</button>`;
   }).join('');
-}
-function contPickStart(){ contSel=new Set(); renderContinue() }
-function contPickStop(){ contSel=null; renderContinue() }
-function contToggle(id){
-  if(!contSel) return;
-  if(contSel.has(id)) contSel.delete(id); else contSel.add(id);
-  renderContinue();
-}
-function contMark(all){
-  if(!contSel) return;
-  contSel = all? new Set(SES.games.map(g=>g.id)) : new Set();
-  renderContinue();
-}
-async function contDelete(){
-  if(!contSel||!contSel.size) return;
-  const all=contSel.size===SES.games.length;
-  const ask = all? t('delAllConfirm') : t('delSelConfirm').replace('{n}',contSel.size);
-  if(!await askConfirm(ask)) return;
-  const curId=SES.cur>=0? SES.games[SES.cur].id : null;
-  SES.games=SES.games.filter(g=>!contSel.has(g.id));
-  SES.cur = curId? SES.games.findIndex(g=>g.id===curId) : -1;
-  contSel=null;
-  persistNow(); renderHome(); toast(t('delDone'));
-}
-function renderModeList(){
-  let h='<div class="mgroups">';
-  for(const [cap,ids] of MODE_GROUPS){
-    h+=`<div class="mgroup" style="--n:${ids.length}"><h3 class="hcap">${t(cap)}</h3><div class="mode-grid">`;
-    for(const id of ids){
-      const st=statsFor(id,null);
-      const note=st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : '';
-      h+=`<button class="mcard${pickedMode===id?' on':''}" data-mode="${id}">
-        <span class="mcard-prev">${previewSVG(id)}</span>
-        <b>${t('m_'+id)}</b><small>${note}</small></button>`;
-    }
-    h+='</div></div>';
-  }
-  h+='</div>';
-  h+=`<button class="rnd-card${pickedMode==='random'?' on':''}" data-mode="random">
-    <span class="rnd-prev">${RANDOM_PREV}</span>
-    <span class="rnd-txt"><b>${t('m_random')}</b>
-      <small>${t('poolCount').replace('{n}',poolList().length)}</small></span></button>`;
-  $('modeList').innerHTML=h;
-  const on=$('modeList').querySelector('.mcard.on');
-  if(on && on.scrollIntoView && !sheetWidth()) on.scrollIntoView({block:'nearest'});
-}
-function renderModePanel(){
-  const m=pickedMode;
-  $('mpPrev').innerHTML = m==='random'? previewSVG(poolList()[0]||'classic') : previewSVG(m);
-  $('mpName').textContent=t('m_'+m);
-  $('mpRules').textContent=t('r_'+m);
-  const tag=I18N[SES.settings.lang]&&I18N[SES.settings.lang]['tag_'+m] || I18N.en['tag_'+m] || '';
-  /* empty but present: min-height holds the line */
-  $('mpTag').textContent=tag;
-  $('mpPool').classList.toggle('hidden', m!=='random');
-  $('poolCount').textContent=t('poolCount').replace('{n}',poolList().length);
   let h='';
-  for(const d of DIFFS){
-    const st = m==='random'? statsFor(null,d) : statsFor(m,d);
-    const note = st.solved? t('bestShort').replace('{t}',fmtTime(st.best)) : t('notPlayed');
-    h+=`<button class="diff-btn" data-diff="${d}"><i class="lvl${st.solved?' on':''}">${LEVEL_RN[d]}</i><span>${t('d_'+d)}</span><em>${note}</em></button>`;
+  for(const [cap,ids] of GROUPS){
+    h+=`<section><div class="shelf-head"><h2>${t(cap)}</h2></div><div class="shelf">`;
+    for(const m of ids){
+      const b=bestLine(m);
+      h+=`<button class="tile" data-mode="${m}"><span class="art">${modeArt(m,96)}</span><b>${t('m_'+m)}</b><small>${b}</small></button>`;
+    }
+    h+='</div></section>';
   }
-  $('diffGrid').innerHTML=h;
-}
-function renderTotals(){
-  let won=0,perfect=0,total=0;
-  for(const g of allGames()){
-    won++; total+=g.time;
-    if(g.mistakes===0&&g.hints===0) perfect++;
-  }
-  $('tot-won').textContent=won;
-  $('tot-perfect').textContent=perfect;
-  $('tot-time').textContent=total? fmtTime(total) : '—';
-  /* a fresh player sees no row of zeros */
-  document.querySelector('.home-foot').classList.toggle('hidden', !won);
-}
-function pickMode(id){
-  pickedMode=id;
-  SES.settings.mode=id; persistCache();
-  renderModeList(); renderModePanel();
-  if(typeof syncUrl==='function') syncUrl(id);
-  openSheet();
+  $('shelves').innerHTML=h;
+  $('homeTitle').textContent='Yoondoku';
 }
 
-function openPool(){
-  const on=new Set(poolList());
-  let h='';
-  for(const id of MODE_ORDER)
-    h+=`<label class="pool-item"><input type="checkbox" data-m="${id}"${on.has(id)?' checked':''}><span>${t('m_'+id)}</span></label>`;
-  $('poolGrid').innerHTML=h;
-  $('poolModal').classList.remove('hidden');
+/* the card of a mode opens out of its tile */
+function openMode(m,from){
+  const random=m==='random';
+  const art=innerWidth<=640? Math.min(240,innerWidth-80) : Math.max(180,Math.min(340,innerHeight-150));
+  const levels=DIFFS.map(d=>{
+    const s=random? statsFor(null,d) : statsFor(m,d);
+    const going=!random && SES.games.some(g=>g.mode===m&&g.diff===d);
+    return `<button class="lv" data-diff="${d}">${t('d_'+d)}${going? `<span class="cont-dot">${t('inProgress')}</span>` : ''}
+      <span class="meta num">${s.best!=null? tf('best',{t:fmtTime(s.best)}) : t('notPlayed')}</span><span class="go" aria-hidden="true">${t('playLv')}</span></button>`;
+  }).join('');
+  const tag=random? '' : (I18N[SES.settings.lang]||I18N.ru)['tag_'+m];
+  const poolBlock=`<div class="pool-wrap"><div class="pool-bar"><span id="poolN">${tf('poolN',{n:poolList().length})}</span><div><button class="link" data-pool="all">${t('poolAll')}</button><button class="link" data-pool="none">${t('poolNone')}</button></div></div><div class="pool" id="pool">${poolHTML()}</div></div>`;
+  const pic=random? poolBlock : `<span class="art" style="--art:${art}px">${modeArt(m,art)}</span>`;
+  let body=`<div class="msheet${random?' rnd':''}">${pic}<div>
+    <h1>${t('m_'+m)}</h1>${random? '' : `<div class="grp">${t(groupOf(m))}</div>`}
+    <p>${t('r_'+m)}</p>${tag? `<div class="tag">${esc(tag)}</div>` : ''}
+    <div class="levels">${levels}</div>`;
+  body+='</div></div>';
+  const sh=openSheet(body,{from});
+  sh.addEventListener('click',e=>{
+    const lv=e.target.closest('.lv');
+    if(lv){
+      const d=lv.dataset.diff;
+      const open=!random && SES.games.filter(g=>g.mode===m&&g.diff===d).sort((a,b)=>b.at-a.at)[0];
+      closeSheet(true);
+      if(open) openGame(open); else newGame(m,d);
+      return;
+    }
+    const pb=e.target.closest('[data-pool]');
+    if(pb){ SES.settings.pool= pb.dataset.pool==='all'? null : []; poolSync(); return }
+    const pm=e.target.closest('#pool button');
+    if(pm){
+      const set=new Set(SES.settings.pool&&SES.settings.pool.length? SES.settings.pool : (SES.settings.pool? [] : MODE_IDS));
+      set.has(pm.dataset.m)? set.delete(pm.dataset.m) : set.add(pm.dataset.m);
+      SES.settings.pool=MODE_IDS.filter(x=>set.has(x));
+      if(SES.settings.pool.length===MODE_IDS.length) SES.settings.pool=null;
+      poolSync();
+    }
+  });
 }
-function savePool(){
-  const picked=[...document.querySelectorAll('#poolGrid input')].filter(i=>i.checked).map(i=>i.dataset.m);
-  if(!picked.length){ toast(t('poolEmpty')); return false }
-  SES.settings.pool = picked.length===MODE_IDS.length? null : picked;
-  persistCache(); renderModeList(); renderModePanel();
-  return true;
+function poolHTML(){
+  const on=new Set(SES.settings.pool? SES.settings.pool : MODE_IDS);
+  return MODE_IDS.map(m=>`<button data-m="${m}" class="${on.has(m)?'on':''}"><span class="ck">${ic('check')}</span>${modeArt(m,40)}${t('m_'+m)}</button>`).join('');
+}
+function poolSync(){
+  const empty=SES.settings.pool&&!SES.settings.pool.length;
+  $('pool').innerHTML=poolHTML();
+  $('poolN').textContent= empty? t('poolEmpty') : tf('poolN',{n:poolList().length});
+  document.querySelectorAll('.lv').forEach(b=>b.disabled=!!empty);
+  saveSoon();
+}
+
+function bindHome(){
+  $('shelves').addEventListener('click',e=>{ const b=e.target.closest('.tile'); if(b) openMode(b.dataset.mode,b) });
+  $('rndBtn').addEventListener('click',e=>openMode('random',e.currentTarget));
+  $('editBtn').addEventListener('click',()=>{ editing=!editing; renderHome() });
+  $('contShelf').addEventListener('click',async e=>{
+    const del=e.target.closest('[data-del]');
+    if(del){
+      e.stopPropagation();
+      if(await ask({text:t('delGameQ'), ok:t('delete'), danger:true})){
+        SES.games=SES.games.filter(g=>g.id!==del.dataset.del); writeSes(); renderHome();
+      }
+      return;
+    }
+    const c=e.target.closest('.cont');
+    if(!c||editing) return;
+    const g=SES.games.find(x=>x.id===c.dataset.id);
+    if(g){ lastDeal={mode:g.mode,diff:g.diff}; openGame(g) }
+  });
 }

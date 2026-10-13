@@ -1,101 +1,55 @@
 'use strict';
 
-const LS_LOG='sudoku-log', LS_SES='sudoku-ses', LS_PEND='sudoku-pending';
+const LS_SES='yoondoku-ses', LS_LOG='yoondoku-log';
+const MAX_GAMES=8;
 const SYS_LANG=(()=>{ try{
-  const langs=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en'];
-  for(const l of langs){ const p=String(l).slice(0,2).toLowerCase(); if(I18N[p]) return p }
-}catch(e){} return 'en' })();
+  for(const l of navigator.languages||[navigator.language||'ru']){ const p=String(l).slice(0,2).toLowerCase(); if(p==='ru'||p==='en') return p }
+}catch(e){} return 'ru' })();
 
-const DEF_SETTINGS={theme:'light', pos:'center', lang:SYS_LANG, instant:true, limit:true, dblPick:true,
-  showHint:false, showAuto:false, highlightSame:true, highlightPeers:true, showCounts:true, digitFirst:false,
-  mode:'tokki', pool:null};
+const DEF_SETTINGS={theme:'auto', lang:SYS_LANG, instant:true, limit:true, peers:true, same:true, counts:true,
+  hintBtn:false, autoBtn:false, pool:null};
 
-let LOG={games:[], updated:0};
-let SES={settings:{...DEF_SETTINGS}, games:[], cur:-1, updated:0};
-let pending=[];
+let SES={settings:{...DEF_SETTINGS}, games:[]};
+let LOG=[];
 
-const cur=()=>SES.games[SES.cur]||null;
-const allGames=()=>[...LOG.games,...pending];
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
-/* a move writes one key, after a pause */
-let saveTimer=null, sesDirty=false;
+let saveTimer=null;
 function writeSes(){
-  sesDirty=false;
+  clearTimeout(saveTimer); saveTimer=null;
   try{ localStorage.setItem(LS_SES,JSON.stringify(SES)) }catch(e){}
 }
-function persistCache(){
-  SES.updated=Date.now();
-  sesDirty=true;
-  if(saveTimer) return;
-  saveTimer=setTimeout(()=>{ saveTimer=null; if(sesDirty) writeSes() },600);
-}
-function savePending(){
-  try{ localStorage.setItem(LS_PEND,JSON.stringify(pending)) }catch(e){}
-}
-/* written at once: leaving the page, a win, dropped games */
-function persistNow(){
-  if(saveTimer){ clearTimeout(saveTimer); saveTimer=null }
-  if(sesDirty) writeSes();
-  savePending();
-}
-function loadCache(){
-  try{ const l=JSON.parse(localStorage.getItem(LS_LOG)); if(l&&Array.isArray(l.games)) LOG=l }catch(e){}
-  try{ const s=JSON.parse(localStorage.getItem(LS_SES)); if(s&&s.settings){ SES=s;
-    SES.settings=Object.assign({...DEF_SETTINGS},s.settings);
-    if(!Array.isArray(SES.games)) SES.games=[] } }catch(e){}
-  try{ const p=JSON.parse(localStorage.getItem(LS_PEND)); if(Array.isArray(p)) pending=p }catch(e){}
+/* a move writes after a pause, leaving the page writes at once */
+function saveSoon(){ if(!saveTimer) saveTimer=setTimeout(writeSes,500) }
+function saveLog(){ try{ localStorage.setItem(LS_LOG,JSON.stringify(LOG)) }catch(e){} }
 
-  for(const g of SES.games) if(!g.mode){ g.mode='classic'; g.ex={} }
-  /* centre marks came later than the first saved games */
-  for(const g of SES.games) if(!Array.isArray(g.mid)) g.mid=Array.from({length:g.solution.length},()=>[]);
-  /* the draft is gone: a trial digit becomes a plain one */
-  for(const g of SES.games) if(Array.isArray(g.hyp)){
-    for(let i=0;i<g.hyp.length;i++) if(g.hyp[i]&&!g.values[i]) g.values[i]=g.hyp[i];
-    delete g.hyp;
-  }
-  for(const g of LOG.games) if(!g.mode) g.mode='classic';
-  for(const g of pending) if(!g.mode) g.mode='classic';
-  /* tokkidoku was called meow until 2026-08-28 */
-  for(const list of [SES.games,LOG.games,pending])
-    for(const g of list) if(g.mode==='meow') g.mode='tokki';
-  if(SES.settings.mode==='meow') SES.settings.mode='tokki';
-  try{ if(localStorage.getItem('sudoku-meowHint')){
-    localStorage.setItem('sudoku-tokkiHint','1'); localStorage.removeItem('sudoku-meowHint') } }catch(e){}
-  if(SES.settings.pool && !Array.isArray(SES.settings.pool)) SES.settings.pool=null;
-  if(SES.settings.pool) SES.settings.pool=SES.settings.pool.map(m=>m==='meow'? 'tokki' : m);
-  if(!MODE_IDS.includes(SES.settings.mode) && SES.settings.mode!=='random') SES.settings.mode='classic';
+function loadStore(){
+  try{
+    const s=JSON.parse(localStorage.getItem(LS_SES));
+    if(s&&s.settings){ SES=s; SES.settings={...DEF_SETTINGS,...s.settings}; if(!Array.isArray(SES.games)) SES.games=[] }
+  }catch(e){}
+  try{ const l=JSON.parse(localStorage.getItem(LS_LOG)); if(Array.isArray(l)) LOG=l }catch(e){}
+  /* first run on the same site: solved games of the old version carry over */
+  try{
+    if(!localStorage.getItem(LS_LOG)){
+      const old=JSON.parse(localStorage.getItem('sudoku-log'));
+      if(old&&Array.isArray(old.games)){ LOG=old.games.map(g=>({...g, mode:g.mode==='meow'?'tokki':g.mode})); saveLog() }
+    }
+  }catch(e){}
+  SES.games=SES.games.filter(g=>g&&MODE_IDS.includes(g.mode)&&Array.isArray(g.val));
 }
-function saveLog(){
-  const map=new Map();
-  for(const g of LOG.games) map.set(g.id,g);
-  for(const g of pending) map.set(g.id,g);
-  LOG.games=[...map.values()].sort((a,b)=> a.d<b.d?-1:a.d>b.d?1:0);
-  LOG.updated=Date.now();
-  pending=[];
-  try{ localStorage.setItem(LS_LOG,JSON.stringify(LOG)); localStorage.setItem(LS_PEND,'[]') }catch(e){}
-}
-
-function fmtTime(s){
-  if(s==null) return '—';
-  const h=(s/3600)|0, m=((s%3600)/60)|0, sec=s%60;
-  return h? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
-          : `${m}:${String(sec).padStart(2,'0')}`;
-}
-const blankStat=()=>({solved:0,best:null,total:0,perfect:0});
 
 function statsFor(mode,diff){
-  const s=blankStat();
-  for(const g of allGames()){
-    if(mode && g.mode!==mode) continue;
-    if(diff && g.diff!==diff) continue;
+  const s={solved:0,best:null,total:0,clean:0};
+  for(const g of LOG){
+    if(mode&&g.mode!==mode) continue;
+    if(diff&&g.diff!==diff) continue;
     s.solved++; s.total+=g.time;
-    if(g.mistakes===0&&g.hints===0) s.perfect++;
+    if(!g.mistakes&&!g.hints) s.clean++;
     if(s.best==null||g.time<s.best) s.best=g.time;
   }
   return s;
 }
-
 function poolList(){
   const p=SES.settings.pool;
   const list=(p&&p.length? p : MODE_IDS).filter(m=>MODE_IDS.includes(m));

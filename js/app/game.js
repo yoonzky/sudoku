@@ -1,613 +1,451 @@
 'use strict';
 
-let sel=-1, msel=new Set(), inputMode='digit', undoStack=[], redoStack=[], timerId=null,
-    lastPlaced=-1, hlDigit=0, armed=0, lastNumTs=0, numPending=false, numTimer=null;
-let lastRequest={mode:'classic',diff:'medium'};
-/* unfinished games kept at once */
-const MAX_GAMES=8;
-const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let G=null;
+const U={sel:-1, msel:new Set(), input:'digit', held:'', tool:'clover', hl:0, undo:[], redo:[], last:-1, lastTs:0, numOpen:false,
+  mode(){ return this.held||this.input }};
+let lastDeal={mode:'classic', diff:'medium'};
 
-let genWorker=null, genSeq=0, genWaiting=null;
-function workerReady(){
+/* worker; from a file, this thread */
+let genWorker=null, genSeq=0, genWait=null, genBusy=false, genTick=null;
+function worker(){
   if(genWorker!==null) return genWorker;
   try{
     genWorker=new Worker('js/engine/worker.js');
     genWorker.onmessage=e=>{
       const d=e.data||{};
-      if(!genWaiting||d.seq!==genWaiting.seq) return;
-      const cb=genWaiting; genWaiting=null;
-      if(d.error){ cb.fail(); return }
-      cb.ok(d);
+      if(!genWait||d.seq!==genWait.seq) return;
+      const w=genWait; genWait=null;
+      d.error? w.fail() : w.ok(d);
     };
-    genWorker.onerror=()=>{ genWorker=false; if(genWaiting){ const cb=genWaiting; genWaiting=null; cb.fail() } };
+    genWorker.onerror=()=>{ genWorker=false; if(genWait){ const w=genWait; genWait=null; w.fail() } };
   }catch(e){ genWorker=false }
   return genWorker;
 }
-function generateAsync(mode,diff,done){
-  const w=workerReady();
-  const sync=()=>{ setTimeout(()=>{
-    const r=makePuzzle(mode,diff);
-    done(r&&{mode:r.mode,diff:r.diff,ex:r.ex,sol:r.sol,puz:r.puz,grade:r.grade});
-  },20) };
+function generate(mode,diff,done){
+  const w=worker();
+  const sync=()=>setTimeout(()=>{ const r=makePuzzle(mode,diff); done(r&&{mode:r.mode,diff:r.diff,ex:r.ex,sol:r.sol,puz:r.puz}) },30);
   if(!w) return sync();
   const seq=++genSeq;
-  genWaiting={seq, ok:done, fail:sync};
+  genWait={seq, ok:done, fail:sync};
   w.postMessage({mode,diff,seq});
 }
-let genBusy=false;
 function cancelGen(){
   if(!genBusy) return false;
-  genBusy=false; genWaiting=null;
-  if(genWorker&&genWorker.terminate){ try{ genWorker.terminate() }catch(e){} }
+  genBusy=false; genWait=null;
+  /* a late error from the stopped worker must not switch generation to this thread */
+  if(genWorker&&genWorker.terminate){ genWorker.onmessage=genWorker.onerror=null; try{ genWorker.terminate() }catch(e){} }
   genWorker=null;
-  closeGenOverlay();
-  if(!cur()) goHome();
+  clearInterval(genTick);
+  $('gen').classList.add('hidden');
+  goHome();
+  toast(t('genStopped'));
   return true;
 }
 
-/* the bar fills against the budget the generator was given */
-let genTick=null;
-function openGenOverlay(mode,diff){
-  const el=$('genOverlay');
-  el.innerHTML='';
-  const title=document.createElement('b');
-  title.textContent=t('gen')+' · '+t('m_'+mode);
-  const bar=document.createElement('div');
-  bar.className='gen-bar';
-  bar.innerHTML='<i></i>';
-  const foot=document.createElement('small');
-  foot.textContent=t(COARSE? 'genCancelTouch' : 'genCancel');
-  el.append(title,bar,foot);
-  el.classList.remove('hidden');
-  const fill=bar.firstChild, started=Date.now(), budget=dealBudget(mode,diff);
-  const draw=()=>{ fill.style.width=Math.min(97,(Date.now()-started)/budget*100)+'%' };
-  draw();
-  clearInterval(genTick);
-  genTick=setInterval(draw,250);
-}
-function closeGenOverlay(){
-  clearInterval(genTick); genTick=null;
-  $('genOverlay').classList.add('hidden');
-}
-function finishGenOverlay(then){
-  const fill=$('genOverlay').querySelector('.gen-bar i');
-  clearInterval(genTick); genTick=null;
-  if(!fill||reducedMotion){ closeGenOverlay(); then(); return }
-  fill.style.transition='width .16s ease-out';
-  fill.style.width='100%';
-  setTimeout(()=>{ closeGenOverlay(); then() },190);
-}
-
-async function newGame(mode,diff){
-  lastRequest={mode,diff};
-  if(typeof syncUrl==='function') syncUrl(mode,diff);
-  if(needCheckAsk()) await askCheck();
-  if(mode==='random'){
-    const pool=poolList();
-    mode=pool[Math.floor(Math.random()*pool.length)];
-  }
+function newGame(mode,diff){
+  lastDeal={mode,diff};
+  if(mode==='random'){ const p=poolList(); mode=p[Math.floor(Math.random()*p.length)] }
+  G=null; SP=null;
+  document.body.classList.toggle('col',isCol());
+  showScreen('game');
+  $('board').innerHTML=''; $('pad').classList.add('hidden');
+  $('gMode').textContent=t('m_'+mode); $('gDiff').textContent=t('d_'+diff);
+  $('gTime').textContent='0:00'; $('gMist').innerHTML='';
+  const gen=$('gen'), fill=gen.querySelector('i'), t0=Date.now(), budget=dealBudget(mode,diff);
+  gen.classList.remove('hidden');
+  const draw=()=>{ fill.style.width=Math.min(96,(Date.now()-t0)/budget*100)+'%' };
+  draw(); clearInterval(genTick); genTick=setInterval(draw,200);
   genBusy=true;
-  openGenOverlay(mode,diff);
-  generateAsync(mode,diff,res=>{
+  generate(mode,diff,res=>{
     if(!genBusy) return;
-    genBusy=false;
-    finishGenOverlay(()=>{
-      if(!res){ toast(t('genFail')); return }
-      const sp=buildSpec(res.mode,res.ex);
-      const n=sp.cells.length;
-      /* a save from an older build may carry more than the limit */
-      if(SES.games.length>=MAX_GAMES){
-        const gone=SES.games.splice(0, SES.games.length-MAX_GAMES+1);
-        const names=gone.map(x=>t('m_'+x.mode)).join(', ');
-        toast(t(gone.length>1? 'gamesDropped' : 'gameDropped').replace('{m}',names));
-      }
-      SES.games.push({
-        id:uid(), mode:res.mode, diff, ex:res.ex,
-        solution:res.sol, given:res.puz.map(v=>!!v),
-        values:res.puz.slice(),
-        notes:Array.from({length:n},()=>[]), mid:Array.from({length:n},()=>[]),
-        time:0, mistakes:0, hints:0, done:false, paused:false, noLimit:false,
-        instant: sp.kind==='num'? false : SES.settings.instant,
-        endErr:[], wasFull:false,
-      });
-      SES.cur=SES.games.length-1;
-      persistCache();
-      openGame();
-    });
+    genBusy=false; clearInterval(genTick);
+    gen.classList.add('hidden');
+    if(!res){ toast(t('genFail')); goHome(); return }
+    const n=res.sol.length;
+    const rec={id:uid(), mode:res.mode, diff, ex:res.ex, sol:res.sol, given:res.puz.map(v=>!!v), val:res.puz.slice(),
+      notes:Array.from({length:n},()=>[]), mid:Array.from({length:n},()=>[]), endErr:[],
+      time:0, mistakes:0, hints:0, assisted:false, noLimit:false, instant:res.mode==='numerator'? false : SES.settings.instant, at:Date.now()};
+    if(SES.games.length>=MAX_GAMES){
+      SES.games.sort((a,b)=>b.at-a.at);
+      const gone=SES.games.splice(MAX_GAMES-1);
+      toast(tf('dropped',{m:gone.map(x=>t('m_'+x.mode)).join(', ')}));
+    }
+    SES.games.push(rec);
+    writeSes();
+    openGame(rec);
   });
 }
-function openGame(idx){
-  clearWin(); numArm(false);
-  if(typeof idx==='number') SES.cur=idx;
-  const g=cur(); if(!g) return;
-  if(typeof syncUrl==='function') syncUrl(g.mode,g.diff);
-  const sp=buildSpec(g.mode,g.ex);
-  buildBoard(sp); buildNumpad(sp); buildPicker(sp);
-  undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0; armed=0; inputMode='digit';
-  syncModeButtons(); applyControls();
-  show('game'); setPaused(false); renderBoard(); startTimer();
-  boardZoom = isPhone() && !isLand() && fitCell()>0 && fitCell()<26;
-  snapBoardTwice(); centerBoardPan(); panHint(); updatePickHint();
-  closePicker();
+
+function openGame(rec){
+  G=rec; G.at=Date.now(); G.paused=false;
+  const sp=buildSpec(G.mode,G.ex);
+  U.sel=-1; U.msel.clear(); U.hl=0; U.undo=[]; U.redo=[]; U.last=-1; U.held=''; U.input='digit'; U.tool='clover'; U.numOpen=false;
+  showScreen('game');
+  $('gen').classList.add('hidden');
+  document.body.classList.remove('won');
+  buildBoard(sp);
+  $('gMode').textContent=t('m_'+G.mode); $('gDiff').textContent=t('d_'+G.diff);
+  renderPad();
+  layoutGame();
+  setPaused(false);
+  startTimer();
+  firstHint();
+  saveSoon();
+}
+function firstHint(){
+  const key=SP.kind==='tokki'? 'tokkiHint' : SP.kind==='num'? 'numHint' : '';
+  if(!key) return;
+  try{ if(localStorage.getItem('yoondoku-'+key)) return; localStorage.setItem('yoondoku-'+key,'1') }catch(e){}
+  setTimeout(()=>toast(t(key)),500);
+}
+function goHome(){
+  stopTimer(); closePicker();
+  if(G&&!G.done){ G.at=Date.now(); writeSes() }
+  G=null;
+  closeMenu();
+  showScreen('home');
+  renderHome();
 }
 
-function snapshot(){ const g=cur();
-  return {values:g.values.slice(), notes:g.notes.map(n=>n.slice()), mid:g.mid.map(n=>n.slice()),
-          endErr:(g.endErr||[]).slice()} }
-function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>300) undoStack.shift(); redoStack.length=0 }
-function restore(s){ const g=cur();
-  g.values=s.values.slice(); g.notes=s.notes.map(n=>n.slice());
-  g.mid=(s.mid||g.mid).map(n=>n.slice());
-  g.endErr=s.endErr.slice() }
-
-/* faces come from a bag: each seated once before any repeats */
-function dealFace(g,i){
-  if(!g.face) g.face={};
-  if(g.face[i]!=null) return;
-  if(!g.bag||!g.bag.length){
-    g.bag=[0,1,2,3,4,5];
-    for(let k=g.bag.length-1;k>0;k--){
-      const j=Math.floor(Math.random()*(k+1));
-      [g.bag[k],g.bag[j]]=[g.bag[j],g.bag[k]];
-    }
-  }
-  g.face[i]=g.bag.pop();
-  persistCache();
-}
-
-function tokkiSeat(i){
-  const g=cur(); if(!g||g.done||g.paused) return;
-  dismissPickHint();
-  pushUndo();
-  const was=g.values[i];
-  g.values[i] = was===TOKKI_BUN? 0 : TOKKI_BUN;
-  if(g.values[i]===TOKKI_BUN) dealFace(g,i);
-  if(g.values[i]===TOKKI_BUN && g.instant && g.solution[i]!==TOKKI_BUN){
-    g.mistakes++;
-    if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
-  }
-  lastPlaced = g.values[i]===TOKKI_BUN? i : -1;
-  if(g.values[i]===TOKKI_BUN && g.solution[i]===TOKKI_BUN) sel=-1;
-  afterMove();
-}
-/* drag from a filled cell and the run counts up */
-function numChain(j,v){
-  const g=cur();
-  if(!g||g.done||g.paused||v>SPEC.maxD) return false;
-  if(g.values[j]===v){ lastPlaced=j; sel=j; return true }
-  if(g.given[j]||g.values[j]) return false;
-  pushUndo();
-  g.values[j]=v; g.notes[j]=[];
-  lastPlaced=j; sel=j;
-  afterMove(true);
-  return true;
-}
-
-function tokkiMark(i){
-  const g=cur(); if(!g||g.done||g.paused) return;
-  dismissPickHint();
-  pushUndo();
-  g.values[i] = g.values[i]===TOKKI_MARK? 0 : TOKKI_MARK;
-  lastPlaced=-1;
-  afterMove();
-}
-function tokkiSweep(i){
-  const g=cur(); if(!g||g.done||g.paused||g.values[i]!==0) return;
-  dismissPickHint();
-  pushUndo();
-  g.values[i]=TOKKI_MARK;
-  lastPlaced=-1;
-  afterMove();
-}
-/* a win pins the board and moves the rest of the screen around it */
-function pinBoard(change){
-  const b=$('board');
-  const before=b? b.getBoundingClientRect().top : 0;
-  change();
-  if(!b) return;
-  const after=b.getBoundingClientRect().top;
-  const now=parseFloat(document.body.style.getPropertyValue('--won-top'))||0;
-  document.body.style.setProperty('--won-top',Math.max(0,Math.round(now+before-after))+'px');
-}
-
-function tokkiClash(g,sp,i){
-  if(g.values[i]!==TOKKI_BUN) return false;
-  for(const j of sp.peers[i]) if(g.values[j]===TOKKI_BUN) return true;
+function snap(){ return {val:G.val.slice(), notes:G.notes.map(x=>x.slice()), mid:G.mid.map(x=>x.slice()), endErr:G.endErr.slice()} }
+function pushUndo(){ U.undo.push(snap()); if(U.undo.length>400) U.undo.shift(); U.redo.length=0 }
+function restore(s){ G.val=s.val.slice(); G.notes=s.notes.map(x=>x.slice()); G.mid=s.mid.map(x=>x.slice()); G.endErr=s.endErr.slice() }
+const live=()=>G&&!G.done&&!G.paused;
+function dropErr(i){ const k=G.endErr.indexOf(i); if(k>=0) G.endErr.splice(k,1) }
+function clearPeerNotes(i,v){ for(const p of SP.peers[i]){ const k=G.notes[p].indexOf(v); if(k>=0) G.notes[p].splice(k,1); const m=G.mid[p].indexOf(v); if(m>=0) G.mid[p].splice(m,1) } }
+function mistake(){
+  if(!G.instant) return false;
+  G.mistakes++;
+  if(SES.settings.limit && !G.noLimit && G.mistakes>=3){ afterMove(); lose(); return true }
   return false;
 }
-/* a lone tap leaves the clover; the bunny takes a double tap */
-const TOKKI_DBL_MS=450;
-let tokkiTapCell=-1, tokkiTapAt=0;
-function tokkiTap(i){
-  const g=cur(); if(!g||g.done||g.paused) return;
-  const now=Date.now();
-  const quick = i===tokkiTapCell && now-tokkiTapAt<TOKKI_DBL_MS;
-  tokkiTapCell=i; tokkiTapAt=now;
-  dismissPickHint();
-  pushUndo();
-  const was=g.values[i];
-  g.values[i] = was===TOKKI_BUN? 0
-    : was===TOKKI_MARK? (quick? TOKKI_BUN : 0)
-    : TOKKI_MARK;
-  if(g.values[i]===TOKKI_BUN && g.instant && g.solution[i]!==TOKKI_BUN){
-    g.mistakes++;
-    if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
+
+function inputDigit(v,force){
+  if(!live()||SP.kind==='tokki') return;
+  if(SP.kind==='num') return inputNumber(v);
+  const mode=force||U.mode();
+  if(v<1||v>SP.maxD) return;
+  if(U.msel.size>1) return inputMulti(v,mode);
+  const i=U.sel;
+  if(i<0||G.given[i]){ U.hl = U.hl===v? 0 : v; paint(); return }
+  if(mode!=='digit'){
+    if(G.val[i]) return;
+    pushUndo();
+    const arr=mode==='center'? G.mid[i] : G.notes[i], k=arr.indexOf(v);
+    if(k>=0) arr.splice(k,1); else { arr.push(v); arr.sort((a,b)=>a-b) }
+    return afterMove(true);
   }
-  lastPlaced = g.values[i]===TOKKI_BUN? i : -1;
-  if(g.values[i]===TOKKI_BUN && g.solution[i]===TOKKI_BUN){ sel=-1 }
+  pushUndo();
+  if(G.val[i]===v){ G.val[i]=0; dropErr(i); return afterMove(true) }
+  G.val[i]=v; G.notes[i]=[]; G.mid[i]=[]; dropErr(i); U.last=i;
+  if(v!==G.sol[i]){ if(mistake()) return }
+  else clearPeerNotes(i,v);
   afterMove();
 }
-
-function numpadPress(v){
-  const g=cur(); if(!g||g.paused) return;
-  if(SPEC.kind==='num'){ inputDigit(v); return }
-  if(msel.size>1){ inputDigit(v); return }
-  if(SES.settings.digitFirst){
-    armed = armed===v? 0 : v;
-    hlDigit=armed; sel=-1; renderBoard(); return;
-  }
-  if(sel<0||g.given[sel]||g.done){ hlDigit = hlDigit===v? 0 : v; renderBoard() }
-  else inputDigit(v);
-}
-
-function numArm(on){
-  clearTimeout(numTimer);
-  numPending=on;
-  if(on) numTimer=setTimeout(numFlush,2600);
-}
-function numFlush(){
-  if(!numPending) return;
-  clearTimeout(numTimer);
-  numPending=false;
-  if(cur()) checkWin();
-}
-function inputNumber(d){
-  const g=cur(); if(!g||g.done||g.paused||sel<0||g.given[sel]) return;
-  const chain=(Date.now()-lastNumTs)<2600 && lastPlaced===sel;
-  if(inputMode==='note'){
-    const nn=g.notes[sel];
-    const prev=chain? nn[nn.length-1] : 0;
-    const grow = chain && prev>0 && prev*10+d<=SPEC.maxD;
-    if(!grow && d<=0) return;
-    pushUndo();
-    if(grow){ nn[nn.length-1]=prev*10+d }
-    else {
-      const k=nn.indexOf(d);
-      if(k>=0) nn.splice(k,1); else nn.push(d);
-    }
-    lastPlaced=sel; lastNumTs=Date.now();
-    dismissPickHint();
-    afterMove(true);
-    return;
-  }
-  const prev=g.values[sel]||0;
-  let nv = (chain && prev>0 && prev*10+d<=SPEC.maxD)? prev*10+d : d;
-  if(nv<1||nv>SPEC.maxD) return;
-  pushUndo();
-  g.values[sel]=nv; g.notes[sel]=[]; lastPlaced=sel; lastNumTs=Date.now();
-  dismissPickHint();
-  if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
-  const more=nv*10<=SPEC.maxD;
-  numArm(more);
-  afterMove(true);
-}
-/* a run of picked cells gets what one cell would get */
+/* a run of cells takes one move */
 function inputMulti(v,mode){
-  const g=cur(); if(!g||g.done||g.paused) return;
-  if(v<1||v>SPEC.maxD) return;
+  const list=[...U.msel].filter(i=>!G.given[i]);
   if(mode==='digit'){
-    const list=[...msel].filter(i=>!g.given[i]);
     if(!list.length) return;
-    const drop=list.every(i=>g.values[i]===v);
+    const drop=list.every(i=>G.val[i]===v);
     pushUndo();
     let wrong=0;
     for(const i of list){
-      if(drop){
-        g.values[i]=0;
-        if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
-        continue;
-      }
-      if(g.values[i]===v) continue;
-      g.values[i]=v; g.notes[i]=[]; g.mid[i]=[];
-      if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
-      if(v!==g.solution[i]) wrong++;
-      else for(const p of SPEC.peers[i]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
+      dropErr(i);
+      if(drop){ G.val[i]=0; continue }
+      if(G.val[i]===v) continue;
+      G.val[i]=v; G.notes[i]=[]; G.mid[i]=[];
+      if(v!==G.sol[i]) wrong++; else clearPeerNotes(i,v);
     }
-    /* one press is one move, however many cells it covered */
-    if(wrong && g.instant){
-      g.mistakes++;
-      if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
-    }
-    dismissPickHint();
-    afterMove(true);
-    return;
+    if(wrong&&mistake()) return;
+    return afterMove(true);
   }
-  const bank = mode==='mid'? 'mid' : 'notes';
-  const list=[...msel].filter(i=>!g.given[i]&&!g.values[i]);
-  if(!list.length) return;
-  const drop=list.every(i=>g[bank][i].includes(v));
+  const bank=mode==='center'? 'mid' : 'notes', open=list.filter(i=>!G.val[i]);
+  if(!open.length) return;
+  const drop=open.every(i=>G[bank][i].includes(v));
   pushUndo();
-  for(const i of list){
-    const arr=g[bank][i], k=arr.indexOf(v);
+  for(const i of open){
+    const arr=G[bank][i], k=arr.indexOf(v);
     if(drop){ if(k>=0) arr.splice(k,1) }
     else if(k<0){ arr.push(v); arr.sort((a,b)=>a-b) }
   }
-  dismissPickHint();
   afterMove(true);
 }
-function inputDigit(v,forceNote,forceMid){
-  const g=cur(); if(!g||g.done||g.paused) return;
-  if(SPEC.kind==='tokki') return;
-  if(SPEC.kind==='num') return inputNumber(v);
-  const mode = forceNote? 'note' : forceMid? 'mid' : activeMode();
-  if(msel.size>1) return inputMulti(v, mode);
-  if(sel<0||g.given[sel]) return;
-  if(v<1||v>SPEC.maxD) return;
-  if((mode==='note'||mode==='mid') && g.values[sel]) return;
-  pushUndo();
-  if(mode==='note'||mode==='mid'){
-    const nn = mode==='mid'? g.mid[sel] : g.notes[sel], k=nn.indexOf(v);
-    if(k>=0) nn.splice(k,1); else { nn.push(v); nn.sort((a,b)=>a-b) }
-  } else {
-    /* the end check has to forget a cleared cell */
-    if(g.values[sel]===v){ g.values[sel]=0;
-      if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) } }
-    else{
-      g.values[sel]=v; g.notes[sel]=[]; g.mid[sel]=[]; lastPlaced=sel;
-      if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
-      if(v!==g.solution[sel]){
-        if(g.instant){
-          g.mistakes++;
-          if(SES.settings.limit && !g.noLimit && g.mistakes>=3){ afterMove(); gameLost(); return }
-        }
-      } else {
-        for(const p of SPEC.peers[sel]){ const k=g.notes[p].indexOf(v); if(k>=0) g.notes[p].splice(k,1) }
-      }
-    }
+/* numerator: figures typed in a row build one number */
+function inputNumber(d){
+  const i=U.sel;
+  if(i<0||G.given[i]) return;
+  const chain=Date.now()-U.lastTs<2600 && U.last===i;
+  if(U.mode()==='corner'){
+    const nn=G.notes[i], prev=chain? nn[nn.length-1] : 0;
+    const grow=chain && prev>0 && prev*10+d<=SP.maxD;
+    if(!grow&&d<=0) return;
+    pushUndo();
+    if(grow) nn[nn.length-1]=prev*10+d;
+    else { const k=nn.indexOf(d); if(k>=0) nn.splice(k,1); else nn.push(d) }
+    U.last=i; U.lastTs=Date.now();
+    return afterMove(true);
   }
+  const prev=G.val[i]||0;
+  const nv=(chain && prev>0 && prev*10+d<=SP.maxD)? prev*10+d : d;
+  if(nv<1||nv>SP.maxD) return;
+  pushUndo();
+  G.val[i]=nv; G.notes[i]=[]; dropErr(i); U.last=i; U.lastTs=Date.now();
+  U.numOpen = nv*10<=SP.maxD;
+  afterMove(true);
+}
+/* drag from a filled cell and the run counts up */
+function numChain(j,v){
+  if(!live()||v>SP.maxD) return false;
+  if(G.val[j]===v){ U.sel=j; return true }
+  if(G.given[j]||G.val[j]) return false;
+  pushUndo();
+  G.val[j]=v; G.notes[j]=[]; U.sel=j; U.last=j;
+  afterMove(true);
+  return true;
+}
+function tokkiSet(i,kind){
+  if(!live()) return;
+  const want=kind==='bunny'? TOKKI_BUN : TOKKI_MARK;
+  pushUndo();
+  G.val[i] = G.val[i]===want? 0 : want;
+  if(G.val[i]===TOKKI_BUN){ U.last=i; if(G.sol[i]!==TOKKI_BUN && mistake()) return }
   afterMove();
 }
-function eraseCell(){
-  const g=cur(); if(!g||g.done||g.paused) return;
-  if(msel.size>1){
-    const list=[...msel].filter(i=>!g.given[i]);
-    if(!list.some(i=>g.values[i]||g.notes[i].length||g.mid[i].length)) return;
-    pushUndo();
-    for(const i of list){
-      g.values[i]=0; g.notes[i]=[]; g.mid[i]=[];
-      if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
-    }
-    afterMove();
-    return;
-  }
-  if(sel<0||g.given[sel]) return;
-  if(!g.values[sel]&&!g.notes[sel].length&&!g.mid[sel].length) return;
+function tokkiSweep(i){
+  if(!live()||G.val[i]) return;
   pushUndo();
-  g.values[sel]=0; g.notes[sel]=[]; g.mid[sel]=[];
-  if(g.endErr){ const k=g.endErr.indexOf(sel); if(k>=0) g.endErr.splice(k,1) }
-  afterMove();
+  G.val[i]=TOKKI_MARK;
+  afterMove(true);
+}
+function erase(){
+  if(!live()) return;
+  const list=(U.msel.size>1? [...U.msel] : U.sel>=0? [U.sel] : []).filter(i=>!G.given[i]);
+  if(!list.some(i=>G.val[i]||G.notes[i].length||G.mid[i].length)) return;
+  pushUndo();
+  for(const i of list){ G.val[i]=0; G.notes[i]=[]; G.mid[i]=[]; dropErr(i) }
+  afterMove(true);
 }
 function hint(){
-  const g=cur(); if(!g||g.done||g.paused) return;
-  if(SPEC.kind==='tokki'){
+  if(!live()) return;
+  if(SP.kind==='tokki'){
     const left=[];
-    for(let k=0;k<g.solution.length;k++)
-      if(g.solution[k]===TOKKI_BUN && g.values[k]!==TOKKI_BUN) left.push(k);
+    for(let k=0;k<G.sol.length;k++) if(G.sol[k]===TOKKI_BUN && G.val[k]!==TOKKI_BUN) left.push(k);
     if(!left.length) return;
-    const spot=left[Math.floor(Math.random()*left.length)];
-    pushUndo();
-    g.values[spot]=TOKKI_BUN; g.hints++; g.usedAssist=true; sel=-1; lastPlaced=spot;
-    afterMove();
-    return;
+    const k=left[Math.floor(Math.random()*left.length)];
+    pushUndo(); G.val[k]=TOKKI_BUN; G.hints++; G.assisted=true; U.last=k;
+    return afterMove();
   }
-  let i=sel;
-  if(i<0||g.values[i]===g.solution[i]){
-    const empt=[];
-    for(let k=0;k<g.solution.length;k++) if(g.values[k]!==g.solution[k]) empt.push(k);
-    if(!empt.length) return;
-    i=empt[Math.floor(Math.random()*empt.length)];
+  let i=U.sel;
+  if(i<0||G.val[i]===G.sol[i]){
+    const open=[];
+    for(let k=0;k<G.sol.length;k++) if(G.val[k]!==G.sol[k]) open.push(k);
+    if(!open.length) return;
+    i=open[Math.floor(Math.random()*open.length)];
   }
   pushUndo();
-  g.values[i]=g.solution[i]; g.notes[i]=[]; g.mid[i]=[]; g.hints++; g.usedAssist=true; sel=i; lastPlaced=i;
-  scrollSelIntoView();
-  if(g.endErr){ const k=g.endErr.indexOf(i); if(k>=0) g.endErr.splice(k,1) }
-  for(const p of SPEC.peers[i]){ const k=g.notes[p].indexOf(g.solution[i]); if(k>=0) g.notes[p].splice(k,1) }
+  G.val[i]=G.sol[i]; G.notes[i]=[]; G.mid[i]=[]; dropErr(i); G.hints++; G.assisted=true;
+  U.sel=i; U.msel.clear(); U.last=i;
+  clearPeerNotes(i,G.sol[i]);
   afterMove();
 }
+const digitKind=()=>SP.kind!=='num'&&SP.kind!=='tokki';
 function autoNotes(){
-  const g=cur(); if(!g||g.done||g.paused||SPEC.kind==='num'||SPEC.kind==='tokki') return;
+  if(!live()||!digitKind()) return;
   pushUndo();
-  for(let i=0;i<SPEC.cells.length;i++) if(!g.values[i]){
-    const m=candMask(SPEC,g.values,i), nn=[];
-    for(let v=1;v<=SPEC.maxD;v++) if(m&(1<<v)) nn.push(v);
-    g.notes[i]=nn;
+  for(let i=0;i<SP.cells.length;i++) if(!G.val[i]){
+    const m=candMask(SP,G.val,i), nn=[];
+    for(let v=1;v<=SP.maxD;v++) if(m&(1<<v)) nn.push(v);
+    G.notes[i]=nn;
   }
-  g.usedAssist=true;
-  afterMove(); toast(t('autoDone'));
+  G.assisted=true;
+  afterMove(true);
+  toast(t('autoDone'));
 }
-function undo(){ const g=cur(); if(!g||g.done||g.paused||!undoStack.length) return;
-  redoStack.push(snapshot()); restore(undoStack.pop()); renderBoard(); persistCache() }
-function redo(){ const g=cur(); if(!g||g.done||g.paused||!redoStack.length) return;
-  undoStack.push(snapshot()); restore(redoStack.pop()); renderBoard(); persistCache() }
+function undo(){ if(!live()||!U.undo.length) return; U.redo.push(snap()); restore(U.undo.pop()); paint(); saveSoon() }
+function redo(){ if(!live()||!U.redo.length) return; U.undo.push(snap()); restore(U.redo.pop()); paint(); saveSoon() }
 
 function afterMove(quiet){
-  renderBoard();
-  if(lastPlaced>=0 && !reducedMotion && !quiet) cells[lastPlaced].classList.add('pop');
-  if(!quiet) lastPlaced=-1;
-  checkWin(); persistCache();
+  paint();
+  if(U.last>=0 && !quiet && !REDUCED.matches){
+    const d=CELLS[U.last];
+    d.classList.remove('pop'); void d.offsetWidth; d.classList.add('pop');
+    setTimeout(()=>d.classList.remove('pop'),260);
+  }
+  saveSoon();
+  if(!U.numOpen) checkWin();
 }
 
-let lastWin=null, winTimer=null;
 function checkWin(){
-  const g=cur(); if(!g) return;
-  const n=g.solution.length;
-  if(SPEC && SPEC.kind==='tokki'){
-    for(let i=0;i<n;i++)
-      if((g.values[i]===TOKKI_BUN)!==(g.solution[i]===TOKKI_BUN)) return;
+  const g=G; if(!g||g.done) return;
+  const n=g.sol.length;
+  if(SP.kind==='tokki'){
+    for(let i=0;i<n;i++) if((g.val[i]===TOKKI_BUN)!==(g.sol[i]===TOKKI_BUN)) return;
   } else {
-    let full=true;
-    for(let i=0;i<n;i++) if(!g.values[i]){ full=false; break }
-    if(!full){ g.wasFull=false; return }
+    for(let i=0;i<n;i++) if(!g.val[i]){ g.full=false; return }
     const wrong=[];
-    for(let i=0;i<n;i++) if(g.values[i]!==g.solution[i]) wrong.push(i);
+    for(let i=0;i<n;i++) if(g.val[i]!==g.sol[i]) wrong.push(i);
     if(wrong.length){
-      if(numPending) return;
-      if(!g.instant){ g.endErr=wrong; renderBoard() }
-      if(!g.wasFull) toast(t('hasErrors').replace('{n}',wrong.length));
-      g.wasFull=true;
+      if(!g.instant){ g.endErr=wrong; paint() }
+      if(!g.full) toast(tf('hasErrors',{n:wrong.length}));
+      g.full=true;
       return;
     }
   }
+  win();
+}
+function win(){
+  const g=G;
   g.done=true; stopTimer();
-  if(boardZoom) setZoom(false);
-  sel=-1; msel.clear(); hlDigit=0; armed=0; renderBoard();
-  const st=statsFor(g.mode,g.diff);
-  const assisted=!!g.usedAssist;
-  const isRecord=!assisted && (st.best==null||g.time<st.best);
-  const perfect=g.mistakes===0&&g.hints===0&&!assisted;
-  if(!assisted) pending.push({id:g.id, d:new Date().toISOString().slice(0,10), mode:g.mode, diff:g.diff,
-    time:g.time, mistakes:g.mistakes, hints:g.hints});
-  SES.games.splice(SES.cur,1); SES.cur=-1;
-  persistNow(); if(!assisted) saveLog();
-  lastWin={mode:g.mode, diff:g.diff, time:g.time, best:st.best, mistakes:g.mistakes, hints:g.hints,
-    isRecord, assisted, perfect, instant:g.instant};
-  renderWinPanel();
-  const showWin=()=>{
-    document.body.classList.add('won');
-    $('winPanel').classList.remove('hidden');
-    placeWinPanel();
-  };
-  if(reducedMotion){ pinBoard(showWin); return }
-  pinBoard(()=>document.body.classList.add('won'));
-  for(let i=0;i<n;i++){
-    const c=SPEC.cells[i];
-    cells[i].style.animationDelay=((c.x+c.y)*22)+'ms';
-    cells[i].classList.add('wave');
+  U.sel=-1; U.msel.clear(); U.hl=0;
+  const prev=statsFor(g.mode,g.diff).best;
+  const rec=!g.assisted && (prev==null || g.time<prev);
+  if(!g.assisted){ LOG.push({id:g.id, d:new Date().toISOString().slice(0,10), mode:g.mode, diff:g.diff, time:g.time, mistakes:g.mistakes, hints:g.hints}); saveLog() }
+  SES.games=SES.games.filter(x=>x.id!==g.id);
+  writeSes();
+  paint();
+  document.body.classList.add('won');
+  const pad=$('pad');
+  pad.className='pad';
+  pad.innerHTML=`<div class="result"><span class="r-head">${t('solved')}</span><span class="r-cap">${t('m_'+g.mode)}, ${t('d_'+g.diff).toLowerCase()}</span>
+    <span class="r-time num">${fmtTime(g.time)}</span>
+    ${rec&&prev!=null? `<span class="r-rec">${t('newRecord')}</span>` : g.assisted? `<span class="r-cap">${t('assisted')}</span>` : ''}
+    <div class="rows">
+      ${prev!=null? `<div class="row"><span>${t(rec?'wasL':'recordL')}</span><b class="num">${fmtTime(prev)}</b></div>` : ''}
+      ${g.instant? `<div class="row"><span>${t('mistakesL')}</span><b class="num">${g.mistakes}</b></div>` : ''}
+      <div class="row"><span>${t('hintsL')}</span><b class="num">${g.hints}</b></div>
+    </div>
+    <div class="acts"><button class="btn" id="againBtn">${t('again')}</button><button class="btn plain" id="homeBtn">${t('allModes')}</button></div></div>`;
+  $('againBtn').onclick=()=>newGame(lastDeal.mode===g.mode||lastDeal.mode==='random'? lastDeal.mode : g.mode, g.diff);
+  $('homeBtn').onclick=goHome;
+  if(document.body.classList.contains('col')) fitBoard();
+  if(!REDUCED.matches) for(let i=0;i<SP.cells.length;i++){
+    const c=SP.cells[i], d=CELLS[i];
+    d.style.animation=`wave .5s ${(c.x+c.y)*28}ms cubic-bezier(.3,.7,.3,1) both`;
+    setTimeout(()=>{ d.style.animation='' },560+(c.x+c.y)*28);
   }
-  winTimer=setTimeout(()=>{ winTimer=null;
-    cells.forEach(d=>{ d.classList.remove('wave'); d.style.animationDelay='' });
-    /* the panel moves the board as much as the class did, so it is pinned too */
-    pinBoard(showWin) },900);
 }
-function renderWinPanel(){
-  const w=lastWin; if(!w) return;
-  $('winTime').textContent=fmtTime(w.time);
-  $('winRecord').classList.toggle('hidden',!w.isRecord);
-  $('winSub').innerHTML=t('m_'+w.mode)+' · '+t('d_'+w.diff)+
-    (w.assisted? ' · '+t('assistNote') : (w.perfect? ' · '+t('clean') : ''));
-  const lbl=$('winBestLbl');
-  lbl.dataset.i18n = w.isRecord? 'wasL' : 'recordL';
-  lbl.textContent=t(lbl.dataset.i18n);
-  $('winBest').textContent=fmtTime(w.best);
-  $('winBestCell').classList.toggle('hidden', w.isRecord && w.best==null);
-  $('winMist').textContent=w.mistakes;
-  $('winHints').textContent=w.hints;
-  $('winMistCell').classList.toggle('hidden', !w.instant);
+function lose(){
+  setPaused(true,true);
+  ask({title:t('loseT'), text:t('loseD'), ok:t('noLimit'), alt:t('restart')}).then(r=>{
+    if(!G) return;
+    if(r==='ok'){ G.noLimit=true; setPaused(false); paint(); saveSoon() }
+    else if(r==='alt') restartGame(true);
+    else setPaused(true);
+  });
 }
-let lastLost={mode:'classic',diff:'medium'};
-function gameLost(){
-  const g=cur();
-  lastLost=g? {mode:g.mode,diff:g.diff} : lastRequest;
-  persistCache(); setPaused(true);
-  $('loseModal').classList.remove('hidden');
-}
-function placeWinPanel(){
-  const panel=$('winPanel');
-  if(!panel||!document.body.classList.contains('won')||!SPEC){
-    document.body.classList.remove('win-side');
-    return;
-  }
-  /* beside the board the panel goes into the pad column */
-  if(isRail()){ document.body.classList.add('win-side'); panel.style.left=''; panel.style.top=''; return }
-  const b=$('board').getBoundingClientRect(), game=$('game').getBoundingClientRect();
-  const side=(window.innerWidth-b.right)>=330 && window.innerHeight>=600 && !isPhone();
-  document.body.classList.toggle('win-side',side);
-  panel.style.left = side? Math.round(b.right-game.left+28)+'px' : '';
-  panel.style.top = side? Math.round(b.top-game.top+b.height/2)+'px' : '';
-}
-function clearWin(){
-  clearTimeout(winTimer); winTimer=null;
-  document.body.classList.remove('won');
-  document.body.classList.remove('win-side');
-  document.body.style.removeProperty('--won-top');
-  $('winPanel').style.left=''; $('winPanel').style.top='';
-  $('winPanel').classList.add('hidden');
+async function restartGame(sure){
+  if(!G) return;
+  if(!sure && !(await ask({text:t('restartQ'), ok:t('restart'), danger:true}))) return;
+  const n=G.sol.length;
+  G.val=G.sol.map((v,i)=>G.given[i]? v : 0);
+  G.notes=Array.from({length:n},()=>[]); G.mid=Array.from({length:n},()=>[]); G.endErr=[];
+  G.time=0; G.mistakes=0; G.hints=0; G.assisted=false; G.noLimit=false; G.full=false; G.face={}; G.bag=[];
+  U.undo=[]; U.redo=[]; U.sel=-1; U.msel.clear(); U.hl=0;
+  setPaused(false); startTimer(); paint(); saveSoon();
 }
 
+let timerId=null;
 function startTimer(){
   stopTimer();
-  const g=cur(); if(!g) return;
-  $('gTimer').textContent=fmtTime(g.time);
+  $('gTime').textContent=fmtTime(G.time);
   timerId=setInterval(()=>{
-    const gg=cur();
-    if(!gg||gg.done||gg.paused||document.hidden) return;
-    gg.time++;
-    $('gTimer').textContent=fmtTime(gg.time);
-    if(gg.time%20===0) persistCache();
+    if(!G||G.done||G.paused||document.hidden) return;
+    G.time++;
+    $('gTime').textContent=fmtTime(G.time);
+    if(G.time%15===0) saveSoon();
   },1000);
 }
 function stopTimer(){ clearInterval(timerId); timerId=null }
-function setPaused(p){
-  const g=cur(); if(!g) return;
-  g.paused=p; closePicker();
+function setPaused(p,quiet){
+  if(!G) return;
+  G.paused=p;
+  $('cover').classList.toggle('hidden',!p||quiet===true);
   document.body.classList.toggle('paused',p);
-  $('pauseOverlay').classList.toggle('hidden',!p);
-  if(!$('game').classList.contains('hidden')) renderBoard();
-  const pl=t(p?'resume':'pauseT');
-  $('pauseBtn').innerHTML=(p? '<svg viewBox="0 0 24 24"><path d="M8.8 6.2 18.6 12 8.8 17.8Z" fill="currentColor" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>' : '<svg viewBox="0 0 24 24"><rect x="7.4" y="5.4" width="3.6" height="13.2" rx="1.8" fill="currentColor" stroke="none"/><rect x="13" y="5.4" width="3.6" height="13.2" rx="1.8" fill="currentColor" stroke="none"/></svg>')
-    + '<span class="tbtn-lbl"></span>';
-  $('pauseBtn').querySelector('.tbtn-lbl').textContent=pl;
-  $('pauseBtn').title=pl; $('pauseBtn').setAttribute('aria-label',pl);
+  $('pauseBtn').innerHTML=ic(p?'play':'pause');
+  $('pauseBtn').setAttribute('aria-label',t(p?'resume':'pause'));
 }
-/* digit, corner marks, centre marks */
-const MODES_IN=['digit','note','mid'];
-/* shift or command borrows a mode while held */
-let heldMode='';
-const activeMode=()=>heldMode||inputMode;
-function setHeldMode(m){
-  if(heldMode===m) return;
-  heldMode = modeAllowed(m)? m : '';
-  syncModeButtons();
-  if(cur() && !$('game').classList.contains('hidden')) renderBoard();
+
+/* pad: digit, corner and centre marks, keys, tools */
+const MODES_IN=['digit','corner','center'];
+function modesFor(){
+  if(SP.kind==='tokki') return ['clover','bunny'];
+  if(SP.kind==='num') return ['digit','corner'];
+  return MODES_IN;
 }
-function modeAllowed(m){
-  if(!SPEC) return m==='digit';
-  if(SPEC.kind==='tokki') return false;
-  if(SPEC.kind==='num') return m==='digit'||m==='note';
-  return MODES_IN.indexOf(m)>=0;
+function setInput(m){
+  if(SP.kind==='tokki'){ U.tool=m; return paintPad() }
+  if(!modesFor().includes(m)) return;
+  U.input=m; paint();
 }
-function syncModeButtons(){
-  const m=activeMode();
-  $('digitBtn').classList.toggle('on', m==='digit');
-  $('notesBtn').classList.toggle('on2', m==='note');
-  $('midBtn').classList.toggle('on3', m==='mid');
-  document.body.classList.toggle('mode-note', m==='note');
-  document.body.classList.toggle('mode-mid', m==='mid');
-  syncPickerMode();
+function cycleInput(){ const l=modesFor(); const cur=SP.kind==='tokki'? U.tool : U.input; setInput(l[(l.indexOf(cur)+1)%l.length]) }
+function keyList(col){
+  if(SP.kind==='tokki') return [];
+  if(SP.kind==='num') return col? [1,2,3,4,5,6,7,8,9,0] : [1,2,3,4,5,6,7,8,9,-1,0,-1];
+  const k=[];
+  for(let v=1;v<=SP.maxD;v++) k.push(v);
+  if(!col && SP.maxD===10) k.splice(9,0,-1),k.push(-1);
+  return k;
 }
-function setMode(m){
-  if(!modeAllowed(m)) return;
-  inputMode=m;
-  syncModeButtons();
-  if(cur() && !$('game').classList.contains('hidden')) renderBoard();
-}
-function cycleMode(){
-  const list=MODES_IN.filter(modeAllowed);
-  if(!list.length) return;
-  const k=list.indexOf(inputMode);
-  setMode(list[(k+1)%list.length]);
-}
-function applyControls(){
-  const num=SPEC && SPEC.kind==='num', tokki=SPEC && SPEC.kind==='tokki';
-  $('hintBtn').classList.toggle('hidden', !SES.settings.showHint);
-  $('autoNotesBtn').classList.toggle('hidden', !SES.settings.showAuto || num || tokki);
-  $('digitBtn').classList.toggle('hidden', tokki);
-  $('midBtn').classList.toggle('hidden', num || tokki);
-  $('notesBtn').classList.toggle('hidden', tokki);
-  $('eraseBtn').classList.toggle('hidden', tokki);
-  /* a row with no visible button goes away */
-  for(const id of ['ctlModes','ctlActs']){
-    const row=$(id); if(!row) continue;
-    row.classList.toggle('hidden', !row.querySelector('.ctl:not(.hidden)'));
+function renderPad(){
+  if(!SP) return;
+  const col=document.body.classList.contains('col');
+  const pad=$('pad');
+  pad.className='pad'; pad.classList.remove('hidden');
+  const glyph=m=> m==='clover'? CLOVER.replace('class="clover"','fill="currentColor"') : m==='bunny'? FACES[0].replace('class="face f0"','fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"') : GLYPH[m];
+  const label=m=> SP.kind==='num'&&m==='corner'? t('corner') : t(m);
+  let h=`<div class="modes" id="modes">${modesFor().map(m=>`<button data-m="${m}"><span class="gl">${glyph(m)}</span>${label(m)}</button>`).join('')}</div>`;
+  const keys=keyList(col);
+  if(keys.length){
+    const kc=col? (keys.length<=9? keys.length : Math.ceil(keys.length/2)) : 3;
+    h+=`<div class="keys${col&&keys.length>9?' two':''}" id="keys" style="--kc:${kc};--kr:${Math.ceil(keys.length/kc)}">`+
+      keys.map(v=>v<0? '<span class="key blank"></span>' : `<button type="button" class="key${v>9?' d2':''}" data-v="${v}">${v}<small aria-hidden="true"></small></button>`).join('')+'</div>';
   }
+  const tools=[['undo','undo'],['redo','redo']];
+  if(SP.kind!=='tokki') tools.push(['erase','erase']);
+  if(SES.settings.autoBtn && digitKind() && SP.maxD<=9) tools.push(['auto','wand']);
+  if(SES.settings.hintBtn) tools.push(['hint','bulb']);
+  h+=`<div class="tools" id="tools">${tools.map(([k,i])=>`<button class="tool" data-t="${k}">${ic(i)}${t(k)}</button>`).join('')}</div>`;
+  pad.innerHTML=h;
+  if(col){ const k=$('keys'), tl=$('tools'); if(k) pad.insertBefore(tl,k) }
+  paintPad();
+}
+function paintPad(){
+  if(!G||!SP||G.done) return;
+  const m=SP.kind==='tokki'? U.tool : U.mode();
+  document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  const keys=$('keys');
+  if(keys){
+    keys.classList.toggle('mode-note',m==='corner'); keys.classList.toggle('mode-mid',m==='center');
+    const show=SES.settings.counts && digitKind();
+    const left={};
+    if(digitKind()){ for(const v of G.sol) left[v]=(left[v]||0)+1; for(const v of G.val) if(v) left[v]--; }
+    keys.querySelectorAll('.key[data-v]').forEach(k=>{
+      const v=+k.dataset.v, l=left[v];
+      k.querySelector('small').textContent= show&&l>0? l : '';
+      k.classList.toggle('done', digitKind() && l<=0);
+      k.classList.toggle('hl', v>0 && U.hl===v);
+    });
+  }
+  const tb=q=>document.querySelector(`#tools [data-t="${q}"]`);
+  if(tb('undo')) tb('undo').disabled=!U.undo.length;
+  if(tb('redo')) tb('redo').disabled=!U.redo.length;
+  const mi=$('gMist'), lim=SES.settings.limit&&G.instant&&!G.noLimit;
+  if(!G.instant){ mi.className='mist hidden' }
+  else if(lim){ mi.className='mist'; mi.innerHTML=[0,1,2].map(k=>`<i${k<G.mistakes?' class="on"':''}></i>`).join('') }
+  else { mi.className='mist n'; mi.innerHTML=`<b class="num">${G.mistakes}</b>` }
+  mi.setAttribute('aria-label',t('mistakes')+' '+G.mistakes);
+}
+
+/* rail beside the board on a wide screen, a tray under it on a phone or upright tablet */
+function isCol(){ return innerWidth<720 || (innerHeight>innerWidth && innerWidth<1100) }
+function layoutGame(){
+  const col=isCol(), was=document.body.classList.contains('col');
+  document.body.classList.toggle('col',col);
+  /* on a phone the timer goes under the title */
+  const tm=$('gTime');
+  if(col&&tm.parentNode.className!=='sub') document.querySelector('.gbar .sub').appendChild(tm);
+  if(!col&&tm.parentNode.className==='sub') document.querySelector('.gbar .div').after(tm);
+  if(G&&!G.done&&col!==was) renderPad();
+  fitBoard();
 }

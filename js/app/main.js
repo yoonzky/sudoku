@@ -1,534 +1,125 @@
 'use strict';
 
-/* how far a finger may travel before a tap turns into a drag */
-const TAP_SLOP=14;
-let tapX=0, tapY=0, tapIdx=-1;
-let sweepOn=false, sweepSeen=null, sweepFrom=-1;
-let chainOn=false, chainPrev=-1, chainLast=0;
-let runOn=false, runFrom=-1, runAdd=false;
-/* a quick finger skips cells, so the gap between points is walked over */
-const dragAt={x:0,y:0}; let dragStep=12;
-function dragCells(e,fn){
-  const raw=e.getCoalescedEvents? e.getCoalescedEvents() : null;
-  const evs=(raw&&raw.length)? raw : [e];
-  let px=dragAt.x, py=dragAt.y;
-  for(const ev of evs){
-    const dx=ev.clientX-px, dy=ev.clientY-py;
-    const steps=Math.max(1,Math.ceil(Math.hypot(dx,dy)/dragStep));
-    for(let k=1;k<=steps;k++){
-      const el=document.elementFromPoint(px+dx*k/steps, py+dy*k/steps);
-      const cell=el&&el.closest&&el.closest('.cell');
-      if(cell) fn(+cell.dataset.i);
-    }
-    px=ev.clientX; py=ev.clientY;
-  }
-  dragAt.x=px; dragAt.y=py;
+const DARK_Q=matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(){
+  const th=SES.settings.theme, dark= th==='dark' || (th==='auto' && DARK_Q.matches);
+  document.documentElement.dataset.theme= dark? 'dark' : 'light';
+  const meta=$('metaTheme'); if(meta) meta.content= dark? '#131417' : '#eceef2';
 }
-function dragStart(i,e){
-  dragAt.x=e.clientX; dragAt.y=e.clientY;
-  const w=cells[i]? cells[i].getBoundingClientRect().width : 0;
-  dragStep=Math.max(6, w*0.4 || 12);
+function applyLang(){
+  document.documentElement.lang=SES.settings.lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n) });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el=>el.setAttribute('aria-label',t(el.dataset.i18nAria)));
 }
-/* on a mac the command key stands where control stands elsewhere */
-const MOD_MAC=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'');
-const pickMod=e=> MOD_MAC? e.metaKey : e.ctrlKey;
-const modeOfEvent=e=> e.shiftKey? 'note' : pickMod(e)? 'mid' : '';
-/* either modifier adds to the run instead of starting a new one */
-const addMod=e=> e.shiftKey || pickMod(e);
-function chainStop(){ chainOn=false; chainPrev=-1; chainLast=0 }
-function tapCancel(){ tapIdx=-1 }
-function sweepStop(){ sweepOn=false; sweepSeen=null; sweepFrom=-1 }
-
-
-function tapCell(i){
-  const g=cur(); if(!g||g.paused) return;
-  closePicker();
-  try{ $('board').focus({preventScroll:true}) }catch(e){}
-  if(msel.size){ msel.clear() }
-  if(SPEC.kind==='tokki'){
-    sel=i;
-    if(lastPointerType==='touch') tokkiTap(i); else tokkiMark(i);
-    return;
-  }
-  if(i!==sel) numFlush();
-  if(SES.settings.digitFirst && armed && !g.done && !g.given[i] && SPEC.kind!=='num'){
-    sel=i; inputDigit(armed); hlDigit=armed; renderBoard(); return;
-  }
-  sel=i; hlDigit=0; renderBoard();
+function showScreen(name){
+  $('home').classList.toggle('hidden',name!=='home');
+  $('game').classList.toggle('hidden',name!=='game');
+  document.body.classList.toggle('in-game',name==='game');
+  if(name==='home') scrollTo(0,0);
 }
 
-$('board').addEventListener('pointerdown',e=>{
-  const el=e.target.closest('.cell'); if(!el) return;
-  lastPointerType=e.pointerType||'mouse';
-  const g=cur(); if(!g||g.paused) return;
-  const i=+el.dataset.i;
-  if(SPEC.kind==='tokki'){
-    if(e.button===2) return;
-    /* a zoomed board scrolls under the finger, so a drag leaves no marks */
-    if(!$('boardPan').classList.contains('pan')){
-      sweepOn=true; sweepSeen=new Set(); sweepFrom=i;
-    }
-    tapIdx=i; tapX=e.clientX; tapY=e.clientY;
-    dragStart(i,e);
-    if(e.pointerType!=='touch') tapCell(i);
-    return;
-  }
-  if(SPEC.kind==='num' && e.pointerType!=='touch' && e.button!==2 && g.values[i]){
-    chainOn=true; chainPrev=i; chainLast=g.values[i];
-    tapX=e.clientX; tapY=e.clientY;
-    dragStart(i,e);
-  }
-  /* the right button belongs to the pad at the cell */
-  if(e.button===2) return;
-  /* a drag picks a run; with a modifier it adds to what is picked */
-  if(e.pointerType!=='touch' && e.button===0 && SPEC.kind!=='num'){
-    runOn=true; runFrom=i; runAdd=addMod(e); tapX=e.clientX; tapY=e.clientY; dragStart(i,e);
-    if(runAdd){
-      e.preventDefault();
-      closePicker();
-      if(msel.has(i)) msel.delete(i); else msel.add(i);
-      sel=i; hlDigit=0;
-      renderBoard();
-      if(msel.size>1) showMultiHint();
-      return;
-    }
-  }
-  if(e.pointerType!=='touch'){ tapCell(i); return }
-  tapIdx=i; tapX=e.clientX; tapY=e.clientY;
-});
-$('board').addEventListener('pointermove',e=>{
-  if(sweepOn){
-    if(Math.abs(e.clientX-tapX)<TAP_SLOP && Math.abs(e.clientY-tapY)<TAP_SLOP) return;
-    if(sweepFrom>=0 && !sweepSeen.size){
-      sweepSeen.add(sweepFrom);
-      tokkiSweep(sweepFrom);
-    }
-    dragCells(e,j=>{
-      if(sweepSeen.has(j)) return;
-      sweepSeen.add(j);
-      tapIdx=-1;
-      tokkiSweep(j);
-    });
-    return;
-  }
-  if(chainOn){
-    dragCells(e,j=>{
-      if(j===chainPrev || !SPEC.nbr[chainPrev] || SPEC.nbr[chainPrev].indexOf(j)<0) return;
-      if(numChain(j,chainLast+1)){ chainLast++; chainPrev=j }
-    });
-    return;
-  }
-  if(runOn){
-    if(Math.abs(e.clientX-tapX)<TAP_SLOP && Math.abs(e.clientY-tapY)<TAP_SLOP) return;
-    if(!msel.size && runFrom>=0) msel.add(runFrom);
-    let grew=false;
-    dragCells(e,j=>{ if(!msel.has(j)){ msel.add(j); grew=true } });
-    if(grew){ renderBoard(); showMultiHint() }
-    return;
-  }
-  if(tapIdx>=0 && (Math.abs(e.clientX-tapX)>TAP_SLOP || Math.abs(e.clientY-tapY)>TAP_SLOP)) tapCancel();
-});
-$('board').addEventListener('pointerup',e=>{
-  if(runOn){
-    const added=runAdd; runOn=false; runAdd=false;
-    if(!added && msel.size<=1){ msel.clear(); renderBoard() }
-  }
-  const i=tapIdx; tapCancel();
-  const swept=sweepOn && sweepSeen && sweepSeen.size>0;
-  sweepStop(); chainStop();
-  if(swept){ sel=-1; renderBoard() }
-  if(i<0 || swept || e.pointerType!=='touch') return;
-  if(Math.abs(e.clientX-tapX)>TAP_SLOP || Math.abs(e.clientY-tapY)>TAP_SLOP) return;
-  tapCell(i);
-});
-for(const ev of ['pointercancel','pointerleave']) $('board').addEventListener(ev,()=>{
-  tapCancel(); sweepStop(); chainStop();
-  if(runOn){ const added=runAdd; runOn=false; runAdd=false;
-    if(!added && msel.size<=1){ msel.clear(); renderBoard() } }
-});
-/* buttons act on click and need no focus from a press */
-for(const sel of ['.controls','.numpad','.topbar','header']){
-  const el=document.querySelector(sel);
-  if(el) el.addEventListener('pointerdown',e=>{ if(e.target.closest('button')) e.preventDefault() });
+function openRules(m){
+  openSheet(`<div class="msheet"><span class="art" style="--art:${innerWidth<=640?200:240}px">${modeArt(m,innerWidth<=640?200:240)}</span><div><h1>${t('m_'+m)}</h1><div class="grp">${t(groupOf(m))}</div><p>${t('r_'+m)}</p></div></div>`,{cls:'rules'});
 }
-function showMultiHint(){
-  try{
-    if(localStorage.getItem('sudoku-multiHint')) return;
-    localStorage.setItem('sudoku-multiHint','1');
-  }catch(e){}
-  toast(t('multiHint'));
+
+function swRow(key,title,desc,dis){
+  return `<label class="li"><span class="tx">${t(title)}<small>${t(desc)}</small></span><span class="sw" style="margin-left:auto"><input type="checkbox" data-opt="${key}"${SES.settings[key]?' checked':''}${dis?' disabled':''}><i></i></span></label>`;
 }
-$('boardPan').addEventListener('scroll',()=>{ tapCancel(); sweepStop(); chainStop(); syncMini() });
-$('miniMap').addEventListener('pointerdown',e=>{
-  e.preventDefault(); e.stopPropagation();
-  const m=$('miniMap'), pan=$('boardPan'), r=m.getBoundingClientRect();
-  const k=$('board').offsetWidth/SPEC.W;
-  /* the tapped point becomes the centre of the window */
-  const cx=((e.clientX-r.left)/r.width*(SPEC.W+1)-.5)*k, cy=((e.clientY-r.top)/r.height*(SPEC.H+1)-.5)*k;
-  pan.scrollTo({left:cx-pan.clientWidth/2, top:cy-pan.clientHeight/2, behavior:'smooth'});
-});
-$('zoomBtn').addEventListener('click',()=>setZoom(!boardZoom));
-
-/* arriving by keyboard picks the first cell: the grid draws no ring */
-$('board').addEventListener('focus',()=>{
-  if(sel>=0||msel.size||!SPEC||!cur()) return;
-  try{ if(!$('board').matches(':focus-visible')) return }catch(e){ return }
-  sel=0; renderBoard();
-});
-$('board').addEventListener('dblclick',e=>{
-  const el=e.target.closest('.cell');
-  if(el && lastPointerType!=='touch') openPicker(+el.dataset.i);
-});
-$('board').addEventListener('contextmenu',e=>{
-  const el=e.target.closest('.cell'); if(!el) return;
-  e.preventDefault();
-  if(SPEC && SPEC.kind==='tokki'){ sel=+el.dataset.i; tokkiSeat(sel); return }
-  if(lastPointerType!=='touch') openPicker(+el.dataset.i);
-});
-$('board').addEventListener('animationend',e=>{
-  if(e.animationName==='pop') e.target.classList.remove('pop');
-});
-
-$('modeList').addEventListener('click',e=>{
-  const b=e.target.closest('[data-mode]'); if(!b) return;
-  pickMode(b.dataset.mode);
-});
-$('diffGrid').addEventListener('click',e=>{
-  const b=e.target.closest('.diff-btn'); if(!b) return;
-  closeSheet();
-  newGame(pickedMode,b.dataset.diff);
-});
-$('sheetBg').addEventListener('click',closeSheet);
-(function(){
-  const mp=$('modePanel'), grab=$('sheetGrab'), bg=$('sheetBg');
-  const EASE='cubic-bezier(.2,.7,.3,1)';
-  let y0=null, sy=0, h=1, moved=false, trail=[], tid=0;
-  const set=y=>{
-    mp.style.transform=`translateY(${y}px)`;
-    bg.style.opacity=Math.min(1,Math.max(0,1-y/h));
+function keysHTML(){
+  const M=MAC? 'Cmd' : 'Ctrl';
+  const row=(a,k)=>`<div class="li"><span class="tx">${t(a)}</span><span class="meta">${k}</span></div>`;
+  const kb=s=>s.split(' ').map(x=>x==='/'? ` ${t('kOr')} ` : x==='+'? ' + ' : `<kbd>${x}</kbd>`).join('');
+  return `<div class="lcap">${t('sGame')}</div><div class="list">`+
+    row('kDigit',kb('1 ... 9'))+row('kBig',kb('A B C'))+row('kCorner',kb('Shift + 1'))+row('kCenter',kb(M+' + 1'))+row('kErase',kb('Backspace / 0'))+
+    '</div><div class="list" style="margin-top:12px">'+
+    row('kModes',kb('Z X C'))+row('kNext',`<kbd>${t('kSpace')}</kbd>`)+row('kMulti',kb(M)+' + '+t('kClick')+` ${t('kOr')} `+t('kDrag'))+
+    '</div><div class="list" style="margin-top:12px">'+
+    row('kUndo',kb(M+' + Z'))+row('kRedo',kb(M+' + Y'))+row('kHint',kb('H'))+row('kAuto',kb('A'))+
+    '</div><div class="list" style="margin-top:12px">'+
+    row('kMove',kb('Arrows').replace('Arrows','&#8592; &#8593; &#8595; &#8594;'))+row('kRules',kb('R'))+row('kPause',kb('P'))+row('kBack',kb('Esc'))+'</div>';
+}
+let setTab='view';
+function openSettings(){
+  const tabs=[['view','sView'],['game','sGame']].concat(COARSE? [] : [['keys','sKeys']]);
+  const body=()=>{
+    const s=SES.settings;
+    if(setTab==='view') return `<div class="lcap">${t('theme')}</div><div class="seg" data-set="theme">${[['auto','thAuto'],['light','thLight'],['dark','thDark']].map(([v,k])=>`<button data-v="${v}" class="${s.theme===v?'on':''}">${t(k)}</button>`).join('')}</div>
+      <div class="lcap">${t('lang')}</div><div class="seg" data-set="lang"><button data-v="ru" class="${s.lang==='ru'?'on':''}">Русский</button><button data-v="en" class="${s.lang==='en'?'on':''}">English</button></div>`;
+    if(setTab==='game') return `<div class="lcap">${t('grpCheck')}</div><div class="list">${swRow('instant','instantT','instantD')}${swRow('limit','limitT','limitD',!s.instant)}</div>
+      <div class="lcap">${t('grpBoard')}</div><div class="list">${swRow('peers','peersT','peersD')}${swRow('same','sameT','sameD')}</div>
+      <div class="lcap">${t('grpPad')}</div><div class="list">${swRow('counts','countsT','countsD')}${swRow('hintBtn','hintT','hintD')}${swRow('autoBtn','autoT','autoD')}</div>`;
+    return keysHTML();
   };
-  /* above the open position the sheet gives a little and resists more the further it goes */
-  const band=d=>d*h*.55/(h+.55*Math.abs(d));
-  const settle=(close,T)=>{
-    mp.style.transition=`transform ${T}s ${EASE}, visibility 0s ${close?T:0}s`;
-    bg.style.transition=`opacity ${T}s ${EASE}`;
-    mp.style.transform=bg.style.opacity='';
-    if(close) closeSheet();
-    clearTimeout(tid);
-    tid=setTimeout(()=>{ mp.style.transition=bg.style.transition='' },T*1000+50);
-  };
-  grab.addEventListener('pointerdown',e=>{
-    h=mp.offsetHeight||1;
-    /* caught mid-flight the sheet stays where it is on screen */
-    const y=Math.max(0,new DOMMatrix(getComputedStyle(mp).transform).m42);
-    clearTimeout(tid);
-    document.body.classList.add('sheet');
-    mp.style.transition=bg.style.transition='none';
-    set(y);
-    y0=e.clientY-y; sy=e.clientY; moved=false; trail=[[e.clientY,e.timeStamp]];
-    try{ grab.setPointerCapture(e.pointerId) }catch(err){}
+  const html=()=>`<div class="sh-title">${t('settings')}</div><div class="seg tabs" style="margin-top:14px">${tabs.map(([k,n])=>`<button data-tab="${k}" class="${setTab===k?'on':''}">${t(n)}</button>`).join('')}</div><div id="setBody">${body()}</div>`;
+  const sh=openSheet(html(),{cls:'narrow'});
+  const redraw=()=>{ sh.querySelector('.sh-body').innerHTML=html(); if(SH&&!SH.phone) place(SH) };
+  sh.addEventListener('click',e=>{
+    const tb=e.target.closest('[data-tab]');
+    if(tb){ setTab=tb.dataset.tab; redraw(); return }
+    const sb=e.target.closest('[data-set] button');
+    if(sb){
+      const k=sb.parentNode.dataset.set;
+      SES.settings[k]=sb.dataset.v; saveSoon();
+      if(k==='theme') applyTheme();
+      if(k==='lang'){ applyLang(); renderHome(); if(G&&SP){ $('gMode').textContent=t('m_'+G.mode); $('gDiff').textContent=t('d_'+G.diff); setPaused(G.paused); if(!G.done) renderPad(); paint() } }
+      redraw();
+    }
   });
-  grab.addEventListener('pointermove',e=>{
-    if(y0==null) return;
-    if(Math.abs(e.clientY-sy)>6) moved=true;
-    const dy=e.clientY-y0;
-    set(dy>0? dy : band(dy));
-    trail.push([e.clientY,e.timeStamp]);
-    if(trail.length>5) trail.shift();
+  sh.addEventListener('change',e=>{
+    const k=e.target.dataset.opt; if(!k) return;
+    SES.settings[k]=e.target.checked; saveSoon();
+    if(k==='instant') redraw();
+    if(G&&SP&&!G.done){ if(k==='hintBtn'||k==='autoBtn') renderPad(); paint() }
   });
-  const end=e=>{
-    if(y0==null) return;
-    const dy=Math.max(0,e.clientY-y0); y0=null;
-    setTimeout(()=>{ moved=false },0);
-    if(!moved){ mp.style.transition=bg.style.transition=''; mp.style.transform=bg.style.opacity=''; return }
-    const [py,pt]=trail[0], dt=e.timeStamp-pt;
-    const v=dt>0? (e.clientY-py)/dt*1000 : 0;
-    /* a flick is judged by where it would come to rest, v/1000*d/(1-d) at d=.99 */
-    const close=dy+v*.099>Math.min(h*.3,110);
-    /* this ease starts at 3.5x its mean speed, so the time is picked to keep the finger's speed */
-    const dist=close? h*1.03-dy : dy, sp=close? v : -v;
-    settle(close, sp>0? Math.min(.32,Math.max(.12,3.5*dist/sp)) : .26);
+}
+
+function openStats(){
+  const all=statsFor(null,null);
+  let h=`<div class="sh-title">${t('stats')}</div>`;
+  if(!all.solved) h+=`<p class="empty">${t('statsEmpty')}</p>`;
+  else {
+    h+=`<div class="st-sum"><div><b class="num">${all.solved}</b><span>${t('statsSolved')}</span></div><div><b class="num">${all.clean}</b><span>${t('statsClean')}</span></div><div><b class="num">${fmtTime(all.total)}</b><span>${t('statsTime')}</span></div></div>`;
+    h+=`<div class="st-table"><div class="st-row st-hd"><span></span>${DIFFS.map(d=>`<span>${t('d_'+d)}</span>`).join('')}</div>`;
+    for(const [cap,ids] of GROUPS){
+      const rows=ids.filter(m=>statsFor(m,null).solved);
+      if(!rows.length) continue;
+      h+=`<div class="st-cap">${t(cap)}</div>`;
+      for(const m of rows) h+=`<div class="st-row"><span class="nm">${modeArt(m,24)}${t('m_'+m)}</span>${DIFFS.map(d=>{ const s=statsFor(m,d); return `<span class="num">${s.best!=null? fmtTime(s.best) : ''}${s.solved>1? `<small>${s.solved}</small>` : ''}</span>` }).join('')}</div>`;
+    }
+    h+=`</div><button class="link danger" id="resetStats">${t('statsReset')}</button>`;
+  }
+  const sh=openSheet(h,{cls:'narrow stats'});
+  const rb=sh.querySelector('#resetStats');
+  if(rb) rb.onclick=async()=>{
+    if(!(await ask({text:t('statsResetQ'), ok:t('statsReset'), danger:true}))) return;
+    LOG=[]; saveLog(); closeSheet(true); renderHome(); toast(t('statsResetDone'));
   };
-  grab.addEventListener('pointerup',end);
-  grab.addEventListener('pointercancel',()=>{ if(y0==null) return; y0=null; moved=false; settle(false,.26) });
-  grab.addEventListener('click',()=>{ if(!moved) closeSheet() });
-})();
-$('contPick').addEventListener('click',contPickStart);
-$('contCancel').addEventListener('click',contPickStop);
-$('contAll').addEventListener('click',()=>contMark(true));
-$('contNone').addEventListener('click',()=>contMark(false));
-$('contDel').addEventListener('click',contDelete);
-$('contList').addEventListener('click',async e=>{
-  const del=e.target.closest('.cont-x');
-  if(del){
-    e.stopPropagation();
-    if(await askConfirm(t('delGame'))){
-      const k=+del.dataset.del;
-      SES.games.splice(k,1);
-      /* the pointer follows the list when a game is dropped */
-      if(SES.cur===k) SES.cur=-1;
-      else if(SES.cur>k) SES.cur--;
-      persistNow(); renderHome();
-    }
-    return;
-  }
-  const card=e.target.closest('.cont-card');
-  if(!card) return;
-  if(contSel){ contToggle(card.dataset.id); return }
-  const open=e.target.closest('.cont-open');
-  if(open) openGame(+open.dataset.idx);
-});
-$('poolOpen').addEventListener('click',openPool);
-$('poolAll').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=true));
-$('poolNone').addEventListener('click',()=>document.querySelectorAll('#poolGrid input').forEach(i=>i.checked=false));
-$('poolClose').addEventListener('click',()=>{ if(savePool()) $('poolModal').classList.add('hidden') });
-
-/* ?m= keeps the mode, ?m=&d= deals the game at once */
-function syncUrl(mode,diff){
-  if(!history.replaceState) return;
-  const q = mode? '?m='+mode+(diff? '&d='+diff : '') : location.pathname;
-  try{ history.replaceState(null,'',q) }catch(e){}
-}
-function goHome(){ numFlush(); clearWin(); closePicker(); stopTimer(); persistCache();
-  show('home'); renderHome(); syncUrl(pickedMode) }
-$('backBtn').addEventListener('click',goHome);
-$('rulesBtn').addEventListener('click',openRules);
-$('rulesClose').addEventListener('click',()=>$('rulesModal').classList.add('hidden'));
-$('pauseBtn').addEventListener('click',()=>{ const g=cur(); if(g) setPaused(!g.paused) });
-$('pauseOverlay').addEventListener('click',()=>setPaused(false));
-async function restartGame(){
-  const g=cur(); if(!g) return;
-  if(!await askConfirm(t('restartConfirm'))) return;
-  const n=g.solution.length;
-  g.values=g.solution.map((v,i)=>g.given[i]? v : 0);
-  g.notes=Array.from({length:n},()=>[]);
-  g.mid=Array.from({length:n},()=>[]);
-  g.endErr=[]; g.wasFull=false;
-  g.time=0; g.mistakes=0; g.hints=0; g.done=false; g.noLimit=false; g.usedAssist=false;
-  undoStack=[]; redoStack=[]; sel=-1; msel.clear(); hlDigit=0;
-  setPaused(false); renderBoard(); startTimer(); persistCache();
-}
-$('restartBtnTop').addEventListener('click',restartGame);
-$('undoBtn').addEventListener('click',undo);
-$('redoBtn').addEventListener('click',redo);
-$('eraseBtn').addEventListener('click',eraseCell);
-$('hintBtn').addEventListener('click',hint);
-$('autoNotesBtn').addEventListener('click',autoNotes);
-$('digitBtn').addEventListener('click',()=>setMode('digit'));
-$('notesBtn').addEventListener('click',()=>setMode('note'));
-$('midBtn').addEventListener('click',()=>setMode('mid'));
-$('winHome').addEventListener('click',goHome);
-$('winAgain').addEventListener('click',()=>newGame(lastRequest.mode,lastRequest.diff));
-$('loseNew').addEventListener('click',()=>{ $('loseModal').classList.add('hidden');
-  SES.games.splice(SES.cur,1); SES.cur=-1; persistNow(); newGame(lastLost.mode,lastLost.diff) });
-$('loseContinue').addEventListener('click',()=>{ $('loseModal').classList.add('hidden');
-  const g=cur(); if(g){ g.noLimit=true; setPaused(false); renderBoard(); persistCache() } });
-
-$('statsBtn').addEventListener('click',openStats);
-$('statsClose').addEventListener('click',()=>$('statsModal').classList.add('hidden'));
-$('setBtn').addEventListener('click',()=>openSettings());
-$('setClose').addEventListener('click',()=>$('setModal').classList.add('hidden'));
-$('resetStats').addEventListener('click',resetStats);
-document.querySelectorAll('.stabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
-$('optInstant').addEventListener('change',e=>{ SES.settings.instant=e.target.checked;
-  $('optLimit').disabled=!SES.settings.instant; persistCache() });
-$('optLimit').addEventListener('change',e=>{ SES.settings.limit=e.target.checked; persistCache();
-  if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
-$('optDbl').addEventListener('change',e=>{ SES.settings.dblPick=e.target.checked;
-  if(!e.target.checked) closePicker(); persistCache() });
-$('optSame').addEventListener('change',e=>{ SES.settings.highlightSame=e.target.checked; persistCache();
-  if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
-$('optPeers').addEventListener('change',e=>{ SES.settings.highlightPeers=e.target.checked; persistCache();
-  if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
-$('optDigitFirst').addEventListener('change',e=>{ SES.settings.digitFirst=e.target.checked;
-  if(!e.target.checked){ armed=0; hlDigit=0 } persistCache();
-  if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
-$('optCounts').addEventListener('change',e=>{ SES.settings.showCounts=e.target.checked; persistCache();
-  if(cur()&&!$('game').classList.contains('hidden')) renderBoard() });
-$('optHintBtn').addEventListener('change',e=>{ SES.settings.showHint=e.target.checked; applyControls(); persistCache() });
-$('optAutoBtn').addEventListener('change',e=>{ SES.settings.showAuto=e.target.checked; applyControls(); persistCache() });
-document.querySelectorAll('#langseg button').forEach(b=>b.addEventListener('click',()=>{
-  SES.settings.lang=b.dataset.l; applyLang(); refreshPickerLang(); persistCache();
-  if(cur()&&!$('game').classList.contains('hidden')){ renderBoard(); updatePickHint() }
-}));
-for(const id of ['statsModal','setModal','poolModal','rulesModal']){
-  $(id).addEventListener('click',e=>{ if(e.target.id===id){
-    if(id==='poolModal'){ if(!savePool()) return }
-    $(id).classList.add('hidden');
-  }});
-}
-document.addEventListener('pointerdown',e=>{
-  const pk=$('picker');
-  if(!pk.classList.contains('hidden')&&!pk.contains(e.target)) closePicker();
-  if($('game').classList.contains('hidden')||sel<0) return;
-  if(e.target.closest('#board,#numpad,.controls,#picker,.topbar,header,.modal-bg')) return;
-  numFlush(); sel=-1; msel.clear(); hlDigit=0; armed=0; renderBoard();
-});
-
-const LETTER_DIGIT={KeyA:10,KeyB:11,KeyC:12};
-$('genOverlay').addEventListener('click',()=>{ if(cancelGen()) toast(t('genStopped')) });
-const KBD_SEEN='sudoku-kbd';
-function markKeyboard(){
-  if(document.body.classList.contains('has-kbd')) return;
-  document.body.classList.add('has-kbd');
-  try{ localStorage.setItem(KBD_SEEN,'1') }catch(e){}
-}
-try{ if(localStorage.getItem(KBD_SEEN)) document.body.classList.add('has-kbd') }catch(e){}
-window.addEventListener('keydown',e=>{ if(/^(Key[A-Z]|Digit[0-9]|Arrow)/.test(e.code)) markKeyboard() });
-
-const trackMod=e=>{
-  if($('game').classList.contains('hidden')) return setHeldMode('');
-  setHeldMode(modeOfEvent(e));
-};
-window.addEventListener('keydown',trackMod);
-window.addEventListener('keyup',trackMod);
-window.addEventListener('blur',()=>setHeldMode(''));
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape' && cancelGen()){ toast(t('genStopped')); return }
-  const modalOpen=['loseModal','statsModal','setModal','poolModal','rulesModal']
-    .some(id=>!$(id).classList.contains('hidden'));
-  if(modalOpen){
-    if(e.key==='Escape'){
-      $('statsModal').classList.add('hidden'); $('setModal').classList.add('hidden');
-      $('rulesModal').classList.add('hidden');
-      if(!$('poolModal').classList.contains('hidden') && savePool()) $('poolModal').classList.add('hidden');
-    }
-    return;
-  }
-  if($('game').classList.contains('hidden')){
-    if(e.key==='Escape'&&sheetOpen()) closeSheet();
-    return;
-  }
-  const g=cur(); if(!g) return;
-  const code=e.code;
-  /* the ring stays with the board, not with the last button pressed */
-  const act=document.activeElement;
-  if(code!=='Tab' && act && act.tagName==='BUTTON' && act.closest('#game')){
-    act.blur();
-    try{ $('board').focus({preventScroll:true}) }catch(err){}
-  }
-  if((e.ctrlKey||e.metaKey)&&code==='KeyZ'){ e.preventDefault(); e.shiftKey? redo():undo(); return }
-  if((e.ctrlKey||e.metaKey)&&code==='KeyY'){ e.preventDefault(); redo(); return }
-  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey){
-    const cm=code.match(/^(Digit|Numpad)([1-9])$/);
-    if(cm && SPEC.kind!=='num' && SPEC.kind!=='tokki'){
-      e.preventDefault(); inputDigit(+cm[2],false,true); return;
-    }
-  }
-  if(e.ctrlKey||e.metaKey) return;
-  const dm=code.match(/^(Digit|Numpad)([0-9])$/);
-  if(dm){
-    const d=+dm[2];
-    if(SPEC.kind==='num'){ e.preventDefault(); inputDigit(d); return }
-    if(d>=1){ e.preventDefault(); inputDigit(d,e.shiftKey); return }
-  }
-  if(SPEC.maxD>9 && LETTER_DIGIT[code] && LETTER_DIGIT[code]<=SPEC.maxD){
-    e.preventDefault(); inputDigit(LETTER_DIGIT[code],e.shiftKey); return;
-  }
-  if(e.altKey) return;
-  switch(code){
-    case 'Backspace': case 'Delete': case 'Digit0': case 'Numpad0': eraseCell(); break;
-    case 'KeyZ': setMode('digit'); break;
-    case 'KeyX': setMode('note'); break;
-    case 'KeyC': setMode('mid'); break;
-    case 'Space': e.preventDefault(); cycleMode(); break;
-    case 'KeyH': if(SES.settings.showHint) hint(); break;
-    case 'KeyA': if(SES.settings.showAuto&&SPEC.maxD<=9) autoNotes(); break;
-    case 'KeyR': openRules(); break;
-    case 'KeyP': setPaused(!g.paused); break;
-    case 'Escape':
-      if(!$('picker').classList.contains('hidden')) closePicker();
-      else if(msel.size){ msel.clear(); renderBoard() }
-      else goHome();
-      break;
-    case 'ArrowUp': case 'ArrowDown': case 'ArrowLeft': case 'ArrowRight': {
-      e.preventDefault();
-      if(g.paused) break;
-      numFlush(); moveSel(code);
-      break;
-    }
-  }
-});
-
-function moveSel(code){
-  if(!SPEC) return;
-  if(msel.size) msel.clear();
-  if(sel<0){ sel=0; renderBoard(); return }
-  const step={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[code];
-  let {x,y}=SPEC.cells[sel];
-  for(let k=0;k<Math.max(SPEC.W,SPEC.H)+1;k++){
-    x+=step[0]; y+=step[1];
-    if(x<0||y<0||x>=SPEC.W||y>=SPEC.H) return;
-    const j=cellAt(SPEC,x,y);
-    if(j>=0){ sel=j; hlDigit=0; renderBoard(); return }
-  }
 }
 
-window.addEventListener('beforeunload',persistNow);
-window.addEventListener('pagehide',persistNow);
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){ persistNow(); if(pending.length) saveLog() }
-});
-window.addEventListener('resize',()=>{
-  if(!sheetWidth()) closeSheet();
-  syncRail();
-  snapBoardTwice(); updatePickHint(); placeWinPanel();
-});
-syncRail();
-/* resize does not always fire (window snapping, monitor swap) */
-if(RAIL_Q.addEventListener) RAIL_Q.addEventListener('change',()=>{
-  syncRail(); snapBoardTwice(); placeWinPanel();
-});
-initDialogs();
-/* resizing mid-drag would move cells out from under the finger */
-if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{
-  if(sweepOn||chainOn) return;
-  snapBoard();
-});
-if(document.fonts&&document.fonts.ready) document.fonts.ready.then(snapBoard);
-
-loadCache();
-pickedMode=SES.settings.mode||'tokki';
-buildSwatches();
-applyTheme(); applyLayout(); applyLang();
-renderHome(); show('home');
-if(pending.length) saveLog();
-/* a guest arriving by such a link gets the welcome first */
-function openFromUrl(){
-  const q=new URLSearchParams(location.search);
-  const m=q.get('m'), d=q.get('d');
-  if(!m || (!MODE_IDS.includes(m) && m!=='random')) return;
-  pickMode(m); closeSheet();
-  if(!d || !DIFFS.includes(d)) return;
-  /* reloading must not deal over the game the address points at */
-  const open=SES.cur>=0? SES.games[SES.cur] : null;
-  if(open && !open.done && open.diff===d && (m==='random' || open.mode===m)) return openGame(SES.cur);
-  const idx=SES.games.findIndex(g=>!g.done && g.diff===d && (m==='random' || g.mode===m));
-  if(idx>=0) return openGame(idx);
-  newGame(m,d);
+function boot(){
+  loadStore();
+  applyTheme(); applyLang();
+  DARK_Q.addEventListener('change',applyTheme);
+  bindInput(); bindHome();
+  $('backBtn').addEventListener('click',goHome);
+  $('pauseBtn').addEventListener('click',()=>{ if(G&&!G.done) setPaused(!G.paused) });
+  $('moreBtn').addEventListener('click',e=>openMenu(e.currentTarget,[
+    {icon:'book',label:t('rules'),kb:'R',run:()=>G&&openRules(G.mode)},
+    {icon:'restart',label:t('restart'),run:()=>restartGame()},
+    {icon:'gear',label:t('settings'),run:openSettings}]));
+  $('statsBtn').addEventListener('click',openStats);
+  $('setBtn').addEventListener('click',openSettings);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&SH){ e.preventDefault(); closeSheet() } },true);
+  let rz=0;
+  addEventListener('resize',()=>{
+    cancelAnimationFrame(rz);
+    rz=requestAnimationFrame(()=>{ if(G&&SP&&!$('game').classList.contains('hidden')) layoutGame(); if(SH&&!SH.phone) place(SH) });
+  });
+  addEventListener('pagehide',writeSes);
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) writeSes() });
+  renderHome();
+  showScreen('home');
+  const q=new URLSearchParams(location.search), m=q.get('m'), d=q.get('d');
+  if(m&&(MODE_IDS.includes(m)||m==='random')&&DIFFS.includes(d)) newGame(m,d);
 }
-(function(){
-  /* a browser with storage switched off throws on the first read */
-  let seen=null, saved=null;
-  try{ seen=localStorage.getItem('sudoku-welcomed'); saved=localStorage.getItem(LS_SES) }
-  catch(e){ seen='1' }
-  if(seen||saved) return openFromUrl();
-  const bg=$('welcomeModal');
-  bg.classList.remove('hidden');
-  const done=()=>{
-    try{ localStorage.setItem('sudoku-welcomed','1') }catch(e){}
-    bg.classList.add('hidden');
-    openFromUrl();
-  };
-  const pick=id=>{ SES.settings.theme=id; applyTheme(); persistCache(); done() };
-  $('welLight').onclick=()=>pick('light');
-  $('welDark').onclick=()=>pick('dark');
-  bg.addEventListener('click',e=>{ if(e.target===bg) done() });
-})();
-
-/* takes off the worker an older build registered */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
-  if(window.caches) caches.keys().then(ks=>ks.forEach(k=>caches.delete(k))).catch(()=>{});
-}
+boot();
