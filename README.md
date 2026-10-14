@@ -8,6 +8,8 @@ Eighteen kinds of sudoku in the browser. No accounts, no ads, no build step.
 
 ## Modes
 
+![Killer, Kakuro, Samurai and Suguru on a phone](.github/modes.png)
+
 | Group | Modes |
 |---|---|
 | Plain board | Classic, X-Sudoku, Even-Odd, Windoku, Asterisk, Mosaic |
