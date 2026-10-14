@@ -44,7 +44,7 @@ ru:{
   r_random:'Режим выбирается случайно из набора ниже, уровень задаётся вручную.',
   d_easy:'Лёгкий', d_medium:'Средний', d_hard:'Сложный', d_expert:'Эксперт',
 
-  tagline:'18 видов судоку', about:'О приложении', author:'Автор', srcCode:'Исходный код', srcInfo:'Лицензия AGPL-3.0', continue:'Продолжить', edit:'Изменить', done:'Готово', delGame:'Удалить партию',
+  tagline:'18 видов судоку', about:'О приложении', author:'Автор', srcCode:'Исходный код', continue:'Продолжить', edit:'Изменить', done:'Готово', delGame:'Удалить партию',
   delGameQ:'Удалить эту партию?', delete:'Удалить', cancel:'Отмена',
   stats:'Статистика', settings:'Настройки', random:'Случайная партия',
   best:'рекорд {t}', notPlayed:'не играли', inProgress:'идёт партия', playLv:'Играть', level:'Уровень',
@@ -127,7 +127,7 @@ en:{
   r_random:'The mode is drawn at random from the pool below, the level is set by hand.',
   d_easy:'Easy', d_medium:'Medium', d_hard:'Hard', d_expert:'Expert',
 
-  tagline:'18 kinds of sudoku', about:'About', author:'Author', srcCode:'Source code', srcInfo:'AGPL-3.0 license', continue:'Continue', edit:'Edit', done:'Done', delGame:'Delete game',
+  tagline:'18 kinds of sudoku', about:'About', author:'Author', srcCode:'Source code', continue:'Continue', edit:'Edit', done:'Done', delGame:'Delete game',
   delGameQ:'Delete this game?', delete:'Delete', cancel:'Cancel',
   stats:'Statistics', settings:'Settings', random:'Random game',
   best:'best {t}', notPlayed:'not played', inProgress:'in progress', playLv:'Play', level:'Level',
