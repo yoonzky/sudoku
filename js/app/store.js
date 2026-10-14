@@ -8,7 +8,7 @@ const SYS_LANG=(()=>{ try{
 }catch(e){} return 'ru' })();
 
 const DEF_SETTINGS={theme:'auto', lang:SYS_LANG, instant:true, limit:true, peers:true, same:true, counts:true,
-  hintBtn:false, autoBtn:false, pool:null};
+  tapPlace:true, hintBtn:false, autoBtn:false, pool:null};
 
 let SES={settings:{...DEF_SETTINGS}, games:[]};
 let LOG=[];

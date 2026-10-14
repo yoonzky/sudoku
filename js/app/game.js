@@ -128,7 +128,7 @@ function inputDigit(v,force){
   if(v<1||v>SP.maxD) return;
   if(U.msel.size>1) return inputMulti(v,mode);
   const i=U.sel;
-  if(i<0||G.given[i]){ U.hl = U.hl===v? 0 : v; paint(); return }
+  if(i<0||G.given[i]){ U.hl = U.hl===v? 0 : v; if(U.hl&&SES.settings.tapPlace) onceHint('placeHint'); paint(); return }
   if(mode!=='digit'){
     if(G.val[i]) return;
     pushUndo();

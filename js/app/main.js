@@ -49,7 +49,7 @@ function openSettings(){
       <div class="lcap">${t('about')}</div><div class="list"><a class="li" href="https://yoonzky.github.io/links/" target="_blank" rel="noopener"><span class="tx">${t('author')}</span><span class="meta">yoonzky</span>${ic('chev','chev')}</a><a class="li" href="https://github.com/yoonzky/yoondoku" target="_blank" rel="noopener"><span class="tx">${t('srcCode')}</span><span class="meta">GitHub</span>${ic('chev','chev')}</a><a class="li" href="privacy.html"><span class="tx">${t('privacy')}</span><span class="meta"></span>${ic('chev','chev')}</a></div>`;
     if(setTab==='game') return `<div class="lcap">${t('grpCheck')}</div><div class="list">${swRow('instant','instantT','instantD')}${swRow('limit','limitT','limitD',!s.instant)}</div>
       <div class="lcap">${t('grpBoard')}</div><div class="list">${swRow('peers','peersT','peersD')}${swRow('same','sameT','sameD')}</div>
-      <div class="lcap">${t('grpPad')}</div><div class="list">${swRow('counts','countsT','countsD')}${swRow('hintBtn','hintT','hintD')}${swRow('autoBtn','autoT','autoD')}</div>`;
+      <div class="lcap">${t('grpPad')}</div><div class="list">${swRow('tapPlace','tapPlaceT','tapPlaceD')}${swRow('counts','countsT','countsD')}${swRow('hintBtn','hintT','hintD')}${swRow('autoBtn','autoT','autoD')}</div>`;
     return keysHTML();
   };
   const html=()=>`<div class="sh-title">${t('settings')}</div><div class="seg tabs" style="margin-top:14px">${tabs.map(([k,n])=>`<button data-tab="${k}" class="${setTab===k?'on':''}">${t(n)}</button>`).join('')}</div><div id="setBody">${body()}</div>`;

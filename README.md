@@ -24,6 +24,7 @@ Every mode has four levels and its own records. Random mode deals one of the mod
 - Levels are graded by a solver: Easy needs singles only, Hard needs locked candidates, Expert needs hidden triples and X-wing.
 - Every deal has exactly one solution.
 - Three ways to fill a cell: digit, corner marks, centre marks.
+- Digit first: pick a digit on the pad, then tap cells to fill them. Can be switched off.
 - Several cells can be picked at once by dragging or with Cmd-click.
 - A pad at the cell opens on a double or right click.
 - Up to eight unfinished games, each with its own timer.

@@ -3,7 +3,7 @@
 
 /* how far a finger may travel before a tap turns into a drag */
 const SLOP=10;
-const P={on:false, id:-1, x:0, y:0, from:-1, moved:false, kind:'', add:false, type:'mouse', chainV:0, seen:null, lastTap:-1, lastTapAt:0};
+const P={on:false, ptr:false, id:-1, x:0, y:0, from:-1, moved:false, kind:'', add:false, type:'mouse', chainV:0, seen:null, lastTap:-1, lastTapAt:0};
 const pickMod=e=> MAC? e.metaKey : e.ctrlKey;
 
 function cellFromPoint(x,y){
@@ -30,7 +30,9 @@ function boardDown(e){
   const i=cellFromPoint(e.clientX,e.clientY);
   if(i<0) return;
   e.preventDefault();
+  P.ptr=true;
   try{ $('board').focus({preventScroll:true}) }catch(err){}
+  P.ptr=false;
   P.on=true; P.id=e.pointerId; P.x=e.clientX; P.y=e.clientY; P.from=i; P.moved=false; P.type=e.pointerType||'mouse';
   try{ $('board').setPointerCapture(e.pointerId) }catch(err){}
   if(SP.kind==='tokki'){
@@ -39,6 +41,7 @@ function boardDown(e){
     return;
   }
   if(e.button===2){ P.on=false; if(P.type!=='touch') openPicker(i); return }
+  if(placing()){ P.kind='place'; P.paint=!(P.type==='touch'&&$('bwrap').classList.contains('zoom')); U.msel.clear(); return }
   if(SP.kind==='num' && G.val[i]){ P.kind='chain'; P.chainV=G.val[i]; P.prev=i; selectCell(i); return }
   if(pickMod(e)||e.shiftKey){
     P.kind='run'; P.add=true;
@@ -58,6 +61,13 @@ function boardMove(e){
   if(P.kind==='sweep'){
     if(!P.seen.size){ P.seen.add(P.from); tokkiSweep(P.from) }
     walk(x0,y0,e.clientX,e.clientY,j=>{ if(!P.seen.has(j)){ P.seen.add(j); tokkiSweep(j) } });
+    return;
+  }
+  if(P.kind==='place'){
+    if(!P.paint) return;
+    if(!U.msel.size) U.msel.add(P.from);
+    walk(x0,y0,e.clientX,e.clientY,j=>U.msel.add(j));
+    paint();
     return;
   }
   if(P.kind==='chain'){
@@ -89,11 +99,29 @@ function boardUp(e){
     }
     return;
   }
+  if(P.kind==='place'){
+    if(!P.moved) placeAt([i]);
+    else if(U.msel.size) placeAt([...U.msel]);
+    return;
+  }
   if(P.kind==='tap'&&!P.moved){ selectCell(i); return }
   if(P.kind==='run' && !P.moved && !P.add){
     if(P.type==='touch') selectCell(i);
     if(U.msel.size) { U.msel.clear(); paint() }
   }
+}
+/* a digit picked on the pad goes straight into the tapped cells */
+const placing=()=>SES.settings.tapPlace && U.hl>0 && digitKind();
+function placeAt(list){
+  if(list.length===1&&G.given[list[0]]){
+    const g=G.val[list[0]];
+    if(g>=1&&g<=SP.maxD){ U.hl=g; paint() }
+    return;
+  }
+  U.msel=new Set(list); U.sel=list[list.length-1];
+  if(list.length>1) inputMulti(U.hl,U.mode()); else inputDigit(U.hl);
+  U.msel.clear(); U.sel=-1;
+  if(live()) paint();
 }
 function onceHint(k){
   try{ if(localStorage.getItem('yoondoku-'+k)) return; localStorage.setItem('yoondoku-'+k,'1') }catch(e){}
@@ -102,7 +130,7 @@ function onceHint(k){
 
 function moveSel(code){
   U.msel.clear();
-  if(U.sel<0){ U.sel=SP.cells.findIndex((c,i)=>!G.given[i]); if(U.sel<0) U.sel=0; return paint() }
+  if(U.sel<0){ U.sel=SP.cells.findIndex((c,i)=>!G.given[i]); if(U.sel<0) U.sel=0; U.hl=0; return paint() }
   const st={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[code];
   let {x,y}=SP.cells[U.sel];
   for(let k=0;k<Math.max(SP.W,SP.H);k++){
@@ -123,6 +151,7 @@ function gameKey(e){
     if(closePicker()||closeMenu()) return;
     if(U.msel.size){ U.msel.clear(); paint(); return }
     if(U.sel>=0&&!G.done){ U.sel=-1; paint(); return }
+    if(U.hl&&!G.done){ U.hl=0; paint(); return }
     goHome(); return;
   }
   if(G.done) return;
@@ -167,11 +196,11 @@ function bindInput(){
   b.addEventListener('pointerdown',boardDown);
   b.addEventListener('pointermove',boardMove);
   b.addEventListener('pointerup',boardUp);
-  b.addEventListener('pointercancel',()=>{ P.on=false });
+  b.addEventListener('pointercancel',()=>{ P.on=false; if(P.kind==='place'&&U.msel.size){ U.msel.clear(); paint() } });
   b.addEventListener('contextmenu',e=>e.preventDefault());
-  b.addEventListener('dblclick',e=>{ if(P.type==='touch'||!SP||SP.kind==='tokki') return; const i=cellFromPoint(e.clientX,e.clientY); if(i>=0) openPicker(i) });
+  b.addEventListener('dblclick',e=>{ if(P.type==='touch'||P.kind==='place'||!SP||SP.kind==='tokki') return; const i=cellFromPoint(e.clientX,e.clientY); if(i>=0) openPicker(i) });
   /* keyboard focus picks a cell */
-  b.addEventListener('focus',()=>{ try{ if(G&&U.sel<0&&b.matches(':focus-visible')) moveSel('ArrowRight') }catch(e){} });
+  b.addEventListener('focus',()=>{ try{ if(G&&U.sel<0&&!P.ptr&&b.matches(':focus-visible')) moveSel('ArrowRight') }catch(e){} });
   document.addEventListener('keydown',gameKey);
   addEventListener('keydown',heldKey);
   addEventListener('keyup',heldKey);
@@ -180,7 +209,7 @@ function bindInput(){
   document.addEventListener('pointerdown',e=>{
     if(!G||G.done||$('game').classList.contains('hidden')) return;
     if(e.target.closest('#board,#pad,.gbar,.menu,.sheet,.alert,.scrim,.picker')) return;
-    if(U.sel>=0||U.msel.size){ U.sel=-1; U.msel.clear(); U.hl=0; paint() }
+    if(U.sel>=0||U.msel.size||U.hl){ U.sel=-1; U.msel.clear(); U.hl=0; paint() }
   });
   const pad=$('pad');
   /* keys act on press */
@@ -197,7 +226,7 @@ function bindInput(){
     ({undo,redo,erase,auto:autoNotes,hint})[tl.dataset.t]();
   });
   $('cover').addEventListener('click',()=>setPaused(false));
-  $('bwrap').addEventListener('scroll',()=>{ if(P.kind==='tap') P.moved=true; syncMini() },{passive:true});
+  $('bwrap').addEventListener('scroll',()=>{ if(P.kind==='tap'||P.kind==='place') P.moved=true; syncMini() },{passive:true});
   $('zoomBtn').addEventListener('click',()=>{ zoomOn=!zoomOn; fitBoard() });
   $('mini').addEventListener('pointerdown',e=>{
     e.preventDefault();
@@ -213,7 +242,7 @@ let PK=null, pkMode='digit';
 function openPicker(i){
   closePicker();
   if(!G||G.done||G.paused||G.given[i]||SP.kind==='tokki') return;
-  U.sel=i; U.msel.clear(); paint();
+  U.sel=i; U.msel.clear(); U.hl=0; paint();
   pkMode=U.mode();
   const el=document.createElement('div');
   el.className='picker';
