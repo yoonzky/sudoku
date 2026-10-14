@@ -1,10 +1,10 @@
-# Yoondoku
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/logo-dark.png"><img src=".github/logo-light.png" height="92" alt="Yoondoku"></picture></p>
 
-Eighteen kinds of sudoku in the browser. No accounts, no ads, no build step.
+<p align="center">Eighteen kinds of sudoku in the browser.<br>No accounts, no ads, no build step.</p>
 
-[yoonzky.github.io/yoondoku](https://yoonzky.github.io/yoondoku/)
+<p align="center"><a href="https://yoonzky.github.io/yoondoku/"><b>Play</b></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#modes">Modes</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#keyboard">Keyboard</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#license">License</a></p>
 
-![Yoondoku on a desktop and a phone](.github/preview.png)
+<p align="center"><img src=".github/preview.png" alt="Yoondoku on a desktop and a phone"></p>
 
 ## Modes
 
