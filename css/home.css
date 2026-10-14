@@ -40,8 +40,6 @@
 @media (prefers-reduced-motion:reduce){ .tile:hover,.cont:hover,.rnd-card:hover{transform:none} }
 
 .site-foot{display:flex;justify-content:center;gap:14px;margin-top:44px;font-size:13px;color:var(--text-2)}
-.site-foot a{color:var(--text-2);text-decoration:none;transition:color .12s}
-@media (hover:hover){ .site-foot a:hover{color:var(--text)} }
 
 /* random mode, a card of its own */
 .rnd-card{display:flex;align-items:center;gap:14px;width:330px;margin-top:26px;padding:12px 14px 12px 12px;background:var(--surface);border-radius:var(--r-tile);box-shadow:var(--shadow-1);text-align:left;transition:transform .2s ease-out,box-shadow .2s ease-out}
@@ -142,7 +140,6 @@
   .cont b{font-size:15px}
 }
 @media (pointer:coarse){
-  .site-foot a{padding:13px 6px;margin:-13px -6px}
   .shelf-head .link{padding:11px 0;margin:-11px 0}
   .pool-bar .link{padding:12px 8px}
 }

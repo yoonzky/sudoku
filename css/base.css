@@ -51,7 +51,11 @@ svg{display:block}
 .li .tx{display:flex;flex-direction:column;gap:2px;min-width:0}
 .li .tx small{font-size:13px;color:var(--text-2);line-height:1.35}
 .lcap{font-size:13px;color:var(--text-2);margin:22px 16px 7px}
-a.li{color:inherit;text-decoration:none;border-radius:12px;transition:background-color .12s}
+a.li{color:inherit;text-decoration:none;transition:background-color .12s}
+a.li:first-child{border-radius:12px 12px 0 0}
+a.li:last-child{border-radius:0 0 12px 12px}
+a.li:only-child{border-radius:12px}
+a.li:focus-visible{outline-offset:-2px}
 a.li:active{background:var(--press)}
 @media (hover:hover){ a.li:hover{background:var(--hover)} }
 .li .chev{width:14px;height:14px;color:var(--text-3);stroke-width:2.4;margin-left:-4px}
