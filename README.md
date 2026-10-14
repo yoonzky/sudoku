@@ -1,6 +1,6 @@
 <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/logo-dark.png"><img src=".github/logo-light.png" height="92" alt="Yoondoku"></picture></p>
 
-<p align="center">Eighteen kinds of sudoku in the browser.<br>No accounts, no ads, no build step.</p>
+<p align="center">Eighteen kinds of sudoku in the browser.<br>No accounts, no build step.</p>
 
 <p align="center"><a href="https://yoonzky.github.io/yoondoku/"><b>Play</b></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#modes">Modes</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#keyboard">Keyboard</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#license">License</a></p>
 
