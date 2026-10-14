@@ -40,6 +40,8 @@
 @media (prefers-reduced-motion:reduce){ .tile:hover,.cont:hover,.rnd-card:hover{transform:none} }
 
 .site-foot{display:flex;justify-content:center;gap:14px;margin-top:44px;font-size:13px;color:var(--text-2)}
+.site-foot>:first-child{position:relative}
+.site-foot>:first-child::after{content:'';position:absolute;right:-7.5px;top:50%;height:12px;margin-top:-6px;border-left:1px solid var(--rule);opacity:.5}
 .site-foot a{color:var(--accent);text-decoration:none;transition:color .12s}
 @media (hover:hover){ .site-foot a:hover{color:var(--accent-ink)} }
 
