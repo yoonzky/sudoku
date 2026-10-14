@@ -85,8 +85,8 @@
 .pool button svg{opacity:.45;transition:opacity .15s}
 .pool button>svg{height:40px}
 .pool button.on{background:var(--tint);color:var(--text)}
-.pool button:active{background-image:linear-gradient(var(--press),var(--press))}
 @media (hover:hover){ .pool button:hover{background-image:linear-gradient(var(--hover),var(--hover))} }
+.pool button:active{background-image:linear-gradient(var(--press),var(--press))}
 .pool button.on svg{opacity:1}
 .pool button .ck{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:8px;display:grid;place-items:center;color:var(--accent);opacity:0}
 .pool button.on .ck{opacity:1}

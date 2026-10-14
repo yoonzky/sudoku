@@ -21,8 +21,8 @@ svg{display:block}
 .seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;gap:2px}
 .seg button{flex:1;min-height:30px;border-radius:7px;font-size:13px;font-weight:500;color:var(--fill-ink);white-space:nowrap;padding:0 10px;transition:color .12s}
 .seg button:focus-visible{outline-offset:0}
-.seg button:active:not(.on){color:var(--text-3)}
 @media (hover:hover){ .seg button:hover:not(.on){color:var(--text)} }
+.seg button:active:not(.on){color:var(--text-3)}
 .seg button.on{background:var(--thumb);color:var(--text);box-shadow:0 .5px 1.5px rgba(20,30,50,.12),0 2px 6px rgba(20,30,50,.06)}
 
 .btn{height:46px;padding:0 22px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:600;font-size:16px;letter-spacing:-.01em;transition:transform .1s ease-out}
@@ -56,8 +56,8 @@ a.li:first-child{border-radius:12px 12px 0 0}
 a.li:last-child{border-radius:0 0 12px 12px}
 a.li:only-child{border-radius:12px}
 a.li:focus-visible{outline-offset:-2px}
-a.li:active{background:var(--press)}
-@media (hover:hover){ a.li:hover{background:var(--hover)} }
+@media (hover:hover){ a.li:hover{background:var(--row-hover)} }
+a.li:active{background:var(--row-press)}
 .li .chev{width:14px;height:14px;color:var(--text-3);stroke-width:2.4;margin-left:-4px}
 
 /* sheets: a centred card on a wide screen, a bottom sheet on a phone */
@@ -88,8 +88,8 @@ a.li:active{background:var(--press)}
 .menu button{display:flex;align-items:center;gap:12px;width:100%;height:42px;padding:0 12px;border-radius:8px;font-size:15px;text-align:left}
 .menu button:focus-visible{outline-offset:-2px}
 .menu button .icon{width:20px;height:20px;color:var(--text-2)}
-.menu button:active{background:var(--tint)}
 @media (hover:hover){ .menu button:hover{background:var(--hover)} }
+.menu button:active{background:var(--tint)}
 .menu .kb{margin-left:auto;font-size:12px;color:var(--text-2)}
 @media (hover:none){ .menu .kb{display:none} }
 
@@ -118,9 +118,9 @@ kbd{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 
 .alert .acts.stack{flex-direction:column-reverse}
 .alert .acts.stack button{flex:none}
 .alert .acts.stack button+button{border-left:0;border-bottom:.5px solid var(--sep)}
-.alert .acts button:active{background:var(--press)}
 .alert .acts button:focus-visible{outline-offset:-2px}
 @media (hover:hover){ .alert .acts button:hover{background:var(--hover)} }
+.alert .acts button:active{background:var(--press)}
 .alert .acts button+button{border-left:.5px solid var(--sep)}
 .alert .acts .strong{font-weight:600}
 .alert .acts .danger{color:var(--red);font-weight:600}

@@ -39,7 +39,6 @@ function keysHTML(){
     '</div><div class="list" style="margin-top:12px">'+
     row('kMove',kb('Arrows').replace('Arrows','&#8592; &#8593; &#8595; &#8594;'))+row('kRules',kb('R'))+row('kPause',kb('P'))+row('kBack',kb('Esc'))+'</div>';
 }
-const VERSION='2.0.0';
 let setTab='view';
 function openSettings(){
   const tabs=[['view','sView'],['game','sGame']].concat(COARSE? [] : [['keys','sKeys']]);
@@ -47,7 +46,7 @@ function openSettings(){
     const s=SES.settings;
     if(setTab==='view') return `<div class="lcap">${t('theme')}</div><div class="seg" data-set="theme">${[['auto','thAuto'],['light','thLight'],['dark','thDark']].map(([v,k])=>`<button data-v="${v}" class="${s.theme===v?'on':''}">${t(k)}</button>`).join('')}</div>
       <div class="lcap">${t('lang')}</div><div class="seg" data-set="lang"><button data-v="ru" class="${s.lang==='ru'?'on':''}">Русский</button><button data-v="en" class="${s.lang==='en'?'on':''}">English</button></div>
-      <div class="lcap">${t('about')}</div><div class="list"><a class="li" href="https://yoonzky.github.io/links/" target="_blank" rel="noopener"><span class="tx">${t('author')}</span><span class="meta">yoonzky</span>${ic('chev','chev')}</a><a class="li" href="https://github.com/yoonzky/yoondoku" target="_blank" rel="noopener"><span class="tx">${t('srcCode')}<small>${tf('srcInfo',{v:VERSION})}</small></span><span class="meta">GitHub</span>${ic('chev','chev')}</a></div>`;
+      <div class="lcap">${t('about')}</div><div class="list"><a class="li" href="https://yoonzky.github.io/links/" target="_blank" rel="noopener"><span class="tx">${t('author')}</span><span class="meta">yoonzky</span>${ic('chev','chev')}</a><a class="li" href="https://github.com/yoonzky/yoondoku" target="_blank" rel="noopener"><span class="tx">${t('srcCode')}<small>${t('srcInfo')}</small></span><span class="meta">GitHub</span>${ic('chev','chev')}</a></div>`;
     if(setTab==='game') return `<div class="lcap">${t('grpCheck')}</div><div class="list">${swRow('instant','instantT','instantD')}${swRow('limit','limitT','limitD',!s.instant)}</div>
       <div class="lcap">${t('grpBoard')}</div><div class="list">${swRow('peers','peersT','peersD')}${swRow('same','sameT','sameD')}</div>
       <div class="lcap">${t('grpPad')}</div><div class="list">${swRow('counts','countsT','countsD')}${swRow('hintBtn','hintT','hintD')}${swRow('autoBtn','autoT','autoD')}</div>`;

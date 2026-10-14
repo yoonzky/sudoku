@@ -71,8 +71,8 @@
 .modes button{flex:1;height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;color:var(--text-2);background:var(--surface-2);transition:background-color .12s,color .12s}
 .modes button .gl{height:20px;display:grid;place-items:center;color:var(--text)}
 .modes button .gl svg{width:20px;height:20px}
-.modes button:active{background-image:linear-gradient(var(--press),var(--press))}
 @media (hover:hover){ .modes button:hover{background-image:linear-gradient(var(--hover),var(--hover))} }
+.modes button:active{background-image:linear-gradient(var(--press),var(--press))}
 .modes button.on{background:var(--tint-2);color:var(--accent-ink)}
 .modes button.on .gl{color:var(--accent-ink)}
 .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -80,9 +80,9 @@
   font:400 28px/1 var(--font-disp);letter-spacing:-.01em;transition:transform .08s ease-out,background-color .12s}
 .key small{font:500 11px/1 var(--font);color:var(--text-2);margin-top:5px;min-height:11px}
 .key.d2{font-size:24px;letter-spacing:-.04em}
-.key:active{background-image:linear-gradient(var(--press),var(--press))}
 @media (hover:hover){ .key:active{transform:scale(.96)} }
 @media (hover:hover){ .key:hover:not(.done){background-image:linear-gradient(var(--hover),var(--hover))} }
+.key:active:not(.done){background-image:linear-gradient(var(--press),var(--press))}
 .key.done{color:var(--text-3);box-shadow:none;background:transparent}
 .key.hl{background:var(--tint-2);color:var(--accent-ink);box-shadow:none}
 .key.blank{visibility:hidden}
@@ -92,8 +92,8 @@
 .tool .icon{color:var(--text)}
 .tool:disabled{opacity:.4}
 .tool{transition:background-color .12s}
-.tool:active:not(:disabled){background:var(--tint)}
 @media (hover:hover){ .tool:hover:not(:disabled){background:var(--hover)} }
+.tool:active:not(:disabled){background:var(--tint)}
 
 body.paused .pad{opacity:.45;pointer-events:none;transition:opacity .2s}
 /* result in place of the pad */
@@ -182,8 +182,8 @@ body.col .cover{border-radius:0}
 .pk-keys .k{height:40px;border-radius:9px;background:var(--raise);box-shadow:var(--key-shadow);font:400 20px/1 var(--font-disp);display:grid;place-items:center}
 .pk-keys .k.d2{font-size:16px;letter-spacing:-.03em}
 .pk-keys .k{transition:transform .08s ease-out}
-.pk-keys .k:active{background-image:linear-gradient(var(--press),var(--press))}
 @media (hover:hover){ .pk-keys .k:active{transform:scale(.96)} }
 @media (hover:hover){ .pk-keys .k:hover{background-image:linear-gradient(var(--hover),var(--hover))} }
+.pk-keys .k:active{background-image:linear-gradient(var(--press),var(--press))}
 .pk-keys .k.er{background:transparent;box-shadow:none;color:var(--text-2)}
 .pk-keys .k.er .icon{width:20px;height:20px}
